@@ -5,7 +5,7 @@ import { Exclude, Type } from "class-transformer";
 import { UserAuthProviderConnEntityType } from "@shared/types/models";
 
 // Scalar import
-import { JSONObject } from "@shared/types/json";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
@@ -27,7 +27,8 @@ class UserAuthProviderConn implements UserAuthProviderConnEntityType {
 
   @Authorized(["ADMIN"])
   @Directive("@auth(requires: ADMIN)")
-  @Field(() => JSONObject)
+  @Exclude()
+  @Field(() => JSONScalar)
   payload: Record<string, any>;
 
   @Field(() => Date, { nullable: true })

@@ -54,7 +54,7 @@ class App {
 
   private middlewares() {
     if (getEnvConfig().NODE_ENV === "production") this.express.use(helmet());
-    this.express.use(cors(getCorsConfig));
+    this.express.use(cors(getCorsConfig()));
     this.express.use(cookieParser());
     this.express.use(express.json());
 

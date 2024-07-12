@@ -77,7 +77,10 @@ class RedisInMemoryDatabaseProvider implements InMemoryDatabaseProviderAdapter {
     });
 
     this.initialization.then(() => {
-      this.healthCheckInterval = setInterval(healthCheck, 10 * 1000);
+      this.healthCheckInterval = setInterval(
+        healthCheck,
+        10 * 1000,
+      ) as NodeJS.Timeout;
     });
 
     this.inMemoryDatabaseProvider = redisClient;

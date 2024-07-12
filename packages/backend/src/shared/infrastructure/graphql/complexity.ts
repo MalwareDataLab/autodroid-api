@@ -7,7 +7,7 @@ import {
   simpleEstimator,
 } from "graphql-query-complexity";
 
-const MAX_COMPLEXITY = 125;
+const MAX_COMPLEXITY = 200;
 
 export const ComplexityPlugin = (
   schema: GraphQLSchema,

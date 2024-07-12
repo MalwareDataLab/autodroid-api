@@ -4,7 +4,6 @@ import { RateLimiterMemory } from "rate-limiter-flexible";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Setup
 const limiter = new RateLimiterMemory({
   points: 10,
   duration: 1,

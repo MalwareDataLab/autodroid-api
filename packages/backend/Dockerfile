@@ -1,9 +1,9 @@
 # Build environment
-FROM node:18.17.1 as build
+FROM node:20.14.0 as build
 
 WORKDIR /usr/app
 
-COPY package.json yarn.lock ./
+COPY --chmod=+x package.json yarn.lock ./
 
 RUN yarn
 
@@ -12,13 +12,15 @@ COPY . .
 RUN yarn build
 
 # Production environment
-FROM node:18.17.1 as production
+FROM node:20.14.0 as production
 
 WORKDIR /usr/app
 
-COPY --from=build /usr/app/package.json /usr/app/yarn.lock /usr/app/scripts/wait-for-it.sh ./
-COPY --from=build /usr/app/prisma ./prisma
-COPY --from=build /usr/app/dist ./dist
+COPY --chmod=+x --from=build /usr/app/package.json /usr/app/yarn.lock /usr/app/scripts/wait-for-it.sh ./
+COPY --chmod=+x --from=build /usr/app/prisma ./prisma
+COPY --chmod=+x --from=build /usr/app/dist ./src
+
+RUN chmod +x ./wait-for-it.sh
 
 RUN yarn --production
 

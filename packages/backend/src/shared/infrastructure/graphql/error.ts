@@ -23,6 +23,7 @@ export const errorPlugin: ApolloServerPlugin = {
       async willSendResponse({ response }) {
         if (
           response.body.kind === "single" &&
+          response.body.singleResult.errors?.length &&
           "data" in response.body.singleResult
         )
           response.body.singleResult.data = null;
@@ -30,6 +31,7 @@ export const errorPlugin: ApolloServerPlugin = {
         if (
           response.body.kind === "incremental" &&
           "initialResult" in response.body &&
+          response.body.initialResult.errors?.length &&
           "data" in response.body.initialResult
         )
           response.body.initialResult.data = null;
@@ -44,80 +46,94 @@ export function errorHandler(
 ): GraphQLFormattedError {
   const error = unwrapResolverError(dispatchedError) as any;
 
-  if (
-    error instanceof AppError ||
-    error.prototype.name === AppError.prototype.name
-  ) {
-    return {
-      ...formattedError,
-      message: error.message || "Internal server error.",
-      extensions: {
-        code: error.key || ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
-        ...(!!error.debug && { isFatal: true }),
-      },
-    };
-  }
+  try {
+    if (
+      error instanceof AppError ||
+      (error as any).handler === AppError.prototype.name ||
+      (!!error.originalError &&
+        error.originalError instanceof AppError &&
+        (error.originalError as any)?.handler === AppError.prototype.name)
+    ) {
+      return {
+        ...formattedError,
+        message:
+          error.message ||
+          error.originalError?.message ||
+          "Internal server error.",
+        extensions: {
+          code:
+            error.key ||
+            error.originalError?.key ||
+            ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+          ...((!!error.debug || !!error.originalError?.debug) && {
+            isFatal: true,
+          }),
+        },
+      };
+    }
 
-  if (error.originalError instanceof TypeGraphQLAuthenticationError)
-    return {
-      ...formattedError,
-      message: "Authentication error.",
-      extensions: {
-        code: "UNAUTHORIZED",
-      },
-    };
+    if (error instanceof TypeGraphQLAuthenticationError)
+      return {
+        ...formattedError,
+        message: "Authentication error.",
+        extensions: {
+          code: "UNAUTHORIZED",
+        },
+      };
 
-  if (error.originalError instanceof TypeGraphQLAuthorizationError)
-    return {
-      ...formattedError,
-      message: "Authentication error.",
-      extensions: {
-        code: "FORBIDDEN",
-      },
-    };
+    if (error instanceof TypeGraphQLAuthorizationError)
+      return {
+        ...formattedError,
+        message: "Authentication error.",
+        extensions: {
+          code: "FORBIDDEN",
+        },
+      };
 
-  const validationErrors = [
-    TypeGraphQLArgumentValidationError,
-    TypeGraphQLNoExplicitTypeError,
-    TypeGraphQLWrongNullableListOptionError,
-  ];
-  if (
-    validationErrors.some(
-      validationError => error.originalError instanceof validationError,
+    const validationErrors = [
+      TypeGraphQLArgumentValidationError,
+      TypeGraphQLNoExplicitTypeError,
+      TypeGraphQLWrongNullableListOptionError,
+    ];
+    if (
+      validationErrors.some(validationError => error instanceof validationError)
+    ) {
+      return {
+        ...formattedError,
+        message: formattedError.message,
+        extensions: {
+          ...error.extensions,
+          code: "GRAPHQL_VALIDATION_FAILED",
+        },
+      };
+    }
+
+    if (
+      !!formattedError.extensions?.code &&
+      formattedError.extensions.code !==
+        ApolloServerErrorCode.INTERNAL_SERVER_ERROR &&
+      Object.values(ApolloServerErrorCode).includes(
+        formattedError.extensions.code as any,
+      )
     )
-  ) {
+      return formattedError;
+
+    console.log(
+      `❌ Application failure: `,
+      util.inspect(error, false, null, true),
+    );
+
+    Sentry.captureException(error);
+
     return {
       ...formattedError,
-      message: formattedError.message,
+      message: "Internal server error.",
       extensions: {
-        ...error.extensions,
-        code: "GRAPHQL_VALIDATION_FAILED",
+        code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
       },
     };
-  }
-
-  if (
-    !!formattedError.extensions?.code &&
-    formattedError.extensions.code !==
-      ApolloServerErrorCode.INTERNAL_SERVER_ERROR &&
-    Object.values(ApolloServerErrorCode).includes(
-      formattedError.extensions.code as any,
-    )
-  )
+  } catch (err) {
+    console.log(err);
     return formattedError;
-
-  console.log(
-    `❌ Application failure: `,
-    util.inspect(error, false, null, true),
-  );
-
-  Sentry.captureException(error);
-
-  return {
-    ...formattedError,
-    message: "Internal server error.",
-    extensions: {
-      code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
-    },
-  };
+  }
 }

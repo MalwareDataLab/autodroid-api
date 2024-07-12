@@ -7,7 +7,7 @@ const authenticationHandler: AuthChecker<GraphQLContext> = (
   roles,
 ) => {
   // if `@Authorized()`, check only if user exists
-  if (roles.length === 0) return session !== undefined;
+  if (roles.length === 0) return session?.user?.id !== undefined;
 
   if (!session) return false;
 

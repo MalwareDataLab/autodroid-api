@@ -12,6 +12,7 @@ export type ICreateUserDTO = Omit<
   | "is_admin"
   // Relations
   | "auth_provider_conns"
+  | "datasets"
 >;
 
 export type IFindUserDTO = AtLeastOneProperty<{

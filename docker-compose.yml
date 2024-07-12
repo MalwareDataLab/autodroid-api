@@ -1,21 +1,6 @@
-version: '3.7'
-
 services:
-  autodroid_dind:
-    container_name: autodroid_dind
-    image: docker:dind
-    privileged: true
-    environment:
-      - DOCKER_TLS_CERTDIR=
-    volumes:
-      - ./.runtime/app/storage:/usr/app/storage
-      - ./.runtime/docker:/var/lib/docker
-    restart: always
-    networks:
-      - autodroid_api_network_prod
-
-  autodroid_postgres_prod:
-    container_name: autodroid_postgres_prod
+  autodroid_api_postgres_prod:
+    container_name: autodroid_api_postgres_prod
     image: postgres:14
     environment:
       - POSTGRES_PASSWORD=docker
@@ -23,63 +8,97 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - ./.runtime/database/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
     restart: always
     networks:
       - autodroid_api_network_prod
 
-  autodroid_redis_prod:
-    container_name: autodroid_redis_prod
+  autodroid_api_redis_prod:
+    container_name: autodroid_api_redis_prod
     image: redis:alpine
     volumes:
       - ./.runtime/database/redis:/data
+    ports:
+      - 6379:6379
+    restart: always
+    networks:
+      - autodroid_api_network_prod
+
+  autodroid_api_mongo_prod:
+    container_name: autodroid_api_mongo_prod
+    image: mongo:6
+    volumes:
+      - ./.runtime/database/mongo:/data/db
+    ports:
+      - 27017:27017
     restart: always
     networks:
       - autodroid_api_network_prod
 
   autodroid_api_gateway_prod:
     container_name: autodroid_api_gateway_prod
-    image: luizfelipelaviola/autodroid-api:latest
+    image: autodroid_api_gateway_prod
     build:
-      context: ./packages/backend
+      context: .
       dockerfile: Dockerfile
-    volumes:
-      - ./.runtime/app/storage:/usr/app/storage
-      - ./packages/backend/shared:/usr/app/shared
     environment:
       # General
       - APP_URL=http://localhost:3333
       - APP_PORT=3333
-      - NODE_ENV=production
+      - NODE_ENV=development
+      - DEFAULT_LANGUAGE=en
+      - TZ=UTC
       - DEBUG=false
 
       # Cors
-      - CORS_ALLOWED_FROM=*
+      - CORS_ALLOWED_FROM=http://localhost:3000,*
 
       # Database
-      - DATABASE_URL=postgresql://postgres:docker@autodroid_postgres_prod:5432/autodroid?schema=public
+      - DATABASE_URL=postgresql://postgres:docker@autodroid_api_postgres_prod:5432/autodroid?schema=public
       - DATABASE_LOGGER_ENABLED=false
 
+      # Non-relational database
+      - NON_RELATIONAL_DATABASE_URL=mongodb://autodroid_api_mongo_prod:27017/autodroid
+      - NON_RELATIONAL_DATABASE_LOGGER_ENABLED=false
+
       # Redis
-      - REDIS_HOST=autodroid_redis_prod
+      - REDIS_HOST=autodroid_api_redis_prod
       - REDIS_PORT=6379
       - REDIS_USER=
       - REDIS_PASS=
-      - REDIS_DB=0
+      - REDIS_DB=1
 
-      # Docker
-      - DOCKER_HOST=http://autodroid_dind
-      - DOCKER_PORT=2375
+      # Providers
+      - FIREBASE_AUTHENTICATION_PROVIDER_PROJECT_ID=
+      - FIREBASE_AUTHENTICATION_PROVIDER_CLIENT_EMAIL=
+      - FIREBASE_AUTHENTICATION_PROVIDER_PRIVATE_KEY=
+
+      - GOOGLE_STORAGE_PROVIDER_PROJECT_ID=
+      - GOOGLE_STORAGE_PROVIDER_CLIENT_EMAIL=
+      - GOOGLE_STORAGE_PROVIDER_PRIVATE_KEY=
+      - GOOGLE_STORAGE_PROVIDER_BUCKET_NAME=
 
       # Feature
-      - JOBS_ENABLED=true
-      - JOBS_CONCURRENCY=1
+      - SENTRY_DSN=
+
+      - ADMIN_EMAILS=
+
+      - STORAGE_PROVIDER_PUBLIC_READ_URL_EXPIRATION=
+      - STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION=
     ports:
       - 3333:3333
-    command: ./wait-for-it.sh autodroid_dind:2375 -s -- ./wait-for-it.sh autodroid_postgres_prod:5432 -s -- ./wait-for-it.sh autodroid_redis_prod:6379 -s -- bash -c "yarn run-s prisma:generate prisma:prod start"
+    command: ./wait-for-it.sh autodroid_api_postgres_prod:5432 -s -- ./wait-for-it.sh autodroid_api_mongo_prod:27017 -s -- ./wait-for-it.sh autodroid_api_redis_prod:6379 -s -- bash -c "yarn run-s prisma:generate prisma:prod start:prod"
     depends_on:
-      - autodroid_dind
-      - autodroid_postgres_prod
-      - autodroid_redis_prod
+      - autodroid_api_postgres_prod
+      - autodroid_api_mongo_prod
+      - autodroid_api_redis_prod
+    healthcheck:
+      test: curl -f http://autodroid_api_gateway_prod:3333/health/ready || exit 1
+      interval: 1m
+      timeout: 20s
+      retries: 3
+      start_period: 1m
     restart: always
     networks:
       - autodroid_api_network_prod

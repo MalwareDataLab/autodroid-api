@@ -12,7 +12,6 @@ import { IAuthenticationMethod } from "@shared/container/providers/Authenticatio
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 import { IAuthenticationProviderSessionDTO } from "@shared/container/providers/AuthenticationProvider/types/IVerifyToken.dto";
-import { Session } from "@modules/user/types/IUserSession.dto";
 
 // Entity import
 import { UserSession } from "@modules/user/entities/userSession.entity";
@@ -27,10 +26,12 @@ import { UpsertUserAuthProviderConnService } from "@modules/user/services/upsert
 
 interface IRequest {
   allow_existing_only?: boolean;
-  parent_session?: Session;
-  user_auth_provider_session: IAuthenticationProviderSessionDTO;
-  agent_info?: IParsedUserAgentInfoDTO;
+
   authenticationProvider: IAuthenticationMethod;
+
+  user_auth_provider_session: IAuthenticationProviderSessionDTO;
+
+  agent_info?: IParsedUserAgentInfoDTO;
   language: string;
 }
 

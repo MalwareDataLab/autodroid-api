@@ -14,7 +14,9 @@ import {
 } from "../types/IUserAuthProviderConn.dto";
 
 export interface IUserAuthProviderConnRepository {
-  create(data: ICreateUserAuthProviderConnDTO): Promise<UserAuthProviderConn>;
+  createOne(
+    data: ICreateUserAuthProviderConnDTO,
+  ): Promise<UserAuthProviderConn>;
 
   findOne(
     filter: IFindUserAuthProviderConnDTO,

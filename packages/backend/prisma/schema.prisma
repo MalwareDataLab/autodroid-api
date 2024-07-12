@@ -19,12 +19,13 @@ model User {
   name         String?
   phone_number String?
 
-  language     String?
+  language String?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   auth_provider_conns UserAuthProviderConn[] @relation(name: "UserAuthProviderConn_User")
+  datasets            Dataset[]              @relation(name: "Dataset_User")
 
   @@index([email])
   @@index([created_at, id], map: "users_pagination_idx")
@@ -50,4 +51,54 @@ model UserAuthProviderConn {
   @@index([auth_provider, code])
   @@index([created_at, id], map: "user_auth_provider_conns_pagination_idx")
   @@map("user_auth_provider_conns")
+}
+
+model File {
+  id String @id @default(uuid())
+
+  storage_provider     String
+  provider_path        String
+  provider_status      String
+  provider_verified_at DateTime?
+
+  type String
+
+  allow_public_access   Boolean
+  public_url            String?
+  public_url_expires_at DateTime?
+
+  filename  String
+  mime_type String
+  size      Int
+
+  md5_hash String
+
+  payload Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  dataset Dataset? @relation(name: "Dataset_File")
+
+  @@map("files")
+}
+
+model Dataset {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(name: "Dataset_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  file_id String @unique
+  file    File   @relation(name: "Dataset_File", fields: [file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  description String?
+  tags        String?
+
+  visibility String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("datasets")
 }

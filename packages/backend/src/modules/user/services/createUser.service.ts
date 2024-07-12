@@ -31,7 +31,7 @@ class CreateUserService {
     const t = await i18n(language);
 
     try {
-      const user = await this.userRepository.create({
+      const user = await this.userRepository.createOne({
         ...data,
       });
 

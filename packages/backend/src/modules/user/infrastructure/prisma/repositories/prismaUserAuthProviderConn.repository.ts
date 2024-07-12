@@ -65,7 +65,7 @@ class PrismaUserAuthProviderConnRepository
     };
   }
 
-  public async create(
+  public async createOne(
     data: ICreateUserAuthProviderConnDTO,
   ): Promise<UserAuthProviderConn> {
     const userAuthProviderConn =

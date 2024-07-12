@@ -14,7 +14,7 @@ import {
 } from "../types/IUser.dto";
 
 export interface IUserRepository {
-  create(data: ICreateUserDTO): Promise<User>;
+  createOne(data: ICreateUserDTO): Promise<User>;
 
   findOne(filter: IFindUserDTO): Promise<User | null>;
 

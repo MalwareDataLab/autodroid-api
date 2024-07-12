@@ -11,6 +11,7 @@ Table users {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   auth_provider_conns user_auth_provider_conns [not null]
+  datasets datasets [not null]
 }
 
 Table user_auth_provider_conns {
@@ -25,4 +26,41 @@ Table user_auth_provider_conns {
   updated_at DateTime [not null]
 }
 
+Table files {
+  id String [pk]
+  storage_provider String [not null]
+  provider_path String [not null]
+  provider_status String [not null]
+  provider_verified_at DateTime
+  type String [not null]
+  allow_public_access Boolean [not null]
+  public_url String
+  public_url_expires_at DateTime
+  filename String [not null]
+  mime_type String [not null]
+  size Int [not null]
+  md5_hash String [not null]
+  payload Json [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  dataset datasets
+}
+
+Table datasets {
+  id String [pk]
+  user_id String [not null]
+  user users [not null]
+  file_id String [unique, not null]
+  file files [not null]
+  description String
+  tags String
+  visibility String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+}
+
 Ref: user_auth_provider_conns.user_id > users.id [delete: Cascade]
+
+Ref: datasets.user_id > users.id [delete: Cascade]
+
+Ref: datasets.file_id - files.id [delete: Cascade]

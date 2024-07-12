@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -36,11 +35,6 @@ declare global {
 
       // Feature
       SENTRY_DSN: string;
-
-      JOBS_ENABLED: string;
-
-      CRON_ENABLED: string;
-      CRON_TIMEZONE: string;
 
       ADMIN_EMAILS: string;
     }

@@ -17,6 +17,8 @@ import { User } from "../entities/user.entity";
 // Repository import
 import { IUserRepository } from "../repositories/IUser.repository";
 import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
+
+// Schema import
 import { UserUpdateDataSchema } from "../schemas/userUpdateData.schema";
 
 interface IRequest {

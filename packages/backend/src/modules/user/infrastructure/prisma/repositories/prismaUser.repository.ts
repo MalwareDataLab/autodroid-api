@@ -45,7 +45,7 @@ class PrismaUserRepository implements IUserRepository {
     return { id, email, phone_number };
   }
 
-  public async create(data: ICreateUserDTO): Promise<User> {
+  public async createOne(data: ICreateUserDTO): Promise<User> {
     const user = await this.databaseProvider.client.user.create({
       data,
       include: this.relations,
