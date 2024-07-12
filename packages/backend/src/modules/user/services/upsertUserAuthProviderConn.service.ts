@@ -57,12 +57,13 @@ class UpsertUserAuthProviderConnService {
           },
         );
     else
-      userAuthProviderConn = await this.userAuthProviderConnRepository.create({
-        user_id,
-        auth_provider,
-        payload,
-        code,
-      });
+      userAuthProviderConn =
+        await this.userAuthProviderConnRepository.createOne({
+          user_id,
+          auth_provider,
+          payload,
+          code,
+        });
 
     if (!userAuthProviderConn)
       throw new AppError({

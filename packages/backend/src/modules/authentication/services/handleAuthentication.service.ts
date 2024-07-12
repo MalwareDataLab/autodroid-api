@@ -23,12 +23,16 @@ import { parse } from "@shared/utils/instanceParser";
 // Repository import
 import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 import { IUserRepository } from "@modules/user/repositories/IUser.repository";
+
+// Service import
 import { HandleUserSessionService } from "./handleUserSession.service";
 
 interface IRequest {
-  allow_existing_only?: boolean;
   access_token: string;
   auth_provider?: AUTH_PROVIDER;
+
+  allow_existing_only?: boolean;
+
   agent_info?: IParsedUserAgentInfoDTO;
   language: string;
 }
@@ -78,42 +82,8 @@ class HandleAuthenticationService {
       this.userRepository,
     );
 
-    let parent_session: Session | undefined;
-
-    if (userAuthProviderSession.parent_session) {
-      if (
-        !userAuthProviderSession.parent_session?.access_token ||
-        !userAuthProviderSession.parent_session?.auth_provider
-      )
-        throw new AppError({
-          key: "@handle_authentication_service/INVALID_PARENT_SESSION_REGISTRY",
-          message: t(
-            "@handle_authentication_service/INVALID_PARENT_SESSION_REGISTRY",
-            "Your session has a problem. Please sign in again.",
-          ),
-          statusCode: 401,
-        });
-
-      try {
-        parent_session = await this.execute({
-          allow_existing_only,
-          access_token: userAuthProviderSession.parent_session.access_token,
-          language,
-          auth_provider: userAuthProviderSession.parent_session.auth_provider,
-          agent_info,
-        });
-      } catch (err: any) {
-        throw new AppError({
-          key: "@handle_authentication_service/PROCESS_PARENT_SESSION_FAILED",
-          message: err.message,
-          statusCode: 401,
-        });
-      }
-    }
-
     const userSession = await handleUserSessionService.execute({
       allow_existing_only,
-      parent_session,
       user_auth_provider_session: userAuthProviderSession,
       authenticationProvider,
       agent_info,

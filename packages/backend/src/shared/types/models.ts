@@ -21,3 +21,19 @@ export type UserAuthProviderConnEntityType = PrismaEntityType<
     };
   }>
 >;
+
+export type FileEntityType = PrismaEntityType<
+  Prisma.FileGetPayload<{
+    include: {
+      [key in keyof Prisma.FileInclude]: true;
+    };
+  }>
+>;
+
+export type DatasetEntityType = PrismaEntityType<
+  Prisma.DatasetGetPayload<{
+    include: {
+      [key in keyof Prisma.DatasetInclude]: true;
+    };
+  }>
+>;

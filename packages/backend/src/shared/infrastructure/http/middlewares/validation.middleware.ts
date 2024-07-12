@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { validateOrReject, ValidationError } from "class-validator";
-import { ClassConstructor, plainToInstance } from "class-transformer";
+import { ClassConstructor } from "class-transformer";
 
 // i18n import
 import { TFunction } from "@shared/i18n";
@@ -17,25 +17,40 @@ const Segments = {
   SIGNEDCOOKIES: "signedCookies",
 } as const;
 
+type ClassType<T> = new (...args: any[]) => T;
+
 async function validateSchema<T extends object>(params: {
   value: any;
   t: TFunction;
-  schema: ClassConstructor<T>;
+  schema: ClassType<T>;
 }) {
-  const { t, schema, value } = params;
-
-  Object.assign(value, plainToInstance(schema, value));
+  const { t, schema: Schema, value } = params;
 
   try {
-    await validateOrReject(value);
+    const dto = new Schema();
+    Object.assign(dto, value);
+    await validateOrReject(dto, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
   } catch (err) {
-    if (err instanceof ValidationError)
+    if (
+      err instanceof ValidationError ||
+      (Array.isArray(err) && err.some(e => e instanceof ValidationError))
+    ) {
+      const selectedError = Array.isArray(err)
+        ? err.find(e => e instanceof ValidationError)
+        : err;
+
+      const message = selectedError?.constraints
+        ? (Object.values(selectedError.constraints)[0] as string)
+        : null;
+
       throw new AppError({
         key: "@general/VALIDATION_FAIL",
-        message:
-          err.constraints?.[0] ||
-          t("@general/VALIDATION_FAIL", "Validation error."),
+        message: message || t("@general/VALIDATION_FAIL", "Validation error."),
       });
+    }
     throw new AppError({
       key: "@general/VALIDATION_FATAL_FAILURE",
       message: t(

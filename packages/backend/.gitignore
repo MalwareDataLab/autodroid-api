@@ -1,39 +1,11 @@
-# Logs
-logs
-*.log
-yarn-debug.log*
-yarn-error.log*
-
-# Dependency directories
-node_modules/
-
-# Optional eslint cache
-.eslintcache
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# Build
+node_modules
 build
-dist
-
-# Storage files
-tmp
 temp
-uploads
-storage
-
-# Docker files
+dist
+.env
 .runtime
 
-# Tests
 test/outputs
-
-# Others
 
 !tmp/.gitkeep
 translation.missing.json

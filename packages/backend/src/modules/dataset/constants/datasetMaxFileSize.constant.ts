@@ -1,0 +1,3 @@
+const DATASET_MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
+
+export { DATASET_MAX_FILE_SIZE };

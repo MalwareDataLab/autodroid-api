@@ -14,12 +14,12 @@ class UserUpdateDataSchema implements IUpdateUserDTO {
   @Field()
   name: string;
 
-  @ValidString()
+  @ValidString({ nullable: true })
   @IsPhoneNumber()
   @Field(() => String, { nullable: true })
   phone_number?: string | null;
 
-  @ValidString()
+  @ValidString({ nullable: true })
   @IsLocale()
   @Field(() => String, { nullable: true })
   language?: string | null;

@@ -9,6 +9,7 @@ import { UserEntityType } from "@shared/types/models";
 
 // Entity import
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
 import { UserAuthProviderConn } from "./userAuthProviderConn.entity";
 
 @ObjectType()
@@ -36,6 +37,7 @@ class User implements UserEntityType {
 
   /* Computed fields */
 
+  @Exclude()
   get is_admin(): boolean {
     return (
       !!this.email &&
@@ -48,6 +50,10 @@ class User implements UserEntityType {
   @Exclude()
   @Type(() => UserAuthProviderConn)
   auth_provider_conns: UserAuthProviderConn[];
+
+  @Exclude()
+  @Type(() => Dataset)
+  datasets: Dataset[];
 }
 
 const PaginatedUser = PaginationConnection(User);

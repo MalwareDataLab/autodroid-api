@@ -18,6 +18,12 @@ import { UserAgentInfoProvider } from "./providers/UserAgentInfoProvider";
 import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
 import { AuthenticationProvider } from "./providers/AuthenticationProvider";
 
+import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
+import { DatasetProcessorProvider } from "./providers/DatasetProcessorProvider";
+
+import { IStorageProvider } from "./providers/StorageProvider/models/IStorage.provider";
+import { StorageProvider } from "./providers/StorageProvider";
+
 // Repository import
 import { initRepositories } from "./repositories";
 
@@ -43,10 +49,12 @@ const initContainer = async () => {
   /**
    * 4: Tertiary providers
    */
+  container.registerSingleton<IDatasetProcessorProvider>("DatasetProcessorProvider", DatasetProcessorProvider);
 
   /**
    * 5: Quaternary providers
    */
+  container.registerSingleton<IStorageProvider>("StorageProvider", StorageProvider);
 };
 
 export { initContainer };

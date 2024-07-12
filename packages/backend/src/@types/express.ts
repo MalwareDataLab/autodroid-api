@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-
 import { i18n, TFunction } from "i18next";
 
 // DTO import

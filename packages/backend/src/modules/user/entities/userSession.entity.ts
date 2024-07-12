@@ -1,9 +1,9 @@
 /* eslint-disable no-use-before-define */
 import { Authorized, Directive, Field, ObjectType } from "type-graphql";
-import { Type } from "class-transformer";
+import { Exclude, Type } from "class-transformer";
 
 // Scalar import
-import { JSONObject } from "@shared/types/json";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 // Entity import
 import { UserAuthProviderConn } from "./userAuthProviderConn.entity";
@@ -24,7 +24,8 @@ class UserSession {
 
   @Authorized(["ADMIN"])
   @Directive("@auth(requires: ADMIN)")
-  @Field(() => JSONObject)
+  @Exclude()
+  @Field(() => JSONScalar)
   payload: Record<string, any>;
 
   /* Relations */

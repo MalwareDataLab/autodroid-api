@@ -11,17 +11,19 @@
     "dev": "wsrun dev",
     "start": "wsrun start",
     "lint": "wsrun lint",
+    "lint-staged": "wsrun lint-staged",
     "build": "wsrun build",
     "test": "wsrun test",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^17.7.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@types/node": "^20.14.10",
     "commitizen": "^4.3.0",
-    "commitlint": "^17.7.1",
+    "commitlint": "^19.3.0",
     "cz-conventional-changelog": "^3.3.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
+    "husky": "^9.0.11",
+    "typescript": "^5.5.3",
     "wsrun": "^5.2.4"
   },
   "config": {

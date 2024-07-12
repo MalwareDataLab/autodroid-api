@@ -127,12 +127,6 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
         refresh_token_expires_at: undefined,
         user_code: response.uid,
         auth_provider: this.auth_provider,
-        parent_session: response.parent_session
-          ? {
-              auth_provider: response.parent_session.auth_provider,
-              access_token: response.parent_session.access_token,
-            }
-          : undefined,
         payload: {
           ...(!!response.payload && { ...response.payload }),
         },
@@ -230,7 +224,6 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
 
   public async createUserTokenByCode({
     code,
-    parent_session,
     payload,
     language,
   }: ICreateUserTokenByCodeDTO): Promise<string> {
@@ -243,7 +236,6 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
     try {
       const token = await provider.auth().createCustomToken(user.code, {
         ...payload,
-        parent_session,
       });
       return token;
     } catch (err) {
