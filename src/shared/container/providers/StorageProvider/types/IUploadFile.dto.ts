@@ -5,7 +5,7 @@ import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentIn
 import { User } from "@modules/user/entities/user.entity";
 
 // Enum import
-import { MIME_TYPE } from "./mimeType.enum";
+import { MIME_TYPE } from "../../../../../modules/file/types/mimeType.enum";
 
 export type IGenerateUploadSignedUrlRequestParamsDTO = {
   filename: string;

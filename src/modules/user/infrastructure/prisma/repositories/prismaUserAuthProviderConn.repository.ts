@@ -71,6 +71,7 @@ class PrismaUserAuthProviderConnRepository
     const userAuthProviderConn =
       await this.databaseProvider.client.userAuthProviderConn.create({
         data,
+        include: this.relations,
       });
 
     return parse(UserAuthProviderConn, userAuthProviderConn);

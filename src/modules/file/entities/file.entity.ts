@@ -19,8 +19,8 @@ import { PaginationConnection } from "@modules/pagination/entities/paginationCon
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 
 // Enum import
-import { MIME_TYPE } from "@shared/container/providers/StorageProvider/types/mimeType.enum";
-import { STORAGE_PROVIDER } from "@shared/container/providers/StorageProvider/types/storageProvider.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { FILE_TYPE } from "../types/fileType.enum";
 import { FILE_PROVIDER_STATUS } from "../types/fileProviderStatus.enum";
 

@@ -31,7 +31,9 @@ const authenticationMiddleware = async (
         req.session = session;
 
         return next();
-      } catch {}
+      } catch (err) {
+        req.session = undefined as any;
+      }
     }
   }
 

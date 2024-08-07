@@ -27,7 +27,7 @@ class PrismaFileRepository implements IFileRepository {
     private databaseProvider: IDatabaseProvider,
   ) {}
 
-  public async create(data: ICreateFileDTO): Promise<File> {
+  public async createOne(data: ICreateFileDTO): Promise<File> {
     const file = await this.databaseProvider.client.file.create({
       data: {
         ...data,

@@ -15,7 +15,7 @@ import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUse
 // Entity import
 import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
 
-interface IRequest {
+interface IUpsertUserAuthProviderConnServiceRequest {
   code: string;
   user_id: string;
   auth_provider: AUTH_PROVIDER;
@@ -36,7 +36,7 @@ class UpsertUserAuthProviderConnService {
     payload,
     code,
     t,
-  }: IRequest): Promise<UserAuthProviderConn> {
+  }: IUpsertUserAuthProviderConnServiceRequest): Promise<UserAuthProviderConn> {
     let userAuthProviderConn =
       await this.userAuthProviderConnRepository.findOne({
         user_id,
@@ -78,4 +78,5 @@ class UpsertUserAuthProviderConnService {
   }
 }
 
+export type { IUpsertUserAuthProviderConnServiceRequest };
 export { UpsertUserAuthProviderConnService };
