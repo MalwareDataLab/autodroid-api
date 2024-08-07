@@ -5,7 +5,7 @@ import { IsEnum, IsHash, IsMimeType } from "class-validator";
 import { ValidString } from "@shared/decorators/validString.decorator";
 
 // Enum import
-import { MIME_TYPE } from "@shared/container/providers/StorageProvider/types/mimeType.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 import { ValidInt } from "@shared/decorators/validInt.decorator";
 
 @InputType()

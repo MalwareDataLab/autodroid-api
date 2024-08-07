@@ -9,7 +9,7 @@ import {
 } from "../types/IFile.dto";
 
 export interface IFileRepository {
-  create(data: ICreateFileDTO): Promise<File>;
+  createOne(data: ICreateFileDTO): Promise<File>;
 
   findOne(filter: IFindFileDTO): Promise<File | null>;
 

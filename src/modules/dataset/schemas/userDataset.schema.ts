@@ -10,22 +10,22 @@ import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestF
 class UserDatasetCreateSchema extends RequestFileUploadSignedUrlSchema {
   @ValidString({ nullable: true })
   @Field(() => String, { nullable: true })
-  description: string;
+  description?: string | null;
 
   @ValidString({ nullable: true })
   @Field(() => String, { nullable: true })
-  tags: string;
+  tags?: string | null;
 }
 
 @InputType()
 class UserDatasetUpdateSchema {
   @ValidString({ nullable: true })
   @Field(() => String, { nullable: true })
-  description: string;
+  description?: string | null;
 
   @ValidString({ nullable: true })
   @Field(() => String, { nullable: true })
-  tags: string;
+  tags?: string | null;
 }
 
 export { UserDatasetCreateSchema, UserDatasetUpdateSchema };

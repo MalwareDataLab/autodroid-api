@@ -2,7 +2,7 @@
 import { File } from "@modules/file/entities/file.entity";
 
 // Enum import
-import { STORAGE_PROVIDER } from "../types/storageProvider.enum";
+import { STORAGE_PROVIDER } from "../../../../../modules/file/types/storageProvider.enum";
 
 // DTO import
 import { IRemoveFileByNameDTO } from "../types/IRemoveFile.dto";

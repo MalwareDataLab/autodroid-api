@@ -37,6 +37,9 @@ declare global {
       SENTRY_DSN: string;
 
       ADMIN_EMAILS: string;
+
+      STORAGE_PROVIDER_PUBLIC_READ_URL_EXPIRATION: string;
+      STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION: string;
     }
   }
 }

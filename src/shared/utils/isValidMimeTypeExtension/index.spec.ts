@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 // Enum import
-import { MIME_TYPE } from "@shared/container/providers/StorageProvider/types/mimeType.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 
 // Test target import
 import { isValidMimeTypeExtension } from ".";

@@ -17,8 +17,6 @@ import { User } from "../entities/user.entity";
 // Repository import
 import { IUserRepository } from "../repositories/IUser.repository";
 import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
-
-// Schema import
 import { UserUpdateDataSchema } from "../schemas/userUpdateData.schema";
 
 interface IRequest {
@@ -69,7 +67,7 @@ class UserUpdateDataService {
         },
       });
 
-    if (!isValidLanguage(language))
+    if (!!data.language && !isValidLanguage(data.language))
       throw new AppError({
         key: "@user_update_data_service/INVALID_LANGUAGE",
         message: t(
@@ -91,7 +89,7 @@ class UserUpdateDataService {
       {
         name: data.name,
         phone_number: data.phone_number,
-        language,
+        language: data.language,
       },
     );
 
