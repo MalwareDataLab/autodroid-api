@@ -29,8 +29,6 @@ const init = async () => {
   });
 };
 
-init();
-
 const shutdownSignals = [
   "SIGHUP",
   "SIGINT",
@@ -101,4 +99,4 @@ shutdownSignals.forEach((signal: string) => {
   process.on(signal as any, shutdownHandler);
 });
 
-export { server };
+export { init };

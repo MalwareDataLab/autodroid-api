@@ -16,6 +16,11 @@ export default defineConfig({
     },
     globals: false,
     workspace: "test/config/vitest.workspace.ts",
+    server: {
+      deps: {
+        fallbackCJS: true,
+      },
+    },
   },
   plugins: [swc.vite(), tsconfigPaths()],
 });

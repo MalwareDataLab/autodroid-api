@@ -22,10 +22,10 @@ const argv = yargs(hideBin(process.argv))
   .help()
   .parseSync();
 
+process.env.APP_ENV = argv.env;
+
 async function main() {
   import("./bootstrap");
 }
 
 main();
-
-export { argv };

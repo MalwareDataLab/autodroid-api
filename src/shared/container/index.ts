@@ -57,4 +57,32 @@ const initContainer = async () => {
   container.registerSingleton<IStorageProvider>("StorageProvider", StorageProvider);
 };
 
-export { initContainer };
+const prerequisites = [
+  // Primary (NOTE: order is important | InMemoryDatabaseProvider is a keep-alive service)
+  "DatabaseProvider",
+  "NonRelationalDatabaseProvider",
+  "InMemoryDatabaseProvider",
+
+  // Secondary
+  "UserAgentInfoProvider",
+  "AuthenticationProvider",
+
+  // Tertiary
+  "DatasetProcessorProvider",
+
+  // Quaternary
+  "StorageProvider",
+];
+
+const waitPreRequisites = async () => {
+  await prerequisites.reduce<Promise<any>>((promise, prerequisite) => {
+    return promise.then(async () => {
+      const dependency: any = container.resolve(prerequisite);
+      await dependency.initialization;
+      if (!dependency.initialization) throw new Error(`❌ ${prerequisite} initialization failed.`);
+      return dependency.initialization;
+    });
+  }, Promise.resolve());
+};
+
+export { initContainer, waitPreRequisites, prerequisites };

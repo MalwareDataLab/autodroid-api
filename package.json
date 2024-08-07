@@ -5,7 +5,7 @@
   "main": "./src/index.ts",
   "license": "MIT",
   "engines": {
-    "node": "v20.14.0"
+    "node": "v20.16.0"
   },
   "scripts": {
     "dev": "nodemon",
@@ -29,6 +29,9 @@
     "test:integration": "vitest run --config test/config/vitest.config.ts --project integration",
     "test:integration:watch": "vitest --config test/config/vitest.config.ts --project integration",
     "test:integration:debug": "node --inspect ./node_modules/.bin/vitest run --config test/config/vitest.config.ts --project integration --no-file-parallelism --testTimeout 60000",
+    "test:e2e": "vitest run --config test/config/vitest.config.ts --project e2e",
+    "test:e2e:watch": "vitest --config test/config/vitest.config.ts --project e2e",
+    "test:e2e:debug": "node --inspect ./node_modules/.bin/vitest run --config test/config/vitest.config.ts --project e2e --no-file-parallelism --testTimeout 60000",
     "i18n": "i18next-scanner --config src/shared/i18n/extraction.js --output src/shared/i18n/extraction 'src/**/*.{ts,tsx,js,jsx}'",
     "build": "babel src --extensions \".js,.ts\" --out-dir dist",
     "changelog": "commit-and-tag-version --skip.bump --skip.commit --skip.tag -i ./docs/CHANGELOG.md",

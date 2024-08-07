@@ -1,5 +1,5 @@
 # Build environment
-FROM node:20.14.0 as build
+FROM node:20.16.0 as build
 
 WORKDIR /usr/app
 
@@ -12,7 +12,7 @@ COPY . .
 RUN yarn build
 
 # Production environment
-FROM node:20.14.0 as production
+FROM node:20.16.0 as production
 
 WORKDIR /usr/app
 

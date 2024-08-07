@@ -1,11 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-import * as Mongoose from "mongoose";
+import type { PrismaClient } from "@prisma/client";
+import type * as Mongoose from "mongoose";
 
 // Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
-import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
-import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
-import { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/implementations/redisInMemoryDatabase.provider";
+import type { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+import type { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
+import type { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import type { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/implementations/redisInMemoryDatabase.provider";
+
+// Type import
+import type { IFirebaseSessionDTO } from "../utils/startAndGetSessionToken";
+import type { App } from "../utils/getServer";
 
 declare global {
   // eslint-disable-next-line vars-on-top, no-var
@@ -18,5 +22,8 @@ declare global {
 
     InMemoryDatabaseProvider?: IInMemoryDatabaseProvider;
     RedisInMemoryDatabaseProvider?: RedisInMemoryDatabaseProvider;
+
+    app: App;
+    session: IFirebaseSessionDTO;
   };
 }
