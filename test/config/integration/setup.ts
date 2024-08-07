@@ -130,8 +130,9 @@ const disposeInMemoryDatabaseProvider = async () => {
   await redis?.provider.del("*");
 };
 
+global.TestInjection = global.TestInjection || {};
+
 beforeEach(async () => {
-  global.TestInjection = global.TestInjection || {};
   await Promise.all([
     initRelationalDatabase(),
     initNonRelationalDatabase(),
@@ -139,7 +140,7 @@ beforeEach(async () => {
   ]);
 
   await initRepositories();
-});
+}, 60000);
 
 afterEach(async () => {
   await sleep(1000);
@@ -148,4 +149,4 @@ afterEach(async () => {
     disposeNonRelationalDatabase(),
     disposeInMemoryDatabaseProvider(),
   ]);
-});
+}, 60000);

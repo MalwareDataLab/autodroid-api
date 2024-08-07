@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import "reflect-metadata";
 import express, { Express } from "express";
 import "express-async-errors";
 import * as Sentry from "@sentry/node";
@@ -88,5 +89,6 @@ class App {
     });
   }
 }
+
 const app = new App();
 export { App, app };
