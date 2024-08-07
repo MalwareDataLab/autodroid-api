@@ -1,3 +1,15 @@
 node_modules
-
+build
+temp
+dist
+.env
 .runtime
+
+test/outputs
+
+!tmp/.gitkeep
+translation.missing.json
+
+service-account.json
+
+.docker
