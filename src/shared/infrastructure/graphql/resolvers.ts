@@ -3,6 +3,7 @@ import { BuildSchemaOptions } from "type-graphql";
 /**
  * General
  */
+import { FileResolver } from "@modules/file/infrastructure/graphql/resolvers/file.resolver";
 
 /**
  * Admin
@@ -24,6 +25,7 @@ const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
     /**
      * General
      */
+    FileResolver,
 
     /**
      * Admin

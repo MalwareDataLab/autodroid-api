@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { Type } from "class-transformer";
+import { Exclude, Type } from "class-transformer";
 
 // Type import
 import { ProcessorEntityType } from "@shared/types/models";
@@ -51,11 +51,11 @@ class Processor implements Omit<ProcessorEntityType, "params"> {
 
   /* Relations */
 
-  @Field()
+  @Exclude()
   user_id: string;
 
   @Type(() => User)
-  @Field(() => User)
+  @Exclude()
   user: User;
 }
 

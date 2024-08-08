@@ -1,7 +1,10 @@
 import { inject, injectable } from "tsyringe";
 
 // Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+import {
+  DatabaseHelperTypes,
+  IDatabaseProvider,
+} from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Interface import
 import { IFileRepository } from "@modules/file/repositories/IFile.repository";
@@ -27,6 +30,17 @@ class PrismaFileRepository implements IFileRepository {
     private databaseProvider: IDatabaseProvider,
   ) {}
 
+  private getWhereClause(
+    { id, provider_path, public_url }: IFindFileDTO,
+    relations_enabled = true,
+  ): DatabaseHelperTypes.FileWhereInput {
+    return {
+      id,
+      provider_path,
+      public_url,
+    };
+  }
+
   public async createOne(data: ICreateFileDTO): Promise<File> {
     const file = await this.databaseProvider.client.file.create({
       data: {
@@ -38,17 +52,9 @@ class PrismaFileRepository implements IFileRepository {
     return parse(File, file);
   }
 
-  public async findOne({
-    id,
-    provider_path,
-    public_url,
-  }: IFindFileDTO): Promise<File | null> {
+  public async findOne(filter: IFindFileDTO): Promise<File | null> {
     const file = await this.databaseProvider.client.file.findFirst({
-      where: {
-        id,
-        provider_path,
-        public_url,
-      },
+      where: this.getWhereClause(filter),
     });
 
     return parse(File, file);

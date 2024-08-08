@@ -75,6 +75,7 @@ type File {
   provider_path: String!
   provider_status: FILE_PROVIDER_STATUS!
   provider_verified_at: DateTimeISO
+  public_url: String
   public_url_expires_at: DateTimeISO
   size: Int!
   storage_provider: STORAGE_PROVIDER!
@@ -138,8 +139,6 @@ type Processor {
   payload: JSON!
   tags: String
   updated_at: DateTimeISO!
-  user: User!
-  user_id: String!
   version: String!
   visibility: PROCESSOR_VISIBILITY!
 }
