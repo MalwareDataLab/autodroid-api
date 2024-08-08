@@ -34,7 +34,7 @@ import { File } from "@modules/file/entities/file.entity";
 // Enum import
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { STORAGE_PROVIDER } from "../../../../../../modules/file/types/storageProvider.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 
 // Interface import
 import { IStorageProvider } from "../../models/IStorage.provider";
