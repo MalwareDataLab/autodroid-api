@@ -17,11 +17,12 @@ import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentIn
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 
+// Enum import
+import { FILE_TYPE } from "@modules/file/types/fileType.enum";
+import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
 // Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";
-
-// Enum import
-import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 // Schema import
 import { UserDatasetCreateSchema } from "../schemas/userDataset.schema";
@@ -91,6 +92,7 @@ class UserDatasetCreateService {
     const file = await this.storageProvider.generateUploadSignedUrl({
       filename: data.filename,
       mimeType: data.mime_type,
+      fileType: FILE_TYPE.DATASET,
       size: data.size,
       md5Hash: data.md5_hash,
 

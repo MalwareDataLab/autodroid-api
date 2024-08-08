@@ -35,6 +35,7 @@ import { File } from "@modules/file/entities/file.entity";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 
 // Interface import
 import { IStorageProvider } from "../../models/IStorage.provider";
@@ -144,6 +145,7 @@ class GoogleStorageProvider implements IStorageProvider {
       filename,
       size,
       mimeType,
+      fileType,
       md5Hash,
       allowPublicAccess,
       cloudDirDestination,
@@ -189,6 +191,15 @@ class GoogleStorageProvider implements IStorageProvider {
         ),
       });
 
+    if (!Object.values(MIME_TYPE).includes(mimeType))
+      throw new AppError({
+        key: "@google_storage_provider_generate_upload_signed_url/INVALID_MIME_TYPE",
+        message: t(
+          "@google_storage_provider_generate_upload_signed_url/INVALID_MIME_TYPE",
+          "Invalid mime type.",
+        ),
+      });
+
     if (
       !isValidMimeTypeExtension({
         mimeType,
@@ -196,10 +207,19 @@ class GoogleStorageProvider implements IStorageProvider {
       })
     )
       throw new AppError({
-        key: "@google_storage_provider_generate_upload_signed_url/INVALID_MIME_TYPE",
+        key: "@google_storage_provider_generate_upload_signed_url/INVALID_MIME_TYPE_EXTENSION",
         message: t(
-          "@google_storage_provider_generate_upload_signed_url/INVALID_MIME_TYPE",
-          "Invalid MIME type.",
+          "@google_storage_provider_generate_upload_signed_url/INVALID_MIME_TYPE_EXTENSION",
+          "Invalid file extension for this mime type.",
+        ),
+      });
+
+    if (!Object.values(FILE_TYPE).includes(fileType))
+      throw new AppError({
+        key: "@google_storage_provider_generate_upload_signed_url/INVALID_FILE_TYPE",
+        message: t(
+          "@google_storage_provider_generate_upload_signed_url/INVALID_FILE_TYPE",
+          "Invalid file type.",
         ),
       });
 
@@ -225,20 +245,22 @@ class GoogleStorageProvider implements IStorageProvider {
       getMillisecondConfig().STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION,
     );
 
+    const md5Base64 = Buffer.from(md5Hash, "hex").toString("base64");
+
     try {
-      const [url] = await bucket.file(filename).getSignedUrl({
+      const [url] = await bucket.file(destinationFilePath).getSignedUrl({
         version: "v4",
         action: "write",
         expires: uploadSignedUrlExpirationDate,
         contentType: mimeType,
-        contentMd5: md5Hash,
+        contentMd5: md5Base64,
       });
 
       const file = await this.fileRepository.createOne({
         filename: destinationFilename,
         size,
         mime_type: mimeType,
-        md5_hash: md5Hash,
+        md5_hash: md5Base64,
 
         allow_public_access: allowPublicAccess,
 
@@ -253,7 +275,7 @@ class GoogleStorageProvider implements IStorageProvider {
         public_url: url,
         public_url_expires_at: uploadSignedUrlExpirationDate,
 
-        type: FILE_TYPE.DATASET,
+        type: fileType,
         provider_status: FILE_PROVIDER_STATUS.PENDING,
       });
 
