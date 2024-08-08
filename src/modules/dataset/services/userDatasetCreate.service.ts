@@ -94,7 +94,7 @@ class UserDatasetCreateService {
       size: data.size,
       md5Hash: data.md5_hash,
 
-      cloudDirDestination: "storage/uploads/dataset",
+      cloudDirDestination: "datasets",
       allowPublicAccess: true,
 
       user,

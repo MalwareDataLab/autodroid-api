@@ -14,12 +14,10 @@ const router = Router();
 
 router.use("/health", healthCheckRouter);
 
-router.use(userAuthenticationMiddleware);
+router.use("/admin", userAuthenticationMiddleware, adminRouter);
 
-router.use("/admin", adminRouter);
-
-router.use("/user", userRouter);
-router.use("/dataset", userDatasetRouter);
-router.use("/processor", userProcessorRouter);
+router.use("/user", userAuthenticationMiddleware, userRouter);
+router.use("/dataset", userAuthenticationMiddleware, userDatasetRouter);
+router.use("/processor", userAuthenticationMiddleware, userProcessorRouter);
 
 export { router };
