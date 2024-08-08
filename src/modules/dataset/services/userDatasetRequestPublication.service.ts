@@ -49,7 +49,6 @@ class UserDatasetRequestPublicationService {
           "@user_dataset_request_publication_service/DATASET_NOT_FOUND",
           "Dataset not found.",
         ),
-        statusCode: 401,
       });
 
     if (dataset.visibility !== DATASET_VISIBILITY.PRIVATE)

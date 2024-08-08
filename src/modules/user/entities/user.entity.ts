@@ -10,6 +10,7 @@ import { UserEntityType } from "@shared/types/models";
 // Entity import
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Processor } from "@modules/processor/entities/processor.entity";
 import { UserAuthProviderConn } from "./userAuthProviderConn.entity";
 
 @ObjectType()
@@ -54,6 +55,10 @@ class User implements UserEntityType {
   @Exclude()
   @Type(() => Dataset)
   datasets: Dataset[];
+
+  @Exclude()
+  @Type(() => Processor)
+  processors: Processor[];
 }
 
 const PaginatedUser = PaginationConnection(User);

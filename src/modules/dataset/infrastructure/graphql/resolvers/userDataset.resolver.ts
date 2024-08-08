@@ -1,13 +1,24 @@
-import { Arg, Authorized, Ctx, Mutation, Query } from "type-graphql";
+import { Arg, Args, Authorized, Ctx, Mutation, Query } from "type-graphql";
 import { container } from "tsyringe";
 
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
+
 // Entity import
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import {
+  Dataset,
+  PaginatedDataset,
+} from "@modules/dataset/entities/dataset.entity";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
+
 // Schema import
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import {
   UserDatasetCreateSchema,
   UserDatasetUpdateSchema,
@@ -23,15 +34,24 @@ import { UserDatasetCreateService } from "@modules/dataset/services/userDatasetC
 
 class UserDatasetResolver {
   @Authorized()
-  @Query(() => [Dataset])
-  async userDatasets(@Ctx() ctx: GraphQLContext): Promise<Dataset[]> {
+  @Query(() => PaginatedDataset)
+  async userDatasets(
+    @Args() pagination: PaginationSchema,
+    @SortingArg<Dataset>(DatasetSortingOptions)
+    sorting: SortingFieldSchema<typeof DatasetSortingOptions>[],
+
+    @Ctx() ctx: GraphQLContext,
+  ): Promise<PaginatedDataset> {
     const userDatasetIndexService = container.resolve(UserDatasetIndexService);
 
-    const datasets = await userDatasetIndexService.execute({
+    const paginatedDatasets = await userDatasetIndexService.execute({
       user: ctx.session.user,
+
+      pagination,
+      sorting,
     });
 
-    return datasets;
+    return paginatedDatasets;
   }
 
   @Authorized()

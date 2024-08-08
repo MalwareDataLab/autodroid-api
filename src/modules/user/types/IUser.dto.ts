@@ -13,6 +13,7 @@ export type ICreateUserDTO = Omit<
   // Relations
   | "auth_provider_conns"
   | "datasets"
+  | "processors"
 >;
 
 export type IFindUserDTO = AtLeastOneProperty<{

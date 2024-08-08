@@ -69,7 +69,13 @@ describe("Service: UserDatasetIndexService", () => {
     });
 
     expect(response).toEqual(
-      expect.arrayContaining([expect.objectContaining(dataset)]),
+      expect.objectContaining({
+        edges: expect.arrayContaining([
+          expect.objectContaining({
+            node: expect.objectContaining(dataset),
+          }),
+        ]),
+      }),
     );
   });
 });

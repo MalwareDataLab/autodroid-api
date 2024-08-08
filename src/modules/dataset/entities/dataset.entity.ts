@@ -4,11 +4,12 @@ import { Field, ID, ObjectType } from "type-graphql";
 // Type import
 import { DatasetEntityType } from "@shared/types/models";
 
-// Enum import
-
 // Entity import
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { File } from "@modules/file/entities/file.entity";
 import { User } from "@modules/user/entities/user.entity";
+
+// Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 @ObjectType()
@@ -48,4 +49,7 @@ class Dataset implements DatasetEntityType {
   file: File;
 }
 
-export { Dataset };
+const PaginatedDataset = PaginationConnection(Dataset);
+
+export type PaginatedDataset = InstanceType<typeof PaginatedDataset>;
+export { Dataset, PaginatedDataset };

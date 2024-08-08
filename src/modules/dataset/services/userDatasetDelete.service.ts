@@ -61,7 +61,6 @@ class UserDatasetDeleteService {
           "@user_dataset_delete_service/DATASET_NOT_FOUND",
           "Dataset not found.",
         ),
-        statusCode: 401,
       });
 
     if (dataset.visibility !== DATASET_VISIBILITY.PRIVATE)
@@ -84,7 +83,6 @@ class UserDatasetDeleteService {
           "@user_dataset_delete_service/FILE_NOT_FOUND",
           "File not found.",
         ),
-        statusCode: 401,
       });
 
     await this.datasetRepository.deleteOne({

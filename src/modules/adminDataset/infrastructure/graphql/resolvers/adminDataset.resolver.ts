@@ -9,13 +9,24 @@ import {
 } from "type-graphql";
 import { container } from "tsyringe";
 
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
+
 // Entity import
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import {
+  Dataset,
+  PaginatedDataset,
+} from "@modules/dataset/entities/dataset.entity";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
+
 // Schema import
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import {
   AdminDatasetIndexSchema,
   AdminDatasetUpdateSchema,
@@ -32,21 +43,30 @@ import { AdminDatasetUpdateVisibilityService } from "@modules/adminDataset/servi
 class AdminDatasetResolver {
   @Directive("@auth(requires: ADMIN)")
   @Authorized(["ADMIN"])
-  @Query(() => [Dataset])
+  @Query(() => PaginatedDataset)
   async adminDatasets(
     @Args() filter: AdminDatasetIndexSchema,
+
+    @Args() pagination: PaginationSchema,
+    @SortingArg<Dataset>(DatasetSortingOptions)
+    sorting: SortingFieldSchema<typeof DatasetSortingOptions>[],
+
     @Ctx() { session }: GraphQLContext,
-  ): Promise<Dataset[]> {
+  ): Promise<PaginatedDataset> {
     const adminDatasetIndexService = container.resolve(
       AdminDatasetIndexService,
     );
 
-    const datasets = await adminDatasetIndexService.execute({
-      filter,
+    const paginatedDatasets = await adminDatasetIndexService.execute({
       user: session.user,
+
+      filter,
+
+      pagination,
+      sorting,
     });
 
-    return datasets;
+    return paginatedDatasets;
   }
 
   @Directive("@auth(requires: ADMIN)")

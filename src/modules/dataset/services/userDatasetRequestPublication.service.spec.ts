@@ -20,6 +20,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       findOne: vi.fn(),
       findMany: vi.fn(),
       findManyPublicOrUserPrivate: vi.fn(),
+      getCount: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),
     };

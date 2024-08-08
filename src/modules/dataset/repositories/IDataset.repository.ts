@@ -1,7 +1,9 @@
-// Entity import
-import { Dataset } from "../entities/dataset.entity";
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
 
 // DTO import
+import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
+import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
   ICreateDatasetDTO,
   IFindDatasetDTO,
@@ -9,14 +11,25 @@ import {
   IUpdateDatasetDTO,
 } from "../types/IDataset.dto";
 
+// Entity import
+import { Dataset } from "../entities/dataset.entity";
+
 export interface IDatasetRepository {
   createOne(data: ICreateDatasetDTO): Promise<Dataset>;
 
   findOne(filter: IFindDatasetDTO): Promise<Dataset | null>;
-  findMany(filter: IFindDatasetDTO): Promise<Dataset[]>;
-  findManyPublicOrUserPrivate({
-    user_id,
-  }: IFindManyPublicOrUserPrivateDTO): Promise<Dataset[]>;
+  findMany(
+    filter: IFindDatasetDTO,
+    pagination?: IPaginationDTO,
+    sorting?: ISortingDTO<typeof DatasetSortingOptions>,
+  ): Promise<Dataset[]>;
+  findManyPublicOrUserPrivate(
+    { user_id }: IFindManyPublicOrUserPrivateDTO,
+    pagination?: IPaginationDTO,
+    sorting?: ISortingDTO<typeof DatasetSortingOptions>,
+  ): Promise<Dataset[]>;
+
+  getCount(filter: IFindDatasetDTO): Promise<number>;
 
   updateOne(
     filter: IFindDatasetDTO,

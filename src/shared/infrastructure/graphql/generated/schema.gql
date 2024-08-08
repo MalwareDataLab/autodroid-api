@@ -16,6 +16,9 @@ input AdminDatasetUpdateVisibilitySchema {
   visibility: DATASET_VISIBILITY!
 }
 
+"""Cursor for pagination"""
+scalar ConnectionCursor
+
 enum DATASET_VISIBILITY {
   PRIVATE
   PUBLIC
@@ -33,6 +36,17 @@ type Dataset {
   user: User!
   user_id: String!
   visibility: DATASET_VISIBILITY!
+}
+
+type DatasetPaginationConnection {
+  edges: [DatasetPaginationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type DatasetPaginationEdge {
+  cursor: ConnectionCursor!
+  node: Dataset!
 }
 
 """
@@ -85,6 +99,9 @@ type Mutation {
   adminDatasetDelete(dataset_id: String!): Dataset! @auth(requires: ADMIN)
   adminDatasetUpdate(data: AdminDatasetUpdateSchema!, dataset_id: String!): Dataset! @auth(requires: ADMIN)
   adminDatasetUpdateVisibility(data: AdminDatasetUpdateVisibilitySchema!, dataset_id: String!): Dataset! @auth(requires: ADMIN)
+  adminProcessorCreate(data: ProcessorSchema!): Processor! @auth(requires: ADMIN)
+  adminProcessorDelete(processor_id: String!): Processor! @auth(requires: ADMIN)
+  adminProcessorUpdate(data: ProcessorSchema!, processor_id: String!): Processor! @auth(requires: ADMIN)
   userDatasetCreate(data: UserDatasetCreateSchema!): Dataset!
   userDatasetDelete(dataset_id: String!): Dataset!
   userDatasetRequestPublication(dataset_id: String!): Dataset!
@@ -93,24 +110,92 @@ type Mutation {
   userUpdateData(data: UserUpdateDataSchema!): User!
 }
 
+enum PROCESSOR_PARAM_TYPE {
+  BOOLEAN
+  INTEGER
+  STRING
+}
+
+enum PROCESSOR_VISIBILITY {
+  HIDDEN
+  PUBLIC
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
 type Processor {
-  allowed_mime_types: [String!]!
-  allowed_params: [String!]!
-  code: String!
-  default_params: JSON!
+  allowed_mime_types: String!
+  created_at: DateTimeISO!
+  description: String
+  id: ID!
+  image_tag: String!
+  name: String!
+  payload: JSON!
+  tags: String
+  updated_at: DateTimeISO!
+  user: User!
+  user_id: String!
+  version: String!
+  visibility: PROCESSOR_VISIBILITY!
+}
+
+type ProcessorPaginationConnection {
+  edges: [ProcessorPaginationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProcessorPaginationEdge {
+  cursor: ConnectionCursor!
+  node: Processor!
+}
+
+input ProcessorPayloadParamSchema {
+  default_value: String
   description: String!
   name: String!
+  sequence: Int!
+  type: PROCESSOR_PARAM_TYPE!
+}
+
+input ProcessorPayloadSchema {
+  params: [ProcessorPayloadParamSchema!]!
+  required_cpu_cores: Int!
+  required_ram_mb: Int!
+}
+
+input ProcessorSchema {
+  allowed_mime_types: String!
+  description: String
+  image_tag: String!
+  name: String!
+  payload: ProcessorPayloadSchema!
+  tags: String
+  version: String!
+  visibility: PROCESSOR_VISIBILITY!
 }
 
 type Query {
   adminDataset(dataset_id: String!): Dataset! @auth(requires: ADMIN)
-  adminDatasets(file_id: String, user_id: String, visibility: DATASET_VISIBILITY): [Dataset!]! @auth(requires: ADMIN)
-  processor(code: String!): Processor!
-  processors: [Processor!]!
+  adminDatasets(after: ConnectionCursor, before: ConnectionCursor, file_id: String, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String, visibility: DATASET_VISIBILITY): DatasetPaginationConnection! @auth(requires: ADMIN)
+  adminProcessor(processor_id: String!): Processor! @auth(requires: ADMIN)
+  adminProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection! @auth(requires: ADMIN)
   session: Session!
   user: User!
   userDataset(dataset_id: String!): Dataset!
-  userDatasets: [Dataset!]!
+  userDatasets(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): DatasetPaginationConnection!
+  userProcessor(processor_id: String!): Processor!
+  userProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection!
+}
+
+enum SORT_ORDER {
+  ASC
+  DESC
 }
 
 enum STORAGE_PROVIDER {
@@ -121,6 +206,11 @@ type Session {
   user: User!
   user_auth_provider_conn: UserAuthProviderConn!
   user_session: UserSession!
+}
+
+input SortingFieldSchema {
+  field: String!
+  order: SORT_ORDER!
 }
 
 type User {

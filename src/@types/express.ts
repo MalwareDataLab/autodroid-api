@@ -5,6 +5,10 @@ import { i18n, TFunction } from "i18next";
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 import { Session } from "@modules/user/types/IUserSession.dto";
 
+// Schema import
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+
 declare global {
   namespace Express {
     interface Request {
@@ -19,6 +23,10 @@ declare global {
 
       // User
       session: Session;
+
+      // Helpers
+      pagination?: PaginationSchema;
+      sorting?: SortingFieldSchema<readonly string[]>[];
     }
   }
 }

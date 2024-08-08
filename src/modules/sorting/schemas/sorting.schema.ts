@@ -1,5 +1,6 @@
 import { Field, InputType } from "type-graphql";
 import { IsEnum } from "class-validator";
+import { Transform } from "class-transformer";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
@@ -16,6 +17,7 @@ class SortingFieldSchema<T extends readonly string[]> {
   @Field(() => SORT_ORDER)
   @ValidString()
   @IsEnum(SORT_ORDER)
+  @Transform(({ value }) => SORT_ORDER[value as keyof typeof SORT_ORDER])
   order: SORT_ORDER;
 }
 
