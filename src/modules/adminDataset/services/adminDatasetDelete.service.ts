@@ -57,7 +57,6 @@ class AdminDatasetDeleteService {
           "@admin_dataset_delete_service/DATASET_NOT_FOUND",
           "Dataset not found.",
         ),
-        statusCode: 401,
       });
 
     const file = await this.fileRepository.findOne({
@@ -71,7 +70,6 @@ class AdminDatasetDeleteService {
           "@admin_dataset_delete_service/FILE_NOT_FOUND",
           "File not found.",
         ),
-        statusCode: 401,
       });
 
     await this.datasetRepository.deleteOne({

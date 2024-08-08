@@ -61,6 +61,24 @@ CREATE TABLE "datasets" (
     CONSTRAINT "datasets_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "processors" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "image_tag" TEXT NOT NULL,
+    "description" TEXT,
+    "tags" TEXT,
+    "allowed_mime_types" TEXT NOT NULL,
+    "visibility" TEXT NOT NULL,
+    "payload" JSONB NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "processors_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -87,3 +105,6 @@ ALTER TABLE "datasets" ADD CONSTRAINT "datasets_user_id_fkey" FOREIGN KEY ("user
 
 -- AddForeignKey
 ALTER TABLE "datasets" ADD CONSTRAINT "datasets_file_id_fkey" FOREIGN KEY ("file_id") REFERENCES "files"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "processors" ADD CONSTRAINT "processors_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

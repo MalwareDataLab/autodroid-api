@@ -19,6 +19,7 @@ describe("Service: UserDatasetIndexService", () => {
       findOne: vi.fn(),
       findMany: vi.fn(),
       findManyPublicOrUserPrivate: vi.fn(),
+      getCount: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),
     };
@@ -36,6 +37,7 @@ describe("Service: UserDatasetIndexService", () => {
       user_id: faker.string.uuid(),
       visibility: DATASET_VISIBILITY.PRIVATE,
       updated_at: new Date(),
+      created_at: new Date(),
     } satisfies Partial<Dataset>);
 
     datasetRepositoryMock.findManyPublicOrUserPrivate.mockResolvedValueOnce([
@@ -49,7 +51,13 @@ describe("Service: UserDatasetIndexService", () => {
     });
 
     expect(response).toEqual(
-      expect.arrayContaining([expect.objectContaining(dataset)]),
+      expect.objectContaining({
+        edges: expect.arrayContaining([
+          expect.objectContaining({
+            node: expect.objectContaining(dataset),
+          }),
+        ]),
+      }),
     );
   });
 });

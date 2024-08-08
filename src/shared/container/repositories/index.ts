@@ -16,6 +16,9 @@ import { PrismaFileRepository } from "@modules/file/infrastructure/prisma/reposi
 import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 import { PrismaDatasetRepository } from "@modules/dataset/infrastructure/prisma/repositories/prismaDataset.repository";
 
+import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
+import { PrismaProcessorRepository } from "@modules/processor/infrastructure/prisma/repositories/prismaProcessor.repository";
+
 const initRepositories = async () => {
   // MongoDB repositories
 
@@ -24,6 +27,7 @@ const initRepositories = async () => {
   container.registerSingleton<IUserAuthProviderConnRepository>("UserAuthProviderConnRepository", PrismaUserAuthProviderConnRepository);
   container.registerSingleton<IFileRepository>("FileRepository", PrismaFileRepository);
   container.registerSingleton<IDatasetRepository>("DatasetRepository", PrismaDatasetRepository);
+  container.registerSingleton<IProcessorRepository>("ProcessorRepository", PrismaProcessorRepository);
 };
 
 export type {
@@ -34,6 +38,7 @@ export type {
   IUserAuthProviderConnRepository,
   IFileRepository,
   IDatasetRepository,
+  IProcessorRepository,
 };
 
 export { initRepositories };

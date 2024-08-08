@@ -37,3 +37,11 @@ export type DatasetEntityType = PrismaEntityType<
     };
   }>
 >;
+
+export type ProcessorEntityType = PrismaEntityType<
+  Prisma.ProcessorGetPayload<{
+    include: {
+      [key in keyof Prisma.ProcessorInclude]: true;
+    };
+  }>
+>;

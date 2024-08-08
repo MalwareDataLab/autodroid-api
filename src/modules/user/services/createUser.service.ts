@@ -43,7 +43,6 @@ class CreateUserService {
           "@create_user_service/FAIL_TO_CREATE_USER",
           "Fail to create user.",
         ),
-        statusCode: 401,
       });
     }
   }

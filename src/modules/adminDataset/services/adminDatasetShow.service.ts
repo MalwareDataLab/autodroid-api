@@ -45,7 +45,6 @@ class AdminDatasetShowService {
           "@admin_dataset_show_service/DATASET_NOT_FOUND",
           "Dataset not found.",
         ),
-        statusCode: 401,
       });
 
     return dataset;

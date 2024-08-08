@@ -26,6 +26,7 @@ model User {
 
   auth_provider_conns UserAuthProviderConn[] @relation(name: "UserAuthProviderConn_User")
   datasets            Dataset[]              @relation(name: "Dataset_User")
+  processors          Processor[]            @relation(name: "Processor_User")
 
   @@index([email])
   @@index([created_at, id], map: "users_pagination_idx")
@@ -101,4 +102,30 @@ model Dataset {
   updated_at DateTime @updatedAt
 
   @@map("datasets")
+}
+
+model Processor {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(name: "Processor_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  name    String
+  version String
+
+  image_tag String
+
+  description String?
+  tags        String?
+
+  allowed_mime_types String
+
+  visibility String
+
+  payload Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("processors")
 }
