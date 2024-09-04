@@ -1,3 +1,4 @@
+import { DependencyContainer } from "tsyringe";
 import type { PrismaClient } from "@prisma/client";
 import type * as Mongoose from "mongoose";
 
@@ -11,19 +12,20 @@ import type { RedisInMemoryDatabaseProvider } from "@shared/container/providers/
 import type { IFirebaseSessionDTO } from "../utils/startAndGetSessionToken";
 import type { App } from "../utils/getServer";
 
-declare global {
-  // eslint-disable-next-line vars-on-top, no-var
-  var TestInjection: {
-    DatabaseProvider?: IDatabaseProvider;
-    PrismaDatabaseProvider?: PrismaClient;
+export type TestContext = {
+  DatabaseUrl: string;
+  DatabaseProvider?: IDatabaseProvider;
+  PrismaDatabaseProvider?: PrismaClient;
 
-    NonRelationalDatabaseProvider?: INonRelationalDatabaseProvider;
-    MongooseNonRelationalDatabaseProvider?: Mongoose.Connection;
+  NonRelationalDatabaseUrl: string;
+  NonRelationalDatabaseProvider?: INonRelationalDatabaseProvider;
+  MongooseNonRelationalDatabaseProvider?: Mongoose.Connection;
 
-    InMemoryDatabaseProvider?: IInMemoryDatabaseProvider;
-    RedisInMemoryDatabaseProvider?: RedisInMemoryDatabaseProvider;
+  InMemoryDatabaseProvider?: IInMemoryDatabaseProvider;
+  RedisInMemoryDatabaseProvider?: RedisInMemoryDatabaseProvider;
 
-    app: App;
-    session: IFirebaseSessionDTO;
-  };
-}
+  container: DependencyContainer;
+
+  app: App;
+  session: IFirebaseSessionDTO;
+};

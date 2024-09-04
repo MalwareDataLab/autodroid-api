@@ -30,7 +30,7 @@ export default defineWorkspace([
     test: {
       name: "unit",
       include: ["**/*.spec.ts"],
-      exclude: [...defaultExclude, "**/*.test.ts"],
+      exclude: [...defaultExclude, "**/*.test.ts", "**/*e2e.test.ts"],
       setupFiles: ["test/config/unit/setup.ts"],
     },
   },

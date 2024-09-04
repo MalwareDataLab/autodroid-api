@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import request from "supertest";
 
 describe("E2E: UserResolver", () => {
-  it("should return user data", async () => {
-    const response = await request(global.TestInjection.app.httpServer)
+  it("should return user data", async context => {
+    const response = await request(context.app.httpServer)
       .post("/graphql")
-      .set("Authorization", `Bearer ${global.TestInjection.session.idToken}`)
+      .set("Authorization", `Bearer ${context.session.idToken}`)
       .send({
         query: `query User {
           user {
@@ -18,15 +18,15 @@ describe("E2E: UserResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.user).toMatchObject({
-      name: global.TestInjection.session.displayName,
-      email: global.TestInjection.session.email,
+      name: context.session.displayName,
+      email: context.session.email,
     });
   });
 
-  it("should return session data", async () => {
-    const response = await request(global.TestInjection.app.httpServer)
+  it("should return session data", async context => {
+    const response = await request(context.app.httpServer)
       .post("/graphql")
-      .set("Authorization", `Bearer ${global.TestInjection.session.idToken}`)
+      .set("Authorization", `Bearer ${context.session.idToken}`)
       .send({
         query: `query Session {
           session {
@@ -41,13 +41,13 @@ describe("E2E: UserResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.session.user).toMatchObject({
-      name: global.TestInjection.session.displayName,
-      email: global.TestInjection.session.email,
+      name: context.session.displayName,
+      email: context.session.email,
     });
   });
 
-  it("should return an error if unauthorized", async () => {
-    const response = await request(global.TestInjection.app.httpServer)
+  it("should return an error if unauthorized", async context => {
+    const response = await request(context.app.httpServer)
       .post("/graphql")
       .set("Authorization", `Bearer someToken`)
       .send({

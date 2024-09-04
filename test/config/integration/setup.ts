@@ -7,7 +7,7 @@ import { randomUUID } from "node:crypto";
 import { execSync } from "node:child_process";
 import { PrismaClient } from "@prisma/client";
 import { Client } from "pg";
-import { container } from "tsyringe";
+import { container as mainContainer } from "tsyringe";
 
 dotenv.config({
   path: ".env.test",
@@ -17,26 +17,35 @@ dotenv.config({
 import { initRepositories } from "@shared/container/repositories";
 
 // Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 import { PrismaDatabaseProvider } from "@shared/container/providers/DatabaseProvider/implementations/prismaDatabase.provider";
-import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 import { MongooseNonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/implementations/mongooseNonRelationalDatabase.provider";
-import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { InMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider";
 import { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/implementations/redisInMemoryDatabase.provider";
+import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
+import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 
 // Util import
 import { sleep } from "@shared/utils/sleep";
 
-const initRelationalDatabase = async () => {
+// Type import
+import { TestContext } from "../../types/testContext.type";
+
+const initRelationalDatabase = async (context: TestContext) => {
   const initialDatabaseUrl = process.env.DATABASE_URL;
   const url = new URL(initialDatabaseUrl!);
   url.searchParams.set("schema", `test-${randomUUID()}`);
 
+  console.log("SETUP", url.toString());
   const databaseUrl = url.toString();
-  process.env.DATABASE_URL = databaseUrl;
+  context.DatabaseUrl = databaseUrl;
 
-  execSync("./node_modules/.bin/prisma migrate deploy");
+  execSync("./node_modules/.bin/prisma migrate deploy", {
+    env: {
+      ...process.env,
+      DATABASE_URL: databaseUrl,
+    },
+  });
 
   const prisma = new PrismaClient({
     datasources: {
@@ -48,10 +57,10 @@ const initRelationalDatabase = async () => {
 
   const databaseProvider = new PrismaDatabaseProvider(prisma);
 
-  global.TestInjection.DatabaseProvider = databaseProvider;
-  global.TestInjection.PrismaDatabaseProvider = prisma;
+  context.DatabaseProvider = databaseProvider;
+  context.PrismaDatabaseProvider = prisma;
 
-  container.registerInstance<IDatabaseProvider>(
+  context.container.registerInstance<IDatabaseProvider>(
     "DatabaseProvider",
     databaseProvider,
   );
@@ -59,26 +68,32 @@ const initRelationalDatabase = async () => {
   await databaseProvider.initialization;
 };
 
-const disposeRelationalDatabase = async () => {
-  await global.TestInjection.PrismaDatabaseProvider?.$disconnect();
+const disposeRelationalDatabase = async (context: TestContext) => {
+  await context.PrismaDatabaseProvider?.$disconnect();
+
+  console.log(
+    "DISPOSE",
+    context.DatabaseUrl,
+    new URL(context.DatabaseUrl).searchParams.get("schema"),
+  );
 
   const client = new Client({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: context.DatabaseUrl,
   });
 
   await client.connect();
   await client.query(
-    `DROP SCHEMA IF EXISTS "${new URL(process.env.DATABASE_URL!).searchParams.get("schema")}" CASCADE`,
+    `DROP SCHEMA IF EXISTS "${new URL(context.DatabaseUrl).searchParams.get("schema")}" CASCADE`,
   );
   await client.end();
 };
 
-const initNonRelationalDatabase = async () => {
+const initNonRelationalDatabase = async (context: TestContext) => {
   const initialNonRelationalDatabaseUrl =
     process.env.NON_RELATIONAL_DATABASE_URL;
   const url = `${initialNonRelationalDatabaseUrl.split("/test")[0]}/test-${randomUUID()}`;
 
-  process.env.NON_RELATIONAL_DATABASE_URL = url;
+  context.NonRelationalDatabaseUrl = url;
 
   const mongoose = Mongoose.createConnection();
 
@@ -86,11 +101,10 @@ const initNonRelationalDatabase = async () => {
     mongoose,
   );
 
-  global.TestInjection.NonRelationalDatabaseProvider =
-    nonRelationDatabaseProvider;
-  global.TestInjection.MongooseNonRelationalDatabaseProvider = mongoose;
+  context.NonRelationalDatabaseProvider = nonRelationDatabaseProvider;
+  context.MongooseNonRelationalDatabaseProvider = mongoose;
 
-  container.registerInstance<INonRelationalDatabaseProvider>(
+  context.container.registerInstance<INonRelationalDatabaseProvider>(
     "NonRelationalDatabaseProvider",
     nonRelationDatabaseProvider,
   );
@@ -98,12 +112,12 @@ const initNonRelationalDatabase = async () => {
   await nonRelationDatabaseProvider.initialization;
 };
 
-const disposeNonRelationalDatabase = async () => {
-  const { connection } = global.TestInjection.NonRelationalDatabaseProvider!;
+const disposeNonRelationalDatabase = async (context: TestContext) => {
+  const { connection } = context.NonRelationalDatabaseProvider!;
   await connection.dropDatabase();
 };
 
-const initInMemoryDatabaseProvider = async () => {
+const initInMemoryDatabaseProvider = async (context: TestContext) => {
   const redis = new RedisInMemoryDatabaseProvider(
     "default",
     defaultOptions => ({
@@ -114,10 +128,10 @@ const initInMemoryDatabaseProvider = async () => {
 
   const inMemoryDatabaseProvider = new InMemoryDatabaseProvider(redis);
 
-  global.TestInjection.InMemoryDatabaseProvider = inMemoryDatabaseProvider;
-  global.TestInjection.RedisInMemoryDatabaseProvider = redis;
+  context.InMemoryDatabaseProvider = inMemoryDatabaseProvider;
+  context.RedisInMemoryDatabaseProvider = redis;
 
-  container.registerInstance<IInMemoryDatabaseProvider>(
+  context.container.registerInstance<IInMemoryDatabaseProvider>(
     "InMemoryDatabaseProvider",
     inMemoryDatabaseProvider,
   );
@@ -125,28 +139,29 @@ const initInMemoryDatabaseProvider = async () => {
   await inMemoryDatabaseProvider.initialization;
 };
 
-const disposeInMemoryDatabaseProvider = async () => {
-  const redis = global.TestInjection.RedisInMemoryDatabaseProvider;
+const disposeInMemoryDatabaseProvider = async (context: TestContext) => {
+  const redis = context.RedisInMemoryDatabaseProvider;
   await redis?.provider.del("*");
 };
 
-global.TestInjection = global.TestInjection || {};
+beforeEach(async context => {
+  context.container = mainContainer;
+  context.container.reset();
 
-beforeEach(async () => {
   await Promise.all([
-    initRelationalDatabase(),
-    initNonRelationalDatabase(),
-    initInMemoryDatabaseProvider(),
+    initRelationalDatabase(context),
+    initNonRelationalDatabase(context),
+    initInMemoryDatabaseProvider(context),
   ]);
 
-  await initRepositories();
-}, 60000);
+  await initRepositories(context.container);
+});
 
-afterEach(async () => {
+afterEach(async context => {
   await sleep(1000);
   await Promise.all([
-    disposeRelationalDatabase(),
-    disposeNonRelationalDatabase(),
-    disposeInMemoryDatabaseProvider(),
+    disposeRelationalDatabase(context),
+    disposeNonRelationalDatabase(context),
+    disposeInMemoryDatabaseProvider(context),
   ]);
-}, 60000);
+});

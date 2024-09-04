@@ -18,6 +18,14 @@ declare global {
   type EntitySortingOptionsMap<T, U extends keyof T> = {
     [K in U]: T[K];
   };
+
+  type Defined<T> = {
+    [P in keyof T]-?: NonNullable<T[P]>;
+  };
+
+  type ClassType<T = any> = {
+    new (...args: any[]): T;
+  };
 }
 
 export {};

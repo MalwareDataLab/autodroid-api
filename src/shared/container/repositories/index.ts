@@ -1,5 +1,5 @@
 /* eslint prettier/prettier: ["error", {"printWidth": 250 }] */
-import { container } from "tsyringe";
+import { DependencyContainer, container as mainContainer } from "tsyringe";
 
 /* Document repositories */
 
@@ -19,15 +19,21 @@ import { PrismaDatasetRepository } from "@modules/dataset/infrastructure/prisma/
 import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
 import { PrismaProcessorRepository } from "@modules/processor/infrastructure/prisma/repositories/prismaProcessor.repository";
 
-const initRepositories = async () => {
+const repositories = {
   // MongoDB repositories
 
   // SQL repositories
-  container.registerSingleton<IUserRepository>("UserRepository", PrismaUserRepository);
-  container.registerSingleton<IUserAuthProviderConnRepository>("UserAuthProviderConnRepository", PrismaUserAuthProviderConnRepository);
-  container.registerSingleton<IFileRepository>("FileRepository", PrismaFileRepository);
-  container.registerSingleton<IDatasetRepository>("DatasetRepository", PrismaDatasetRepository);
-  container.registerSingleton<IProcessorRepository>("ProcessorRepository", PrismaProcessorRepository);
+  UserRepository: PrismaUserRepository as ClassType<IUserRepository>,
+  UserAuthProviderConnRepository: PrismaUserAuthProviderConnRepository as ClassType<IUserAuthProviderConnRepository>,
+  FileRepository: PrismaFileRepository as ClassType<IFileRepository>,
+  DatasetRepository: PrismaDatasetRepository as ClassType<IDatasetRepository>,
+  ProcessorRepository: PrismaProcessorRepository as ClassType<IProcessorRepository>,
+};
+
+const initRepositories = async (selectedContainer: DependencyContainer = mainContainer) => {
+  Object.entries(repositories).forEach(([key, value]) => {
+    selectedContainer.registerSingleton<InstanceType<typeof value>>(key, value);
+  });
 };
 
 export type {
