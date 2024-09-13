@@ -62,6 +62,8 @@ export interface IAuthenticationMethod {
   ): Promise<IAuthenticationProviderUserDTO>;
 
   deleteUserByCode(code: string, language: string): Promise<void>;
+
+  dispose(): Promise<void>;
 }
 
 export interface IAuthenticationProvider {
@@ -72,4 +74,6 @@ export interface IAuthenticationProvider {
     code: AUTH_PROVIDER,
     language?: string,
   ): Promise<IAuthenticationMethod>;
+
+  dispose(): Promise<void>;
 }

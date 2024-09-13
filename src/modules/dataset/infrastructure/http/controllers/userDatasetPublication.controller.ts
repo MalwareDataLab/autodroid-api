@@ -7,7 +7,7 @@ import { process } from "@shared/utils/instanceParser";
 // Service import
 import { UserDatasetRequestPublicationService } from "@modules/dataset/services/userDatasetRequestPublication.service";
 
-class UserDatasetPublicationControllerClass {
+class UserDatasetPublicationController {
   public async update(req: Request, res: Response) {
     const userDatasetRequestPublicationService = container.resolve(
       UserDatasetRequestPublicationService,
@@ -22,6 +22,4 @@ class UserDatasetPublicationControllerClass {
   }
 }
 
-const UserDatasetPublicationController =
-  new UserDatasetPublicationControllerClass();
 export { UserDatasetPublicationController };

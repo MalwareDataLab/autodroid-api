@@ -1,6 +1,6 @@
 /* eslint prettier/prettier: ["error", {"printWidth": 250 }] */
 import "reflect-metadata";
-import { container } from "tsyringe";
+import { DependencyContainer, container as mainContainer } from "tsyringe";
 
 // Providers import
 import { IDatabaseProvider } from "./providers/DatabaseProvider/models/IDatabase.provider";
@@ -15,49 +15,60 @@ import { InMemoryDatabaseProvider } from "./providers/InMemoryDatabaseProvider";
 import { IUserAgentInfoProvider } from "./providers/UserAgentInfoProvider/models/IUserAgentInfo.provider";
 import { UserAgentInfoProvider } from "./providers/UserAgentInfoProvider";
 
-import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
-import { AuthenticationProvider } from "./providers/AuthenticationProvider";
-
-import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
-import { DatasetProcessorProvider } from "./providers/DatasetProcessorProvider";
-
 import { IStorageProvider } from "./providers/StorageProvider/models/IStorage.provider";
 import { StorageProvider } from "./providers/StorageProvider";
+
+import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
+import { AuthenticationProvider } from "./providers/AuthenticationProvider";
 
 // Repository import
 import { initRepositories } from "./repositories";
 
-const initContainer = async () => {
-  /**
-   * 1: Primary providers
-   */
-  container.registerSingleton<IDatabaseProvider>("DatabaseProvider", DatabaseProvider);
-  container.registerSingleton<INonRelationalDatabaseProvider>("NonRelationalDatabaseProvider", NonRelationalDatabaseProvider);
-  container.registerSingleton<IInMemoryDatabaseProvider>("InMemoryDatabaseProvider", InMemoryDatabaseProvider);
+const primaryProviders = {
+  DatabaseProvider: DatabaseProvider as ClassType<IDatabaseProvider>,
+  NonRelationalDatabaseProvider: NonRelationalDatabaseProvider as ClassType<INonRelationalDatabaseProvider>,
+  InMemoryDatabaseProvider: InMemoryDatabaseProvider as ClassType<IInMemoryDatabaseProvider>,
+} as const;
+const primaryProviderKeys = Object.keys(primaryProviders) as ReadonlyArray<keyof typeof primaryProviders>;
 
-  /**
-   * 2: Database repositories
-   */
-  await initRepositories();
+const secondaryProviders = {
+  UserAgentInfoProvider: UserAgentInfoProvider as ClassType<IUserAgentInfoProvider>,
+  StorageProvider: StorageProvider as ClassType<IStorageProvider>,
+  AuthenticationProvider: AuthenticationProvider as ClassType<IAuthenticationProvider>,
+} as const;
+const secondaryProviderKeys = Object.keys(secondaryProviders) as ReadonlyArray<keyof typeof secondaryProviders>;
 
-  /**
-   * 3: Secondary providers
-   */
-  container.registerSingleton<IUserAgentInfoProvider>("UserAgentInfoProvider", UserAgentInfoProvider);
-  container.registerSingleton<IAuthenticationProvider>("AuthenticationProvider", AuthenticationProvider);
+const providers = { ...primaryProviders, ...secondaryProviders } as const;
+const providerKeys = [...primaryProviderKeys, ...secondaryProviderKeys] as const;
 
-  /**
-   * 4: Tertiary providers
-   */
-  container.registerSingleton<IDatasetProcessorProvider>("DatasetProcessorProvider", DatasetProcessorProvider);
-
-  /**
-   * 5: Quaternary providers
-   */
-  container.registerSingleton<IStorageProvider>("StorageProvider", StorageProvider);
+const initContainerByKeys = ({ selectedContainer = mainContainer, containers }: { selectedContainer: DependencyContainer; containers: ReadonlyArray<(typeof providerKeys)[number]> }) => {
+  containers.forEach(containerKey => {
+    const provider = providers[containerKey];
+    selectedContainer.registerSingleton<InstanceType<typeof provider>>(containerKey, provider);
+  });
 };
 
-const prerequisites = [
+const initPrimaryProviders = (selectedContainer: DependencyContainer = mainContainer) => {
+  initContainerByKeys({
+    selectedContainer,
+    containers: primaryProviderKeys,
+  });
+};
+
+const initSecondaryProviders = (selectedContainer: DependencyContainer = mainContainer) => {
+  initContainerByKeys({
+    selectedContainer,
+    containers: secondaryProviderKeys,
+  });
+};
+
+const initContainer = (selectedContainer: DependencyContainer = mainContainer) => {
+  initPrimaryProviders(selectedContainer);
+  initRepositories(selectedContainer);
+  initSecondaryProviders(selectedContainer);
+};
+
+const standardPreRequisites = [
   // Primary (NOTE: order is important | InMemoryDatabaseProvider is a keep-alive service)
   "DatabaseProvider",
   "NonRelationalDatabaseProvider",
@@ -65,19 +76,17 @@ const prerequisites = [
 
   // Secondary
   "UserAgentInfoProvider",
+  "StorageProvider",
   "AuthenticationProvider",
 
   // Tertiary
-  "DatasetProcessorProvider",
 
   // Quaternary
-  "StorageProvider",
-];
-
-const waitPreRequisites = async () => {
+] satisfies ReadonlyArray<(typeof providerKeys)[number]>;
+const waitPreRequisites = async (selectedContainer: DependencyContainer = mainContainer, prerequisites = standardPreRequisites) => {
   await prerequisites.reduce<Promise<any>>((promise, prerequisite) => {
     return promise.then(async () => {
-      const dependency: any = container.resolve(prerequisite);
+      const dependency: any = selectedContainer.resolve(prerequisite);
       await dependency.initialization;
       if (!dependency.initialization) throw new Error(`❌ ${prerequisite} initialization failed.`);
       return dependency.initialization;
@@ -85,4 +94,8 @@ const waitPreRequisites = async () => {
   }, Promise.resolve());
 };
 
-export { initContainer, waitPreRequisites, prerequisites };
+type Providers = typeof providers;
+export type ProviderToken = keyof Providers;
+export type Provider<T extends ProviderToken> = InstanceType<Providers[T]>;
+
+export { primaryProviderKeys, secondaryProviderKeys, initPrimaryProviders, initSecondaryProviders, initContainer, waitPreRequisites };

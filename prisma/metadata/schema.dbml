@@ -13,6 +13,8 @@ Table users {
   auth_provider_conns user_auth_provider_conns [not null]
   datasets datasets [not null]
   processors processors [not null]
+  worker_registration_tokens worker_registration_tokens [not null]
+  workers workers [not null]
 }
 
 Table user_auth_provider_conns {
@@ -76,6 +78,33 @@ Table processors {
   updated_at DateTime [not null]
 }
 
+Table worker_registration_tokens {
+  id String [pk]
+  user_id String [not null]
+  user users [not null]
+  token String [unique, not null]
+  is_unlimited_usage Boolean [not null]
+  activated_at DateTime
+  expires_at DateTime
+  archived_at DateTime
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  workers workers [not null]
+}
+
+Table workers {
+  id String [pk]
+  user_id String [not null]
+  user users [not null]
+  registration_token_id String [not null]
+  registration_token worker_registration_tokens [not null]
+  refresh_token String [not null]
+  payload Json [not null]
+  archived_at DateTime
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+}
+
 Ref: user_auth_provider_conns.user_id > users.id [delete: Cascade]
 
 Ref: datasets.user_id > users.id [delete: Cascade]
@@ -83,3 +112,9 @@ Ref: datasets.user_id > users.id [delete: Cascade]
 Ref: datasets.file_id - files.id [delete: Cascade]
 
 Ref: processors.user_id > users.id [delete: Cascade]
+
+Ref: worker_registration_tokens.user_id > users.id [delete: Cascade]
+
+Ref: workers.user_id > users.id [delete: Restrict]
+
+Ref: workers.registration_token_id > worker_registration_tokens.id [delete: Restrict]

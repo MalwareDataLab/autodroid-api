@@ -8,7 +8,7 @@ import { getRedisConfig } from "@config/redis";
 import { getCorsConfig } from "@config/cors";
 
 // Middleware import
-import { websocketAuthenticationMiddleware } from "./middlewares/websocketAuthentication.middleware";
+// import { websocketAuthenticationMiddleware } from "./middlewares/websocketAuthentication.middleware";
 
 // Type import
 import { WebsocketServer } from "./types";
@@ -49,7 +49,7 @@ class WebsocketApp {
   }
 
   private middlewares(): void {
-    this.server.use(websocketAuthenticationMiddleware);
+    // this.server.use(websocketAuthenticationMiddleware);
 
     // USER: create a room for him
     this.server.use((socket, next) => {

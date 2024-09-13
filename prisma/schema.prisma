@@ -24,9 +24,11 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  auth_provider_conns UserAuthProviderConn[] @relation(name: "UserAuthProviderConn_User")
-  datasets            Dataset[]              @relation(name: "Dataset_User")
-  processors          Processor[]            @relation(name: "Processor_User")
+  auth_provider_conns        UserAuthProviderConn[]    @relation(name: "UserAuthProviderConn_User")
+  datasets                   Dataset[]                 @relation(name: "Dataset_User")
+  processors                 Processor[]               @relation(name: "Processor_User")
+  worker_registration_tokens WorkerRegistrationToken[] @relation(name: "WorkerRegistrationToken_User")
+  workers                    Worker[]                  @relation(name: "Worker_User")
 
   @@index([email])
   @@index([created_at, id], map: "users_pagination_idx")
@@ -128,4 +130,48 @@ model Processor {
   updated_at DateTime @updatedAt
 
   @@map("processors")
+}
+
+model WorkerRegistrationToken {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(name: "WorkerRegistrationToken_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  token String @unique
+
+  is_unlimited_usage Boolean
+
+  activated_at DateTime?
+  expires_at   DateTime?
+
+  archived_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  workers Worker[] @relation(name: "WorkerRegistrationToken_Worker")
+
+  @@map("worker_registration_tokens")
+}
+
+model Worker {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(name: "Worker_User", fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  registration_token_id String
+  registration_token    WorkerRegistrationToken @relation(name: "WorkerRegistrationToken_Worker", fields: [registration_token_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  refresh_token String
+
+  payload Json
+
+  archived_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("workers")
 }

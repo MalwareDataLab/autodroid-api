@@ -12,18 +12,20 @@ import { UserController } from "../controllers/user.controller";
 // Router import
 import { userSessionRouter } from "./userSession.routes";
 
+const userController = new UserController();
+
 const userRouter = Router();
 
 userRouter.use("/session", userSessionRouter);
 
-userRouter.get("/", UserController.get);
+userRouter.get("/", userController.get);
 userRouter.put(
   "/",
   validateRequest({
     schema: UserUpdateDataSchema,
     segment: "BODY",
   }),
-  UserController.update,
+  userController.update,
 );
 
 export { userRouter };

@@ -8,10 +8,12 @@ import { getAdminConfig } from "@config/admin";
 import { UserEntityType } from "@shared/types/models";
 
 // Entity import
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Worker } from "@modules/worker/entities/worker.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 import { Processor } from "@modules/processor/entities/processor.entity";
-import { UserAuthProviderConn } from "./userAuthProviderConn.entity";
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
 
 @ObjectType()
 class User implements UserEntityType {
@@ -59,6 +61,14 @@ class User implements UserEntityType {
   @Exclude()
   @Type(() => Processor)
   processors: Processor[];
+
+  @Exclude()
+  @Type(() => WorkerRegistrationToken)
+  worker_registration_tokens: WorkerRegistrationToken[];
+
+  @Exclude()
+  @Type(() => Worker)
+  workers: Worker[];
 }
 
 const PaginatedUser = PaginationConnection(User);

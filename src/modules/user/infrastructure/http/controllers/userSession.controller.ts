@@ -7,7 +7,7 @@ import { process } from "@shared/utils/instanceParser";
 // DTO import
 import { UserSessionsCloseService } from "@modules/user/services/userSessionsClose.service";
 
-class UserSessionControllerClass {
+class UserSessionController {
   public async get(req: Request, res: Response) {
     return res.json(process(req.session));
   }
@@ -26,5 +26,4 @@ class UserSessionControllerClass {
   }
 }
 
-const UserSessionController = new UserSessionControllerClass();
 export { UserSessionController };

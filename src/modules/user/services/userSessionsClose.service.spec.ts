@@ -35,6 +35,7 @@ describe("Service: UserSessionsCloseService", () => {
       getUserByPhoneNumber: vi.fn(),
       updateUserByCode: vi.fn(),
       deleteUserByCode: vi.fn(),
+      dispose: vi.fn(),
     };
 
     authenticationProviderMock = {
@@ -43,6 +44,7 @@ describe("Service: UserSessionsCloseService", () => {
         Promise.resolve(authenticationMethod as IAuthenticationMethod),
       ),
       default_auth_provider: AUTH_PROVIDER.FIREBASE,
+      dispose: vi.fn(),
     };
 
     userAuthProviderConnRepositoryMock = {

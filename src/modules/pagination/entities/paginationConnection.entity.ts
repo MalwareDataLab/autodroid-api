@@ -28,7 +28,7 @@ export function PaginationConnection<IEntity extends INodeEntity>(
   @ObjectType(
     `${EntityClass.name || (EntityClass as unknown as symbol).description}PaginationConnection`,
   )
-  class PaginationConnectionClass implements IConnection<IEntity> {
+  class PaginationConnectionFactory implements IConnection<IEntity> {
     @Field(() => [EntityEdge])
     edges: IEntityEdge[];
 
@@ -45,7 +45,7 @@ export function PaginationConnection<IEntity extends INodeEntity>(
 
       hasIncludedBoundaries = true,
     }: IMakePaginationConnection<IEntity>) {
-      const connection = new PaginationConnectionClass();
+      const connection = new PaginationConnectionFactory();
 
       const pagination = makePaginationObj(paginationRequest);
       if (!pagination.take) pagination.take = TAKE_DEFAULT;
@@ -107,5 +107,5 @@ export function PaginationConnection<IEntity extends INodeEntity>(
     }
   }
 
-  return PaginationConnectionClass;
+  return PaginationConnectionFactory;
 }

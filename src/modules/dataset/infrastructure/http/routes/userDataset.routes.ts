@@ -13,6 +13,9 @@ import {
 import { UserDatasetController } from "../controllers/userDataset.controller";
 import { UserDatasetPublicationController } from "../controllers/userDatasetPublication.controller";
 
+const userDatasetController = new UserDatasetController();
+const userDatasetPublicationController = new UserDatasetPublicationController();
+
 const userDatasetRouter = Router();
 
 userDatasetRouter.post(
@@ -21,10 +24,10 @@ userDatasetRouter.post(
     schema: UserDatasetCreateSchema,
     segment: "BODY",
   }),
-  UserDatasetController.create,
+  userDatasetController.create,
 );
-userDatasetRouter.get("/", UserDatasetController.index);
-userDatasetRouter.get("/:dataset_id", UserDatasetController.show);
+userDatasetRouter.get("/", userDatasetController.index);
+userDatasetRouter.get("/:dataset_id", userDatasetController.show);
 
 userDatasetRouter.put(
   "/:dataset_id",
@@ -32,13 +35,13 @@ userDatasetRouter.put(
     schema: UserDatasetUpdateSchema,
     segment: "BODY",
   }),
-  UserDatasetController.update,
+  userDatasetController.update,
 );
-userDatasetRouter.delete("/:dataset_id", UserDatasetController.delete);
+userDatasetRouter.delete("/:dataset_id", userDatasetController.delete);
 
 userDatasetRouter.post(
   "/:dataset_id/request-publication",
-  UserDatasetPublicationController.update,
+  userDatasetPublicationController.update,
 );
 
 export { userDatasetRouter };

@@ -7,7 +7,7 @@ import { process } from "@shared/utils/instanceParser";
 // Service import
 import { UserUpdateDataService } from "@modules/user/services/userUpdateData.service";
 
-class UserControllerClass {
+class UserController {
   public async get(req: Request, res: Response) {
     return res.json(process(req.session?.user));
   }
@@ -25,5 +25,4 @@ class UserControllerClass {
   }
 }
 
-const UserController = new UserControllerClass();
 export { UserController };

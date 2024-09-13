@@ -133,7 +133,6 @@ export function errorHandler(
       },
     };
   } catch (err) {
-    console.log(err);
     return formattedError;
   }
 }

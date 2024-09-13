@@ -45,3 +45,19 @@ export type ProcessorEntityType = PrismaEntityType<
     };
   }>
 >;
+
+export type WorkerRegistrationTokenEntityType = PrismaEntityType<
+  Prisma.WorkerRegistrationTokenGetPayload<{
+    include: {
+      [key in keyof Prisma.WorkerRegistrationTokenInclude]: true;
+    };
+  }>
+>;
+
+export type WorkerEntityType = PrismaEntityType<
+  Prisma.WorkerGetPayload<{
+    include: {
+      [key in keyof Prisma.WorkerInclude]: true;
+    };
+  }>
+>;

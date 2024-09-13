@@ -7,6 +7,7 @@ import { getEnvConfig } from "@config/env";
 // Provider import
 import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
 // Server import
 import { app } from "./app";
@@ -15,6 +16,7 @@ const { httpServer: server } = app;
 
 const init = async () => {
   await app.graphqlServer.initialization;
+  await app.websocketServer.initialization;
 
   app.httpServer.listen(getEnvConfig().APP_PORT, () => {
     console.log(
@@ -84,6 +86,16 @@ const shutdownHandler = async (signal: string) => {
       .quit()
       .then(() => {
         console.info("💿 Redis connection closed.");
+      })
+      .catch(() => null);
+
+    const authenticationProvider = container.resolve<IAuthenticationProvider>(
+      "AuthenticationProvider",
+    );
+    await authenticationProvider
+      .dispose()
+      .then(() => {
+        console.info("🔒 Authentication provided closed.");
       })
       .catch(() => null);
 

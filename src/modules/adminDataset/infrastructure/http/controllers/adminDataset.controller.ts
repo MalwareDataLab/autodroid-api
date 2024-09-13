@@ -10,7 +10,7 @@ import { AdminDatasetShowService } from "@modules/adminDataset/services/adminDat
 import { AdminDatasetUpdateService } from "@modules/adminDataset/services/adminDatasetUpdate.service";
 import { AdminDatasetDeleteService } from "@modules/adminDataset/services/adminDatasetDelete.service";
 
-class AdminDatasetControllerClass {
+class AdminDatasetController {
   public async index(req: Request, res: Response) {
     const adminDatasetIndexService = container.resolve(
       AdminDatasetIndexService,
@@ -64,5 +64,4 @@ class AdminDatasetControllerClass {
   }
 }
 
-const AdminDatasetController = new AdminDatasetControllerClass();
 export { AdminDatasetController };
