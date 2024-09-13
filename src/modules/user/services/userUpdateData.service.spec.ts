@@ -45,6 +45,7 @@ describe("Service: UserUpdateDataService", () => {
       getUserByPhoneNumber: vi.fn(),
       updateUserByCode: vi.fn(),
       deleteUserByCode: vi.fn(),
+      dispose: vi.fn(),
     };
 
     authenticationProviderMock = {
@@ -53,6 +54,7 @@ describe("Service: UserUpdateDataService", () => {
         Promise.resolve(authenticationMethodMock as IAuthenticationMethod),
       ),
       default_auth_provider: AUTH_PROVIDER.FIREBASE,
+      dispose: vi.fn(),
     };
 
     userAuthProviderConnRepositoryMock = {

@@ -14,7 +14,7 @@ import { UserProcessorShowService } from "@modules/processor/services/userProces
 // Schema import
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
-class UserProcessorControllerClass {
+class UserProcessorController {
   public async index(req: Request, res: Response) {
     const userProcessorIndexService = container.resolve(
       UserProcessorIndexService,
@@ -42,5 +42,4 @@ class UserProcessorControllerClass {
   }
 }
 
-const UserProcessorController = new UserProcessorControllerClass();
 export { UserProcessorController };

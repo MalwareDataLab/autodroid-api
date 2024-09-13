@@ -65,6 +65,13 @@ class AuthenticationProvider implements IAuthenticationProvider {
 
     return provider;
   }
+
+  public async dispose(): Promise<void> {
+    const promises = Object.values(this.providers).map(provider =>
+      provider.dispose(),
+    );
+    await Promise.all([...promises]);
+  }
 }
 
 export { AuthenticationProvider };

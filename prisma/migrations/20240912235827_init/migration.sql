@@ -79,6 +79,35 @@ CREATE TABLE "processors" (
     CONSTRAINT "processors_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "worker_registration_tokens" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "is_unlimited_usage" BOOLEAN NOT NULL,
+    "activated_at" TIMESTAMP(3),
+    "expires_at" TIMESTAMP(3),
+    "archived_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "worker_registration_tokens_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "workers" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "registration_token_id" TEXT NOT NULL,
+    "refresh_token" TEXT NOT NULL,
+    "payload" JSONB NOT NULL,
+    "archived_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "workers_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -97,6 +126,9 @@ CREATE INDEX "user_auth_provider_conns_pagination_idx" ON "user_auth_provider_co
 -- CreateIndex
 CREATE UNIQUE INDEX "datasets_file_id_key" ON "datasets"("file_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "worker_registration_tokens_token_key" ON "worker_registration_tokens"("token");
+
 -- AddForeignKey
 ALTER TABLE "user_auth_provider_conns" ADD CONSTRAINT "user_auth_provider_conns_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -108,3 +140,12 @@ ALTER TABLE "datasets" ADD CONSTRAINT "datasets_file_id_fkey" FOREIGN KEY ("file
 
 -- AddForeignKey
 ALTER TABLE "processors" ADD CONSTRAINT "processors_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "worker_registration_tokens" ADD CONSTRAINT "worker_registration_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "workers" ADD CONSTRAINT "workers_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "workers" ADD CONSTRAINT "workers_registration_token_id_fkey" FOREIGN KEY ("registration_token_id") REFERENCES "worker_registration_tokens"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

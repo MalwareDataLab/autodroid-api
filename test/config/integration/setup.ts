@@ -25,9 +25,6 @@ import { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMem
 import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
 import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 
-// Util import
-import { sleep } from "@shared/utils/sleep";
-
 // Type import
 import { TestContext } from "../../types/testContext.type";
 
@@ -36,7 +33,6 @@ const initRelationalDatabase = async (context: TestContext) => {
   const url = new URL(initialDatabaseUrl!);
   url.searchParams.set("schema", `test-${randomUUID()}`);
 
-  console.log("SETUP", url.toString());
   const databaseUrl = url.toString();
   context.DatabaseUrl = databaseUrl;
 
@@ -70,12 +66,6 @@ const initRelationalDatabase = async (context: TestContext) => {
 
 const disposeRelationalDatabase = async (context: TestContext) => {
   await context.PrismaDatabaseProvider?.$disconnect();
-
-  console.log(
-    "DISPOSE",
-    context.DatabaseUrl,
-    new URL(context.DatabaseUrl).searchParams.get("schema"),
-  );
 
   const client = new Client({
     connectionString: context.DatabaseUrl,
@@ -158,7 +148,6 @@ beforeEach(async context => {
 });
 
 afterEach(async context => {
-  await sleep(1000);
   await Promise.all([
     disposeRelationalDatabase(context),
     disposeNonRelationalDatabase(context),

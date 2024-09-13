@@ -77,7 +77,7 @@ class AppError extends Error {
       Sentry.captureException(this);
 
       if (getEnvConfig().DEBUG === "true")
-        console.log(`❌ Error debug: `, util.inspect(this, false, null, true));
+        console.log(`❌ Error debug: `, util.inspect(this, false, 4, true));
     }
   }
 

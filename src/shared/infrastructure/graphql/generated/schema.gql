@@ -103,6 +103,9 @@ type Mutation {
   adminProcessorCreate(data: ProcessorSchema!): Processor! @auth(requires: ADMIN)
   adminProcessorDelete(processor_id: String!): Processor! @auth(requires: ADMIN)
   adminProcessorUpdate(data: ProcessorSchema!, processor_id: String!): Processor! @auth(requires: ADMIN)
+  adminWorkerDelete(worker_id: String!): Worker! @auth(requires: ADMIN)
+  adminWorkerRegistrationTokenCreate(data: WorkerRegistrationTokenCreateSchema!): WorkerRegistrationToken! @auth(requires: ADMIN)
+  adminWorkerRegistrationTokenDelete(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: ADMIN)
   userDatasetCreate(data: UserDatasetCreateSchema!): Dataset!
   userDatasetDelete(dataset_id: String!): Dataset!
   userDatasetRequestPublication(dataset_id: String!): Dataset!
@@ -184,6 +187,10 @@ type Query {
   adminDatasets(after: ConnectionCursor, before: ConnectionCursor, file_id: String, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String, visibility: DATASET_VISIBILITY): DatasetPaginationConnection! @auth(requires: ADMIN)
   adminProcessor(processor_id: String!): Processor! @auth(requires: ADMIN)
   adminProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection! @auth(requires: ADMIN)
+  adminWorker(worker_id: String!): Worker! @auth(requires: ADMIN)
+  adminWorkerRegistrationToken(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: ADMIN)
+  adminWorkerRegistrationTokens(activatable: Boolean, activated: Boolean, after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, expired: Boolean, first: Int, is_unlimited_usage: Boolean, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, token: String, user_id: String): WorkerRegistrationTokenPaginationConnection! @auth(requires: ADMIN)
+  adminWorkers(after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, first: Int, last: Int, registration_token_id: String, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String): WorkerPaginationConnection! @auth(requires: ADMIN)
   session: Session!
   user: User!
   userDataset(dataset_id: String!): Dataset!
@@ -261,4 +268,55 @@ input UserUpdateDataSchema {
   language: String
   name: String!
   phone_number: String
+}
+
+type Worker {
+  archived_at: DateTimeISO
+  created_at: DateTimeISO!
+  id: ID!
+  payload: JSON!
+  refresh_token: String!
+  registration_token: WorkerRegistrationToken!
+  registration_token_id: String!
+  updated_at: DateTimeISO!
+  user_id: String!
+}
+
+type WorkerPaginationConnection {
+  edges: [WorkerPaginationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type WorkerPaginationEdge {
+  cursor: ConnectionCursor!
+  node: Worker!
+}
+
+type WorkerRegistrationToken {
+  activated_at: DateTimeISO
+  archived_at: DateTimeISO
+  created_at: DateTimeISO!
+  expires_at: DateTimeISO
+  id: ID!
+  is_unlimited_usage: Boolean!
+  token: String!
+  updated_at: DateTimeISO!
+  user_id: String!
+}
+
+input WorkerRegistrationTokenCreateSchema {
+  expires_at: DateTimeISO
+  is_unlimited_usage: Boolean!
+}
+
+type WorkerRegistrationTokenPaginationConnection {
+  edges: [WorkerRegistrationTokenPaginationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type WorkerRegistrationTokenPaginationEdge {
+  cursor: ConnectionCursor!
+  node: WorkerRegistrationToken!
 }

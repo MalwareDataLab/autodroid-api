@@ -7,7 +7,7 @@ import { process } from "@shared/utils/instanceParser";
 // Service import
 import { AdminDatasetUpdateVisibilityService } from "@modules/adminDataset/services/adminDatasetUpdateVisibility.service";
 
-class AdminDatasetVisibilityControllerClass {
+class AdminDatasetVisibilityController {
   public async update(req: Request, res: Response) {
     const adminDatasetUpdateVisibilityService = container.resolve(
       AdminDatasetUpdateVisibilityService,
@@ -23,6 +23,4 @@ class AdminDatasetVisibilityControllerClass {
   }
 }
 
-const AdminDatasetVisibilityController =
-  new AdminDatasetVisibilityControllerClass();
 export { AdminDatasetVisibilityController };

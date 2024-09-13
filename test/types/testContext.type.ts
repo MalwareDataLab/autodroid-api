@@ -9,8 +9,8 @@ import type { IInMemoryDatabaseProvider } from "@shared/container/providers/InMe
 import type { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/implementations/redisInMemoryDatabase.provider";
 
 // Type import
-import type { IFirebaseSessionDTO } from "../utils/startAndGetSessionToken";
-import type { App } from "../utils/getServer";
+import type { IFirebaseSessionDTO } from "../utils/startAndGetSessionToken.util";
+import type { App } from "../utils/getServer.util";
 
 export type TestContext = {
   DatabaseUrl: string;

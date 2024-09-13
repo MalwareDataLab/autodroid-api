@@ -1,16 +1,25 @@
+// Type import
+import { BaseEntityFields } from "@shared/types/baseEntityFields.type";
+
 // Entity import
 import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+
+export type UserAuthProviderConnRelationFields = "user" | "sessions";
+
+export type IUserAuthProviderConnBase = Omit<
+  UserAuthProviderConn,
+  UserAuthProviderConnRelationFields
+>;
 
 export type ICreateUserAuthProviderConnDTO = Omit<
   UserAuthProviderConn,
   // Base
-  | "id"
+  | BaseEntityFields
+
+  // Protected
   | "disconnected_at"
-  | "created_at"
-  | "updated_at"
   // Relations
-  | "user"
-  | "sessions"
+  | UserAuthProviderConnRelationFields
 >;
 
 export type IFindUserAuthProviderConnDTO = AtLeastOneProperty<{

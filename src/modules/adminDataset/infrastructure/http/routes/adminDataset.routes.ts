@@ -14,6 +14,9 @@ import {
 import { AdminDatasetController } from "../controllers/adminDataset.controller";
 import { AdminDatasetVisibilityController } from "../controllers/adminDatasetVisibility.controller";
 
+const adminDatasetController = new AdminDatasetController();
+const adminDatasetVisibilityController = new AdminDatasetVisibilityController();
+
 const adminDatasetRouter = Router();
 
 adminDatasetRouter.get(
@@ -22,9 +25,9 @@ adminDatasetRouter.get(
     schema: AdminDatasetIndexSchema,
     segment: "QUERY",
   }),
-  AdminDatasetController.index,
+  adminDatasetController.index,
 );
-adminDatasetRouter.get("/:dataset_id", AdminDatasetController.show);
+adminDatasetRouter.get("/:dataset_id", adminDatasetController.show);
 
 adminDatasetRouter.put(
   "/:dataset_id",
@@ -32,9 +35,9 @@ adminDatasetRouter.put(
     schema: AdminDatasetUpdateSchema,
     segment: "BODY",
   }),
-  AdminDatasetController.update,
+  adminDatasetController.update,
 );
-adminDatasetRouter.delete("/:dataset_id", AdminDatasetController.delete);
+adminDatasetRouter.delete("/:dataset_id", adminDatasetController.delete);
 
 adminDatasetRouter.post(
   "/:dataset_id/update-visibility",
@@ -42,7 +45,7 @@ adminDatasetRouter.post(
     schema: AdminDatasetUpdateVisibilitySchema,
     segment: "BODY",
   }),
-  AdminDatasetVisibilityController.update,
+  adminDatasetVisibilityController.update,
 );
 
 export { adminDatasetRouter };

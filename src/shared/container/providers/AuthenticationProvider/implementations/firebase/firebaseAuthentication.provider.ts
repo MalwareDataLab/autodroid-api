@@ -498,6 +498,10 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
       });
     }
   }
+
+  public async dispose(): Promise<void> {
+    await this.provider.delete();
+  }
 }
 
 export { FirebaseAuthenticationProvider };

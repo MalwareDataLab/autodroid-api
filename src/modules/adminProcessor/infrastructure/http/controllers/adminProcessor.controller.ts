@@ -17,7 +17,7 @@ import { AdminProcessorCreateService } from "@modules/adminProcessor/services/ad
 import { AdminProcessorUpdateService } from "@modules/adminProcessor/services/adminProcessorUpdate.service";
 import { AdminProcessorDeleteService } from "@modules/adminProcessor/services/adminProcessorDelete.service";
 
-class AdminProcessorControllerClass {
+class AdminProcessorController {
   public async index(req: Request, res: Response) {
     const adminProcessorIndexService = container.resolve(
       AdminProcessorIndexService,
@@ -90,5 +90,4 @@ class AdminProcessorControllerClass {
   }
 }
 
-const AdminProcessorController = new AdminProcessorControllerClass();
 export { AdminProcessorController };

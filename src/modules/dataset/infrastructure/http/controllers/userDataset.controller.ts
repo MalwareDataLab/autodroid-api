@@ -11,7 +11,7 @@ import { UserDatasetShowService } from "@modules/dataset/services/userDatasetSho
 import { UserDatasetUpdateService } from "@modules/dataset/services/userDatasetUpdate.service";
 import { UserDatasetDeleteService } from "@modules/dataset/services/userDatasetDelete.service";
 
-class UserDatasetControllerClass {
+class UserDatasetController {
   public async create(req: Request, res: Response) {
     const userDatasetCreateService = container.resolve(
       UserDatasetCreateService,
@@ -84,5 +84,4 @@ class UserDatasetControllerClass {
   }
 }
 
-const UserDatasetController = new UserDatasetControllerClass();
 export { UserDatasetController };

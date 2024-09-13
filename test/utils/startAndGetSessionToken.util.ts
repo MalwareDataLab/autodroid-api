@@ -25,6 +25,11 @@ export const startAndGetSessionToken =
         redirect: "follow",
       },
     );
+
     const data = await res.json();
+
+    if (!data.idToken) throw new Error("Fail to start session.");
+
+    console.log(data.idToken);
     return data;
   };
