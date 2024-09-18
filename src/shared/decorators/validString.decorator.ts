@@ -1,4 +1,4 @@
-import { IsString, MinLength, MaxLength } from "class-validator";
+import { IsString, MinLength } from "class-validator";
 import { TrimStringTransform } from "./trimStringTransform.decorator";
 import { IsNullable, NullableOptions } from "./isNullable.decorator";
 
@@ -9,7 +9,6 @@ export function ValidString(
 ) {
   const isString = IsString();
   const minLength = MinLength(1);
-  const maxLength = MaxLength(255);
 
   const isNullable = IsNullable({ nullable: props.nullable });
 
@@ -19,7 +18,6 @@ export function ValidString(
     if (props.nullable) isNullable(target, key);
     isString(target, key);
     minLength(target, key);
-    maxLength(target, key);
     trimStringTransform(target, key);
   };
 }

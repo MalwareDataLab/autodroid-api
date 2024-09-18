@@ -10,12 +10,14 @@ import { JSONScalar } from "@shared/types/json.scalar";
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { ProcessorConfiguration } from "./processorConfiguration.entity";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
 
 @ObjectType()
-class Processor implements Omit<ProcessorEntityType, "params"> {
+class Processor implements ProcessorEntityType {
   @Field(() => ID)
   id: string;
 
@@ -40,6 +42,9 @@ class Processor implements Omit<ProcessorEntityType, "params"> {
   @Field(() => PROCESSOR_VISIBILITY)
   visibility: PROCESSOR_VISIBILITY;
 
+  @Field(() => ProcessorConfiguration)
+  configuration: Record<string, any> & ProcessorConfiguration;
+
   @Field(() => JSONScalar)
   payload: Record<string, any>;
 
@@ -57,6 +62,11 @@ class Processor implements Omit<ProcessorEntityType, "params"> {
   @Type(() => User)
   @Exclude()
   user: User;
+
+  // See UserProcessorFieldResolver
+  @Exclude()
+  @Type(() => Processing)
+  processes: Processing[];
 }
 
 const PaginatedProcessor = PaginationConnection(Processor);

@@ -5,6 +5,7 @@ import { container } from "tsyringe";
 import { getEnvConfig } from "@config/env";
 
 // Provider import
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
@@ -68,6 +69,14 @@ const shutdownHandler = async (signal: string) => {
     )
       .then(() => {
         console.info("📡 Websocket server closed.");
+      })
+      .catch(() => null);
+
+    const jobProvider = container.resolve<IJobProvider>("JobProvider");
+    await jobProvider
+      .close()
+      .then(() => {
+        console.info("⏹ Background jobs stopped.");
       })
       .catch(() => null);
 

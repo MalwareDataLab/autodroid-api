@@ -7,7 +7,7 @@ import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
   ICreateDatasetDTO,
   IFindDatasetDTO,
-  IFindManyPublicOrUserPrivateDTO,
+  IFindDatasetPublicOrUserPrivateDTO,
   IUpdateDatasetDTO,
 } from "../types/IDataset.dto";
 
@@ -24,12 +24,15 @@ export interface IDatasetRepository {
     sorting?: ISortingDTO<typeof DatasetSortingOptions>,
   ): Promise<Dataset[]>;
   findManyPublicOrUserPrivate(
-    { user_id }: IFindManyPublicOrUserPrivateDTO,
+    filter: IFindDatasetPublicOrUserPrivateDTO,
     pagination?: IPaginationDTO,
     sorting?: ISortingDTO<typeof DatasetSortingOptions>,
   ): Promise<Dataset[]>;
 
   getCount(filter: IFindDatasetDTO): Promise<number>;
+  getCountPublicOrUserPrivate(
+    filter: IFindDatasetPublicOrUserPrivateDTO,
+  ): Promise<number>;
 
   updateOne(
     filter: IFindDatasetDTO,

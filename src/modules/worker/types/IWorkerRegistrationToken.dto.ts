@@ -35,5 +35,6 @@ export type IFindWorkerRegistrationTokenDTO = Partial<
   archived?: boolean;
 };
 
-export type IUpdateWorkerRegistrationTokenDTO =
-  Partial<ICreateWorkerRegistrationTokenDTO>;
+export type IUpdateWorkerRegistrationTokenDTO = Partial<
+  Omit<ICreateWorkerRegistrationTokenDTO, "user_id" | "token">
+>;

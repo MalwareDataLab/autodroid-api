@@ -21,6 +21,12 @@ import { StorageProvider } from "./providers/StorageProvider";
 import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
 import { AuthenticationProvider } from "./providers/AuthenticationProvider";
 
+import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
+import { DatasetProcessorProvider } from "./providers/DatasetProcessorProvider";
+
+import { IJobProvider } from "./providers/JobProvider/models/IJob.provider";
+import { JobProvider } from "./providers/JobProvider";
+
 // Repository import
 import { initRepositories } from "./repositories";
 
@@ -35,6 +41,10 @@ const secondaryProviders = {
   UserAgentInfoProvider: UserAgentInfoProvider as ClassType<IUserAgentInfoProvider>,
   StorageProvider: StorageProvider as ClassType<IStorageProvider>,
   AuthenticationProvider: AuthenticationProvider as ClassType<IAuthenticationProvider>,
+
+  DatasetProcessorProvider: DatasetProcessorProvider as ClassType<IDatasetProcessorProvider>,
+
+  JobProvider: JobProvider as ClassType<IJobProvider>,
 } as const;
 const secondaryProviderKeys = Object.keys(secondaryProviders) as ReadonlyArray<keyof typeof secondaryProviders>;
 
@@ -82,8 +92,9 @@ const standardPreRequisites = [
   // Tertiary
 
   // Quaternary
+  "JobProvider",
 ] satisfies ReadonlyArray<(typeof providerKeys)[number]>;
-const waitPreRequisites = async (selectedContainer: DependencyContainer = mainContainer, prerequisites = standardPreRequisites) => {
+const initAndWaitPreRequisites = async (selectedContainer: DependencyContainer = mainContainer, prerequisites = standardPreRequisites) => {
   await prerequisites.reduce<Promise<any>>((promise, prerequisite) => {
     return promise.then(async () => {
       const dependency: any = selectedContainer.resolve(prerequisite);
@@ -98,4 +109,4 @@ type Providers = typeof providers;
 export type ProviderToken = keyof Providers;
 export type Provider<T extends ProviderToken> = InstanceType<Providers[T]>;
 
-export { primaryProviderKeys, secondaryProviderKeys, initPrimaryProviders, initSecondaryProviders, initContainer, waitPreRequisites };
+export { primaryProviderKeys, secondaryProviderKeys, initPrimaryProviders, initSecondaryProviders, initContainer, initAndWaitPreRequisites };

@@ -72,6 +72,7 @@ CREATE TABLE "processors" (
     "tags" TEXT,
     "allowed_mime_types" TEXT NOT NULL,
     "visibility" TEXT NOT NULL,
+    "configuration" JSONB NOT NULL,
     "payload" JSONB NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -100,12 +101,38 @@ CREATE TABLE "workers" (
     "user_id" TEXT NOT NULL,
     "registration_token_id" TEXT NOT NULL,
     "refresh_token" TEXT NOT NULL,
+    "refresh_token_expires_at" TIMESTAMP(3) NOT NULL,
+    "internal_id" TEXT NOT NULL,
+    "signature" TEXT NOT NULL,
+    "system_info" JSONB NOT NULL,
+    "agent_info" JSONB NOT NULL,
     "payload" JSONB NOT NULL,
     "archived_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "workers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "processes" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "processor_id" TEXT NOT NULL,
+    "dataset_id" TEXT NOT NULL,
+    "worker_id" TEXT,
+    "result_file_id" TEXT,
+    "status" TEXT NOT NULL,
+    "visibility" TEXT NOT NULL,
+    "started_at" TIMESTAMP(3),
+    "finished_at" TIMESTAMP(3),
+    "keep_until" TIMESTAMP(3),
+    "configuration" JSONB NOT NULL,
+    "payload" JSONB NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "processes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -129,6 +156,12 @@ CREATE UNIQUE INDEX "datasets_file_id_key" ON "datasets"("file_id");
 -- CreateIndex
 CREATE UNIQUE INDEX "worker_registration_tokens_token_key" ON "worker_registration_tokens"("token");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "workers_signature_key" ON "workers"("signature");
+
+-- CreateIndex
+CREATE INDEX "workers_refresh_token_idx" ON "workers"("refresh_token");
+
 -- AddForeignKey
 ALTER TABLE "user_auth_provider_conns" ADD CONSTRAINT "user_auth_provider_conns_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -149,3 +182,18 @@ ALTER TABLE "workers" ADD CONSTRAINT "workers_user_id_fkey" FOREIGN KEY ("user_i
 
 -- AddForeignKey
 ALTER TABLE "workers" ADD CONSTRAINT "workers_registration_token_id_fkey" FOREIGN KEY ("registration_token_id") REFERENCES "worker_registration_tokens"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "processes" ADD CONSTRAINT "processes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "processes" ADD CONSTRAINT "processes_processor_id_fkey" FOREIGN KEY ("processor_id") REFERENCES "processors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "processes" ADD CONSTRAINT "processes_dataset_id_fkey" FOREIGN KEY ("dataset_id") REFERENCES "datasets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "processes" ADD CONSTRAINT "processes_worker_id_fkey" FOREIGN KEY ("worker_id") REFERENCES "workers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "processes" ADD CONSTRAINT "processes_result_file_id_fkey" FOREIGN KEY ("result_file_id") REFERENCES "files"("id") ON DELETE CASCADE ON UPDATE CASCADE;

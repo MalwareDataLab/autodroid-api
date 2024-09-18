@@ -2,6 +2,7 @@ import { Field, InputType, Int } from "type-graphql";
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsEnum,
   IsObject,
   IsSemVer,
@@ -20,15 +21,15 @@ import {
 } from "../types/IProcessor.dto";
 
 // Entity import
-import { ProcessorPayload } from "../entities/processorPayload.entity";
+import { ProcessorConfiguration } from "../entities/processorConfiguration.entity";
+import { ProcessorParameter } from "../entities/processorParameter.entity";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
-import { ProcessorParam } from "../entities/processorParam.entity";
-import { PROCESSOR_PARAM_TYPE } from "../types/processorParamType.enum";
+import { PROCESSOR_PARAMETER_TYPE } from "../types/processorParameterType.enum";
 
 @InputType()
-class ProcessorPayloadParamSchema implements ProcessorParam {
+class ProcessorConfigurationParameterSchema implements ProcessorParameter {
   @ValidInt()
   @Field(() => Int)
   sequence: number;
@@ -42,9 +43,13 @@ class ProcessorPayloadParamSchema implements ProcessorParam {
   description: string;
 
   @ValidString()
-  @IsEnum(PROCESSOR_PARAM_TYPE)
-  @Field(() => PROCESSOR_PARAM_TYPE)
-  type: PROCESSOR_PARAM_TYPE;
+  @IsEnum(PROCESSOR_PARAMETER_TYPE)
+  @Field(() => PROCESSOR_PARAMETER_TYPE)
+  type: PROCESSOR_PARAMETER_TYPE;
+
+  @IsBoolean()
+  @Field()
+  is_required: boolean;
 
   @ValidString({ nullable: "allowNull" })
   @Field(() => String, { nullable: true })
@@ -52,26 +57,42 @@ class ProcessorPayloadParamSchema implements ProcessorParam {
 }
 
 @InputType()
-class ProcessorPayloadSchema implements ProcessorPayload {
+class ProcessorConfigurationSchema implements ProcessorConfiguration {
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested()
-  @Type(() => ProcessorPayloadParamSchema)
-  @Field(() => [ProcessorPayloadParamSchema])
-  params: ProcessorPayloadParamSchema[];
+  @Type(() => ProcessorConfigurationParameterSchema)
+  @Field(() => [ProcessorConfigurationParameterSchema])
+  parameters: ProcessorConfigurationParameterSchema[];
 
-  @ValidInt()
-  @Field(() => Int)
-  required_ram_mb: number;
+  @ValidString()
+  @Field()
+  dataset_input_argument: string;
 
-  @ValidInt()
-  @Field(() => Int)
-  required_cpu_cores: number;
+  @ValidString()
+  @Field()
+  dataset_input_value: string;
+
+  @ValidString()
+  @Field()
+  dataset_output_argument: string;
+
+  @ValidString()
+  @Field()
+  dataset_output_value: string;
+
+  @ValidString()
+  @Field()
+  command: string;
 }
 
 @InputType()
 class ProcessorSchema
-  implements Omit<ICreateProcessorDTO, ProcessorForeignKeys | "payload">
+  implements
+    Omit<
+      ICreateProcessorDTO,
+      ProcessorForeignKeys | "payload" | "configuration"
+    >
 {
   @ValidString()
   @Field()
@@ -105,9 +126,9 @@ class ProcessorSchema
 
   @IsObject()
   @ValidateNested()
-  @Type(() => ProcessorPayloadSchema)
-  @Field(() => ProcessorPayloadSchema)
-  payload: ProcessorPayloadSchema;
+  @Type(() => ProcessorConfigurationSchema)
+  @Field(() => ProcessorConfigurationSchema)
+  configuration: ProcessorConfigurationSchema;
 }
 
-export { ProcessorSchema };
+export { ProcessorSchema, ProcessorConfigurationParameterSchema };

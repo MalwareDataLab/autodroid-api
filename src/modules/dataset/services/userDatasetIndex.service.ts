@@ -37,7 +37,8 @@ class UserDatasetIndexService {
       user_id: user.id,
     };
 
-    const totalCount = await this.datasetRepository.getCount(filter);
+    const totalCount =
+      await this.datasetRepository.getCountPublicOrUserPrivate(filter);
 
     const datasets = await this.datasetRepository.findManyPublicOrUserPrivate(
       filter,

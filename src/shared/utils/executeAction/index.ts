@@ -8,7 +8,7 @@ interface IParams {
   actionName: string;
   action: () => Promise<any>;
   attempt?: number;
-  maxAttempts?: number;
+  maxRetries?: number;
   retryDelay?: number;
   logging?: boolean;
 }
@@ -18,7 +18,7 @@ const executeAction = async (params: IParams): Promise<any> => {
     actionName,
     action,
     attempt = 1,
-    maxAttempts = getEnvConfig().isTestEnv ? 0 : 3,
+    maxRetries = getEnvConfig().isTestEnv ? 0 : 3,
     logging,
   } = params;
 
@@ -32,7 +32,7 @@ const executeAction = async (params: IParams): Promise<any> => {
       );
     return result;
   } catch (err: any) {
-    if (attempt > maxAttempts)
+    if (attempt > maxRetries)
       throw new Error(
         `❌ ${actionName} failure after ${
           attempt - 1

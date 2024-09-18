@@ -1,5 +1,8 @@
 import { Server } from "socket.io";
 
+// Entity import
+import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
+
 // DTO import
 import { Session } from "@modules/user/types/IUserSession.dto";
 
@@ -16,7 +19,9 @@ export interface InterServerEvents {
 }
 
 export interface SocketData {
-  session: Session;
+  kind: "USER" | "WORKER";
+  user_session: Session;
+  worker_session: WorkerSession;
 }
 
 export type WebsocketServer = Server<

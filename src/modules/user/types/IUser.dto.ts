@@ -11,7 +11,8 @@ export type UserRelationFields =
   | "datasets"
   | "processors"
   | "worker_registration_tokens"
-  | "workers";
+  | "workers"
+  | "processes";
 
 export type IUserBase = Omit<User, UserComputedFields | UserRelationFields>;
 

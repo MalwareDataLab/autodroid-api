@@ -1,13 +1,13 @@
 import { container } from "tsyringe";
 
 // Container import
-import { waitPreRequisites } from "@shared/container";
+import { initAndWaitPreRequisites } from "@shared/container";
 
 // Provider import
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
 export const getServer = async () => {
-  await waitPreRequisites();
+  await initAndWaitPreRequisites();
   const { App } = await import("@shared/infrastructure/http/app");
 
   const app = new App();

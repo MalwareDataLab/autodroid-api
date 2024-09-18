@@ -9,7 +9,7 @@ describe("E2E: UserController", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject({
-      name: context.session.displayName,
+      name: context.session.displayName || null,
       email: context.session.email,
     });
   });

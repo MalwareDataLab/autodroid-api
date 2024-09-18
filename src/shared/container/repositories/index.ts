@@ -25,6 +25,9 @@ import { PrismaWorkerRepository } from "@modules/worker/infrastructure/prisma/re
 import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
 import { PrismaWorkerRegistrationTokenRepository } from "@modules/worker/infrastructure/prisma/repositories/prismaWorkerRegistrationToken.repository";
 
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { PrismaProcessingRepository } from "@modules/processing/infrastructure/prisma/repositories/prismaProcessing.repository";
+
 const repositories = {
   // MongoDB repositories
 
@@ -36,6 +39,7 @@ const repositories = {
   ProcessorRepository: PrismaProcessorRepository as ClassType<IProcessorRepository>,
   WorkerRepository: PrismaWorkerRepository as ClassType<IWorkerRepository>,
   WorkerRegistrationTokenRepository: PrismaWorkerRegistrationTokenRepository as ClassType<IWorkerRegistrationTokenRepository>,
+  ProcessingRepository: PrismaProcessingRepository as ClassType<IProcessingRepository>,
 };
 
 const initRepositories = async (selectedContainer: DependencyContainer = mainContainer) => {
@@ -55,6 +59,7 @@ export type {
   IProcessorRepository,
   IWorkerRepository,
   IWorkerRegistrationTokenRepository,
+  IProcessingRepository,
 };
 
 export { initRepositories };

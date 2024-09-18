@@ -14,6 +14,7 @@ import { Processor } from "@modules/processor/entities/processor.entity";
 import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
 
 @ObjectType()
 class User implements UserEntityType {
@@ -69,6 +70,10 @@ class User implements UserEntityType {
   @Exclude()
   @Type(() => Worker)
   workers: Worker[];
+
+  @Exclude()
+  @Type(() => Processing)
+  processes: Processing[];
 }
 
 const PaginatedUser = PaginationConnection(User);

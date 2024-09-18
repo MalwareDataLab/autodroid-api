@@ -1,13 +1,14 @@
-import { Type } from "class-transformer";
+import { Exclude, Type } from "class-transformer";
 import { Field, ID, ObjectType } from "type-graphql";
 
 // Type import
 import { DatasetEntityType } from "@shared/types/models";
 
 // Entity import
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
-import { File } from "@modules/file/entities/file.entity";
 import { User } from "@modules/user/entities/user.entity";
+import { File } from "@modules/file/entities/file.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 
 // Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
@@ -47,6 +48,11 @@ class Dataset implements DatasetEntityType {
   @Type(() => File)
   @Field(() => File)
   file: File;
+
+  // See UserDatasetFieldResolver
+  @Exclude()
+  @Type(() => Processing)
+  processes: Processing[];
 }
 
 const PaginatedDataset = PaginationConnection(Dataset);

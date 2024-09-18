@@ -1,8 +1,5 @@
 import { inject, injectable } from "tsyringe";
 
-// i18n import
-import { i18n } from "@shared/i18n";
-
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
@@ -15,6 +12,9 @@ import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 // Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Guard import
+import { DatasetGuard } from "../guards/dataset.guard";
 
 // Schema import
 import { UserDatasetUpdateSchema } from "../schemas/userDataset.schema";
@@ -29,10 +29,14 @@ interface IRequest {
 
 @injectable()
 class UserDatasetUpdateService {
+  private datasetGuard: DatasetGuard;
+
   constructor(
     @inject("DatasetRepository")
     private datasetRepository: IDatasetRepository,
-  ) {}
+  ) {
+    this.datasetGuard = new DatasetGuard(this.datasetRepository);
+  }
 
   public async execute({
     dataset_id,
@@ -40,21 +44,11 @@ class UserDatasetUpdateService {
     user,
     language,
   }: IRequest): Promise<Dataset> {
-    const t = await i18n(language);
-
-    const dataset = await this.datasetRepository.findOne({
-      id: dataset_id,
-      user_id: user.id,
+    const { dataset, t } = await this.datasetGuard.execute({
+      user,
+      dataset_id,
+      language,
     });
-
-    if (!dataset)
-      throw new AppError({
-        key: "@user_dataset_update_service/DATASET_NOT_FOUND",
-        message: t(
-          "@user_dataset_update_service/DATASET_NOT_FOUND",
-          "Dataset not found.",
-        ),
-      });
 
     if (dataset.visibility !== DATASET_VISIBILITY.PRIVATE)
       throw new AppError({

@@ -24,4 +24,4 @@ class FileResolver {
   }
 }
 
-export { FileResolver };
+export { FileResolver as FileFieldResolver };

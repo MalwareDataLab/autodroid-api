@@ -33,7 +33,8 @@ import { IWorkerRepository } from "@modules/worker/repositories/IWorker.reposito
 class PrismaWorkerRepository implements IWorkerRepository {
   private readonly relations: DatabaseHelperTypes.WorkerInclude = {
     registration_token: true,
-  };
+    user: true,
+  } satisfies DatabaseHelperTypes.WorkerInclude;
 
   constructor(
     @inject("DatabaseProvider")
@@ -46,6 +47,8 @@ class PrismaWorkerRepository implements IWorkerRepository {
       refresh_token,
       user_id,
       registration_token_id,
+      internal_id,
+      signature,
 
       archived,
     }: IFindWorkerDTO,
@@ -56,10 +59,16 @@ class PrismaWorkerRepository implements IWorkerRepository {
       refresh_token,
       user_id,
       registration_token_id,
+      internal_id,
+      signature,
 
       ...(archived !== undefined && {
         archived_at: archived ? { not: null } : null,
       }),
+
+      registration_token: relations_enabled
+        ? { token: registration_token_id }
+        : undefined,
     };
   }
 

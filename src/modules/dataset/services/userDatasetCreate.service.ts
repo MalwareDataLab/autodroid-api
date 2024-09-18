@@ -7,7 +7,6 @@ import { i18n } from "@shared/i18n";
 import { AppError } from "@shared/errors/AppError";
 
 // Provider import
-import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // DTO import
@@ -17,12 +16,13 @@ import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentIn
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 
+// Repository import
+import { IProcessorRepository } from "@shared/container/repositories";
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+
 // Enum import
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
-
-// Repository import
-import { IDatasetRepository } from "../repositories/IDataset.repository";
 
 // Schema import
 import { UserDatasetCreateSchema } from "../schemas/userDataset.schema";
@@ -38,14 +38,14 @@ interface IRequest {
 @injectable()
 class UserDatasetCreateService {
   constructor(
-    @inject("DatasetProcessorProvider")
-    private datasetProcessorProvider: IDatasetProcessorProvider,
+    @inject("DatasetRepository")
+    private datasetRepository: IDatasetRepository,
+
+    @inject("ProcessorRepository")
+    private processorRepository: IProcessorRepository,
 
     @inject("StorageProvider")
     private storageProvider: IStorageProvider,
-
-    @inject("DatasetRepository")
-    private datasetRepository: IDatasetRepository,
   ) {}
 
   public async execute({
@@ -78,7 +78,7 @@ class UserDatasetCreateService {
       });
 
     const acceptedMimeTypes =
-      this.datasetProcessorProvider.getAcceptedMimeTypes();
+      await this.processorRepository.getAllowedMimeTypes();
 
     if (!acceptedMimeTypes.includes(data.mime_type.toString()))
       throw new AppError({

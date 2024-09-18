@@ -14,6 +14,14 @@ const getMillisecondConfig = () => {
     STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION: ms(
       envConfig.STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION || "5m",
     ),
+
+    PROCESSING_DEFAULT_KEEP_UNTIL: ms(
+      envConfig.PROCESSING_DEFAULT_KEEP_UNTIL || "30",
+    ),
+
+    PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND: ms(
+      envConfig.PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND || "30",
+    ),
   };
 };
 

@@ -253,7 +253,7 @@ class GoogleStorageProvider implements IStorageProvider {
         action: "write",
         expires: uploadSignedUrlExpirationDate,
         contentType: mimeType,
-        contentMd5: md5Base64,
+        // contentMd5: md5Base64,
       });
 
       const file = await this.fileRepository.createOne({

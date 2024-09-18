@@ -23,6 +23,8 @@ export interface IProcessorRepository {
     sorting?: ISortingDTO<typeof ProcessorSortingOptions>,
   ): Promise<Processor[]>;
 
+  getAllowedMimeTypes(): Promise<string[]>;
+
   getCount(filter: IFindProcessorDTO): Promise<number>;
 
   updateOne(

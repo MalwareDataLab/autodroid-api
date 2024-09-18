@@ -40,6 +40,14 @@ class ProcessorFactory extends Processor {
       version: faker.system.semver(),
       visibility: PROCESSOR_VISIBILITY.HIDDEN,
       payload: {},
+      configuration: {
+        parameters: [],
+        dataset_input_argument: "",
+        dataset_input_value: "",
+        dataset_output_argument: "",
+        dataset_output_value: "",
+        command: "",
+      },
 
       /** Relations */
       user_id: required.user_id,

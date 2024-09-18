@@ -12,6 +12,9 @@ import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPe
 // Repository import
 import { IProcessorRepository } from "@shared/container/repositories";
 
+// Util import
+import { validateProcessorConfigurationParameters } from "@modules/processor/utils/validateProcessorConfigurationParameters.util";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Processor } from "@modules/processor/entities/processor.entity";
@@ -41,6 +44,11 @@ class AdminProcessorUpdateService {
     language,
   }: IRequest): Promise<Processor> {
     const t = await i18n(language);
+
+    validateProcessorConfigurationParameters({
+      parameters: data.configuration.parameters,
+      t,
+    });
 
     const processor = await this.processorRepository.updateOne(
       { id: processor_id },

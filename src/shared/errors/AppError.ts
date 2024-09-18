@@ -62,10 +62,12 @@ class AppError extends Error {
   }
 
   private async register() {
+    const envConfig = getEnvConfig();
+
     if (
       (!!this.debug || this.statusCode >= 500) &&
       !this.debug?.disableRegister &&
-      !getEnvConfig().isTestEnv
+      !envConfig.isTestEnv
     ) {
       Sentry.addBreadcrumb({
         category: "data",
@@ -76,7 +78,7 @@ class AppError extends Error {
       });
       Sentry.captureException(this);
 
-      if (getEnvConfig().DEBUG === "true")
+      if (envConfig.DEBUG === "true")
         console.log(`❌ Error debug: `, util.inspect(this, false, 4, true));
     }
   }

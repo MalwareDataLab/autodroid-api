@@ -31,7 +31,7 @@ import { IUserRepository } from "@modules/user/repositories/IUser.repository";
 
 @injectable()
 class PrismaUserRepository implements IUserRepository {
-  private readonly relations: DatabaseHelperTypes.UserInclude = {};
+  private readonly relations = {} satisfies DatabaseHelperTypes.UserInclude;
 
   constructor(
     @inject("DatabaseProvider")

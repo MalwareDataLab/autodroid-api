@@ -8,7 +8,9 @@ import { getRedisConfig } from "@config/redis";
 import { getCorsConfig } from "@config/cors";
 
 // Middleware import
-// import { websocketAuthenticationMiddleware } from "./middlewares/websocketAuthentication.middleware";
+import { websocketUserAuthenticationMiddleware } from "@modules/user/infrastructure/websocket/middlewares/websocketUserAuthentication.middleware";
+import { websocketWorkerAuthenticationMiddleware } from "@modules/worker/infrastructure/websocket/middlewares/websocketWorkerAuthentication.middleware";
+import { websocketAuthenticationGuardMiddleware } from "./middlewares/websocketAuthenticationGuard.middleware";
 
 // Type import
 import { WebsocketServer } from "./types";
@@ -27,7 +29,7 @@ class WebsocketApp {
     this.initialization = Promise.resolve();
 
     this.server = new SocketIoServer(httpServer, {
-      path: "/websocket",
+      path: "/websocketAS",
       cors: {
         origin: getCorsConfig().origin,
       },
@@ -49,12 +51,22 @@ class WebsocketApp {
   }
 
   private middlewares(): void {
-    // this.server.use(websocketAuthenticationMiddleware);
+    this.server.use(websocketUserAuthenticationMiddleware);
+    this.server.use(websocketWorkerAuthenticationMiddleware);
+    this.server.use(websocketAuthenticationGuardMiddleware);
 
-    // USER: create a room for him
     this.server.use((socket, next) => {
-      if (socket.data.session?.user.id)
-        socket.join(`user:${socket.data.session.user.id}`);
+      if (socket.data.kind === "USER" && socket.data.user_session?.user?.id) {
+        socket.join(`user:${socket.data.user_session.user?.id}`);
+      }
+
+      if (
+        socket.data.kind === "WORKER" &&
+        socket.data.worker_session?.worker?.id
+      ) {
+        socket.join(`worker:${socket.data.worker_session.worker.id}`);
+      }
+
       next();
     });
   }

@@ -1,13 +1,16 @@
 // Container import
-import { initContainer, waitPreRequisites } from "@shared/container/index";
+import {
+  initContainer,
+  initAndWaitPreRequisites,
+} from "@shared/container/index";
 
 const Bootstrap = (async () => {
   try {
     console.clear();
 
-    await initContainer();
+    initContainer();
 
-    await waitPreRequisites();
+    await initAndWaitPreRequisites();
 
     // Sequence of bootstrapping
     // await condition;

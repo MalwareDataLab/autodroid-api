@@ -50,6 +50,14 @@ describe("Service: UserProcessorShowService", () => {
       allowed_mime_types: faker.system.mimeType(),
       image_tag: faker.system.fileName(),
       payload: {},
+      configuration: {
+        parameters: [],
+        dataset_input_argument: "",
+        dataset_input_value: "",
+        dataset_output_argument: "",
+        dataset_output_value: "",
+        command: "",
+      },
       version: faker.system.semver(),
     });
 
