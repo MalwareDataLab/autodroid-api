@@ -12,6 +12,10 @@ import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPe
 // Repository import
 import { IProcessorRepository } from "@shared/container/repositories";
 
+// Util import
+import { validateProcessorConfigurationParameters } from "@modules/processor/utils/validateProcessorConfigurationParameters.util";
+import { validateAndGetProcessorAllowedMimeTypes } from "@modules/processor/utils/parseAndValidateProcessorAllowedMimeTypes.util";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Processor } from "@modules/processor/entities/processor.entity";
@@ -50,9 +54,21 @@ class AdminProcessorCreateService {
         ),
       });
 
+    const allowed_mime_types = validateAndGetProcessorAllowedMimeTypes({
+      allowed_mime_types: data.allowed_mime_types,
+      t,
+    });
+
+    validateProcessorConfigurationParameters({
+      parameters: data.configuration.parameters,
+      t,
+    });
+
     const processor = await this.processorRepository.createOne({
       ...data,
+      allowed_mime_types: allowed_mime_types.join(","),
       user_id: user.id,
+      payload: {},
     });
 
     return processor;

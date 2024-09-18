@@ -31,6 +31,7 @@ type Dataset {
   file: File!
   file_id: String!
   id: ID!
+  processes(after: ConnectionCursor, before: ConnectionCursor, dataset_id: String, finished: Boolean, first: Int, last: Int, processor_id: String, skip: Int, sorting: [SortingFieldSchema!], started: Boolean, status: PROCESSING_STATUS, take: Int, visibility: PROCESSING_VISIBILITY): ProcessingPaginationConnection!
   tags: String
   updated_at: DateTimeISO!
   user: User!
@@ -110,11 +111,28 @@ type Mutation {
   userDatasetDelete(dataset_id: String!): Dataset!
   userDatasetRequestPublication(dataset_id: String!): Dataset!
   userDatasetUpdate(data: UserDatasetUpdateSchema!, dataset_id: String!): Dataset!
+  userProcessingDelete(processing_id: String!): Processing!
+  userProcessingExtendKeepUntil(keep_until: DateTimeISO!, processing_id: String!): Processing!
+  userProcessingUpdateVisibility(processing_id: String!, visibility: PROCESSING_VISIBILITY!): Processing!
+  userRequestDatasetProcessing(data: RequestDatasetProcessingSchema!): Processing!
   userSessionsClose: UserAuthProviderConn!
   userUpdateData(data: UserUpdateDataSchema!): User!
 }
 
-enum PROCESSOR_PARAM_TYPE {
+enum PROCESSING_STATUS {
+  CANCELLED
+  FAILED
+  PENDING
+  RUNNING
+  SUCCEEDED
+}
+
+enum PROCESSING_VISIBILITY {
+  PRIVATE
+  PUBLIC
+}
+
+enum PROCESSOR_PARAMETER_TYPE {
   BOOLEAN
   INTEGER
   STRING
@@ -132,18 +150,80 @@ type PageInfo {
   startCursor: String
 }
 
+type Processing {
+  configuration: JSON!
+  created_at: DateTimeISO!
+  dataset: Dataset!
+  dataset_id: String!
+  finished_at: DateTimeISO
+  id: ID!
+  keep_until: DateTimeISO
+  payload: JSON!
+  processor: Processor!
+  processor_id: String!
+  result_file: File
+  result_file_id: String
+  started_at: DateTimeISO
+  status: PROCESSING_STATUS!
+  updated_at: DateTimeISO!
+  user: User!
+  user_id: String!
+  visibility: PROCESSING_VISIBILITY!
+  worker_id: String
+}
+
+type ProcessingPaginationConnection {
+  edges: [ProcessingPaginationEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProcessingPaginationEdge {
+  cursor: ConnectionCursor!
+  node: Processing!
+}
+
 type Processor {
   allowed_mime_types: String!
+  configuration: ProcessorConfiguration!
   created_at: DateTimeISO!
   description: String
   id: ID!
   image_tag: String!
   name: String!
   payload: JSON!
+  processes(after: ConnectionCursor, before: ConnectionCursor, dataset_id: String, finished: Boolean, first: Int, last: Int, processor_id: String, skip: Int, sorting: [SortingFieldSchema!], started: Boolean, status: PROCESSING_STATUS, take: Int, visibility: PROCESSING_VISIBILITY): ProcessingPaginationConnection!
   tags: String
   updated_at: DateTimeISO!
   version: String!
   visibility: PROCESSOR_VISIBILITY!
+}
+
+type ProcessorConfiguration {
+  command: String!
+  dataset_input_argument: String!
+  dataset_input_value: String!
+  dataset_output_argument: String!
+  dataset_output_value: String!
+  parameters: [ProcessorParameter!]!
+}
+
+input ProcessorConfigurationParameterSchema {
+  default_value: String
+  description: String!
+  is_required: Boolean!
+  name: String!
+  sequence: Int!
+  type: PROCESSOR_PARAMETER_TYPE!
+}
+
+input ProcessorConfigurationSchema {
+  command: String!
+  dataset_input_argument: String!
+  dataset_input_value: String!
+  dataset_output_argument: String!
+  dataset_output_value: String!
+  parameters: [ProcessorConfigurationParameterSchema!]!
 }
 
 type ProcessorPaginationConnection {
@@ -157,26 +237,21 @@ type ProcessorPaginationEdge {
   node: Processor!
 }
 
-input ProcessorPayloadParamSchema {
+type ProcessorParameter {
   default_value: String
   description: String!
+  is_required: Boolean!
   name: String!
   sequence: Int!
-  type: PROCESSOR_PARAM_TYPE!
-}
-
-input ProcessorPayloadSchema {
-  params: [ProcessorPayloadParamSchema!]!
-  required_cpu_cores: Int!
-  required_ram_mb: Int!
+  type: PROCESSOR_PARAMETER_TYPE!
 }
 
 input ProcessorSchema {
   allowed_mime_types: String!
+  configuration: ProcessorConfigurationSchema!
   description: String
   image_tag: String!
   name: String!
-  payload: ProcessorPayloadSchema!
   tags: String
   version: String!
   visibility: PROCESSOR_VISIBILITY!
@@ -195,8 +270,21 @@ type Query {
   user: User!
   userDataset(dataset_id: String!): Dataset!
   userDatasets(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): DatasetPaginationConnection!
+  userProcesses(after: ConnectionCursor, before: ConnectionCursor, dataset_id: String, finished: Boolean, first: Int, last: Int, processor_id: String, skip: Int, sorting: [SortingFieldSchema!], started: Boolean, status: PROCESSING_STATUS, take: Int, visibility: PROCESSING_VISIBILITY): ProcessingPaginationConnection!
+  userProcessing(processing_id: String!): Processing!
   userProcessor(processor_id: String!): Processor!
   userProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection!
+}
+
+input RequestDatasetProcessingParameterSchema {
+  name: String!
+  value: String!
+}
+
+input RequestDatasetProcessingSchema {
+  dataset_id: String!
+  parameters: [RequestDatasetProcessingParameterSchema!]!
+  processor_id: String!
 }
 
 enum SORT_ORDER {
@@ -271,13 +359,18 @@ input UserUpdateDataSchema {
 }
 
 type Worker {
+  agent_info: JSON!
   archived_at: DateTimeISO
   created_at: DateTimeISO!
   id: ID!
+  internal_id: String!
   payload: JSON!
   refresh_token: String!
+  refresh_token_expires_at: DateTimeISO!
   registration_token: WorkerRegistrationToken!
   registration_token_id: String!
+  signature: String!
+  system_info: JSON!
   updated_at: DateTimeISO!
   user_id: String!
 }

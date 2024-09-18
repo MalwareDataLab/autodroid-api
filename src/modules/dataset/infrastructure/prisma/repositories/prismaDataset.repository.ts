@@ -29,7 +29,7 @@ import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
   ICreateDatasetDTO,
   IFindDatasetDTO,
-  IFindManyPublicOrUserPrivateDTO,
+  IFindDatasetPublicOrUserPrivateDTO,
   IUpdateDatasetDTO,
 } from "@modules/dataset/types/IDataset.dto";
 
@@ -38,7 +38,7 @@ class PrismaDatasetRepository implements IDatasetRepository {
   private readonly relations = {
     user: true,
     file: true,
-  };
+  } satisfies DatabaseHelperTypes.DatasetInclude;
 
   constructor(
     @inject("DatabaseProvider")
@@ -54,6 +54,22 @@ class PrismaDatasetRepository implements IDatasetRepository {
       user_id,
       file_id,
       visibility,
+    };
+  }
+
+  private getWhereClausePublicOrUserPrivate(
+    filter: IFindDatasetPublicOrUserPrivateDTO,
+    relations_enabled = true,
+  ): DatabaseHelperTypes.DatasetWhereInput {
+    return {
+      ...this.getWhereClause(filter, relations_enabled),
+      OR: [
+        { visibility: DATASET_VISIBILITY.PUBLIC },
+        {
+          visibility: DATASET_VISIBILITY.PRIVATE,
+          user_id: filter.user_id,
+        },
+      ],
     };
   }
 
@@ -91,22 +107,12 @@ class PrismaDatasetRepository implements IDatasetRepository {
   }
 
   public async findManyPublicOrUserPrivate(
-    { user_id }: IFindManyPublicOrUserPrivateDTO,
+    filter: IFindDatasetPublicOrUserPrivateDTO,
     pagination?: IPaginationDTO,
     sorting?: ISortingDTO<typeof DatasetSortingOptions>,
   ): Promise<Dataset[]> {
     const datasets = await this.databaseProvider.client.dataset.findMany({
-      where: {
-        OR: [
-          {
-            visibility: DATASET_VISIBILITY.PUBLIC,
-          },
-          {
-            visibility: DATASET_VISIBILITY.PRIVATE,
-            user_id,
-          },
-        ],
-      },
+      where: this.getWhereClausePublicOrUserPrivate(filter),
 
       include: this.relations,
 
@@ -123,6 +129,14 @@ class PrismaDatasetRepository implements IDatasetRepository {
   public async getCount(filter: IFindDatasetDTO): Promise<number> {
     return this.databaseProvider.client.dataset.count({
       where: this.getWhereClause(filter, false),
+    });
+  }
+
+  public async getCountPublicOrUserPrivate(
+    filter: IFindDatasetPublicOrUserPrivateDTO,
+  ): Promise<number> {
+    return this.databaseProvider.client.dataset.count({
+      where: this.getWhereClausePublicOrUserPrivate(filter, false),
     });
   }
 

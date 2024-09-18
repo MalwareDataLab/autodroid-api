@@ -3,7 +3,7 @@ import { CorsOptions } from "cors";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
-const getCorsConfig: () => CorsOptions = () => {
+const getCorsConfig = (): CorsOptions => {
   const envConfig = getEnvConfig();
 
   return {

@@ -3,7 +3,7 @@ export interface IFirebaseSessionDTO {
   localId: string;
   refreshToken: string;
   email: string;
-  displayName: string;
+  displayName: string | null;
 }
 
 export const startAndGetSessionToken =
@@ -30,6 +30,5 @@ export const startAndGetSessionToken =
 
     if (!data.idToken) throw new Error("Fail to start session.");
 
-    console.log(data.idToken);
     return data;
   };

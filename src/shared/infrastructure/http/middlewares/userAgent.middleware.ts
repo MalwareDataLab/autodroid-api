@@ -33,9 +33,9 @@ class ProcessUserAgentInfo {
       isMobile,
       isDesktop,
 
-      ip: Array.isArray(req.headers["X-Forwarded-For"])
-        ? req.headers["X-Forwarded-For"][0]
-        : req.headers["X-Forwarded-For"] || req.socket.remoteAddress || req.ip,
+      ip: Array.isArray(req.headers["x-forwarded-for"])
+        ? req.headers["x-forwarded-for"][0]
+        : req.headers["x-forwarded-for"] || req.socket.remoteAddress || req.ip,
       browser: {
         name: browser,
         version,

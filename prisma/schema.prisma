@@ -25,10 +25,11 @@ model User {
   updated_at DateTime @updatedAt
 
   auth_provider_conns        UserAuthProviderConn[]    @relation(name: "UserAuthProviderConn_User")
-  datasets                   Dataset[]                 @relation(name: "Dataset_User")
-  processors                 Processor[]               @relation(name: "Processor_User")
   worker_registration_tokens WorkerRegistrationToken[] @relation(name: "WorkerRegistrationToken_User")
   workers                    Worker[]                  @relation(name: "Worker_User")
+  datasets                   Dataset[]                 @relation(name: "Dataset_User")
+  processors                 Processor[]               @relation(name: "Processor_User")
+  processes                  Processing[]              @relation(name: "Processing_User")
 
   @@index([email])
   @@index([created_at, id], map: "users_pagination_idx")
@@ -81,7 +82,8 @@ model File {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  dataset Dataset? @relation(name: "Dataset_File")
+  dataset   Dataset?     @relation(name: "Dataset_File")
+  processes Processing[] @relation(name: "Processing_ResultFile")
 
   @@map("files")
 }
@@ -102,6 +104,8 @@ model Dataset {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  processes Processing[] @relation(name: "Processing_Dataset")
 
   @@map("datasets")
 }
@@ -124,10 +128,13 @@ model Processor {
 
   visibility String
 
-  payload Json
+  configuration Json
+  payload       Json
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  processes Processing[] @relation(name: "Processing_Processor")
 
   @@map("processors")
 }
@@ -164,14 +171,59 @@ model Worker {
   registration_token_id String
   registration_token    WorkerRegistrationToken @relation(name: "WorkerRegistrationToken_Worker", fields: [registration_token_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  refresh_token String
+  refresh_token            String
+  refresh_token_expires_at DateTime
 
-  payload Json
+  internal_id String
+  signature   String @unique
+
+  system_info Json
+  agent_info  Json
+  payload     Json
 
   archived_at DateTime?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  processes Processing[] @relation(name: "Processing_Worker")
+
+  @@index([refresh_token])
   @@map("workers")
+}
+
+model Processing {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(name: "Processing_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  processor_id String
+  processor    Processor @relation(name: "Processing_Processor", fields: [processor_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  dataset_id String
+  dataset    Dataset @relation(name: "Processing_Dataset", fields: [dataset_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  worker_id String?
+  worker    Worker? @relation(name: "Processing_Worker", fields: [worker_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  result_file_id String?
+  result_file    File?   @relation(name: "Processing_ResultFile", fields: [result_file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  status String
+
+  visibility String
+
+  started_at  DateTime?
+  finished_at DateTime?
+
+  keep_until DateTime?
+
+  configuration Json
+  payload       Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("processes")
 }

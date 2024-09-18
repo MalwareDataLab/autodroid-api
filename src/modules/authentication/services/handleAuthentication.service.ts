@@ -97,7 +97,7 @@ class HandleAuthenticationService {
       user_auth_provider_conn: userSession.user_auth_provider_conn,
       user_session: userSession,
       is_admin: user.is_admin,
-    });
+    } satisfies Session);
   }
 }
 

@@ -2,6 +2,9 @@
 import { Socket } from "socket.io";
 import { container } from "tsyringe";
 
+// Error import
+import { WebsocketUnauthorizedError } from "@shared/infrastructure/websocket/errors/WebsocketUnauthorized.error";
+
 // Service import
 import { HandleAuthenticationService } from "@modules/authentication/services/handleAuthentication.service";
 
@@ -11,9 +14,9 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-} from "../types";
+} from "@shared/infrastructure/websocket/types";
 
-export const websocketAuthenticationMiddleware = async (
+export const websocketUserAuthenticationMiddleware = async (
   socket: Socket<
     ClientToServerEvents,
     ServerToClientEvents,
@@ -24,7 +27,7 @@ export const websocketAuthenticationMiddleware = async (
 ): Promise<void> => {
   const { auth } = socket.handshake;
 
-  if (auth?.token) {
+  if (auth.kind === "USER" && auth.token) {
     const [, access_token] = auth.token.split(" ");
 
     try {
@@ -38,14 +41,14 @@ export const websocketAuthenticationMiddleware = async (
         language: (socket.request as any).language,
       });
 
-      socket.data.session = session;
+      socket.data.kind = "USER";
+      socket.data.user_session = session;
 
       next();
     } catch {
-      next(new Error("unauthorized"));
+      next(new WebsocketUnauthorizedError());
     }
+  } else {
+    next();
   }
-
-  if (socket.data.session) next();
-  else next(new Error("unauthorized"));
 };

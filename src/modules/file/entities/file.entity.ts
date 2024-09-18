@@ -15,8 +15,9 @@ import { FileEntityType } from "@shared/types/models";
 import { JSONScalar } from "@shared/types/json.scalar";
 
 // Entity import
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 
 // Enum import
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
@@ -82,6 +83,10 @@ class File implements FileEntityType {
   @Exclude()
   @Type(() => Dataset)
   dataset: Dataset;
+
+  @Exclude()
+  @Type(() => Processing)
+  processes: Processing[];
 }
 
 const PaginatedFile = PaginationConnection(File);

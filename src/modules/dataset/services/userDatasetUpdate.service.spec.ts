@@ -21,6 +21,7 @@ describe("Service: UserDatasetUpdateService", () => {
       findMany: vi.fn(),
       findManyPublicOrUserPrivate: vi.fn(),
       getCount: vi.fn(),
+      getCountPublicOrUserPrivate: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),
     };

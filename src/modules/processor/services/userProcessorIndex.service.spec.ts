@@ -26,6 +26,7 @@ describe("Service: UserProcessorIndexService", () => {
       createOne: vi.fn(),
       findOne: vi.fn(),
       findMany: vi.fn(),
+      getAllowedMimeTypes: vi.fn(),
       getCount: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),

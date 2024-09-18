@@ -1,25 +1,30 @@
+// Type import
+import { BaseEntityFields } from "@shared/types/baseEntityFields.type";
+
 // Entity import
 import { Dataset } from "../entities/dataset.entity";
 
+export type DatasetRelationFields = "user" | "file" | "processes";
+
+export type DatasetForeignKeys = "user_id" | "file_id";
+
+export type IDatasetBase = Omit<Dataset, DatasetRelationFields>;
+
 export type ICreateDatasetDTO = Omit<
   Dataset,
-  "id" | "created_at" | "updated_at" | "toJSON" | "file" | "user"
-> & {
-  file_id: string;
-  user_id: string;
-};
-
-export type IUpdateDatasetDTO = Partial<
-  Omit<ICreateDatasetDTO, "user_id" | "file_id">
+  // Base
+  | BaseEntityFields
+  // Relations
+  | DatasetRelationFields
 >;
 
-export type IFindDatasetDTO = {
-  id?: Dataset["id"];
-  user_id?: Dataset["user_id"];
-  file_id?: Dataset["file_id"];
-  visibility?: Dataset["visibility"];
-};
+export type IUpdateDatasetDTO = Partial<
+  Omit<ICreateDatasetDTO, DatasetForeignKeys>
+>;
 
-export type IFindManyPublicOrUserPrivateDTO = {
-  user_id: Dataset["user_id"];
-};
+export type IFindDatasetDTO = Partial<
+  Pick<Dataset, "id" | "user_id" | "file_id" | "visibility">
+>;
+
+export type IFindDatasetPublicOrUserPrivateDTO = IFindDatasetDTO &
+  Pick<Dataset, "user_id">;

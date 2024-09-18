@@ -3,7 +3,7 @@ import { BuildSchemaOptions } from "type-graphql";
 /**
  * General
  */
-import { FileResolver } from "@modules/file/infrastructure/graphql/resolvers/file.resolver";
+import { FileFieldResolver } from "@modules/file/infrastructure/graphql/resolvers/fileField.resolver";
 
 /**
  * Admin
@@ -20,14 +20,17 @@ import { UserResolver } from "@modules/user/infrastructure/graphql/resolvers/use
 import { UserUpdateDataResolver } from "@modules/user/infrastructure/graphql/resolvers/userUpdateData.resolver";
 import { UserSessionResolver } from "@modules/user/infrastructure/graphql/resolvers/userSession.resolver";
 import { UserDatasetResolver } from "@modules/dataset/infrastructure/graphql/resolvers/userDataset.resolver";
+import { UserDatasetFieldResolver } from "@modules/dataset/infrastructure/graphql/resolvers/userDatasetField.resolver";
 import { UserProcessorResolver } from "@modules/processor/infrastructure/graphql/resolvers/userProcessor.resolver";
+import { UserProcessorFieldResolver } from "@modules/processor/infrastructure/graphql/resolvers/userProcessorField.resolver";
+import { UserProcessingResolver } from "@modules/processing/infrastructure/graphql/resolvers/userProcessing.resolver";
 
 const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
   resolvers: [
     /**
      * General
      */
-    FileResolver,
+    FileFieldResolver,
 
     /**
      * Admin
@@ -44,7 +47,10 @@ const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
     UserUpdateDataResolver,
     UserSessionResolver,
     UserDatasetResolver,
+    UserDatasetFieldResolver,
     UserProcessorResolver,
+    UserProcessorFieldResolver,
+    UserProcessingResolver,
   ],
 };
 

@@ -41,7 +41,7 @@ describe("E2E: UserResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.session.user).toMatchObject({
-      name: context.session.displayName,
+      name: context.session.displayName || null,
       email: context.session.email,
     });
   });

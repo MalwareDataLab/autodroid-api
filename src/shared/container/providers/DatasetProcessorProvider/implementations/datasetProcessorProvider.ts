@@ -1,17 +1,16 @@
-// Processor import
-import processors from "@/processors.json";
-
 // Interface import
+import { inject, injectable } from "tsyringe";
+import { IDatasetRepository } from "@shared/container/repositories";
 import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider";
 
+@injectable()
 class DatasetProcessorProvider implements IDatasetProcessorProvider {
-  public initialization = Promise.resolve();
+  public readonly initialization: Promise<void>;
 
-  public getAcceptedMimeTypes(): string[] {
-    return Object.values(processors).flatMap(
-      processor => processor.allowed_mime_types,
-    );
-  }
+  constructor(
+    @inject("DatasetRepository")
+    private datasetRepository: IDatasetRepository,
+  ) {}
 }
 
 export { DatasetProcessorProvider };

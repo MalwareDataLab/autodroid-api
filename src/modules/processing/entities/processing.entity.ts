@@ -1,0 +1,95 @@
+import { Field, ID, ObjectType } from "type-graphql";
+import { Exclude, Type } from "class-transformer";
+
+// Scalar import
+import { JSONScalar } from "@shared/types/json.scalar";
+
+// Type import
+import { ProcessingEntityType } from "@shared/types/models";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { File } from "@modules/file/entities/file.entity";
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Worker } from "@modules/worker/entities/worker.entity";
+import { Processor } from "@modules/processor/entities/processor.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+
+// Enum import
+import { PROCESSING_STATUS } from "../types/processingStatus.enum";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+
+@ObjectType()
+class Processing implements ProcessingEntityType {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => PROCESSING_STATUS)
+  status: PROCESSING_STATUS;
+
+  @Field(() => PROCESSING_VISIBILITY)
+  visibility: PROCESSING_VISIBILITY;
+
+  @Field(() => Date, { nullable: true })
+  started_at: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  finished_at: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  keep_until: Date | null;
+
+  @Field(() => JSONScalar)
+  configuration: Record<string, any>;
+
+  @Field(() => JSONScalar)
+  payload: Record<string, any>;
+
+  @Field()
+  created_at: Date;
+
+  @Field()
+  updated_at: Date;
+
+  /* Relations */
+
+  @Field()
+  user_id: string;
+
+  @Type(() => User)
+  @Field(() => User)
+  user: User;
+
+  @Field()
+  processor_id: string;
+
+  @Field(() => Processor)
+  @Type(() => Processor)
+  processor: Processor;
+
+  @Field()
+  dataset_id: string;
+
+  @Field(() => Dataset)
+  @Type(() => Dataset)
+  dataset: Dataset;
+
+  @Field(() => String, { nullable: true })
+  worker_id: string | null;
+
+  @Exclude()
+  @Type(() => Worker)
+  worker: Worker | null;
+
+  @Field(() => String, { nullable: true })
+  result_file_id: string | null;
+
+  @Field(() => File, { nullable: true })
+  @Type(() => File)
+  result_file: File | null;
+}
+
+const PaginatedProcessing = PaginationConnection(Processing);
+
+export type PaginatedProcessing = InstanceType<typeof PaginatedProcessing>;
+export { Processing, PaginatedProcessing };

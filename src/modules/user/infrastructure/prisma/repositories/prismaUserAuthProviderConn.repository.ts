@@ -33,10 +33,9 @@ import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUse
 class PrismaUserAuthProviderConnRepository
   implements IUserAuthProviderConnRepository
 {
-  private readonly relations: DatabaseHelperTypes.UserAuthProviderConnInclude =
-    {
-      user: true,
-    };
+  private readonly relations = {
+    user: true,
+  } satisfies DatabaseHelperTypes.UserAuthProviderConnInclude;
 
   constructor(
     @inject("DatabaseProvider")

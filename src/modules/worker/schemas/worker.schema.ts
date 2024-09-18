@@ -1,6 +1,9 @@
-import { IsBoolean, IsUUID } from "class-validator";
+import { IsBoolean, IsHash, IsUUID, IsObject } from "class-validator";
 import { ArgsType, Field } from "type-graphql";
 import { plainToInstance } from "class-transformer";
+
+// Scalar import
+import { JSONScalar } from "@shared/types/json.scalar";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
@@ -8,6 +11,42 @@ import { IsNullable } from "@shared/decorators/isNullable.decorator";
 
 // DTO import
 import { IFindWorkerDTO } from "../types/IWorker.dto";
+
+@ArgsType()
+class WorkerRegisterSchema {
+  @IsObject()
+  @Field(() => JSONScalar)
+  system_info: Record<string, any>;
+
+  @ValidString()
+  @Field()
+  registration_token: string;
+
+  @ValidString()
+  @IsUUID()
+  @Field()
+  internal_id: string;
+
+  @ValidString()
+  @IsHash("sha256")
+  @Field()
+  signature: string;
+}
+
+@ArgsType()
+class WorkerIdentificationSchema extends WorkerRegisterSchema {
+  @ValidString()
+  @IsUUID()
+  @Field()
+  worker_id: string;
+}
+
+@ArgsType()
+class WorkerRefreshTokenSchema extends WorkerIdentificationSchema {
+  @ValidString()
+  @Field()
+  refresh_token: string;
+}
 
 @ArgsType()
 class WorkerIndexSchema implements IFindWorkerDTO {
@@ -31,4 +70,4 @@ class WorkerIndexSchema implements IFindWorkerDTO {
   }
 }
 
-export { WorkerIndexSchema };
+export { WorkerRegisterSchema, WorkerRefreshTokenSchema, WorkerIndexSchema };

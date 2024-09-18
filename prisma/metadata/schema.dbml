@@ -11,10 +11,11 @@ Table users {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   auth_provider_conns user_auth_provider_conns [not null]
-  datasets datasets [not null]
-  processors processors [not null]
   worker_registration_tokens worker_registration_tokens [not null]
   workers workers [not null]
+  datasets datasets [not null]
+  processors processors [not null]
+  processes processes [not null]
 }
 
 Table user_auth_provider_conns {
@@ -47,6 +48,7 @@ Table files {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   dataset datasets
+  processes processes [not null]
 }
 
 Table datasets {
@@ -60,6 +62,7 @@ Table datasets {
   visibility String [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  processes processes [not null]
 }
 
 Table processors {
@@ -73,9 +76,11 @@ Table processors {
   tags String
   allowed_mime_types String [not null]
   visibility String [not null]
+  configuration Json [not null]
   payload Json [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
+  processes processes [not null]
 }
 
 Table worker_registration_tokens {
@@ -99,8 +104,37 @@ Table workers {
   registration_token_id String [not null]
   registration_token worker_registration_tokens [not null]
   refresh_token String [not null]
+  refresh_token_expires_at DateTime [not null]
+  internal_id String [not null]
+  signature String [unique, not null]
+  system_info Json [not null]
+  agent_info Json [not null]
   payload Json [not null]
   archived_at DateTime
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  processes processes [not null]
+}
+
+Table processes {
+  id String [pk]
+  user_id String [not null]
+  user users [not null]
+  processor_id String [not null]
+  processor processors [not null]
+  dataset_id String [not null]
+  dataset datasets [not null]
+  worker_id String
+  worker workers
+  result_file_id String
+  result_file files
+  status String [not null]
+  visibility String [not null]
+  started_at DateTime
+  finished_at DateTime
+  keep_until DateTime
+  configuration Json [not null]
+  payload Json [not null]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
 }
@@ -118,3 +152,13 @@ Ref: worker_registration_tokens.user_id > users.id [delete: Cascade]
 Ref: workers.user_id > users.id [delete: Restrict]
 
 Ref: workers.registration_token_id > worker_registration_tokens.id [delete: Restrict]
+
+Ref: processes.user_id > users.id [delete: Cascade]
+
+Ref: processes.processor_id > processors.id [delete: Cascade]
+
+Ref: processes.dataset_id > datasets.id [delete: Cascade]
+
+Ref: processes.worker_id > workers.id [delete: Cascade]
+
+Ref: processes.result_file_id > files.id [delete: Cascade]

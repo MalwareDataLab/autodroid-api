@@ -6,7 +6,7 @@ import { Worker } from "../entities/worker.entity";
 
 export type WorkerComputedFields = "status";
 
-export type WorkerRelationFields = "user" | "registration_token";
+export type WorkerRelationFields = "user" | "registration_token" | "processes";
 
 export type IWorkerBase = Omit<
   Worker,
@@ -24,8 +24,17 @@ export type ICreateWorkerDTO = Omit<
 >;
 
 export type IFindWorkerDTO = Partial<
-  Pick<Worker, "id" | "refresh_token" | "user_id" | "registration_token_id">
+  Pick<
+    Worker,
+    | "id"
+    | "refresh_token"
+    | "user_id"
+    | "registration_token_id"
+    | "internal_id"
+    | "signature"
+  >
 > & {
+  registration_token?: string;
   archived?: boolean;
 };
 

@@ -5,7 +5,8 @@ import { userAuthenticationMiddleware } from "@modules/user/infrastructure/http/
 
 // Router import
 import { healthCheckRouter } from "@modules/healthcheck/infrastructure/http/routes/healthCheck.routes";
-import { adminRouter } from "@modules/admin/infrastructure/http/routes/admin.router";
+import { workerRouter } from "@modules/worker/infrastructure/http/routes/worker.routes";
+import { adminRouter } from "@modules/admin/infrastructure/http/routes/admin.routes";
 import { userRouter } from "@modules/user/infrastructure/http/routes/user.routes";
 import { userDatasetRouter } from "@modules/dataset/infrastructure/http/routes/userDataset.routes";
 import { userProcessorRouter } from "@modules/processor/infrastructure/http/routes/userProcessor.routes";
@@ -13,6 +14,8 @@ import { userProcessorRouter } from "@modules/processor/infrastructure/http/rout
 const router = Router();
 
 router.use("/health", healthCheckRouter);
+
+router.use("/worker", workerRouter);
 
 router.use("/admin", userAuthenticationMiddleware, adminRouter);
 

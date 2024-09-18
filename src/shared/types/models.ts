@@ -61,3 +61,11 @@ export type WorkerEntityType = PrismaEntityType<
     };
   }>
 >;
+
+export type ProcessingEntityType = PrismaEntityType<
+  Prisma.ProcessingGetPayload<{
+    include: {
+      [key in keyof Prisma.ProcessingInclude]: true;
+    };
+  }>
+>;

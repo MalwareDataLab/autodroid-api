@@ -10,7 +10,10 @@ import { AppError } from "@shared/errors/AppError";
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
 // Repository import
-import { IProcessorRepository } from "@shared/container/repositories";
+import {
+  IProcessingRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
@@ -28,6 +31,9 @@ class AdminProcessorDeleteService {
   constructor(
     @inject("ProcessorRepository")
     private processorRepository: IProcessorRepository,
+
+    @inject("ProcessingRepository")
+    private processingRepository: IProcessingRepository,
   ) {}
 
   @RequireAdminPermission()
@@ -36,6 +42,19 @@ class AdminProcessorDeleteService {
     language,
   }: IRequest): Promise<Processor> {
     const t = await i18n(language);
+
+    const processes = await this.processingRepository.findOne({
+      processor_id,
+    });
+
+    if (processes)
+      throw new AppError({
+        key: "@admin_processor_delete_service/PROCESSOR_IN_USE",
+        message: t(
+          "@admin_processor_delete_service/PROCESSOR_IN_USE",
+          "Processor is in use.",
+        ),
+      });
 
     const processor = await this.processorRepository.deleteOne({
       id: processor_id,

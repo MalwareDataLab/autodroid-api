@@ -5,7 +5,7 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-abstract class DateHelpers {
+abstract class DateHelper {
   static adapter = dayjs;
 
   static isAfter(date1: string | Date, date2: string | Date): boolean {
@@ -44,9 +44,17 @@ abstract class DateHelpers {
     return dayjs.utc(date).format(formatStr);
   }
 
-  static parse(dateStr: string, formatStr: string): dayjs.Dayjs {
-    return dayjs.utc(dateStr, formatStr);
+  static parseISOString(dateStr: string): dayjs.Dayjs {
+    return dayjs.utc(dateStr);
+  }
+
+  static parse(
+    config: dayjs.ConfigType,
+    format?: string,
+    strict?: boolean,
+  ): dayjs.Dayjs {
+    return dayjs.utc(config, format, strict);
   }
 }
 
-export { DateHelpers };
+export { DateHelper };

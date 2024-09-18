@@ -33,8 +33,8 @@ import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories
 class PrismaWorkerRegistrationTokenRepository
   implements IWorkerRegistrationTokenRepository
 {
-  private readonly relations: DatabaseHelperTypes.WorkerRegistrationTokenInclude =
-    {};
+  private readonly relations =
+    {} satisfies DatabaseHelperTypes.WorkerRegistrationTokenInclude;
 
   constructor(
     @inject("DatabaseProvider")

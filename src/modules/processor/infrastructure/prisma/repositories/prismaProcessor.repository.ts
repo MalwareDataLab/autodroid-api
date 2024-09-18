@@ -33,7 +33,7 @@ import {
 class PrismaProcessorRepository implements IProcessorRepository {
   private readonly relations = {
     user: true,
-  };
+  } satisfies DatabaseHelperTypes.ProcessorInclude;
 
   constructor(
     @inject("DatabaseProvider")
@@ -82,6 +82,14 @@ class PrismaProcessorRepository implements IProcessorRepository {
     });
 
     return parse(Processor, processors);
+  }
+
+  public async getAllowedMimeTypes(): Promise<string[]> {
+    const data = await this.databaseProvider.client.processor.findMany({
+      select: { allowed_mime_types: true },
+    });
+
+    return data.flatMap(processor => processor.allowed_mime_types.split(","));
   }
 
   public async getCount(filter: IFindProcessorDTO): Promise<number> {
