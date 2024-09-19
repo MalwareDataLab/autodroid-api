@@ -71,6 +71,11 @@ class BullJobProvider implements IJobProvider {
     @inject("InMemoryDatabaseProvider")
     private inMemoryDatabaseProvider: IInMemoryDatabaseProvider,
   ) {
+    if (getEnvConfig().JOBS_ENABLED !== "true") {
+      this.initialization = Promise.resolve();
+      return;
+    }
+
     this.inMemoryDatabaseClient = new this.inMemoryDatabaseProvider.Adapter(
       "jobs_client",
       defaultOptions => ({
@@ -93,17 +98,15 @@ class BullJobProvider implements IJobProvider {
   }
 
   private async init() {
-    if (getEnvConfig().JOBS_ENABLED === "true") {
-      await this.start();
+    await this.start();
 
-      await this.startCronJobs();
+    await this.startCronJobs();
 
-      this.process();
+    this.process();
 
-      this.log(
-        `🆗 Processing background jobs on ${getEnvConfig().APP_INFO.name || "API"}.`,
-      );
-    }
+    this.log(
+      `🆗 Processing background jobs on ${getEnvConfig().APP_INFO.name || "API"}.`,
+    );
   }
 
   private async startCronJobs() {

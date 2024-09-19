@@ -86,6 +86,14 @@ class AppError extends Error {
   static make(params: IAppError) {
     return new AppError(params);
   }
+
+  static isInstance(error: unknown): error is AppError {
+    if (!error) return false;
+    return (
+      error instanceof AppError ||
+      (error as any).handler === AppError.prototype.name
+    );
+  }
 }
 
 export { AppError };

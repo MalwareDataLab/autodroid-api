@@ -311,6 +311,7 @@ type User {
   created_at: DateTimeISO!
   email: String!
   id: ID!
+  is_admin: Boolean!
   language: String
   name: String
   phone_number: String

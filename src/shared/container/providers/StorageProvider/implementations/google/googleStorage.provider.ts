@@ -110,6 +110,14 @@ class GoogleStorageProvider implements IStorageProvider {
       if (!this.bucket) {
         try {
           const bucket = this.provider.bucket(this.configuration.bucket_name);
+          await bucket.setCorsConfiguration([
+            {
+              maxAgeSeconds: 3600,
+              method: ["GET", "HEAD", "PUT", "POST", "DELETE"],
+              origin: ["*"],
+              responseHeader: ["*"],
+            },
+          ]);
           const exists = await bucket.exists();
           if (!exists[0]) throw new Error();
         } catch (error) {
@@ -415,17 +423,7 @@ class GoogleStorageProvider implements IStorageProvider {
     try {
       const [exists] = await bucket.file(path).exists();
 
-      if (!exists)
-        throw new AppError({
-          key: "@google_storage_provider_remove_file_by_path/FILE_NOT_FOUND",
-          message: t(
-            "@google_storage_provider_remove_file_by_path/FILE_NOT_FOUND",
-            "File not found.",
-          ),
-          statusCode: 404,
-        });
-
-      await bucket.file(path).delete();
+      if (exists === true) await bucket.file(path).delete();
 
       const fileRegistry = await this.fileRepository.findOne({
         provider_path: path,
