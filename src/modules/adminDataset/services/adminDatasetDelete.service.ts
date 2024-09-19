@@ -76,10 +76,6 @@ class AdminDatasetDeleteService {
       id: dataset.id,
     });
 
-    await this.fileRepository.deleteOne({
-      id: file.id,
-    });
-
     await this.storageProvider.removeFileByPath({
       path: file.provider_path,
       language,

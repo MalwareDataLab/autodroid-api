@@ -45,32 +45,24 @@ export function errorHandler(
   dispatchedError: any,
 ): GraphQLFormattedError {
   const error = unwrapResolverError(dispatchedError) as any;
+  const { originalError } = error;
 
   try {
-    if (
-      error instanceof AppError ||
-      (error as any).handler === AppError.prototype.name ||
-      (!!error.originalError &&
-        error.originalError instanceof AppError &&
-        (error.originalError as any)?.handler === AppError.prototype.name)
-    ) {
+    const appError = AppError.isInstance(originalError)
+      ? originalError
+      : AppError.isInstance(error)
+        ? error
+        : null;
+
+    if (appError)
       return {
         ...formattedError,
-        message:
-          error.message ||
-          error.originalError?.message ||
-          "Internal server error.",
+        message: appError.message || "Internal server error.",
         extensions: {
-          code:
-            error.key ||
-            error.originalError?.key ||
-            ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
-          ...((!!error.debug || !!error.originalError?.debug) && {
-            isFatal: true,
-          }),
+          code: appError.key || ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+          ...(!!appError.debug && { fatal: true }),
         },
       };
-    }
 
     if (error instanceof TypeGraphQLAuthenticationError)
       return {

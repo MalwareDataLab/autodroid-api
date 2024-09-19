@@ -26,7 +26,7 @@ const validateAndGetProcessorAllowedMimeTypes = ({
       mimeType =>
         !mimeType ||
         !isMimeType(mimeType) ||
-        !Object.keys(MIME_TYPE).includes(mimeType),
+        !Object.values(MIME_TYPE).includes(mimeType as MIME_TYPE),
     )
   )
     throw new AppError({

@@ -1,5 +1,5 @@
 import {
-  Authorized,
+  // Authorized,
   Directive,
   Field,
   ID,
@@ -67,7 +67,7 @@ class File implements FileEntityType {
   @Field()
   md5_hash: string;
 
-  @Authorized(["ADMIN"])
+  // @Authorized(["ADMIN"])
   @Directive("@auth(requires: ADMIN)")
   @Field(() => JSONScalar)
   payload: Record<string, any>;

@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { Exclude, Type } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 
 // Configuration import
 import { getAdminConfig } from "@config/admin";
@@ -41,7 +41,8 @@ class User implements UserEntityType {
 
   /* Computed fields */
 
-  @Exclude()
+  @Field(() => Boolean)
+  @Expose()
   get is_admin(): boolean {
     return (
       !!this.email &&

@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "nodemon",
-    "dev:server": "node --inspect -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
+    "dev:server": "node -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
+    "dev:server:debug": "node --inspect -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
     "start:dev": "node src/index.js -e development",
     "start:staging": "node src/index.js -e staging",
     "start:prod": "node src/index.js -e production",
@@ -154,7 +155,7 @@
       "src/**/*"
     ],
     "ext": "ts,json",
-    "exec": "yarn dev:server",
+    "exec": "yarn dev:server:debug",
     "signal": "SIGTERM"
   },
   "lint-staged": {
