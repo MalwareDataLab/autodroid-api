@@ -49,21 +49,15 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
       private_key: firebaseAuthProviderConfig.private_key,
     };
     this.initialization = executeAction({
-      action: () => this.getProvider({ language: "en" }),
+      action: () => this.getProvider(),
       actionName: "Firebase authentication provider init",
       retryDelay: 30 * 1000, // 30 seconds
       logging: true,
     });
   }
 
-  private async getProvider(params: { language: string }): Promise<{
-    provider: firebase.app.App;
-  }> {
+  private getProvider() {
     if (!this.provider) {
-      const { language } = params;
-
-      const t = await i18n(language);
-
       if (
         !this.configuration.project_id ||
         !this.configuration.client_email ||
@@ -71,10 +65,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
       )
         throw new AppError({
           key: "@firebase_authentication_provider_get_provider/INVALID_CONFIGURATION",
-          message: t(
-            "@firebase_authentication_provider_get_provider/INVALID_CONFIGURATION",
-            "Invalid environment variables.",
-          ),
+          message: "Invalid environment variables.",
         });
 
       try {
@@ -104,7 +95,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   }: IAuthenticationProviderVerifyTokenRequestDTO): Promise<IAuthenticationProviderSessionDTO> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const response = await provider.auth().verifyIdToken(access_token, true);
@@ -155,7 +146,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
 
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const emailAlreadyExists = await this.getUserByEmail(
@@ -229,7 +220,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   }: ICreateUserTokenByCodeDTO): Promise<string> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     const user = await this.getUserByCode(code, language);
 
@@ -265,7 +256,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   ): Promise<IAuthenticationProviderUserDTO> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const user = await provider.auth().getUser(code);
@@ -312,7 +303,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   ): Promise<IAuthenticationProviderUserDTO> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const user = await provider.auth().getUserByEmail(email);
@@ -354,7 +345,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   ): Promise<IAuthenticationProviderUserDTO> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const user = await provider.auth().getUserByPhoneNumber(phone_number);
@@ -397,7 +388,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   ): Promise<IAuthenticationProviderUserDTO> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const user = await this.getUserByCode(code, language);
@@ -437,7 +428,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   public async deleteUserByCode(code: string, language: string): Promise<void> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     try {
       const user = await this.getUserByCode(code, language);
@@ -463,7 +454,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
   ): Promise<void> {
     const t = await i18n(language);
 
-    const { provider } = await this.getProvider({ language });
+    const { provider } = this.getProvider();
 
     if (user_auth_provider_conn.auth_provider !== this.auth_provider)
       throw new AppError({

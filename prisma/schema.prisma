@@ -67,6 +67,9 @@ model File {
 
   type String
 
+  upload_url            String?
+  upload_url_expires_at DateTime?
+
   allow_public_access   Boolean
   public_url            String?
   public_url_expires_at DateTime?

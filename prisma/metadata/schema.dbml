@@ -37,6 +37,8 @@ Table files {
   provider_status String [not null]
   provider_verified_at DateTime
   type String [not null]
+  upload_url String
+  upload_url_expires_at DateTime
   allow_public_access Boolean [not null]
   public_url String
   public_url_expires_at DateTime
