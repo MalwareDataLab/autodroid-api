@@ -6,7 +6,7 @@ import { sleep } from "@shared/utils/sleep";
 
 interface IParams {
   actionName: string;
-  action: () => Promise<any>;
+  action: () => any;
   attempt?: number;
   maxRetries?: number;
   retryDelay?: number;

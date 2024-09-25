@@ -14,11 +14,11 @@ import {
   IQueueOptionsDTO,
 } from "../../types/IAddJobOptions.dto";
 
-type ITestJob = any;
+type IDispatchDatasetProcessingJob = any;
 
 @injectable()
-class TestJob implements IJob {
-  public readonly name = "TestJob";
+class DispatchDatasetProcessingJob implements IJob {
+  public readonly name = "DispatchDatasetProcessingJob";
   public readonly concurrency = 1;
 
   public readonly jobOptions: IJobOptionsDTO = {};
@@ -26,7 +26,10 @@ class TestJob implements IJob {
 
   constructor() {}
 
-  public async handle(job: Job<ITestJob>, done: DoneCallback): Promise<void> {
+  public async handle(
+    job: Job<IDispatchDatasetProcessingJob>,
+    done: DoneCallback,
+  ): Promise<void> {
     try {
       console.log(`inside job id ${job.id} DATA: ${JSON.stringify(job.data)}`);
       await sleep(5000);
@@ -44,5 +47,5 @@ class TestJob implements IJob {
   }
 }
 
-export type { ITestJob };
-export { TestJob };
+export type { IDispatchDatasetProcessingJob };
+export { DispatchDatasetProcessingJob };

@@ -45,6 +45,12 @@ class File implements FileEntityType {
   @Field(() => FILE_TYPE)
   type: FILE_TYPE;
 
+  @Field(() => String, { nullable: true })
+  upload_url: string | null;
+
+  @Field(() => Date, { nullable: true })
+  upload_url_expires_at: Date | null;
+
   @Field()
   allow_public_access: boolean;
 

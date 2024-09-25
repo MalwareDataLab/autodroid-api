@@ -41,9 +41,10 @@ import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 import { IStorageProvider } from "../../models/IStorage.provider";
 
 // DTO import
+import { IGoogleStorageProviderConfigurationDTO } from "./types/IGoogleStorageProvider.dto";
 import { IGenerateUploadSignedUrlRequestParamsDTO } from "../../types/IUploadFile.dto";
 import { IRemoveFileByNameDTO } from "../../types/IRemoveFile.dto";
-import { IGoogleStorageProviderConfigurationDTO } from "./types/IGoogleStorageProvider.dto";
+import { IRefreshFileDTO } from "../../types/IRefreshFile.dto";
 
 @injectable()
 class GoogleStorageProvider implements IStorageProvider {
@@ -110,16 +111,16 @@ class GoogleStorageProvider implements IStorageProvider {
       if (!this.bucket) {
         try {
           const bucket = this.provider.bucket(this.configuration.bucket_name);
-          await bucket.setCorsConfiguration([
+          const exists = await bucket.exists();
+          if (!exists[0]) throw new Error();
+          /* await bucket.setCorsConfiguration([
             {
               maxAgeSeconds: 3600,
               method: ["GET", "HEAD", "PUT", "POST", "DELETE"],
               origin: ["*"],
               responseHeader: ["*"],
             },
-          ]);
-          const exists = await bucket.exists();
-          if (!exists[0]) throw new Error();
+          ]); */
         } catch (error) {
           throw new AppError({
             key: "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",
@@ -280,6 +281,9 @@ class GoogleStorageProvider implements IStorageProvider {
           agentInfo,
         },
 
+        upload_url: url,
+        upload_url_expires_at: uploadSignedUrlExpirationDate,
+
         public_url: url,
         public_url_expires_at: uploadSignedUrlExpirationDate,
 
@@ -301,18 +305,30 @@ class GoogleStorageProvider implements IStorageProvider {
     }
   }
 
-  public async updatePublicUrl(
-    file: File,
-    language: string,
-    expires_at?: Date,
-  ): Promise<File> {
+  public async refreshFile(params: IRefreshFileDTO): Promise<File> {
+    const { file, customPublicUrlExpirationDate, language } = params;
     const { bucket, t } = await this.getProvider({
-      language,
+      language: language || "en",
     });
+
+    if (file.storage_provider !== this.provider_code)
+      throw new AppError({
+        key: "@google_storage_provider_refresh_file/INVALID_STORAGE_PROVIDER",
+        message: t(
+          "@google_storage_provider_refresh_file/INVALID_STORAGE_PROVIDER",
+          "Invalid storage provider.",
+        ),
+        debug: {
+          file,
+          provider: this.provider_code,
+        },
+      });
 
     if (!file.allow_public_access) return file;
 
     if (
+      !file.upload_url &&
+      !file.upload_url_expires_at &&
       file.public_url &&
       file.public_url_expires_at &&
       isBefore(subMinutes(new Date(), 30), file.public_url_expires_at)
@@ -320,9 +336,9 @@ class GoogleStorageProvider implements IStorageProvider {
       return file;
 
     if (
-      expires_at &&
-      (isBefore(expires_at, new Date()) ||
-        isAfter(expires_at, addDays(new Date(), 7)))
+      customPublicUrlExpirationDate &&
+      (isBefore(customPublicUrlExpirationDate, new Date()) ||
+        isAfter(customPublicUrlExpirationDate, addDays(new Date(), 7)))
     )
       throw new AppError({
         key: "@google_storage_provider_update_public_url/INVALID_EXPIRATION_DATE",
@@ -333,7 +349,7 @@ class GoogleStorageProvider implements IStorageProvider {
         statusCode: 500,
         debug: {
           file,
-          expires_at,
+          params,
         },
       });
 
@@ -343,28 +359,48 @@ class GoogleStorageProvider implements IStorageProvider {
       const [exists] = await cloudFile.exists();
 
       if (!exists) {
-        await this.fileRepository.updateOne(
+        const isUploadProcessExpired =
+          !!file.upload_url &&
+          !!file.upload_url_expires_at &&
+          isAfter(new Date(), file.upload_url_expires_at);
+
+        if (!isUploadProcessExpired) {
+          const updatedFile = await this.fileRepository.updateOne(
+            { id: file.id },
+            {
+              provider_verified_at: new Date(),
+
+              public_url: null,
+              public_url_expires_at: null,
+              provider_status: FILE_PROVIDER_STATUS.PENDING,
+            },
+          );
+
+          if (!updatedFile)
+            throw new Error(
+              "File not found after update. Upload process not expired.",
+            );
+
+          return updatedFile;
+        }
+
+        const updatedFile = await this.fileRepository.updateOne(
           { id: file.id },
           {
+            provider_verified_at: new Date(),
+
             public_url: null,
             public_url_expires_at: null,
             provider_status: FILE_PROVIDER_STATUS.NOT_FOUND,
           },
         );
-        throw new AppError({
-          key: "@google_storage_provider_update_public_url/FILE_NOT_FOUND",
-          message: t(
-            "@google_storage_provider_update_public_url/FILE_NOT_FOUND",
-            "File not found.",
-          ),
-          debug: {
-            file,
-          },
-        });
+
+        if (!updatedFile) throw new Error("File not found after update.");
+        return updatedFile;
       }
 
       const expires =
-        expires_at ||
+        customPublicUrlExpirationDate ||
         addMilliseconds(
           new Date(),
           getMillisecondConfig().STORAGE_PROVIDER_PUBLIC_READ_URL_EXPIRATION,
@@ -379,6 +415,11 @@ class GoogleStorageProvider implements IStorageProvider {
       const updatedFile = await this.fileRepository.updateOne(
         { id: file.id },
         {
+          provider_verified_at: new Date(),
+
+          upload_url: null,
+          upload_url_expires_at: null,
+
           public_url: url,
           public_url_expires_at: expires,
           provider_status: FILE_PROVIDER_STATUS.READY,

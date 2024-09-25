@@ -50,6 +50,8 @@ describe("Service: UserDatasetShowService", () => {
       provider_status: FILE_PROVIDER_STATUS.PENDING,
       provider_verified_at: null,
       type: FILE_TYPE.DATASET,
+      upload_url: null,
+      upload_url_expires_at: null,
       allow_public_access: false,
       public_url: null,
       public_url_expires_at: null,

@@ -33,6 +33,8 @@ CREATE TABLE "files" (
     "provider_status" TEXT NOT NULL,
     "provider_verified_at" TIMESTAMP(3),
     "type" TEXT NOT NULL,
+    "upload_url" TEXT,
+    "upload_url_expires_at" TIMESTAMP(3),
     "allow_public_access" BOOLEAN NOT NULL,
     "public_url" TEXT,
     "public_url_expires_at" TIMESTAMP(3),
