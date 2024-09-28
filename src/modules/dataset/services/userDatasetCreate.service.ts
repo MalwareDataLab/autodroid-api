@@ -82,10 +82,10 @@ class UserDatasetCreateService {
 
     if (!acceptedMimeTypes.includes(data.mime_type.toString()))
       throw new AppError({
-        key: "@user_dataset_create_service/INVALID_MIME_TYPE",
+        key: "@user_dataset_create_service/MIME_TYPE_NOT_ACCEPTED_BY_ANY_PROCESSOR",
         message: t(
-          "@user_dataset_create_service/INVALID_MIME_TYPE",
-          "Invalid mime type.",
+          "@user_dataset_create_service/MIME_TYPE_NOT_ACCEPTED_BY_ANY_PROCESSOR",
+          "The file type is not accepted by any processor.",
         ),
       });
 

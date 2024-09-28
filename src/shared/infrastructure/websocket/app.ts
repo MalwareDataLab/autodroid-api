@@ -29,7 +29,7 @@ class WebsocketApp {
     this.initialization = Promise.resolve();
 
     this.server = new SocketIoServer(httpServer, {
-      path: "/websocketAS",
+      path: "/websocket",
       cors: {
         origin: getCorsConfig().origin,
       },

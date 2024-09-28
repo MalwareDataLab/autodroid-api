@@ -354,7 +354,7 @@ class GoogleStorageProvider implements IStorageProvider {
       });
 
     try {
-      const cloudFile = bucket.file(file.filename);
+      const cloudFile = bucket.file(file.provider_path);
 
       const [exists] = await cloudFile.exists();
 
