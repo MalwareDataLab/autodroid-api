@@ -1,5 +1,8 @@
 import { inject, injectable } from "tsyringe";
 
+// Error import
+import { AppError } from "@shared/errors/AppError";
+
 // Configuration import
 import { getProcessingConfig } from "@config/processing";
 
@@ -9,20 +12,26 @@ import {
   IProcessorRepository,
 } from "@shared/container/repositories";
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
+import { File } from "@modules/file/entities/file.entity";
 import { DateHelper } from "@shared/utils/dateHelpers";
+import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 import { Processing } from "../entities/processing.entity";
 
 // Guard import
 import { ProcessingGuard } from "../guards/processing.guard";
 
+// Util import
+import { validateAndParseProcessingParameters } from "../utils/validateAndParseProcessingParameters.util";
+
 // Schema import
 import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
-import { validateAndParseProcessingParameters } from "../utils/validateAndParseProcessingParameters.util";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
-import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 
 interface IRequest {
   user: User;
@@ -35,6 +44,7 @@ interface IRequest {
 @injectable()
 class UserRequestDatasetProcessingService {
   private processingGuard: ProcessingGuard;
+
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
@@ -44,6 +54,9 @@ class UserRequestDatasetProcessingService {
 
     @inject("ProcessorRepository")
     private processorRepository: IProcessorRepository,
+
+    @inject("DatasetProcessorProvider")
+    private datasetProcessorProvider: IDatasetProcessorProvider,
   ) {
     this.processingGuard = new ProcessingGuard(
       this.processingRepository,
@@ -71,6 +84,17 @@ class UserRequestDatasetProcessingService {
       language,
     });
 
+    const file = await File.process(dataset.file);
+
+    if (!file.public_url || file.provider_status !== FILE_PROVIDER_STATUS.READY)
+      throw new AppError({
+        key: "@user_request_dataset_processing/DATASET_NOT_AVAILABLE",
+        message: t(
+          "@user_request_dataset_processing/DATASET_NOT_AVAILABLE",
+          "Dataset not available.",
+        ),
+      });
+
     const configuration = validateAndParseProcessingParameters({
       parameters,
       processor,
@@ -92,11 +116,19 @@ class UserRequestDatasetProcessingService {
       configuration,
       payload: {},
 
+      verified_at: null,
       visibility: PROCESSING_VISIBILITY.PRIVATE,
       status: PROCESSING_STATUS.PENDING,
 
+      attempts: 0,
+      message: null,
+
       worker_id: null,
       result_file_id: null,
+    });
+
+    await this.datasetProcessorProvider.dispatchProcess({
+      processing_id: processing.id,
     });
 
     return processing;

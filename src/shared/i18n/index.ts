@@ -13,6 +13,8 @@ import { AppError } from "@shared/errors/AppError";
 // Logs for i18n
 const logs = false;
 
+const DEFAULT_LANGUAGE = getEnvConfig().DEFAULT_LANGUAGE || "en";
+
 const options: InitOptions = {
   /**
    * LOGGING
@@ -39,7 +41,7 @@ const options: InitOptions = {
   // lng: envConfig.DEFAULT_LANGUAGE || "en",
 
   // If not found language, switches to this
-  fallbackLng: getEnvConfig().DEFAULT_LANGUAGE || "en",
+  fallbackLng: DEFAULT_LANGUAGE,
 
   // Supported languages
   supportedLngs: false,
@@ -47,7 +49,7 @@ const options: InitOptions = {
 
   // Preload languages
   load: "all",
-  preload: [getEnvConfig().DEFAULT_LANGUAGE || "en"],
+  preload: [DEFAULT_LANGUAGE],
 
   // Locale lowercase
   lowerCaseLng: true,
@@ -149,11 +151,11 @@ if (getEnvConfig().NODE_ENV === "development" && logs) {
 
 const t = i18next.t.bind(i18next);
 
-const i18n = async (lng: string) => {
+const i18n = async (lng: string = DEFAULT_LANGUAGE) => {
   try {
     const translationFunction = await i18next
       .cloneInstance({ initImmediate: false })
-      .changeLanguage(lng || getEnvConfig().DEFAULT_LANGUAGE || "en");
+      .changeLanguage(lng || DEFAULT_LANGUAGE);
     return translationFunction;
   } catch (err) {
     throw new AppError({
@@ -165,4 +167,4 @@ const i18n = async (lng: string) => {
 };
 
 export type { TFunction };
-export { i18next, i18n, t };
+export { i18next, i18n, t, DEFAULT_LANGUAGE };

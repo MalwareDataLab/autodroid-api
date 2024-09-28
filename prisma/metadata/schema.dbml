@@ -134,6 +134,9 @@ Table processes {
   visibility String [not null]
   started_at DateTime
   finished_at DateTime
+  verified_at DateTime
+  attempts Int
+  message String
   keep_until DateTime
   configuration Json [not null]
   payload Json [not null]

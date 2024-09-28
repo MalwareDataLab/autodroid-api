@@ -220,6 +220,10 @@ model Processing {
   started_at  DateTime?
   finished_at DateTime?
 
+  verified_at DateTime?
+  attempts    Int?
+  message String?
+
   keep_until DateTime?
 
   configuration Json
