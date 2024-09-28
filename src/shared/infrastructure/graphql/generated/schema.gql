@@ -72,7 +72,7 @@ type File {
   id: ID!
   md5_hash: String!
   mime_type: MIME_TYPE!
-  payload: JSON! @auth(requires: ADMIN)
+  payload: JSON! @auth(requires: "ADMIN")
   provider_path: String!
   provider_status: FILE_PROVIDER_STATUS!
   provider_verified_at: DateTimeISO
@@ -100,15 +100,15 @@ enum MIME_TYPE {
 }
 
 type Mutation {
-  adminDatasetDelete(dataset_id: String!): Dataset! @auth(requires: ADMIN)
-  adminDatasetUpdate(data: AdminDatasetUpdateSchema!, dataset_id: String!): Dataset! @auth(requires: ADMIN)
-  adminDatasetUpdateVisibility(data: AdminDatasetUpdateVisibilitySchema!, dataset_id: String!): Dataset! @auth(requires: ADMIN)
-  adminProcessorCreate(data: ProcessorSchema!): Processor! @auth(requires: ADMIN)
-  adminProcessorDelete(processor_id: String!): Processor! @auth(requires: ADMIN)
-  adminProcessorUpdate(data: ProcessorSchema!, processor_id: String!): Processor! @auth(requires: ADMIN)
-  adminWorkerDelete(worker_id: String!): Worker! @auth(requires: ADMIN)
-  adminWorkerRegistrationTokenCreate(data: WorkerRegistrationTokenCreateSchema!): WorkerRegistrationToken! @auth(requires: ADMIN)
-  adminWorkerRegistrationTokenDelete(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: ADMIN)
+  adminDatasetDelete(dataset_id: String!): Dataset! @auth(requires: "ADMIN")
+  adminDatasetUpdate(data: AdminDatasetUpdateSchema!, dataset_id: String!): Dataset! @auth(requires: "ADMIN")
+  adminDatasetUpdateVisibility(data: AdminDatasetUpdateVisibilitySchema!, dataset_id: String!): Dataset! @auth(requires: "ADMIN")
+  adminProcessorCreate(data: ProcessorSchema!): Processor! @auth(requires: "ADMIN")
+  adminProcessorDelete(processor_id: String!): Processor! @auth(requires: "ADMIN")
+  adminProcessorUpdate(data: ProcessorSchema!, processor_id: String!): Processor! @auth(requires: "ADMIN")
+  adminWorkerDelete(worker_id: String!): Worker! @auth(requires: "ADMIN")
+  adminWorkerRegistrationTokenCreate(data: WorkerRegistrationTokenCreateSchema!): WorkerRegistrationToken! @auth(requires: "ADMIN")
+  adminWorkerRegistrationTokenDelete(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: "ADMIN")
   userDatasetCreate(data: UserDatasetCreateSchema!): Dataset!
   userDatasetDelete(dataset_id: String!): Dataset!
   userDatasetRequestPublication(dataset_id: String!): Dataset!
@@ -260,14 +260,14 @@ input ProcessorSchema {
 }
 
 type Query {
-  adminDataset(dataset_id: String!): Dataset! @auth(requires: ADMIN)
-  adminDatasets(after: ConnectionCursor, before: ConnectionCursor, file_id: String, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String, visibility: DATASET_VISIBILITY): DatasetPaginationConnection! @auth(requires: ADMIN)
-  adminProcessor(processor_id: String!): Processor! @auth(requires: ADMIN)
-  adminProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection! @auth(requires: ADMIN)
-  adminWorker(worker_id: String!): Worker! @auth(requires: ADMIN)
-  adminWorkerRegistrationToken(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: ADMIN)
-  adminWorkerRegistrationTokens(activatable: Boolean, activated: Boolean, after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, expired: Boolean, first: Int, is_unlimited_usage: Boolean, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, token: String, user_id: String): WorkerRegistrationTokenPaginationConnection! @auth(requires: ADMIN)
-  adminWorkers(after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, first: Int, last: Int, registration_token_id: String, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String): WorkerPaginationConnection! @auth(requires: ADMIN)
+  adminDataset(dataset_id: String!): Dataset! @auth(requires: "ADMIN")
+  adminDatasets(after: ConnectionCursor, before: ConnectionCursor, file_id: String, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String, visibility: DATASET_VISIBILITY): DatasetPaginationConnection! @auth(requires: "ADMIN")
+  adminProcessor(processor_id: String!): Processor! @auth(requires: "ADMIN")
+  adminProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection! @auth(requires: "ADMIN")
+  adminWorker(worker_id: String!): Worker! @auth(requires: "ADMIN")
+  adminWorkerRegistrationToken(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: "ADMIN")
+  adminWorkerRegistrationTokens(activatable: Boolean, activated: Boolean, after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, expired: Boolean, first: Int, is_unlimited_usage: Boolean, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, token: String, user_id: String): WorkerRegistrationTokenPaginationConnection! @auth(requires: "ADMIN")
+  adminWorkers(after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, first: Int, last: Int, registration_token_id: String, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String): WorkerPaginationConnection! @auth(requires: "ADMIN")
   session: Session!
   user: User!
   userDataset(dataset_id: String!): Dataset!
@@ -326,7 +326,7 @@ type UserAuthProviderConn {
   created_at: DateTimeISO!
   disconnected_at: DateTimeISO
   id: ID!
-  payload: JSON! @auth(requires: ADMIN)
+  payload: JSON! @auth(requires: "ADMIN")
   updated_at: DateTimeISO!
   user_id: String!
 }
@@ -348,7 +348,7 @@ input UserDatasetUpdateSchema {
 type UserSession {
   access_token: String!
   access_token_expires_at: DateTimeISO!
-  payload: JSON! @auth(requires: ADMIN)
+  payload: JSON! @auth(requires: "ADMIN")
   refresh_token: String
   refresh_token_expires_at: DateTimeISO
   user_auth_provider_conn: UserAuthProviderConn!
