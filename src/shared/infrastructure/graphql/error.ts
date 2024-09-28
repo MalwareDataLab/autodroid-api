@@ -1,4 +1,4 @@
-import { GraphQLFormattedError } from "graphql";
+import { GraphQLFormattedError, GraphQLError } from "graphql";
 import {
   AuthorizationError as TypeGraphQLAuthorizationError,
   AuthenticationError as TypeGraphQLAuthenticationError,
@@ -95,10 +95,20 @@ export function errorHandler(
         message: formattedError.message,
         extensions: {
           ...error.extensions,
-          code: "GRAPHQL_VALIDATION_FAILED",
+          code: ApolloServerErrorCode.GRAPHQL_VALIDATION_FAILED,
         },
       };
     }
+
+    if (error instanceof GraphQLError)
+      return {
+        ...formattedError,
+        message: error.message,
+        extensions: {
+          code: ApolloServerErrorCode.GRAPHQL_PARSE_FAILED,
+          ...error.extensions,
+        },
+      };
 
     if (
       !!formattedError.extensions?.code &&
