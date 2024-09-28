@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, Int, ObjectType } from "type-graphql";
 import { Exclude, Type } from "class-transformer";
 
 // Scalar import
@@ -38,6 +38,15 @@ class Processing implements ProcessingEntityType {
 
   @Field(() => Date, { nullable: true })
   keep_until: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  verified_at: Date | null;
+
+  @Field(() => Int, { nullable: true })
+  attempts: number | null;
+
+  @Field(() => String, { nullable: true })
+  message: string | null;
 
   @Field(() => JSONScalar)
   configuration: Record<string, any>;

@@ -1,5 +1,6 @@
+import { container } from "tsyringe";
 import {
-  // Authorized,
+  // Authorized, // TODO
   Directive,
   Field,
   ID,
@@ -24,6 +25,9 @@ import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { FILE_TYPE } from "../types/fileType.enum";
 import { FILE_PROVIDER_STATUS } from "../types/fileProviderStatus.enum";
+
+// Service import
+import { ProcessFilePublicAccessService } from "../services/processFilePublicAccess.service";
 
 @ObjectType()
 class File implements FileEntityType {
@@ -73,7 +77,7 @@ class File implements FileEntityType {
   @Field()
   md5_hash: string;
 
-  // @Authorized(["ADMIN"])
+  // @Authorized(["ADMIN"]) // TODO
   @Directive("@auth(requires: ADMIN)")
   @Field(() => JSONScalar)
   payload: Record<string, any>;
@@ -93,6 +97,16 @@ class File implements FileEntityType {
   @Exclude()
   @Type(() => Processing)
   processes: Processing[];
+
+  static async process(params: File): Promise<File> {
+    const processFilePublicAccessService = container.resolve(
+      ProcessFilePublicAccessService,
+    );
+    return processFilePublicAccessService.execute({
+      cls: File,
+      obj: params,
+    });
+  }
 }
 
 const PaginatedFile = PaginationConnection(File);

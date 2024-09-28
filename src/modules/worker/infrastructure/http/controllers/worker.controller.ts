@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { process } from "@shared/utils/instanceParser";
 
 class WorkerController {
-  public async get(req: Request, res: Response) {
+  public async show(req: Request, res: Response) {
     return res.json(process(req.worker_session.worker));
   }
 }

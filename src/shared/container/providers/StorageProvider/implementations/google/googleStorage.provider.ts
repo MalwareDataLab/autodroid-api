@@ -76,7 +76,7 @@ class GoogleStorageProvider implements IStorageProvider {
     });
   }
 
-  private async getProvider(params: { language: string }): Promise<{
+  private async getProvider(params: { language?: string }): Promise<{
     provider: Storage;
     bucket: Bucket;
     t: TFunction;

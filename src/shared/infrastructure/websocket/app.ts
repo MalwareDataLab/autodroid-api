@@ -64,6 +64,7 @@ class WebsocketApp {
         socket.data.kind === "WORKER" &&
         socket.data.worker_session?.worker?.id
       ) {
+        socket.join("worker");
         socket.join(`worker:${socket.data.worker_session.worker.id}`);
       }
 

@@ -12,6 +12,9 @@ import {
 // Middleware import
 import { workerAuthenticationMiddleware } from "../middlewares/workerAuthentication.middleware";
 
+// Router import
+import { workerProcessingRouter } from "./workerProcessing.routes";
+
 // Controller import
 import { WorkerRegisterController } from "../controllers/workerRegister.controller";
 import { WorkerUpdateRefreshTokenController } from "../controllers/workerUpdateRefreshToken.controller";
@@ -57,6 +60,12 @@ workerRouter.post(
   workerGenerateAccessTokenController.update,
 );
 
-workerRouter.get("/", workerAuthenticationMiddleware, workerController.get);
+workerRouter.get("/", workerAuthenticationMiddleware, workerController.show);
+
+workerRouter.use(
+  "/processing",
+  workerAuthenticationMiddleware,
+  workerProcessingRouter,
+);
 
 export { workerRouter };

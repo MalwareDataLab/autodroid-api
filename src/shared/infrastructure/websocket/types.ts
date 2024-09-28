@@ -6,8 +6,13 @@ import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
 // DTO import
 import { Session } from "@modules/user/types/IUserSession.dto";
 
+// Type import
+import { ISocketWorkerProcessingJobMessage } from "./socket.types";
+
 export interface ServerToClientEvents {
   pong: () => void;
+
+  workerProcessingJob: (data: ISocketWorkerProcessingJobMessage) => void;
 }
 
 export interface ClientToServerEvents {

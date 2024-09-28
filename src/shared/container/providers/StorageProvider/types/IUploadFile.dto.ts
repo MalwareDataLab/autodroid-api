@@ -21,5 +21,5 @@ export type IGenerateUploadSignedUrlRequestParamsDTO = {
   user: User | null;
   agentInfo?: IParsedUserAgentInfoDTO;
 
-  language: string;
+  language?: string;
 };
