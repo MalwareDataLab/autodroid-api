@@ -7,10 +7,7 @@ import { File } from "@modules/file/entities/file.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider";
 import { IStorageProvider } from "../../StorageProvider/models/IStorage.provider";
-import {
-  ICreateProcessDTO,
-  IDispatchProcessDTO,
-} from "../types/IDatasetProcessor.dto";
+import { IDispatchProcessDTO } from "../types/IDatasetProcessor.dto";
 
 @injectable()
 class DatasetProcessorProvider implements IDatasetProcessorProvider {
@@ -27,9 +24,6 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
     private storageProvider: IStorageProvider,
   ) {}
 
-  createProcess(_: ICreateProcessDTO): Promise<Processing> {
-    throw new Error("Method not implemented.");
-  }
   dispatchProcess(_: IDispatchProcessDTO): Promise<Processing> {
     throw new Error("Method not implemented.");
   }

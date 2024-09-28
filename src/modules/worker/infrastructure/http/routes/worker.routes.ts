@@ -9,10 +9,14 @@ import {
   WorkerRegisterSchema,
 } from "@modules/worker/schemas/worker.schema";
 
+// Middleware import
+import { workerAuthenticationMiddleware } from "../middlewares/workerAuthentication.middleware";
+
 // Controller import
 import { WorkerRegisterController } from "../controllers/workerRegister.controller";
 import { WorkerUpdateRefreshTokenController } from "../controllers/workerUpdateRefreshToken.controller";
 import { WorkerGenerateAccessTokenController } from "../controllers/workerGenerateAccessToken.controller";
+import { WorkerController } from "../controllers/worker.controller";
 
 const workerRegisterController = new WorkerRegisterController();
 
@@ -21,6 +25,8 @@ const workerUpdateRefreshTokenController =
 
 const workerGenerateAccessTokenController =
   new WorkerGenerateAccessTokenController();
+
+const workerController = new WorkerController();
 
 const workerRouter = Router();
 
@@ -50,5 +56,7 @@ workerRouter.post(
   }),
   workerGenerateAccessTokenController.update,
 );
+
+workerRouter.get("/", workerAuthenticationMiddleware, workerController.get);
 
 export { workerRouter };
