@@ -63,6 +63,7 @@ enum FILE_PROVIDER_STATUS {
 
 enum FILE_TYPE {
   DATASET
+  PROCESSING
 }
 
 type File {
@@ -97,6 +98,7 @@ enum MIME_TYPE {
   OTHER
   PDF
   PNG
+  ZIP
 }
 
 type Mutation {
@@ -153,13 +155,15 @@ type PageInfo {
 }
 
 type Processing {
-  configuration: JSON!
+  attempts: Int
+  configuration: [ProcessingParameter!]!
   created_at: DateTimeISO!
   dataset: Dataset!
   dataset_id: String!
   finished_at: DateTimeISO
   id: ID!
   keep_until: DateTimeISO
+  message: String
   payload: JSON!
   processor: Processor!
   processor_id: String!
@@ -170,6 +174,7 @@ type Processing {
   updated_at: DateTimeISO!
   user: User!
   user_id: String!
+  verified_at: DateTimeISO
   visibility: PROCESSING_VISIBILITY!
   worker_id: String
 }
@@ -183,6 +188,11 @@ type ProcessingPaginationConnection {
 type ProcessingPaginationEdge {
   cursor: ConnectionCursor!
   node: Processing!
+}
+
+type ProcessingParameter {
+  key: String!
+  value: String!
 }
 
 type Processor {

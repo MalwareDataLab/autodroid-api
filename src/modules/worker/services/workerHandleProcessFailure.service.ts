@@ -13,9 +13,13 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { Worker } from "../entities/worker.entity";
 
+// Schema import
+import { WorkerHandleProcessFailureSchema } from "../schemas/workerHandleProcessFailure.schema";
+
 interface IRequest {
   worker: Worker;
   processing_id: string;
+  data?: WorkerHandleProcessFailureSchema | null;
 }
 
 @injectable()
@@ -28,6 +32,7 @@ class WorkerHandleProcessFailureService {
   public async execute({
     worker,
     processing_id,
+    data,
   }: IRequest): Promise<Processing> {
     const processing = await this.processingRepository.findOne({
       id: processing_id,
@@ -48,6 +53,7 @@ class WorkerHandleProcessFailureService {
 
         worker_id: worker.id,
         status: PROCESSING_STATUS.FAILED,
+        message: data?.reason || null,
       },
     );
 

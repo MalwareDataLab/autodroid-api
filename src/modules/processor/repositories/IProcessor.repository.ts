@@ -5,9 +5,10 @@ import { ProcessorSortingOptions } from "@modules/processor/constants/processorS
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
-  ICreateProcessorDTO,
   IFindProcessorDTO,
+  ICreateProcessorDTO,
   IUpdateProcessorDTO,
+  IFindProcessorPublicOrUserPrivateDTO,
 } from "../types/IProcessor.dto";
 
 // Entity import
@@ -22,10 +23,18 @@ export interface IProcessorRepository {
     pagination?: IPaginationDTO,
     sorting?: ISortingDTO<typeof ProcessorSortingOptions>,
   ): Promise<Processor[]>;
+  findManyPublicOrUserPrivate(
+    filter: IFindProcessorPublicOrUserPrivateDTO,
+    pagination?: IPaginationDTO,
+    sorting?: ISortingDTO<typeof ProcessorSortingOptions>,
+  ): Promise<Processor[]>;
 
   getAllowedMimeTypes(): Promise<string[]>;
 
   getCount(filter: IFindProcessorDTO): Promise<number>;
+  getCountPublicOrUserPrivate(
+    filter: IFindProcessorPublicOrUserPrivateDTO,
+  ): Promise<number>;
 
   updateOne(
     filter: IFindProcessorDTO,

@@ -5,6 +5,7 @@ import { validateRequest } from "@shared/infrastructure/http/middlewares/validat
 
 // Schema import
 import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestFileUploadSignedUrl.schema";
+import { WorkerHandleProcessFailureSchema } from "@modules/worker/schemas/workerHandleProcessFailure.schema";
 
 // Controller import
 import { WorkerProcessingController } from "../controllers/workerProcessing.controller";
@@ -41,6 +42,10 @@ workerProcessingRouter.post(
 
 workerProcessingRouter.post(
   "/:processing_id/failure",
+  validateRequest({
+    schema: WorkerHandleProcessFailureSchema,
+    segment: "BODY",
+  }),
   workerProcessingController.failure,
 );
 

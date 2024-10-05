@@ -28,3 +28,6 @@ export type IFindProcessorDTO = Partial<
     "id" | "name" | "version" | "image_tag" | "user_id" | "visibility"
   >
 >;
+
+export type IFindProcessorPublicOrUserPrivateDTO = IFindProcessorDTO &
+  Pick<Processor, "user_id">;

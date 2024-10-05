@@ -88,6 +88,7 @@ class WorkerProcessingController {
     const processing = await workerHandleProcessFailureService.execute({
       worker: req.worker_session.worker,
       processing_id: req.params.processing_id,
+      data: req.body,
     });
 
     return res.json(process(processing));

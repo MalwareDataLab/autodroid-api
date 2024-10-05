@@ -37,7 +37,11 @@ import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisib
 class PrismaProcessingRepository implements IProcessingRepository {
   private readonly relations = {
     user: true,
-    dataset: true,
+    dataset: {
+      include: {
+        file: true,
+      },
+    },
     processor: true,
     result_file: true,
     worker: true,
