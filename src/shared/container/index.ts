@@ -21,6 +21,9 @@ import { StorageProvider } from "./providers/StorageProvider";
 import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
 import { AuthenticationProvider } from "./providers/AuthenticationProvider";
 
+import { IWebsocketProvider } from "./providers/WebsocketProvider/models/IWebsocket.provider";
+import { WebsocketProvider } from "./providers/WebsocketProvider";
+
 import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 import { DatasetProcessorProvider } from "./providers/DatasetProcessorProvider";
 
@@ -41,6 +44,7 @@ const secondaryProviders = {
   UserAgentInfoProvider: UserAgentInfoProvider as ClassType<IUserAgentInfoProvider>,
   StorageProvider: StorageProvider as ClassType<IStorageProvider>,
   AuthenticationProvider: AuthenticationProvider as ClassType<IAuthenticationProvider>,
+  WebsocketProvider: WebsocketProvider as ClassType<IWebsocketProvider>,
 
   DatasetProcessorProvider: DatasetProcessorProvider as ClassType<IDatasetProcessorProvider>,
 

@@ -14,6 +14,7 @@ import { Dataset } from "@modules/dataset/entities/dataset.entity";
 import { Worker } from "@modules/worker/entities/worker.entity";
 import { Processor } from "@modules/processor/entities/processor.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { ProcessingParameter } from "./processingParameter.entity";
 
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
@@ -48,7 +49,8 @@ class Processing implements ProcessingEntityType {
   @Field(() => String, { nullable: true })
   message: string | null;
 
-  @Field(() => JSONScalar)
+  @Field(() => [ProcessingParameter])
+  @Type(() => ProcessingParameter)
   configuration: Record<string, any>;
 
   @Field(() => JSONScalar)

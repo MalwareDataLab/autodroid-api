@@ -68,6 +68,12 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         message: "Processing already started.",
       });
 
+    if (!processing.dataset.file)
+      throw new AppError({
+        key: "@dataset_processor_provider_dispatch_process/FILE_NOT_FOUND",
+        message: "Dataset file not found.",
+      });
+
     try {
       const file = await File.process(processing.dataset.file);
 

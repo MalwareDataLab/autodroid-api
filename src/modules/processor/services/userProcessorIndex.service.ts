@@ -8,15 +8,14 @@ import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
 // Entity import
+import { User } from "@modules/user/entities/user.entity";
 import { PaginatedProcessor } from "../entities/processor.entity";
 
 // Repository import
 import { IProcessorRepository } from "../repositories/IProcessor.repository";
 
-// Enum import
-import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
-
 interface IRequest {
+  user: User;
   pagination?: IPaginationDTO;
   sorting?: ISortingDTO<typeof ProcessorSortingOptions>;
 }
@@ -29,20 +28,23 @@ class UserProcessorIndexService {
   ) {}
 
   public async execute({
+    user,
     pagination,
     sorting,
   }: IRequest): Promise<PaginatedProcessor> {
     const filter = {
-      visibility: PROCESSOR_VISIBILITY.PUBLIC,
+      user_id: user.id,
     };
 
-    const totalCount = await this.processorRepository.getCount(filter);
+    const totalCount =
+      await this.processorRepository.getCountPublicOrUserPrivate(filter);
 
-    const processors = await this.processorRepository.findMany(
-      filter,
-      pagination,
-      sorting,
-    );
+    const processors =
+      await this.processorRepository.findManyPublicOrUserPrivate(
+        filter,
+        pagination,
+        sorting,
+      );
 
     return PaginatedProcessor.make({
       items: processors,

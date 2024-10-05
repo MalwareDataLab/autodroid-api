@@ -8,6 +8,7 @@ import { AppError } from "@shared/errors/AppError";
 
 // Entity import
 import { Processor } from "@modules/processor/entities/processor.entity";
+import { ProcessingParameter } from "@modules/processing/entities/processingParameter.entity";
 
 // Schema import
 import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
@@ -38,7 +39,7 @@ const processingParameterTypeMap = {
 
 const validateAndParseProcessingParameters = (
   params: IValidateAndParseProcessingParametersDTO,
-) => {
+): ProcessingParameter[] => {
   const { parameters, processor, t } = params;
 
   const repeatedParameter = parameters.find((parameter, index) =>
@@ -56,58 +57,64 @@ const validateAndParseProcessingParameters = (
 
   const result = processor.configuration.parameters
     .sort((a, b) => a.sequence - b.sequence)
-    .reduce(
-      (acc, parameter) => {
-        const providedParameter = parameters.find(
-          p => p.name === parameter.name,
-        );
+    .map(parameter => {
+      const providedParameter = parameters.find(p => p.name === parameter.name);
 
-        if (parameter.is_required && !providedParameter?.value)
+      if (parameter.is_required && !providedParameter?.value)
+        throw new AppError({
+          key: "@validate_processor_configuration_parameters/MISSING_PARAMETER",
+          message: t(
+            "@validate_processor_configuration_parameters/MISSING_PARAMETER",
+            "Missing required parameter {{ parameter }}.",
+            { parameter: parameter.name },
+          ),
+        });
+
+      const isValid = processingParameterValidatorMap[parameter.type];
+      const parser = processingParameterTypeMap[parameter.type];
+
+      if (providedParameter) {
+        if (!isValid(providedParameter.value))
           throw new AppError({
-            key: "@validate_processor_configuration_parameters/MISSING_PARAMETER",
+            key: "@validate_processor_configuration_parameters/INVALID_PARAMETER",
             message: t(
-              "@validate_processor_configuration_parameters/MISSING_PARAMETER",
-              "Missing required parameter {{ parameter }}.",
+              "@validate_processor_configuration_parameters/INVALID_PARAMETER",
+              "Invalid value for parameter {{ parameter }}.",
               { parameter: parameter.name },
             ),
           });
 
-        const isValid = processingParameterValidatorMap[parameter.type];
-        const parser = processingParameterTypeMap[parameter.type];
+        return {
+          key: parameter.name,
+          value: String(parser(String(providedParameter.value).trim())),
+        };
+      }
+      if (
+        parameter.default_value !== null &&
+        parameter.default_value !== undefined
+      ) {
+        if (!isValid(parameter.default_value))
+          throw new AppError({
+            key: "@validate_processor_configuration_parameters/INVALID_DEFAULT_PARAMETER",
+            message: t(
+              "@validate_processor_configuration_parameters/INVALID_DEFAULT_PARAMETER",
+              "Invalid default value for parameter {{ parameter }}.",
+              { parameter: parameter.name },
+            ),
+          });
 
-        if (providedParameter) {
-          if (!isValid(providedParameter.value))
-            throw new AppError({
-              key: "@validate_processor_configuration_parameters/INVALID_PARAMETER",
-              message: t(
-                "@validate_processor_configuration_parameters/INVALID_PARAMETER",
-                "Invalid value for parameter {{ parameter }}.",
-                { parameter: parameter.name },
-              ),
-            });
+        return {
+          key: parameter.name,
+          value: String(parser(String(parameter.default_value).trim())),
+        };
+      }
 
-          acc[parameter.name] = parser(String(providedParameter.value).trim());
-        } else if (
-          parameter.default_value !== null &&
-          parameter.default_value !== undefined
-        ) {
-          if (!isValid(parameter.default_value))
-            throw new AppError({
-              key: "@validate_processor_configuration_parameters/INVALID_DEFAULT_PARAMETER",
-              message: t(
-                "@validate_processor_configuration_parameters/INVALID_DEFAULT_PARAMETER",
-                "Invalid default value for parameter {{ parameter }}.",
-                { parameter: parameter.name },
-              ),
-            });
-
-          acc[parameter.name] = parser(String(parameter.default_value).trim());
-        }
-
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
+      return {
+        key: parameter.name,
+        value: null,
+      };
+    })
+    .filter(parameter => parameter.value !== null);
 
   return result;
 };

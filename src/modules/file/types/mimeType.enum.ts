@@ -5,6 +5,7 @@ enum MIME_TYPE {
   PNG = "image/png",
   PDF = "application/pdf",
   CSV = "text/csv",
+  ZIP = "application/zip",
   OTHER = "application/octet-stream",
 }
 

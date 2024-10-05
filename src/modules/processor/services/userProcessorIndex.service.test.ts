@@ -60,7 +60,9 @@ describe("Service: UserProcessorIndexService", () => {
       version: faker.system.semver(),
     });
 
-    const response = await userProcessorIndexService.execute({});
+    const response = await userProcessorIndexService.execute({
+      user,
+    });
 
     expect(response).toEqual(
       expect.objectContaining({

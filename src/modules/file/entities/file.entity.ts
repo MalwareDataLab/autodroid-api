@@ -59,7 +59,6 @@ class File implements FileEntityType {
   allow_public_access: boolean;
 
   // See File resolver for more information
-  @Exclude()
   public_url: string | null;
 
   @Field(() => Date, { nullable: true })

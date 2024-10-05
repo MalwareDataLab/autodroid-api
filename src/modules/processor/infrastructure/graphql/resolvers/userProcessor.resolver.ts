@@ -31,12 +31,15 @@ class UserProcessorResolver {
     @Args() pagination: PaginationSchema,
     @SortingArg<Processor>(ProcessorSortingOptions)
     sorting: SortingFieldSchema<typeof ProcessorSortingOptions>[],
+
+    @Ctx() { session }: GraphQLContext,
   ): Promise<PaginatedProcessor> {
     const userProcessorIndexService = container.resolve(
       UserProcessorIndexService,
     );
 
     const paginatedProcessors = await userProcessorIndexService.execute({
+      user: session.user,
       pagination,
       sorting,
     });

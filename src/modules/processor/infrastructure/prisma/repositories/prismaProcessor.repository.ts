@@ -20,13 +20,17 @@ import { Processor } from "@modules/processor/entities/processor.entity";
 // Interface import
 import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
 
+// Enum import
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
-  ICreateProcessorDTO,
   IFindProcessorDTO,
+  ICreateProcessorDTO,
   IUpdateProcessorDTO,
+  IFindProcessorPublicOrUserPrivateDTO,
 } from "@modules/processor/types/IProcessor.dto";
 
 @injectable()
@@ -48,6 +52,22 @@ class PrismaProcessorRepository implements IProcessorRepository {
       id,
       user_id,
       visibility,
+    };
+  }
+
+  private getWhereClausePublicOrUserPrivate(
+    filter: IFindProcessorPublicOrUserPrivateDTO,
+    relations_enabled = true,
+  ): DatabaseHelperTypes.ProcessorWhereInput {
+    return {
+      ...this.getWhereClause(filter, relations_enabled),
+      OR: [
+        { visibility: PROCESSOR_VISIBILITY.PUBLIC },
+        {
+          visibility: PROCESSOR_VISIBILITY.HIDDEN,
+          user_id: filter.user_id,
+        },
+      ],
     };
   }
 
@@ -84,6 +104,26 @@ class PrismaProcessorRepository implements IProcessorRepository {
     return parse(Processor, processors);
   }
 
+  public async findManyPublicOrUserPrivate(
+    filter: IFindProcessorPublicOrUserPrivateDTO,
+    pagination?: IPaginationDTO,
+    sorting?: ISortingDTO<typeof ProcessorSortingOptions>,
+  ): Promise<Processor[]> {
+    const processors = await this.databaseProvider.client.processor.findMany({
+      where: this.getWhereClausePublicOrUserPrivate(filter),
+
+      include: this.relations,
+
+      orderBy: makeSortingArr({
+        options: ProcessorSortingOptions,
+        sorting,
+      }),
+      ...makePaginationObj(pagination),
+    });
+
+    return parse(Processor, processors);
+  }
+
   public async getAllowedMimeTypes(): Promise<string[]> {
     const data = await this.databaseProvider.client.processor.findMany({
       select: { allowed_mime_types: true },
@@ -95,6 +135,14 @@ class PrismaProcessorRepository implements IProcessorRepository {
   public async getCount(filter: IFindProcessorDTO): Promise<number> {
     return this.databaseProvider.client.processor.count({
       where: this.getWhereClause(filter, false),
+    });
+  }
+
+  public async getCountPublicOrUserPrivate(
+    filter: IFindProcessorPublicOrUserPrivateDTO,
+  ): Promise<number> {
+    return this.databaseProvider.client.processor.count({
+      where: this.getWhereClausePublicOrUserPrivate(filter, false),
     });
   }
 

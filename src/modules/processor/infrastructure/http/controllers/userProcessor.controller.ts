@@ -21,6 +21,7 @@ class UserProcessorController {
     );
 
     const processor = await userProcessorIndexService.execute({
+      user: req.session.user,
       pagination: req.pagination,
       sorting: req.sorting as SortingFieldSchema<
         typeof ProcessorSortingOptions

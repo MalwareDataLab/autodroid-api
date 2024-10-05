@@ -29,8 +29,10 @@ describe("Service: UserProcessorShowService", () => {
       createOne: vi.fn(),
       findOne: vi.fn(),
       findMany: vi.fn(),
+      findManyPublicOrUserPrivate: vi.fn(),
       getAllowedMimeTypes: vi.fn(),
       getCount: vi.fn(),
+      getCountPublicOrUserPrivate: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),
     };
