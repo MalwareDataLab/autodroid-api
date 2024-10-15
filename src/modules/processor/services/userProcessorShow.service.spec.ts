@@ -7,11 +7,12 @@ import { AppError } from "@shared/errors/AppError";
 // Util import
 import { parse } from "@shared/utils/instanceParser";
 
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { Processor } from "../entities/processor.entity";
+
 // Repository import
 import { IProcessorRepository } from "../repositories/IProcessor.repository";
-
-// Entity import
-import { Processor } from "../entities/processor.entity";
 
 // Service import
 import { UserProcessorShowService } from "./userProcessorShow.service";
@@ -57,6 +58,9 @@ describe("Service: UserProcessorShowService", () => {
     processorRepositoryMock.findOne.mockResolvedValueOnce(processor);
 
     const response = await userProcessorShowService.execute({
+      user: {
+        id: processor.user_id,
+      } as User,
       processor_id,
       language: "en",
     });
@@ -76,6 +80,9 @@ describe("Service: UserProcessorShowService", () => {
 
     expect(() =>
       userProcessorShowService.execute({
+        user: {
+          id: faker.string.uuid(),
+        } as User,
         processor_id,
         language: "en",
       }),

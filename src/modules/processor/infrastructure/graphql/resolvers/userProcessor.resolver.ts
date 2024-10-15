@@ -52,13 +52,14 @@ class UserProcessorResolver {
   async userProcessor(
     @Arg("processor_id") processor_id: string,
 
-    @Ctx() { language }: GraphQLContext,
+    @Ctx() { session, language }: GraphQLContext,
   ): Promise<Processor> {
     const userProcessorShowService = container.resolve(
       UserProcessorShowService,
     );
 
     const processor = await userProcessorShowService.execute({
+      user: session.user,
       processor_id,
       language,
     });

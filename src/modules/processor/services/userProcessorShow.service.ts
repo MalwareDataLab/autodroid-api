@@ -1,52 +1,43 @@
 import { inject, injectable } from "tsyringe";
 
-// i18n import
-import { i18n } from "@shared/i18n";
-
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // Entity import
+import { User } from "@modules/user/entities/user.entity";
 import { Processor } from "../entities/processor.entity";
+
+// Guard import
+import { ProcessorGuard } from "../guards/processor.guard";
 
 // Repository import
 import { IProcessorRepository } from "../repositories/IProcessor.repository";
 
-// Enum import
-import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
-
 interface IRequest {
   processor_id: string;
 
+  user: User;
   language: string;
 }
 
 @injectable()
 class UserProcessorShowService {
+  private processorGuard: ProcessorGuard;
+
   constructor(
     @inject("ProcessorRepository")
     private processorRepository: IProcessorRepository,
-  ) {}
+  ) {
+    this.processorGuard = new ProcessorGuard(this.processorRepository);
+  }
 
   public async execute({
     processor_id,
+    user,
     language,
   }: IRequest): Promise<Processor> {
-    const t = await i18n(language);
-
-    const processor = await this.processorRepository.findOne({
-      id: processor_id,
-      visibility: PROCESSOR_VISIBILITY.PUBLIC,
+    const { processor } = await this.processorGuard.execute({
+      user,
+      processor_id,
+      language,
     });
-
-    if (!processor)
-      throw new AppError({
-        key: "@user_processor_show_service/PROCESSOR_NOT_FOUND",
-        message: t(
-          "@user_processor_show_service/PROCESSOR_NOT_FOUND",
-          "Processor not found.",
-        ),
-      });
 
     return processor;
   }

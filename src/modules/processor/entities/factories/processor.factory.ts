@@ -1,10 +1,16 @@
+import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-import crypto from "node:crypto";
+import { Factory } from "fishery";
+import { plainToInstance } from "class-transformer";
 
 // Entity import
 import { Processor } from "@modules/processor/entities/processor.entity";
 
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
 // Type import
+import { FactoryParams } from "@/test/types/factoryParams.type";
 import {
   IProcessorBase,
   ProcessorRelationFields,
@@ -13,23 +19,24 @@ import {
 // Enum import
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
-class ProcessorFactory extends Processor {
-  public static make({
-    required,
-    relations = {},
-    overrides = {},
-  }: {
-    required: Pick<Processor, "user_id">;
-    relations?: Partial<Pick<Processor, ProcessorRelationFields>>;
-    overrides?: Partial<Processor>;
-  }) {
-    const entity = new ProcessorFactory();
+// Util import
+import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
+import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
+import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 
-    const data: IProcessorBase = {
+class ProcessorFactory extends Factory<Processor, FactoryParams> {
+  static get repository() {
+    return container.resolve("ProcessorRepository");
+  }
+}
+
+const processorFactory = ProcessorFactory.define(
+  ({ onCreate, associations, transientParams }) => {
+    const user = associations.user || userFactory.build();
+
+    const base: IProcessorBase = {
       /** Base */
-      id: crypto.randomUUID(),
-      created_at: faker.date.past(),
-      updated_at: faker.date.past(),
+      ...generateEntityBaseData(),
 
       /** Entity */
       name: faker.system.fileName(),
@@ -49,20 +56,33 @@ class ProcessorFactory extends Processor {
         command: "",
       },
 
-      /** Relations */
-      user_id: required.user_id,
+      /** Simulated */
 
-      ...overrides,
+      /** Relations */
+      user_id: user.id,
     };
 
-    Object.assign(entity, {
-      ...data,
-      ...relations,
-      ...overrides,
+    onCreate(async item => {
+      return ProcessorFactory.repository.createOne(
+        getBaseFactoryEntityData({
+          base,
+          item: await loadEntityRelations(item, ["user"]),
+        }),
+      );
     });
 
-    return entity;
-  }
-}
+    return plainToInstance(Processor, {
+      ...base,
+      ...associations,
 
-export { ProcessorFactory };
+      ...(transientParams.withRelations &&
+        ({
+          user,
+
+          processes: [],
+        } satisfies Pick<Processor, ProcessorRelationFields>)),
+    });
+  },
+);
+
+export { processorFactory };

@@ -16,24 +16,26 @@
 
 ## 📝 Índice <a name="summary"></a>
 
-- [Sobre](#about)
-- [Visão Geral do Projeto](#overview)
-- [Requisitos Funcionais e Não Funcionais](#project_requirements)
-- [Arquitetura](#architecture)
-- [Tecnologias](#built_using)
-- [Ambiente do Usuário](#user_environment)
-- [Primeiros passos](#getting_started)
-- [Utilização](#usage)
-- [Testes](#tests)
-- [Deployment](#deployment)
-- [Resolução de problemas](#troubleshooting)
-- [Contribuições](./CONTRIBUTING.md)
-- [Changelog](./CHANGELOG.md)
-- [Referências](#bibliography)
+- [📖 Sobre](#about)
+- [✨ Visão Geral do Projeto](#overview)
+- [✅ Requisitos Funcionais e Não Funcionais](https://docs.google.com/document/d/1tCNZw9VFt5honSpTOx_DjVQ7-l0qdYta)
+- [🏦 Arquitetura](#architecture)
+- [⛏️ Tecnologias Utilizadas](#built_using)
+- [💻 Ambiente do Usuário](#user_environment)
+- [📡 Ambiente do Servidor](#server_environment)
+- [🏁 Primeiros Passos](#getting_started)
+- [📱 Utilização](#usage)
+- [✅ Testes](#tests)
+- [🚀 Deployment](#deployment)
+- [🔃 Atualizando](#updating)
+- [🔧 Solução de Problemas](#troubleshooting)
+- [🤝🏻 Contribuições](./CONTRIBUTING.md)
+- [💾 Changelog](./CHANGELOG.md)
+- [📖 Referências](#bibliography)
 
 ## 📖 Sobre <a name = "about"></a>
 
-Este repositório contém o monorepo para a aplicação AutoDroid.
+Este repositório contém o código da API AutoDroid.
 
 ### Motivação
 
@@ -49,6 +51,8 @@ Encapsular aplicativos em contêineres Docker pode ser uma solução para esse p
 
 Ao oferecer ferramentas como a DroidAugmentor como um serviço, torna sua execução escalável, de fácil aprendizado e com melhor aproveitamento para experimentação.
 
+A AutoDroid é uma aplicação que visa oferecer aplicações como a DroidAugmentor como um serviço, tornando sua execução escalável, de fácil aprendizado e com melhor aproveitamento para experimentação.
+
 ## ✨ Visão Geral do Projeto <a name="overview"></a>
 
 O serviço proposto se trata da etapa de expansão de Dataset na pipeline de AutoML, conforme apresentado em [DroidAugmentor](https://sol.sbc.org.br/index.php/sbseg_estendido/article/view/27273).
@@ -59,15 +63,9 @@ O projeto é composto por diversas partes, com o objetivo final de oferecer uma 
 
 <img src="../.github/docs/1-overview.jpg" alt="Overview" style="fill:#000000">
 
-## ✅ Requisitos Funcionais (Histórias de Usuário) e Requisitos Não Funcionais <a name="project_requirements"></a>
-
-O documento de visão/requisitos pode ser acessado [aqui](https://docs.google.com/document/d/1tCNZw9VFt5honSpTOx_DjVQ7-l0qdYta/edit?usp=sharing&ouid=105354267831258985184&rtpof=true&sd=true).
-
 ## 🏦 Arquitetura <a name="architecture"></a>
 
-Este repositório contém o monorepo para a aplicação AutoDroid, cuja [Estrutura do Código](./CODEBASE_STRUCTURE.md) está disponível na pasta ```./docs``` deste repositório.
-
-O núcleo desta aplicação é o backend, que é uma API REST/GraphQL construída usando Node.js e Express, e está disponível na pasta ```./packages/backend``` deste repositório.
+Esta aplicação é uma API REST/GraphQL construída usando Typescript com Node.js, Express e TypeGraphQL.
 
 Seguindo o [modelo C4](https://c4model.com/), a arquitetura do back-end é apresentada a seguir:
 
@@ -83,6 +81,7 @@ Visão de componente:
 ### Entidades
 
 - `User`: representa um usuário da aplicação. Nenhum dado pessoal é coletado, é apenas um identificador anônimo.
+- `File`: representa um arquivo, que pode ser um dataset ou resultado de processamento, por exemplo.
 - `Processor`: representa um processador que será usado para processar um conjunto de dados. É uma imagem Docker que será usada para processar a solicitação de processamento do usuário com os parâmetros fornecidos.
 - `Dataset`: representa um conjunto de dados que será usado por um processador, é um arquivo que será usado como entrada para o processador.
 - `Processing`: representa uma solicitação de processamento feita por um usuário. É uma solicitação para processar um conjunto de dados usando um processador com os parâmetros fornecidos. Todo o ciclo de vida do processamento está disponível nesta entidade, incluindo o status de execução e seu resultado.
@@ -126,17 +125,7 @@ A proposta de arquitetura do back-end é baseada em [DDD](https://en.wikipedia.o
 
 O ambiente do usuário final (utilizador) deverá ter um dispositivo (seja fixo ou móvel) com acesso à internet e com ao menos uma ferramenta de navegação para acessar a versão web do produto ou um cliente de API REST/GraphQL (ex.: curl, httpie, postman, insomnia) previamente instalado em seu dispositivo.
 
-## 🏁 Primeiros Passos <a name = "getting_started"></a>
-
-Estas instruções irão ajudá-lo a obter uma cópia deste projeto e executá-lo em sua máquina local para fins de desenvolvimento e teste. Consulte [deployment](#deployment) para obter informações sobre como implantar o projeto em ambiente produtivo.
-
-Existem duas maneiras de executar esta aplicação, usando o Docker ou executando manualmente em sua máquina local.
-
-Os seguintes passos irão guiá-lo através do processo de execução desta aplicação de forma automatizada, usando o Docker.
-
-Para começar, a máquina que executará esta aplicação deve atender aos seguintes requisitos, considerando a execução através do [Docker](https://docs.docker.com/get-docker/):
-
-### Requisitos Mínimos <a name = "minimum_requirements"></a>
+## 📡 Ambiente do Servidor <a name = "server_environment"></a>
 
 - Sistema operacional Linux (por exemplo, Ubuntu, Debian e outros...) (MacOS/Windows é experimental)
 - Virtualização habilitada na BIOS
@@ -145,12 +134,84 @@ Para começar, a máquina que executará esta aplicação deve atender aos segui
 - [Git](https://git-scm.com/downloads) instalado
 - [Docker](https://docs.docker.com/get-docker/) instalado
 
-### Instalação
+## 🚩 Antes de começar <a name = "before_start"></a>
+
+Este projeto requer credenciais e chaves de acesso para a integração com serviços externos, sendo eles:
+- Firebase: autenticação/autorização
+- Google Cloud Storage: armazenamento de arquivos
+
+O requisito "Google Cloud Storage" pode ser provido pela mesma conta do requisito "Firebase", tanto como pode ser uma conta/projeto Google distinto.
+
+### Firebase
+
+- Entre na conta Google que será utilizada para gerenciar o projeto.
+- Acesse o [Firebase Console](https://console.firebase.google.com/).
+- Crie um novo projeto ou utilize um projeto existente.
+- Inicie o [Firebase Authentication](https://console.firebase.google.com/project/_/authentication/providers).
+- Habilite o provedor de autenticação Email.
+- Habilite o provedor de autenticação Google.
+- Inicie o [Firebase Storage](https://console.firebase.google.com/project/_/storage).
+- Crie um novo bucket ou utilize um bucket existente, coletando o valor ```nome``` do bucket.
+- Crie a aplicação web e armazene os dados de configuração a serem usados pelo frontend posteriormente.
+- Crie uma [conta de serviço (service account) para SDK Admin do Firebase](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk).
+- Crie uma chave de acesso JSON para a conta de serviço e salve o arquivo em um local seguro.
+
+- Coletado o ```nome``` do bucket e a chave de acesso JSON, [prossiga para a configuração das variáveis de ambiente](#env_variables).
+
+Para mais detalhes, foi desenvolvido o [tutorial detalhado sobre como configurar o Firebase (Authentication + Storage) para a AutoDroid](./FIREBASE_SETUP_EXAMPLE.md).
+
+### Google Cloud Storage
+
+- Entre na conta Google que será utilizada para gerenciar o projeto.
+- Acesse o [Google Cloud Console](https://console.cloud.google.com/).
+- Crie um novo projeto ou utilize um projeto existente.
+- Ative a [API do Google Cloud Storage](https://console.cloud.google.com/apis/library/storage.googleapis.com).
+- Verifique se o projeto possui uma [conta de faturamento](https://console.cloud.google.com/billing) caso necessário.
+- Crie um [novo bucket ou utilize um bucket existente](https://console.cloud.google.com/storage/browser), coletando o valor ```nome``` do bucket.
+- Crie uma [nova conta de serviço (service account) ou utilize uma existente](https://console.cloud.google.com/iam-admin/serviceaccounts).
+- Verifique se a conta de serviço possui a [permissão de escrita no bucket selecionado](https://cloud.google.com/storage/docs/access-control/iam-roles).
+- Crie uma [chave de acesso JSON para a conta de serviço](https://cloud.google.com/iam/docs/keys-create-delete) e salve o arquivo em um local seguro.
+
+- Coletado o ```nome``` do bucket desejado e a chave de acesso JSON, [prossiga para a configuração das variáveis de ambiente](#env_variables).
+
+### Variáveis de ambiente <a name = "env_variables"></a>
+
+Os campos das seções ```#General```, ```#Database```, ```#Non-relational database``` e ```# Redis``` estão configurados para funcionarem adequadamente em ambiente Docker, altere conforme necessário.
+
+O campo ```CORS_ALLOWED_FROM``` é configurado para aceitar requisições de qualquer origem, altere conforme necessário.
+
+Os campos da seção ```#Providers``` são obrigatórios para o funcionamento da aplicação e devem ser preenchidos com os valores coletados anteriormente.
+
+- (Obrigatório) Preencha os campos ```FIREBASE_AUTHENTICATION_PROVIDER_PROJECT_ID```, ```FIREBASE_AUTHENTICATION_PROVIDER_CLIENT_EMAIL``` e ```FIREBASE_AUTHENTICATION_PROVIDER_PRIVATE_KEY``` com os valores da conta de serviço do Firebase.
+- (Obrigatório) Preencha os campos ```GOOGLE_STORAGE_PROVIDER_PROJECT_ID```, ```GOOGLE_STORAGE_PROVIDER_CLIENT_EMAIL``` e ```GOOGLE_STORAGE_PROVIDER_PRIVATE_KEY``` e ```GOOGLE_STORAGE_PROVIDER_BUCKET_NAME``` com os valores da conta de serviço do Google Cloud Storage (ou Firebase Storage, com o nome do bucket coletado em ```Criação → Storage``` sem o prefixo ```gs://```).
+
+Os campos ```#Feature``` devem ser ajustados conforme suas preferências para o funcionamento.
+
+- (Obrigatório) Preencha o campo ```ADMIN_EMAILS``` com os emails dos administradores separados por vírgula.
+- (Obrigatório) O campo ```JOBS_ENABLED``` deve ser preenchido com ```true``` para habilitar o processamento de jobs em background.
+- (Obrigatório) Os campos ```WORKER_REFRESH_TOKEN_SECRET``` e ```WORKER_ACCESS_TOKEN_SECRET``` são obrigatórios e devem ser preenchidos com valores aleatórios para garantir a segurança da aplicação.
+
+Os campos opcionais podem ficar vazios (exemplo: ```CAMPO=```, deixando nenhum valor após o sinal de igualdade ```=```), caso não deseje especificar um valor
+
+- (Opcional) Preencha o campo ```SENTRY_DSN``` com a chave fornecida pelo [Sentry](https://sentry.io/) caso desejado.
+- (Opcional) Preencha os campos ```STORAGE_PROVIDER_PUBLIC_READ_URL_EXPIRATION```, ```STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION```, ```WORKER_REFRESH_TOKEN_EXPIRATION```, ```WORKER_ACCESS_TOKEN_EXPIRATION```, ```PROCESSING_DEFAULT_KEEP_UNTIL``` e ```PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND``` [conforme a especificação da biblioteca ms](https://www.npmjs.com/package/ms).
+
+## 🏁 Primeiros Passos <a name = "getting_started"></a>
+
+Estas instruções irão ajudá-lo a obter uma cópia deste projeto e executá-lo em sua máquina local para fins de desenvolvimento e teste. Consulte [deployment](#deployment) para obter informações sobre como implantar o projeto em ambiente produtivo.
+
+Verifique se você atende aos [requisitos do ambiente do servidor](#server_environment) antes de prosseguir.
+
+Execute todos os passos de [antes de começar](#before_start) antes de prosseguir. Salve todos certificados e chaves de acesso em um local seguro.
+
+Existem duas maneiras de instalar esta aplicação: [utilizando o Docker (recomendado)](#docker_setup) ou [manualmente](#manual_setup).
+
+### Instalação via Docker (recomendado) <a name="docker_setup"></a>
 
 Usando o terminal, clone este repositório em sua máquina local usando o Git:
 
 ```bash
-git clone https://github.com/luizfelipelaviola/autodroid.git
+git clone https://github.com/MalwareDataLab/AutoDroid.git
 ```
 
 Navegue até a pasta do repositório:
@@ -180,23 +241,13 @@ autodroid_api_gateway_prod  | 🆗 Processing background jobs on @autodroid/api.
 autodroid_api_gateway_prod  | ⚡️ @autodroid/api production version X using Node.js X running at port 3333 with PID X.
 ```
 
-After successfully starting the application, you can run a demo executing the following script on another terminal:
-
-```bash
-./demo.sh
-```
-
-Ou você pode continuar manualmente e usá-lo seguindo as instruções de [uso](#usage).
+Prossiga para a seção [utilização](#usage) para obter informações sobre como usar a aplicação.
 
 Para parar a aplicação, pressione ```Ctrl + C``` no terminal ou execute ```docker compose down``` na raiz deste repositório, caso esteja executando a aplicação em modo destacado.
 
-Por padrão, uma pasta `./runtime` será criada na raiz deste repositório para armazenar os arquivos em tempo de execução da aplicação, incluindo o banco de dados e os arquivos enviados, que são utilizados para persistir os dados entre as execuções da aplicação. Considerando isso, às vezes, para excluir essa pasta, devido ao comportamento padrão do Docker, pode ser necessário utilizar um usuário administrador do sistema / root (sudo).
+Uma pasta `./runtime` será criada na raiz deste repositório para armazenar os arquivos temporários da aplicação. Pode ser necessário permissões de superusuário para acessar, modificar ou excluir esta pasta.
 
-A pasta `./runtime` também é útil para estudar a estrutura de dados da aplicação e fazer backup dos dados da aplicação. Por favor, lembre-se de que a pasta do Docker pode solicitar que você esteja logado como usuário administrador do sistema / root (sudo) para ser visualizada.
-
-### Manual Setup <a name="manual_setup"></a>
-
-Executar esta aplicação usando o ambiente Docker compose é a forma recomendada, evitando a instalação manual de cada dependência.
+### Instalação Manual <a name="manual_setup"></a>
 
 Um guia para configurar o projeto manualmente está disponível no guia de [configuração manual](./MANUAL_SETUP.md).
 
@@ -210,7 +261,9 @@ Por padrão, estará disponível em sua máquina local nos seguintes URLs:
 
 Esta URL estará disponível até que a aplicação seja interrompida.
 
-Para usar a API diretamente, você pode seguir as instruções na [documentação da API](./API.md) ou pode usar ferramentas de cliente HTTP como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/). Há uma [coleção do Insomnia](./collections/Insomnia.json) na pasta ```./docs/collections``` deste repositório que você pode importar para sua aplicação cliente HTTP.
+Para usar a API diretamente, você pode seguir as instruções na [documentação da API](./API.md) ou pode usar ferramentas de cliente HTTP como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/).
+
+Todas as rotas, queries e mutations da API estão disponíveis [nesta coleção do Postman](https://www.postman.com/luizfelipelaviola/workspace/autodroid/collection/17242387-d69ee1f8-a603-4ac8-89aa-787cfacffaee?action=share&creator=17242387&active-environment=17242387-9dcb7b8e-4eb1-4a10-b607-74725449575f).
 
 ### Usuário/Autorização
 
@@ -218,51 +271,21 @@ Esta aplicação usa autenticação através do provedor Firebase, sendo necess�
 
 ### Processador
 
-Os processadores (aplicações como o DroidAugmentor) disponíveis podem ser alterados apenas manualmente pelo administrador da aplicação usando o arquivo [processors.json](../packages/backend/shared/processors.json). Este arquivo é carregado na inicialização da aplicação e é usado para definir os processadores disponíveis, suas configurações e as imagens necessárias a serem obtidas do Docker Hub.
+O processador é uma aplicação (imagem Docker) a ser registrada pelo adminsitrador para ser utilizada pelos usuários para processar conjuntos de dados. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-72c95160-e485-466b-a22b-2dc7a201aeb0?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
-Os parâmetros de configuração são descritos abaixo:
-- `code`: o identificador do processador, usado para referenciá-lo na solicitação de processamento.
-- `name`: o nome do processador.
-- `description`: a descrição do processador.
-- `image`: a imagem Docker do processador, usada para obtê-la do Docker Hub. A imagem de destino deve ser pública.
-- `input_arg`: a chave do argumento que será usada para passar o caminho do arquivo de conjunto de dados para o processador.
-- `input_dir`: o diretório onde o arquivo de conjunto de dados será colocado no contêiner do processador usando volumes.
-- `output_arg`: a chave do argumento que será usada para passar o caminho do arquivo de resultado do processamento para o processador.
-- `output_dir`: o diretório onde o arquivo de resultado do processamento será colocado no contêiner do processador usando volumes.
-- `command`: o comando que executa a ação desejada no contêiner do processador, usando os argumentos fornecidos.
-- `allowed_params`: a lista de chaves de parâmetros aceitos para o processador.
-- `allowed_mime_types`: a lista de tipos MIME aceitos para o arquivo de conjunto de dados. Isso também afetará a validação do upload do arquivo de conjunto de dados.
-- `default_params`: os parâmetros padrão para o processador. Serão usados se o parâmetro especificado não for fornecido na solicitação de processamento.
-
-Após alterar o processors.json, se estiver executando no Docker ou em um ambiente de produção, será necessário reiniciar a aplicação para aplicar as alterações.
-
-Para reconstruir a aplicação usando o ambiente Docker compose, você pode executar o seguinte comando na raiz deste repositório:
-
-```bash
-docker compose build
-```
-
-E então você pode executar o script `./start.sh` novamente.
-
-Para reconstruir a aplicação manualmente novamente para produção, você pode seguir as instruções na seção [configuração manual](#manual_setup).
-
-### Conjunto de Dados
+### Dataset
 
 O arquivo de conjunto de dados pode ser enviado pelo usuário usando a API. O arquivo de conjunto de dados deve ser um arquivo válido com um tipo MIME válido, de acordo com a configuração do processador.
 
-Há um [exemplo de conjunto de dados](./samples/dataset_example.csv) na pasta ```./docs/samples``` deste repositório que você pode usar para testar a aplicação.
+Há um [dataset de exemplo](./samples/dataset_example.csv) na pasta ```./docs/samples``` deste repositório que você pode usar para testar a aplicação.
 
-A referência do usuário é apenas para mencionar o usuário que enviou o arquivo de conjunto de dados.
-Ele pode ser baixado, alterado ou excluído por qualquer outro usuário.
+O envio é feito por URL assinada, a funcionalidade de `Create dataset` irá fornecer uma `upload_url`, para onde o arquivo de fato deverá ser enviado. [Exemplo de requisições](https://www.postman.com/luizfelipelaviola/workspace/autodroid/folder/17242387-303cd191-1127-448c-920c-18bc5f9d0e46?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
 ### Processamento
 
-A solicitação de processamento pode ser feita pelo usuário usando a API. A solicitação de processamento deve ser feita por um usuário válido e deve conter um arquivo de conjunto de dados válido e um processador válido seguido dos parâmetros desejados.
+Obtidos o `processor_id` e `dataset_id` a partir da criação dos dois passos anteriores, o usuário pode solicitar o processamento do conjunto de dados, seja com os parâmetros predefinidos ou customizados. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-3c8296fb-5506-428c-95d2-8abc65cc92bc?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
-A solicitação de processamento será enfileirada e processada pela aplicação, e o resultado do processamento estará disponível na entidade de processamento. O processo pode levar vários minutos, horas ou até mesmo dias, dependendo do processador e do arquivo de conjunto de dados.
-
-A referência do usuário é apenas para mencionar o usuário que solicitou o processamento.
-Ele pode ser baixado, alterado ou excluído por qualquer outro usuário.
+O resultado pode ser obtido através do download do arquivo zip fornecido pelo campo `public_url` após a conclusão do processamento (campo `status`). [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-6f8c7085-04f4-47d0-8f83-abe90fbffd25?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
 ### Fluxo comum
 
@@ -279,27 +302,58 @@ Para executar os testes, por favor execute o comando abaixo:
 yarn test
 ```
 
-A cobertura de código e outros relatórios serão gerados na pasta `./packages/backend/test/outputs`.
+A cobertura de código e outros relatórios serão gerados na pasta `./test/outputs`.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
 Esta aplicação está pronta para implantação com Docker e docker compose.
 
-Para implantar o backend em uma Máquina Virtual, faça um clone deste repositório no destino, selecione o branch desejado e, após atender aos requisitos, execute os seguintes comandos:
+Para disponibilizar esta aplicação em ambiente produtivo:
+
+Realize o download na pasta desejada:
 
 ```bash
-docker compose build
+git clone https://github.com/MalwareDataLab/AutoDroid.git
 ```
 
-Depois que a aplicação for construída, preencha o arquivo ```docker-compose.yml``` com suas variáveis de ambiente e execute o seguinte comando:
+Atualize o repositório utilizando:
+
+```bash
+git pull
+```
+
+Complete os mesmos processos citados anteriormente em [antes de começar](#before_start).
+
+Realize o processo de construção da imagem Docker utilizando:
+
+```bash
+docker compose build --no-cache
+```
+
+Depois que a aplicação for construída, preencha e verifique o arquivo ```docker-compose.yml``` com suas variáveis de ambiente (conforme especificado em [antes de começar](#before_start)) e execute o seguinte comando:
 
 ```bash
 docker compose up -d
 ```
 
-Certifique-se de que seus Firewalls, Balanceadores de Carga e DNS estejam bem configurados.
+A aplicação estará disponível na porta 3333 (configuração padrão), para alterar, modifique o arquivo ```docker-compose.yml``` e reinicie a aplicação utilizando o comando ```docker compose restart```.
 
-## 🛠 Solução de Problemas <a name = "troubleshooting"></a>
+Configure sua rede local e as portas do firewall para permitir o acesso à aplicação.
+
+Verifique as restrições da sua rede local e ISP.
+
+## 🔃 Atualizando <a name = "updating"></a>
+
+Para atualizar a aplicação, siga os passos abaixo:
+
+```bash
+git pull
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+```
+
+## 🔧 Solução de Problemas <a name = "troubleshooting"></a>
 
 O Docker é incrível, mas às vezes pode ser um pouco complicado. Alguns erros podem ocorrer durante a execução da aplicação, e alguns deles podem estar relacionados ao Docker.
 
@@ -307,10 +361,10 @@ O Docker é incrível, mas às vezes pode ser um pouco complicado. Alguns erros 
 
 Se você estiver enfrentando alguns erros antes da inicialização da aplicação, verifique os seguintes itens:
 
-- Verifique se você tem os [requisitos](#minimum_requirements) instalados em sua máquina.
-- Verifique se você tem o [Docker](https://docs.docker.com/get-docker/) em execução em sua máquina.
-- Verifique se você tem espaço livre suficiente em seu disco, pelo menos 10GB.
-- Verifique se você pode baixar outras imagens do Docker Hub, como `docker run --rm hello-world:latest`.
+- Verifique se a máquina atende aos [requisitos](#server_environment).
+- Verifique se todos os passos especificados em [antes de começar](#before_start) foram completados, refaça-os se necessário.
+- Verifique se seu usário possui permissões de uso ao Docker, executando o comando `docker run --rm hello-world:latest`.
+- Realize os processos de pós-instalação do Docker, conforme [documentação oficial](https://docs.docker.com/engine/install/linux-postinstall/).
 
 ### Limpando o ambiente do Docker
 
@@ -347,7 +401,7 @@ docker run --rm hello-world:latest
 docker compose build --no-cache
 ```
 
-Após executar essas etapas, se o erro persistir, por favor abra uma issue neste repositório.
+Persistindo o erro, entre em contato com o mantenedor do projeto.
 
 ## 📖 Referências <a name="bibliography"></a>
 

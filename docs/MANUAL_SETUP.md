@@ -17,7 +17,7 @@ Você também pode configurar manualmente contêineres Docker para [PostgreSQL](
 Usando o terminal, clone este repositório em sua máquina local usando o Git:
 
 ```bash
-git clone https://github.com/luizfelipelaviola/autodroid.git
+git clone https://github.com/MalwareDataLab/AutoDroid.git
 ```
 
 Navegue até a pasta do repositório:
