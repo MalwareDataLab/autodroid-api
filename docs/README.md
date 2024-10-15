@@ -200,9 +200,9 @@ Os campos opcionais podem ficar vazios (exemplo: ```CAMPO=```, deixando nenhum v
 
 Estas instruções irão ajudá-lo a obter uma cópia deste projeto e executá-lo em sua máquina local para fins de desenvolvimento e teste. Consulte [deployment](#deployment) para obter informações sobre como implantar o projeto em ambiente produtivo.
 
-Verifique se você atende aos [requisitos do ambiente do servidor](#server_environment) antes de prosseguir.
+Verifique se você atende aos [requisitos do ambiente do servidor](#server_environment) antes de começar.
 
-Execute todos os passos de [antes de começar](#before_start) antes de prosseguir. Salve todos certificados e chaves de acesso em um local seguro.
+Execute todos os passos de [antes de começar](#before_start). Salve todos certificados e chaves de acesso em um local seguro.
 
 Existem duas maneiras de instalar esta aplicação: [utilizando o Docker (recomendado)](#docker_setup) ou [manualmente](#manual_setup).
 
@@ -220,10 +220,16 @@ Navegue até a pasta do repositório:
 cd autodroid
 ```
 
-Execute o script ```start.sh```:
+Atualize o repositório sempre, utilizando:
 
 ```bash
-./start.sh
+git pull
+```
+
+Inicie o projeto:
+
+```bash
+docker compose up --build
 ```
 
 Este script irá iniciar a aplicação usando o Docker compose.
