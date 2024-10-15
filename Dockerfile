@@ -1,29 +1,27 @@
 # Build environment
-FROM node:20.16.0 as build
-
+FROM node:20.16.0-alpine AS build
 WORKDIR /usr/app
 
-COPY --chmod=+x package.json yarn.lock ./
-
-RUN yarn
-
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 COPY . .
-
 RUN yarn build
 
 # Production environment
-FROM node:20.16.0 as production
-
+FROM node:20.16.0-alpine AS production
 WORKDIR /usr/app
+RUN addgroup -g 1001 -S nodegrp
+RUN adduser -S nodejs -u 1001
 
-COPY --chmod=+x --from=build /usr/app/package.json /usr/app/yarn.lock /usr/app/scripts/wait-for-it.sh ./
-COPY --chmod=+x --from=build /usr/app/prisma ./prisma
-COPY --chmod=+x --from=build /usr/app/dist ./src
+COPY --from=build /usr/app/package.json /usr/app/yarn.lock /usr/app/scripts/wait-for.sh ./
+COPY --from=build /usr/app/prisma ./prisma
+COPY --from=build /usr/app/dist ./src
 
-RUN chmod +x ./wait-for-it.sh
+RUN chown -R nodejs:nodegrp /usr/app
+RUN chmod +x ./wait-for.sh
 
-RUN yarn --production
+USER nodejs
+RUN yarn install --frozen-lockfile --production
 
 EXPOSE 3333
-
-CMD yarn run-s prisma:generate prisma:prod start
+CMD ["yarn", "run-s", "prisma:generate", "prisma:prod", "start"]

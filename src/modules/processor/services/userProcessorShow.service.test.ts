@@ -1,67 +1,34 @@
+import { container } from "tsyringe";
 import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
-import { container } from "tsyringe";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Entity import
+// Factory import
 import { User } from "@modules/user/entities/user.entity";
-import {
-  IUserRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-
-// Enum import
-import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Service import
 import { UserProcessorShowService } from "./userProcessorShow.service";
+import { processorFactory } from "../entities/factories/processor.factory";
 
 describe("Service: UserProcessorShowService", () => {
   let user: User;
-  let processorRepository: IProcessorRepository;
-
   let userProcessorShowService: UserProcessorShowService;
 
   beforeEach(async () => {
-    processorRepository = container.resolve("ProcessorRepository");
-
-    const userRepository = container.resolve<IUserRepository>("UserRepository");
-    user = await userRepository.createOne({
-      email: faker.internet.email(),
-      name: faker.person.fullName(),
-      language: "en",
-      phone_number: null,
-    });
-
-    userProcessorShowService = new UserProcessorShowService(
-      processorRepository,
-    );
+    user = await userFactory.create();
+    userProcessorShowService = container.resolve(UserProcessorShowService);
   });
 
   it("should get one processor", async () => {
-    const processor = await processorRepository.createOne({
-      description: faker.word.words(3),
-      tags: "one,two,three",
+    const processor = await processorFactory.create({
       user_id: user.id,
-      visibility: PROCESSOR_VISIBILITY.PUBLIC,
-      name: faker.word.words(3),
-      allowed_mime_types: faker.system.mimeType(),
-      image_tag: faker.system.fileName(),
-      payload: {},
-      configuration: {
-        parameters: [],
-        dataset_input_argument: "",
-        dataset_input_value: "",
-        dataset_output_argument: "",
-        dataset_output_value: "",
-        command: "",
-      },
-      version: faker.system.semver(),
     });
 
     const response = await userProcessorShowService.execute({
+      user,
       processor_id: processor.id,
       language: "en",
     });
@@ -77,6 +44,7 @@ describe("Service: UserProcessorShowService", () => {
 
     expect(() =>
       userProcessorShowService.execute({
+        user,
         processor_id: faker.string.uuid(),
         language: "en",
       }),

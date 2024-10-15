@@ -48,6 +48,9 @@ const initRepositories = async (selectedContainer: DependencyContainer = mainCon
   });
 };
 
+export type RepositoryToken = keyof typeof repositories;
+export type Repository<T extends RepositoryToken> = InstanceType<(typeof repositories)[T]>;
+
 export type {
   /* Document repositories */
 
@@ -62,4 +65,4 @@ export type {
   IProcessingRepository,
 };
 
-export { initRepositories };
+export { initRepositories, repositories };

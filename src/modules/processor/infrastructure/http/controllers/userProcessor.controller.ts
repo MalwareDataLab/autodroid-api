@@ -36,6 +36,7 @@ class UserProcessorController {
       UserProcessorShowService,
     );
     const processor = await userProcessorShowService.execute({
+      user: req.session.user,
       processor_id: req.params.processor_id,
       language: req.language,
     });

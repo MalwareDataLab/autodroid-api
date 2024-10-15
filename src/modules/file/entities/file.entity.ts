@@ -91,7 +91,7 @@ class File implements FileEntityType {
 
   @Exclude()
   @Type(() => Dataset)
-  dataset: Dataset;
+  dataset: Dataset | null;
 
   @Exclude()
   @Type(() => Processing)
