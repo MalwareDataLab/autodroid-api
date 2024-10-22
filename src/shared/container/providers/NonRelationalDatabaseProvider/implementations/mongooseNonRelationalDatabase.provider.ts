@@ -19,8 +19,8 @@ class MongooseNonRelationalDatabaseProvider
 
   public readonly connection: Mongoose.Connection;
 
-  constructor(client: Mongoose.Connection = Mongoose.createConnection()) {
-    const mongooseClient = client;
+  constructor(uri = getEnvConfig().NON_RELATIONAL_DATABASE_URL) {
+    const mongooseClient = Mongoose.createConnection();
 
     if (logEnabled) {
       mongooseClient.on("error", error => {
@@ -51,7 +51,7 @@ class MongooseNonRelationalDatabaseProvider
     this.connection = mongooseClient;
     this.initialization = executeAction({
       action: () =>
-        this.connection.openUri(getEnvConfig().NON_RELATIONAL_DATABASE_URL, {
+        this.connection.openUri(uri, {
           ...(!!getEnvConfig().isTestEnv && {
             directConnection: true,
           }),
