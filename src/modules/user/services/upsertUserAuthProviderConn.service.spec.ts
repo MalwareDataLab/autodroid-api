@@ -1,16 +1,26 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 
+// i18n import
+import { TFunction } from "@shared/i18n";
+
+// Util import
 import { parse } from "@shared/utils/instanceParser";
-import { AppError } from "@shared/errors/AppError";
+
+// Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
-import { TFunction } from "i18next";
+
+// Entity import
+import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
+
+// Repository import
 import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
+
+// Service import
 import {
   IUpsertUserAuthProviderConnServiceRequest,
   UpsertUserAuthProviderConnService,
 } from "./upsertUserAuthProviderConn.service";
-import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
 
 describe("Service: UpsertUserAuthProviderConnService", () => {
   let userAuthProviderConnRepositoryMock: Mocked<IUserAuthProviderConnRepository>;
@@ -88,11 +98,6 @@ describe("Service: UpsertUserAuthProviderConnService", () => {
       ) as unknown as TFunction,
     };
 
-    const error = new AppError({
-      key: "@user_auth_provider_conn_service/USER_AUTH_PROVIDER_CONN_NOT_FOUND",
-      message: "User auth provider conn not found.",
-    });
-
     userAuthProviderConnRepositoryMock.findOne.mockResolvedValueOnce(
       parse(UserAuthProviderConn, data),
     );
@@ -101,6 +106,10 @@ describe("Service: UpsertUserAuthProviderConnService", () => {
 
     expect(
       upsertUserAuthProviderConnService.execute(data),
-    ).rejects.toThrowError(error);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_auth_provider_conn_service/USER_AUTH_PROVIDER_CONN_NOT_FOUND",
+      }),
+    );
   });
 });

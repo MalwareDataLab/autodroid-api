@@ -1,13 +1,21 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
-
-import { parse } from "@shared/utils/instanceParser";
 import { faker } from "@faker-js/faker";
-import { AppError } from "@shared/errors/AppError";
+
+// Util import
+import { parse } from "@shared/utils/instanceParser";
+
+// Util import
 import { User } from "@modules/user/entities/user.entity";
-import { IDatasetRepository } from "../repositories/IDataset.repository";
-import { UserDatasetShowService } from "./userDatasetShow.service";
 import { Dataset } from "../entities/dataset.entity";
+
+// Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
+// Repository import
+import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Service import
+import { UserDatasetShowService } from "./userDatasetShow.service";
 
 describe("Service: UserDatasetShowService", () => {
   let datasetRepositoryMock: Mocked<IDatasetRepository>;
@@ -57,11 +65,6 @@ describe("Service: UserDatasetShowService", () => {
   it("should throw if dataset was not found", async () => {
     const dataset_id = faker.string.uuid();
 
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_FOUND",
-      message: "Dataset not found.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(null);
 
     expect(() =>
@@ -72,6 +75,10 @@ describe("Service: UserDatasetShowService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@dataset_guard/DATASET_NOT_FOUND",
+      }),
+    );
   });
 });

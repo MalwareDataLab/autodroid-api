@@ -1,12 +1,20 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 
+// Util import
 import { parse } from "@shared/utils/instanceParser";
-import { AppError } from "@shared/errors/AppError";
-import { CreateUserService } from "./createUser.service";
-import { IUserRepository } from "../repositories/IUser.repository";
-import { ICreateUserDTO } from "../types/IUser.dto";
+
+// Entity import
 import { User } from "../entities/user.entity";
+
+// Repository import
+import { IUserRepository } from "../repositories/IUser.repository";
+
+// DTO import
+import { ICreateUserDTO } from "../types/IUser.dto";
+
+// Service import
+import { CreateUserService } from "./createUser.service";
 
 describe("Service: CreateUserService", () => {
   let userRepositoryMock: Mocked<IUserRepository>;
@@ -51,19 +59,17 @@ describe("Service: CreateUserService", () => {
       phone_number: faker.phone.number(),
     };
 
-    const error = new AppError({
-      key: "@create_user_service/FAIL_TO_CREATE_USER",
-      message: "Fail to create user.",
-      statusCode: 401,
-    });
-
-    userRepositoryMock.createOne.mockRejectedValueOnce(error);
+    userRepositoryMock.createOne.mockRejectedValueOnce(new Error());
 
     expect(
       createUserService.execute({
         data,
         language: "en",
       }),
-    ).rejects.toThrowError(error);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@create_user_service/FAIL_TO_CREATE_USER",
+      }),
+    );
   });
 });

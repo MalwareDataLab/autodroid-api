@@ -61,9 +61,9 @@ class UserDatasetUpdateService {
 
     if (!!data.description && typeof data.description !== "string")
       throw new AppError({
-        key: "@dataset_create_service/INVALID_DESCRIPTION",
+        key: "@user_dataset_create_service/INVALID_DESCRIPTION",
         message: t(
-          "@dataset_create_service/INVALID_DESCRIPTION",
+          "@user_dataset_create_service/INVALID_DESCRIPTION",
           "Invalid description.",
         ),
       });
@@ -73,9 +73,9 @@ class UserDatasetUpdateService {
       !data.tags.split(",").every((tag: string) => tag.trim().length > 0)
     )
       throw new AppError({
-        key: "@dataset_create_service/TAGS_NOT_PROVIDED",
+        key: "@user_dataset_create_service/TAGS_NOT_PROVIDED",
         message: t(
-          "@dataset_create_service/TAGS_NOT_PROVIDED",
+          "@user_dataset_create_service/TAGS_NOT_PROVIDED",
           "Tags must be a comma-separated list.",
         ),
       });

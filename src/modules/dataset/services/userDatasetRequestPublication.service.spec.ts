@@ -1,13 +1,21 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
-
-import { parse } from "@shared/utils/instanceParser";
 import { faker } from "@faker-js/faker";
-import { AppError } from "@shared/errors/AppError";
+
+// Util import
+import { parse } from "@shared/utils/instanceParser";
+
+// Entity import
 import { User } from "@modules/user/entities/user.entity";
-import { IDatasetRepository } from "../repositories/IDataset.repository";
-import { UserDatasetRequestPublicationService } from "./userDatasetRequestPublication.service";
 import { Dataset } from "../entities/dataset.entity";
+
+// Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
+// Repository import
+import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Service import
+import { UserDatasetRequestPublicationService } from "./userDatasetRequestPublication.service";
 
 describe("Service: UserDatasetRequestPublicationService", () => {
   let datasetRepositoryMock: Mocked<IDatasetRepository>;
@@ -61,7 +69,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
     expect(response).toMatchObject(expected);
   });
 
-  it("should throw if dataset was not found after upload", async () => {
+  it("should throw if dataset was not updated", async () => {
     const dataset_id = faker.string.uuid();
 
     const dataset: Dataset = parse(Dataset, {
@@ -72,11 +80,6 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       visibility: DATASET_VISIBILITY.PRIVATE,
       updated_at: new Date(),
     } satisfies Partial<Dataset>);
-
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_UPDATED",
-      message: "Dataset not updated.",
-    });
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
     datasetRepositoryMock.updateOne.mockResolvedValueOnce(null);
@@ -89,7 +92,11 @@ describe("Service: UserDatasetRequestPublicationService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_request_publication_service/DATASET_NOT_UPDATED",
+      }),
+    );
   });
 
   it("should throw if dataset is not editable", async () => {
@@ -105,11 +112,6 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       updated_at: new Date(),
     });
 
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_EDITABLE",
-      message: "Dataset not editable.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
     expect(() =>
@@ -120,16 +122,15 @@ describe("Service: UserDatasetRequestPublicationService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_request_publication_service/DATASET_NOT_EDITABLE",
+      }),
+    );
   });
 
   it("should throw if dataset was not found", async () => {
     const dataset_id = faker.string.uuid();
-
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_FOUND",
-      message: "Dataset not found.",
-    });
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(null);
 
@@ -141,6 +142,10 @@ describe("Service: UserDatasetRequestPublicationService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@dataset_guard/DATASET_NOT_FOUND",
+      }),
+    );
   });
 });

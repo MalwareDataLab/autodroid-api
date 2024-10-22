@@ -1,17 +1,8 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
-// Util import
-import { parse } from "@shared/utils/instanceParser";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Processor } from "../entities/processor.entity";
-
 // Repository import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { IProcessorRepository } from "../repositories/IProcessor.repository";
 
 // Service import
@@ -19,6 +10,9 @@ import { UserProcessorShowService } from "./userProcessorShow.service";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
+
+// Factory import
+import { processorFactory } from "../entities/factories/processor.factory";
 
 describe("Service: UserProcessorShowService", () => {
   let processorRepositoryMock: Mocked<IProcessorRepository>;
@@ -43,49 +37,107 @@ describe("Service: UserProcessorShowService", () => {
     );
   });
 
-  it("should get one processor", async () => {
-    const processor_id = faker.string.uuid();
+  it("should get one processor when is public", async () => {
+    const user = userFactory.build();
 
-    const processor: Processor = parse(Processor, {
-      id: faker.string.uuid(),
-      description: faker.word.words(3),
-      tags: "one,two,three",
-      user_id: faker.string.uuid(),
-      visibility: PROCESSOR_VISIBILITY.PUBLIC,
-      updated_at: new Date(),
-    } satisfies Partial<Processor>);
+    const processor = processorFactory.build(
+      {
+        description: faker.word.words(3),
+        tags: "one,two,three",
+        visibility: PROCESSOR_VISIBILITY.PUBLIC,
+      },
+      {
+        associations: { user },
+        transient: { withRelations: true },
+      },
+    );
 
     processorRepositoryMock.findOne.mockResolvedValueOnce(processor);
 
     const response = await userProcessorShowService.execute({
-      user: {
-        id: processor.user_id,
-      } as User,
-      processor_id,
+      processor_id: processor.id,
+
+      user: processor.user,
       language: "en",
     });
 
     expect(response).toMatchObject(processor);
   });
 
-  it("should throw if processor was not found", async () => {
-    const processor_id = faker.string.uuid();
+  it("should get one processor when is hidden but the user is the owner", async () => {
+    const user = userFactory.build();
 
-    const expected = new AppError({
-      key: "@processor_update_service/PROCESSOR_NOT_FOUND",
-      message: "Processor not found.",
+    const processor = processorFactory.build(
+      {
+        description: faker.word.words(3),
+        tags: "one,two,three",
+        visibility: PROCESSOR_VISIBILITY.HIDDEN,
+      },
+      {
+        associations: { user },
+        transient: { withRelations: true },
+      },
+    );
+
+    processorRepositoryMock.findOne.mockResolvedValueOnce(processor);
+
+    const response = await userProcessorShowService.execute({
+      processor_id: processor.id,
+
+      user,
+      language: "en",
     });
+
+    expect(response).toMatchObject(processor);
+  });
+
+  it("should return not found if the processor is not public and user is not an admin", async () => {
+    const createdUser = userFactory.build();
+    const user = userFactory.build({ is_admin: false });
+
+    const processor = processorFactory.build(
+      {
+        id: faker.string.uuid(),
+        description: faker.word.words(3),
+        tags: "one,two,three",
+        visibility: PROCESSOR_VISIBILITY.HIDDEN,
+      },
+      {
+        associations: { user: createdUser },
+        transient: { withRelations: true },
+      },
+    );
+
+    processorRepositoryMock.findOne.mockResolvedValueOnce(processor);
+
+    expect(() =>
+      userProcessorShowService.execute({
+        user,
+        processor_id: processor.id,
+        language: "en",
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@processor_guard/PROCESSOR_NOT_PUBLIC",
+      }),
+    );
+  });
+
+  it("should throw if processor was not found", async () => {
+    const user = userFactory.build({ is_admin: false });
 
     processorRepositoryMock.findOne.mockResolvedValueOnce(null);
 
     expect(() =>
       userProcessorShowService.execute({
-        user: {
-          id: faker.string.uuid(),
-        } as User,
-        processor_id,
+        user,
+        processor_id: faker.string.uuid(),
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@processor_guard/PROCESSOR_NOT_FOUND",
+      }),
+    );
   });
 });
