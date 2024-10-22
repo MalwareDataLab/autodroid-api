@@ -2,16 +2,13 @@ import { container } from "tsyringe";
 import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // Factory import
 import { User } from "@modules/user/entities/user.entity";
 import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 
 // Service import
 import { UserProcessorShowService } from "./userProcessorShow.service";
-import { processorFactory } from "../entities/factories/processor.factory";
 
 describe("Service: UserProcessorShowService", () => {
   let user: User;
@@ -37,17 +34,16 @@ describe("Service: UserProcessorShowService", () => {
   });
 
   it("should throw if processor was not found", async () => {
-    const expected = new AppError({
-      key: "@processor_update_service/PROCESSOR_NOT_FOUND",
-      message: "Processor not found.",
-    });
-
     expect(() =>
       userProcessorShowService.execute({
         user,
         processor_id: faker.string.uuid(),
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@processor_guard/PROCESSOR_NOT_FOUND",
+      }),
+    );
   });
 });

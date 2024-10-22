@@ -17,6 +17,9 @@ import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
 // Service import
 import { UserProcessorIndexService } from "./userProcessorIndex.service";
 
+// Factory import
+import { processorFactory } from "../entities/factories/processor.factory";
+
 describe("Service: UserProcessorIndexService", () => {
   let user: User;
   let processorRepository: IProcessorRepository;
@@ -40,24 +43,9 @@ describe("Service: UserProcessorIndexService", () => {
   });
 
   it("should list processors", async () => {
-    const processor = await processorRepository.createOne({
-      description: faker.word.words(3),
-      tags: "one,two,three",
-      user_id: user.id,
+    const processor = await processorFactory.create({
       visibility: PROCESSOR_VISIBILITY.PUBLIC,
-      name: faker.word.words(3),
-      allowed_mime_types: faker.system.mimeType(),
-      image_tag: faker.system.fileName(),
-      payload: {},
-      configuration: {
-        parameters: [],
-        dataset_input_argument: "",
-        dataset_input_value: "",
-        dataset_output_argument: "",
-        dataset_output_value: "",
-        command: "",
-      },
-      version: faker.system.semver(),
+      user_id: user.id,
     });
 
     const response = await userProcessorIndexService.execute({

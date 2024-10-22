@@ -73,17 +73,21 @@ const processorFactory = ProcessorFactory.define(
       );
     });
 
-    return plainToInstance(Processor, {
-      ...base,
-      ...associations,
+    return plainToInstance(
+      Processor,
+      {
+        ...base,
+        ...associations,
 
-      ...(transientParams.withRelations &&
-        ({
-          user,
+        ...(transientParams.withRelations &&
+          ({
+            user,
 
-          processes: [],
-        } satisfies Pick<Processor, ProcessorRelationFields>)),
-    });
+            processes: [],
+          } satisfies Pick<Processor, ProcessorRelationFields>)),
+      },
+      { ignoreDecorators: true },
+    );
   },
 );
 

@@ -1,13 +1,21 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
-
-import { parse } from "@shared/utils/instanceParser";
 import { faker } from "@faker-js/faker";
-import { AppError } from "@shared/errors/AppError";
+
+// Util import
+import { parse } from "@shared/utils/instanceParser";
+
+// Entity import
 import { User } from "@modules/user/entities/user.entity";
-import { IDatasetRepository } from "../repositories/IDataset.repository";
-import { UserDatasetUpdateService } from "./userDatasetUpdate.service";
 import { Dataset } from "../entities/dataset.entity";
+
+// Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
+// Repository import
+import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Service import
+import { UserDatasetUpdateService } from "./userDatasetUpdate.service";
 
 describe("Service: UserDatasetUpdateService", () => {
   let datasetRepositoryMock: Mocked<IDatasetRepository>;
@@ -122,11 +130,6 @@ describe("Service: UserDatasetUpdateService", () => {
       updated_at: new Date(),
     } satisfies Partial<Dataset>);
 
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_UPDATED",
-      message: "Dataset not updated.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
     datasetRepositoryMock.updateOne.mockResolvedValueOnce(null);
 
@@ -139,7 +142,11 @@ describe("Service: UserDatasetUpdateService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_update_service/DATASET_NOT_UPDATED",
+      }),
+    );
   });
 
   it("should throw if the tags are invalid", async () => {
@@ -159,11 +166,6 @@ describe("Service: UserDatasetUpdateService", () => {
       updated_at: new Date(),
     } satisfies Partial<Dataset>);
 
-    const expected = new AppError({
-      key: "@dataset_update_service/TAGS_NOT_PROVIDED",
-      message: "Tags must be a comma-separated list.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
     expect(() =>
@@ -175,7 +177,11 @@ describe("Service: UserDatasetUpdateService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_create_service/TAGS_NOT_PROVIDED",
+      }),
+    );
   });
 
   it("should throw if the description is invalid", async () => {
@@ -195,11 +201,6 @@ describe("Service: UserDatasetUpdateService", () => {
       updated_at: new Date(),
     } satisfies Partial<Dataset>);
 
-    const expected = new AppError({
-      key: "@dataset_update_service/INVALID_DESCRIPTION",
-      message: "Invalid description.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
     expect(() =>
@@ -211,7 +212,11 @@ describe("Service: UserDatasetUpdateService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_create_service/INVALID_DESCRIPTION",
+      }),
+    );
   });
 
   it("should throw if the dataset is not editable", async () => {
@@ -232,11 +237,6 @@ describe("Service: UserDatasetUpdateService", () => {
       updated_at: new Date(),
     });
 
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_EDITABLE",
-      message: "Dataset not editable.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
     expect(() =>
@@ -248,15 +248,14 @@ describe("Service: UserDatasetUpdateService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_update_service/DATASET_NOT_EDITABLE",
+      }),
+    );
   });
 
   it("should throw if the dataset was not found", async () => {
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_FOUND",
-      message: "Dataset not found.",
-    });
-
     datasetRepositoryMock.findOne.mockResolvedValueOnce(null);
 
     expect(() =>
@@ -271,6 +270,10 @@ describe("Service: UserDatasetUpdateService", () => {
         } as User,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@dataset_guard/DATASET_NOT_FOUND",
+      }),
+    );
   });
 });

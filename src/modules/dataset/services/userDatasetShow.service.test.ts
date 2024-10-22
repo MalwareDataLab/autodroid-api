@@ -1,21 +1,27 @@
 import { beforeEach, describe, expect, it } from "vitest";
-
 import { faker } from "@faker-js/faker";
-import { AppError } from "@shared/errors/AppError";
-import { User } from "@modules/user/entities/user.entity";
-import {
-  IFileRepository,
-  IUserRepository,
-} from "@shared/container/repositories";
 import { container } from "tsyringe";
+import { createHash } from "node:crypto";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Enum import
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-import { createHash } from "node:crypto";
-import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
-import { UserDatasetShowService } from "./userDatasetShow.service";
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+
+// Repository import
+import {
+  IFileRepository,
+  IUserRepository,
+} from "@shared/container/repositories";
 import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Service import
+import { UserDatasetShowService } from "./userDatasetShow.service";
 
 describe("Service: UserDatasetShowService", () => {
   let user: User;
@@ -78,17 +84,16 @@ describe("Service: UserDatasetShowService", () => {
   });
 
   it("should throw if dataset was not found", async () => {
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_FOUND",
-      message: "Dataset not found.",
-    });
-
     expect(() =>
       userDatasetShowService.execute({
         dataset_id: faker.string.uuid(),
         user,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@dataset_guard/DATASET_NOT_FOUND",
+      }),
+    );
   });
 });

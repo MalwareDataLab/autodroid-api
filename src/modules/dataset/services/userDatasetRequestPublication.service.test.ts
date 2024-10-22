@@ -1,21 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { faker } from "@faker-js/faker";
-import { AppError } from "@shared/errors/AppError";
-import { User } from "@modules/user/entities/user.entity";
 import { container } from "tsyringe";
-import {
-  IFileRepository,
-  IUserRepository,
-} from "@shared/container/repositories";
+import { faker } from "@faker-js/faker";
+import { createHash } from "node:crypto";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Enum import
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-import { createHash } from "node:crypto";
-import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
-import { UserDatasetRequestPublicationService } from "./userDatasetRequestPublication.service";
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+
+// Repository import
+import {
+  IFileRepository,
+  IUserRepository,
+} from "@shared/container/repositories";
 import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Service import
+import { UserDatasetRequestPublicationService } from "./userDatasetRequestPublication.service";
 
 describe("Service: UserDatasetRequestPublicationService", () => {
   let user: User;
@@ -112,11 +118,6 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       user_id: user.id,
     });
 
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_UPDATED",
-      message: "Dataset not updated.",
-    });
-
     vi.spyOn(datasetRepository, "updateOne").mockResolvedValueOnce(null);
 
     expect(() =>
@@ -125,7 +126,11 @@ describe("Service: UserDatasetRequestPublicationService", () => {
         user,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_request_publication_service/DATASET_NOT_UPDATED",
+      }),
+    );
   });
 
   it("should throw if dataset is not editable", async () => {
@@ -157,32 +162,30 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       user_id: user.id,
     });
 
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_EDITABLE",
-      message: "Dataset not editable.",
-    });
-
     expect(() =>
       userDatasetRequestPublicationService.execute({
         dataset_id: dataset.id,
         user,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@user_dataset_request_publication_service/DATASET_NOT_EDITABLE",
+      }),
+    );
   });
 
   it("should throw if dataset was not found", async () => {
-    const expected = new AppError({
-      key: "@dataset_update_service/DATASET_NOT_FOUND",
-      message: "Dataset not found.",
-    });
-
     expect(() =>
       userDatasetRequestPublicationService.execute({
         dataset_id: faker.string.uuid(),
         user,
         language: "en",
       }),
-    ).rejects.toThrowError(expected);
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@dataset_guard/DATASET_NOT_FOUND",
+      }),
+    );
   });
 });

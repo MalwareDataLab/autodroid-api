@@ -64,9 +64,9 @@ class UserDatasetRequestPublicationService {
 
     if (!updatedDataset)
       throw new AppError({
-        key: "@dataset_update_service/DATASET_NOT_UPDATED",
+        key: "@user_dataset_request_publication_service/DATASET_NOT_UPDATED",
         message: t(
-          "@dataset_update_service/DATASET_NOT_UPDATED",
+          "@user_dataset_request_publication_service/DATASET_NOT_UPDATED",
           "Dataset not updated.",
         ),
       });
