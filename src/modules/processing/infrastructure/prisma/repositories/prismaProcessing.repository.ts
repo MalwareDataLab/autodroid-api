@@ -90,10 +90,8 @@ class PrismaProcessingRepository implements IProcessingRepository {
 
   private getWhereClausePublicOrUserPrivate(
     filter: IFindProcessingPublicOrUserPrivateDTO,
-    relations_enabled = true,
   ): DatabaseHelperTypes.ProcessingWhereInput {
     return {
-      ...this.getWhereClause(filter, relations_enabled),
       OR: [
         { visibility: PROCESSING_VISIBILITY.PUBLIC },
         {
@@ -167,7 +165,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     filter: IFindProcessingPublicOrUserPrivateDTO,
   ): Promise<number> {
     return this.databaseProvider.client.processing.count({
-      where: this.getWhereClausePublicOrUserPrivate(filter, false),
+      where: this.getWhereClausePublicOrUserPrivate(filter),
     });
   }
 

@@ -1,12 +1,17 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
-
-import { parse } from "@shared/utils/instanceParser";
 import { faker } from "@faker-js/faker";
-import { User } from "@modules/user/entities/user.entity";
+
+// Factory import
+import { datasetFactory } from "../entities/factories/dataset.factory";
+
+// Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";
-import { UserDatasetIndexService } from "./userDatasetIndex.service";
-import { Dataset } from "../entities/dataset.entity";
+
+// Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
+// Service import
+import { UserDatasetIndexService } from "./userDatasetIndex.service";
 
 describe("Service: UserDatasetIndexService", () => {
   let datasetRepositoryMock: Mocked<IDatasetRepository>;
@@ -31,24 +36,21 @@ describe("Service: UserDatasetIndexService", () => {
   });
 
   it("should list datasets", async () => {
-    const dataset: Dataset = parse(Dataset, {
-      id: faker.string.uuid(),
-      description: faker.word.words(3),
-      tags: "one,two,three",
-      user_id: faker.string.uuid(),
-      visibility: DATASET_VISIBILITY.PRIVATE,
-      updated_at: new Date(),
-      created_at: new Date(),
-    } satisfies Partial<Dataset>);
+    const dataset = datasetFactory.build(
+      {
+        description: faker.word.words(3),
+        tags: "one,two,three",
+        visibility: DATASET_VISIBILITY.PUBLIC,
+      },
+      { transient: { withRelations: true } },
+    );
 
     datasetRepositoryMock.findManyPublicOrUserPrivate.mockResolvedValueOnce([
       dataset,
     ]);
 
     const response = await userDatasetIndexService.execute({
-      user: {
-        id: dataset.user_id,
-      } as User,
+      user: dataset.user,
     });
 
     expect(response).toEqual(

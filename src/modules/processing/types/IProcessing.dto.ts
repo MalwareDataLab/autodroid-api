@@ -38,5 +38,4 @@ export type IFindProcessingDTO = Partial<
   finished?: boolean;
 };
 
-export type IFindProcessingPublicOrUserPrivateDTO = IFindProcessingDTO &
-  Pick<Processing, "user_id">;
+export type IFindProcessingPublicOrUserPrivateDTO = Pick<Processing, "user_id">;

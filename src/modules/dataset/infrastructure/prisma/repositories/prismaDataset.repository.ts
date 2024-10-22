@@ -59,10 +59,8 @@ class PrismaDatasetRepository implements IDatasetRepository {
 
   private getWhereClausePublicOrUserPrivate(
     filter: IFindDatasetPublicOrUserPrivateDTO,
-    relations_enabled = true,
   ): DatabaseHelperTypes.DatasetWhereInput {
     return {
-      ...this.getWhereClause(filter, relations_enabled),
       OR: [
         { visibility: DATASET_VISIBILITY.PUBLIC },
         {
@@ -136,7 +134,7 @@ class PrismaDatasetRepository implements IDatasetRepository {
     filter: IFindDatasetPublicOrUserPrivateDTO,
   ): Promise<number> {
     return this.databaseProvider.client.dataset.count({
-      where: this.getWhereClausePublicOrUserPrivate(filter, false),
+      where: this.getWhereClausePublicOrUserPrivate(filter),
     });
   }
 

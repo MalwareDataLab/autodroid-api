@@ -1,12 +1,8 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 
-// Util import
-import { parse } from "@shared/utils/instanceParser";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Processor } from "../entities/processor.entity";
+// Factory import
+import { processorFactory } from "../entities/factories/processor.factory";
 
 // Repository import
 import { IProcessorRepository } from "../repositories/IProcessor.repository";
@@ -41,19 +37,14 @@ describe("Service: UserProcessorIndexService", () => {
   });
 
   it("should list processors", async () => {
-    const user_id = faker.string.uuid();
-    const processor: Processor = parse(Processor, {
-      id: faker.string.uuid(),
-      description: faker.word.words(3),
-      tags: "one,two,three",
-      user_id,
-      user: {
-        id: user_id,
-      } as User,
-      visibility: PROCESSOR_VISIBILITY.PUBLIC,
-      created_at: new Date(),
-      updated_at: new Date(),
-    } satisfies Partial<Processor>);
+    const processor = processorFactory.build(
+      {
+        description: faker.word.words(3),
+        tags: "one,two,three",
+        visibility: PROCESSOR_VISIBILITY.PUBLIC,
+      },
+      { transient: { withRelations: true } },
+    );
 
     processorRepositoryMock.findManyPublicOrUserPrivate.mockResolvedValueOnce([
       processor,

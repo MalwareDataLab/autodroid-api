@@ -57,10 +57,8 @@ class PrismaProcessorRepository implements IProcessorRepository {
 
   private getWhereClausePublicOrUserPrivate(
     filter: IFindProcessorPublicOrUserPrivateDTO,
-    relations_enabled = true,
   ): DatabaseHelperTypes.ProcessorWhereInput {
     return {
-      ...this.getWhereClause(filter, relations_enabled),
       OR: [
         { visibility: PROCESSOR_VISIBILITY.PUBLIC },
         {
@@ -109,8 +107,9 @@ class PrismaProcessorRepository implements IProcessorRepository {
     pagination?: IPaginationDTO,
     sorting?: ISortingDTO<typeof ProcessorSortingOptions>,
   ): Promise<Processor[]> {
+    const where = this.getWhereClausePublicOrUserPrivate(filter);
     const processors = await this.databaseProvider.client.processor.findMany({
-      where: this.getWhereClausePublicOrUserPrivate(filter),
+      where,
 
       include: this.relations,
 
@@ -142,7 +141,7 @@ class PrismaProcessorRepository implements IProcessorRepository {
     filter: IFindProcessorPublicOrUserPrivateDTO,
   ): Promise<number> {
     return this.databaseProvider.client.processor.count({
-      where: this.getWhereClausePublicOrUserPrivate(filter, false),
+      where: this.getWhereClausePublicOrUserPrivate(filter),
     });
   }
 
