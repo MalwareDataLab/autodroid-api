@@ -74,7 +74,10 @@ const datasetFactory = DatasetFactory.define(
       return DatasetFactory.repository.createOne(
         getBaseFactoryEntityData({
           base,
-          item: await loadEntityRelations(item, ["user", "file"]),
+          item: await loadEntityRelations(item, [
+            { relation: "user", foreignKey: "user_id" },
+            { relation: "file", foreignKey: "file_id" },
+          ]),
         }),
       );
     });

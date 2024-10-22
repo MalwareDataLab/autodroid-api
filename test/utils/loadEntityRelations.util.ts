@@ -24,19 +24,31 @@ const relationFactoryMap = {
   file: fileFactory,
 } as const satisfies Record<RelationMapKey, Factory<any, any>>;
 
-type RelationResult<R extends RelationMapKey[]> = {
-  [K in R[number]]: Awaited<ReturnType<Repository<RelationMap[K]>["findOne"]>>;
+type RelationList<T extends Record<string, any>, K = RelationMapKey> = {
+  relation: K extends keyof T ? K : never;
+  foreignKey: keyof T;
+}[];
+
+type RelationResult<
+  T extends Record<string, any>,
+  R extends RelationList<T>,
+> = {
+  [K in R[number]["relation"]]: Awaited<
+    ReturnType<Repository<RelationMap[K]>["findOne"]>
+  >;
 };
 
 const loadEntityRelations = async <
   T extends Record<string, any>,
-  R extends RelationMapKey[],
+  R extends RelationList<T>,
 >(
-  data: T & { [K in R[number] as `${K}_id`]: string },
+  data: T & { [FK in R[number]["foreignKey"]]: T[FK] } & {
+    [K in R[number]["relation"]]: T[K];
+  },
   relations: R,
-): Promise<T & RelationResult<R>> => {
+): Promise<T & RelationResult<T, R>> => {
   const loadedRelations = await relations.reduce(
-    (previousPromise, relation) =>
+    (previousPromise, { relation, foreignKey }) =>
       previousPromise.then(async total => {
         const repository = relationMap[relation];
         if (!repository)
@@ -46,8 +58,7 @@ const loadEntityRelations = async <
         if (!factory)
           throw new Error(`Factory not found for relation ${relation}`);
 
-        const repositoryForeignKey = `${relation}_id`;
-        const repositoryEntityId = data[repositoryForeignKey];
+        const repositoryEntityId = data[foreignKey];
 
         const repositoryEntity = repositoryEntityId
           ? await container
@@ -61,12 +72,15 @@ const loadEntityRelations = async <
 
         const result = total;
 
-        const key = relation as R[number];
-        result[key] = entity as RelationResult<R>[typeof key];
+        const key = relation as R[number]["foreignKey"];
+        Object.assign(result, {
+          [foreignKey]: entity.id,
+          [key]: entity,
+        });
 
         return result;
       }),
-    Promise.resolve({}) as Promise<RelationResult<R>>,
+    Promise.resolve({}) as Promise<R>,
   );
 
   const result = data;
