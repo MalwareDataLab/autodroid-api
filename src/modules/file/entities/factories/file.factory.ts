@@ -4,6 +4,9 @@ import { faker } from "@faker-js/faker";
 import { Factory } from "fishery";
 import { plainToInstance } from "class-transformer";
 
+// Constant import
+import { MAX_SAFE_INT } from "@shared/constants/maxSafeInt.constant";
+
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 
@@ -54,7 +57,7 @@ const fileFactory = FileFactory.define(
       payload: {},
       public_url: null,
       public_url_expires_at: null,
-      size: faker.number.int(),
+      size: faker.number.int({ min: 1, max: MAX_SAFE_INT }),
 
       /** Relations */
     };
@@ -68,16 +71,22 @@ const fileFactory = FileFactory.define(
       );
     });
 
-    return plainToInstance(File, {
-      ...base,
-      ...associations,
+    return plainToInstance(
+      File,
+      {
+        ...base,
+        ...associations,
 
-      ...(transientParams.withRelations &&
-        ({
-          dataset: null,
-          processes: [],
-        } satisfies Pick<File, FileRelationFields>)),
-    });
+        ...(transientParams.withRelations &&
+          ({
+            dataset: null,
+            processes: [],
+          } satisfies Pick<File, FileRelationFields>)),
+      },
+      {
+        ignoreDecorators: true,
+      },
+    );
   },
 );
 
