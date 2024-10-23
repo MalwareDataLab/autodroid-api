@@ -4,11 +4,6 @@ import { Factory } from "fishery";
 // Repository import
 import { Repository, RepositoryToken } from "@shared/container/repositories";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-
 const relationMap = {
   user: "UserRepository",
   dataset: "DatasetRepository",
@@ -18,14 +13,9 @@ const relationMap = {
 type RelationMap = typeof relationMap;
 type RelationMapKey = keyof RelationMap;
 
-const relationFactoryMap = {
-  user: userFactory,
-  dataset: datasetFactory,
-  file: fileFactory,
-} as const satisfies Record<RelationMapKey, Factory<any, any>>;
-
 type RelationList<T extends Record<string, any>, K = RelationMapKey> = {
   relation: K extends keyof T ? K : never;
+  factory: Factory<any, any>;
   foreignKey: keyof T;
 }[];
 
@@ -48,15 +38,11 @@ const loadEntityRelations = async <
   relations: R,
 ): Promise<T & RelationResult<T, R>> => {
   const loadedRelations = await relations.reduce(
-    (previousPromise, { relation, foreignKey }) =>
+    (previousPromise, { relation, factory, foreignKey }) =>
       previousPromise.then(async total => {
         const repository = relationMap[relation];
         if (!repository)
           throw new Error(`Relation not found for relation ${relation}`);
-
-        const factory = relationFactoryMap[relation];
-        if (!factory)
-          throw new Error(`Factory not found for relation ${relation}`);
 
         const repositoryEntityId = data[foreignKey];
 
