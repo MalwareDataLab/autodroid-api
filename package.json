@@ -1,5 +1,5 @@
 {
-  "name": "autodroid",
+  "name": "autodroid-api",
   "author": "luizfelipelaviola <luiz@laviola.dev>",
   "version": "0.0.1",
   "main": "./src/index.ts",
