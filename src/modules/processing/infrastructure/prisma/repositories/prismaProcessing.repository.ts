@@ -40,6 +40,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     dataset: {
       include: {
         file: true,
+        user: true,
       },
     },
     processor: true,

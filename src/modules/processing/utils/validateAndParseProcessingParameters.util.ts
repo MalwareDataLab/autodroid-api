@@ -42,6 +42,20 @@ const validateAndParseProcessingParameters = (
 ): ProcessingParameter[] => {
   const { parameters, processor, t } = params;
 
+  const unknownParameters = parameters.filter(
+    parameter =>
+      !processor.configuration.parameters.find(p => p.name === parameter.name),
+  );
+  if (unknownParameters.length > 0)
+    throw new AppError({
+      key: "@validate_processor_configuration_parameters/UNKNOWN_PARAMETER",
+      message: t(
+        "@validate_processor_configuration_parameters/UNKNOWN_PARAMETER",
+        "Unknown parameter {{ parameter }}.",
+        { parameter: unknownParameters[0].name },
+      ),
+    });
+
   const repeatedParameter = parameters.find((parameter, index) =>
     parameters.find((p, i) => index !== i && p.name === parameter.name),
   );
