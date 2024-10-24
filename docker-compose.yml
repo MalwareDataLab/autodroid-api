@@ -38,7 +38,7 @@ services:
 
   autodroid_api_gateway_prod:
     container_name: autodroid_api_gateway_prod
-    image: autodroid_api_gateway_prod
+    image: luizfelipelaviola/autodroid-api:latest
     build:
       context: .
       dockerfile: Dockerfile
