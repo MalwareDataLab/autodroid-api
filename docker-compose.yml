@@ -32,7 +32,7 @@ services:
 
   autodroid_api_gateway_prod:
     container_name: autodroid_api_gateway_prod
-    image: luizfelipelaviola/autodroid-api:latest
+    image: malwaredatalab/autodroid-api:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -106,6 +106,13 @@ services:
     restart: always
     networks:
       - autodroid_api_network_prod
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    command: --interval 30 autodroid_api_gateway_prod
 
 networks:
   autodroid_api_network_prod:
