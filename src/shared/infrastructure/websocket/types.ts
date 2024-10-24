@@ -7,16 +7,22 @@ import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
 import { Session } from "@modules/user/types/IUserSession.dto";
 
 // Type import
-import { ISocketWorkerProcessingJobMessage } from "./socket.types";
+import {
+  ISocketWorkerProcessingJobMessage,
+  ISocketWorkerStatusMessage,
+} from "./socket.types";
 
 export interface ServerToClientEvents {
   pong: () => void;
 
-  workerProcessingJob: (data: ISocketWorkerProcessingJobMessage) => void;
+  "worker:work": (data: ISocketWorkerProcessingJobMessage) => void;
+  "worker:get-status": () => void;
 }
 
 export interface ClientToServerEvents {
   ping: () => void;
+
+  "worker:status": (data: ISocketWorkerStatusMessage) => void;
 }
 
 export interface InterServerEvents {

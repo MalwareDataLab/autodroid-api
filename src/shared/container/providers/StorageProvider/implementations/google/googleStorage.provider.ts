@@ -113,14 +113,21 @@ class GoogleStorageProvider implements IStorageProvider {
           const bucket = this.provider.bucket(this.configuration.bucket_name);
           const exists = await bucket.exists();
           if (!exists[0]) throw new Error();
-          /* await bucket.setCorsConfiguration([
-            {
-              maxAgeSeconds: 3600,
-              method: ["GET", "HEAD", "PUT", "POST", "DELETE"],
-              origin: ["*"],
-              responseHeader: ["*"],
-            },
-          ]); */
+          const [metadata] = await bucket.getMetadata();
+          if (
+            !metadata.cors ||
+            metadata.cors.length === 0 ||
+            !metadata.cors.some(cors => cors.origin?.includes("*"))
+          ) {
+            await bucket.setCorsConfiguration([
+              {
+                maxAgeSeconds: 3600,
+                method: ["GET", "HEAD", "PUT", "POST", "DELETE"],
+                origin: ["*"],
+                responseHeader: ["*"],
+              },
+            ]);
+          }
         } catch (error) {
           throw new AppError({
             key: "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",

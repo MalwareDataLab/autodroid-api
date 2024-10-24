@@ -86,11 +86,9 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Dataset not available.",
         });
 
-      await this.websocketProvider.sendMessageToRoom(
-        "worker",
-        "workerProcessingJob",
-        { processing_id },
-      );
+      await this.websocketProvider.sendMessageToRoom("worker", "worker:work", {
+        processing_id,
+      });
 
       return processing;
     } catch (error) {
