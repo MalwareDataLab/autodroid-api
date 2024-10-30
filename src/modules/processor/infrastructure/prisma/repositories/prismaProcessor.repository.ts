@@ -45,13 +45,16 @@ class PrismaProcessorRepository implements IProcessorRepository {
   ) {}
 
   private getWhereClause(
-    { id, user_id, visibility }: IFindProcessorDTO,
+    { id, user_id, visibility, image_tag, name, version }: IFindProcessorDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.ProcessorWhereInput {
     return {
       id,
       user_id,
       visibility,
+      image_tag,
+      name,
+      version,
     };
   }
 
