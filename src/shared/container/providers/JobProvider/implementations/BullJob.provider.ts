@@ -110,17 +110,11 @@ class BullJobProvider implements IJobProvider {
   }
 
   private async startCronJobs() {
-    /* const cronJobs: { name: keyof typeof Jobs; rule: string; data: any }[] = [
-      {
-        name: "DispatchReminderProcessJob",
-        rule: "0 * * * *",
-        data: null,
-      },
-    ];
+    const cronJobs: { name: keyof typeof Jobs; rule: string; data: any }[] = [];
 
     await Promise.all(
-      this.queues.map(async queue => {
-        const repeatableJobs = await queue.bull.getRepeatableJobs();
+      this.modules.map(async ({ queue }) => {
+        const repeatableJobs = await queue.getRepeatableJobs();
 
         if (repeatableJobs?.length) {
           await Promise.all(
@@ -132,8 +126,8 @@ class BullJobProvider implements IJobProvider {
                     allowedCronJob.rule === existingJob.cron,
                 )
               ) {
-                await queue.bull.removeRepeatableByKey(existingJob.key);
-                this.log("🗑 Removed repeatable job: ", existingJob.key);
+                await queue.removeRepeatableByKey(existingJob.key);
+                console.log("🗑 Removed repeatable job: ", existingJob.key);
               }
             }),
           );
@@ -147,7 +141,7 @@ class BullJobProvider implements IJobProvider {
           cron: job.rule,
         },
       });
-    }); */
+    });
   }
 
   private async start() {
