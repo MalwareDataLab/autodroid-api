@@ -10,6 +10,7 @@ import { adminRouter } from "@modules/admin/infrastructure/http/routes/admin.rou
 import { userRouter } from "@modules/user/infrastructure/http/routes/user.routes";
 import { userDatasetRouter } from "@modules/dataset/infrastructure/http/routes/userDataset.routes";
 import { userProcessorRouter } from "@modules/processor/infrastructure/http/routes/userProcessor.routes";
+import { userProcessingRouter } from "@modules/processing/infrastructure/http/routes/userProcessing.routes";
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/admin", userAuthenticationMiddleware, adminRouter);
 router.use("/user", userAuthenticationMiddleware, userRouter);
 router.use("/dataset", userAuthenticationMiddleware, userDatasetRouter);
 router.use("/processor", userAuthenticationMiddleware, userProcessorRouter);
+router.use("/processing", userAuthenticationMiddleware, userProcessingRouter);
 
 export { router };
