@@ -83,10 +83,10 @@ class ProcessingGuard {
     if (processing_id) {
       if (!processing)
         throw new AppError({
-          key: "@processing_guard/PROCESSOR_NOT_FOUND",
+          key: "@processing_guard/PROCESSING_NOT_FOUND",
           message: t(
-            "@processing_guard/PROCESSOR_NOT_FOUND",
-            "Processor not found.",
+            "@processing_guard/PROCESSING_NOT_FOUND",
+            "Processing not found.",
           ),
         });
 
