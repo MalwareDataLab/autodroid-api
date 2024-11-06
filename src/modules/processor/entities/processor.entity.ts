@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 import { Exclude, Type } from "class-transformer";
 
 // Type import
@@ -45,6 +45,9 @@ class Processor implements ProcessorEntityType {
   @Field(() => ProcessorConfiguration)
   configuration: Record<string, any> & ProcessorConfiguration;
 
+  @Authorized(["ADMIN"])
+  @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Field(() => JSONScalar)
   payload: Record<string, any>;
 

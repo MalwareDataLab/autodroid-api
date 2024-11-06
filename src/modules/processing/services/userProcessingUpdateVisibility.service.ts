@@ -87,7 +87,7 @@ class UserProcessingUpdateVisibilityService {
         ),
       });
 
-    return processing;
+    return updatedProcessing;
   }
 }
 

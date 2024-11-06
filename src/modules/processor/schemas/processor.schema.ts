@@ -60,7 +60,7 @@ class ProcessorConfigurationParameterSchema implements ProcessorParameter {
 class ProcessorConfigurationSchema implements ProcessorConfiguration {
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => ProcessorConfigurationParameterSchema)
   @Field(() => [ProcessorConfigurationParameterSchema])
   parameters: ProcessorConfigurationParameterSchema[];

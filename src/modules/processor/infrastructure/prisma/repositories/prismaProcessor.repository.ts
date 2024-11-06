@@ -58,17 +58,21 @@ class PrismaProcessorRepository implements IProcessorRepository {
     };
   }
 
-  private getWhereClausePublicOrUserPrivate(
-    filter: IFindProcessorPublicOrUserPrivateDTO,
-  ): DatabaseHelperTypes.ProcessorWhereInput {
+  private getWhereClausePublicOrUserPrivate({
+    user_id,
+    ...filter
+  }: IFindProcessorPublicOrUserPrivateDTO): DatabaseHelperTypes.ProcessorWhereInput {
     return {
-      OR: [
-        { visibility: PROCESSOR_VISIBILITY.PUBLIC },
-        {
-          visibility: PROCESSOR_VISIBILITY.HIDDEN,
-          user_id: filter.user_id,
-        },
-      ],
+      ...this.getWhereClause(filter),
+      AND: {
+        OR: [
+          { visibility: PROCESSOR_VISIBILITY.PUBLIC },
+          {
+            visibility: PROCESSOR_VISIBILITY.HIDDEN,
+            user_id,
+          },
+        ],
+      },
     };
   }
 

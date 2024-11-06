@@ -3,6 +3,7 @@ import { IsDate, MaxDate, MinDate } from "class-validator";
 
 // Helper import
 import { DateHelper } from "@shared/utils/dateHelpers";
+import { Type } from "class-transformer";
 
 @ArgsType()
 class UserProcessingExtendKeepUntilSchema {
@@ -13,6 +14,7 @@ class UserProcessingExtendKeepUntilSchema {
   @MaxDate(() => DateHelper.now().add(30, "days").toDate(), {
     message: "The date must be less than or equal to 30 days from now",
   })
+  @Type(() => Date)
   @Field(() => Date)
   keep_until: Date;
 }
