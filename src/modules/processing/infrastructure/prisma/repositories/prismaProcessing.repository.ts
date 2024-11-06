@@ -57,6 +57,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     {
       id,
       status,
+      visibility,
 
       user_id,
       processor_id,
@@ -72,6 +73,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     return {
       id,
       status,
+      visibility,
 
       user_id,
       processor_id,
@@ -89,17 +91,21 @@ class PrismaProcessingRepository implements IProcessingRepository {
     };
   }
 
-  private getWhereClausePublicOrUserPrivate(
-    filter: IFindProcessingPublicOrUserPrivateDTO,
-  ): DatabaseHelperTypes.ProcessingWhereInput {
+  private getWhereClausePublicOrUserPrivate({
+    user_id,
+    ...filter
+  }: IFindProcessingPublicOrUserPrivateDTO): DatabaseHelperTypes.ProcessingWhereInput {
     return {
-      OR: [
-        { visibility: PROCESSING_VISIBILITY.PUBLIC },
-        {
-          visibility: PROCESSING_VISIBILITY.PRIVATE,
-          user_id: filter.user_id,
-        },
-      ],
+      ...this.getWhereClause(filter),
+      AND: {
+        OR: [
+          { visibility: PROCESSING_VISIBILITY.PUBLIC },
+          {
+            visibility: PROCESSING_VISIBILITY.PRIVATE,
+            user_id,
+          },
+        ],
+      },
     };
   }
 

@@ -29,4 +29,5 @@ export type IFindProcessorDTO = Partial<
   >
 >;
 
-export type IFindProcessorPublicOrUserPrivateDTO = Pick<Processor, "user_id">;
+export type IFindProcessorPublicOrUserPrivateDTO = Pick<Processor, "user_id"> &
+  IFindProcessorDTO;

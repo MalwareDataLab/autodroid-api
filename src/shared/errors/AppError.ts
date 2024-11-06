@@ -13,6 +13,10 @@ interface IAppError {
     [key: string]: any;
     disableRegister?: boolean;
   };
+  payload?: {
+    [key: string]: any;
+    errors?: Array<any>;
+  };
 }
 
 class AppError extends Error {
@@ -28,6 +32,13 @@ class AppError extends Error {
   public readonly debug:
     | {
         [key: string]: any;
+      }
+    | undefined;
+
+  public readonly payload:
+    | {
+        [key: string]: any;
+        errors?: Array<any>;
       }
     | undefined;
 
@@ -58,6 +69,9 @@ class AppError extends Error {
           error_code: this.errorCode,
         }
       : undefined;
+
+    this.payload = params.payload;
+
     this.action = this.register();
   }
 

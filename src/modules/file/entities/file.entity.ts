@@ -1,6 +1,6 @@
 import { container } from "tsyringe";
 import {
-  // Authorized, // TODO
+  Authorized,
   Directive,
   Field,
   ID,
@@ -76,8 +76,9 @@ class File implements FileEntityType {
   @Field()
   md5_hash: string;
 
-  // @Authorized(["ADMIN"]) // TODO
+  @Authorized(["ADMIN"])
   @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Field(() => JSONScalar)
   payload: Record<string, any>;
 
