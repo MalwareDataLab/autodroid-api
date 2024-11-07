@@ -81,6 +81,13 @@ class UserProcessingDeleteService {
       });
     }
 
+    if (processing.metrics_file) {
+      await this.storageProvider.removeFileByPath({
+        path: processing.metrics_file.provider_path,
+        language,
+      });
+    }
+
     await this.processingRepository.deleteOne({
       id: processing.id,
     });

@@ -15,6 +15,7 @@ import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWor
 // Schema import
 import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+import { AdminWorkerUpdateService } from "@modules/adminWorker/services/adminWorkerUpdate.service";
 
 class AdminWorkerController {
   public async index(req: Request, res: Response) {
@@ -39,6 +40,18 @@ class AdminWorkerController {
     const userWorkerShowService = container.resolve(AdminWorkerShowService);
     const worker = await userWorkerShowService.execute({
       worker_id: req.params.worker_id,
+
+      user: req.session.user,
+      language: req.language,
+    });
+    return res.json(process(worker));
+  }
+
+  public async update(req: Request, res: Response) {
+    const userWorkerUpdateService = container.resolve(AdminWorkerUpdateService);
+    const worker = await userWorkerUpdateService.execute({
+      worker_id: req.params.worker_id,
+      data: req.body,
 
       user: req.session.user,
       language: req.language,

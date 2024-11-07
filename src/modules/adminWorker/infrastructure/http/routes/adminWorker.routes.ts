@@ -13,6 +13,7 @@ import { Worker } from "@modules/worker/entities/worker.entity";
 
 // Schema import
 import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
+import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
 
 // Router import
 import { adminWorkerRegistrationTokenRouter } from "./adminWorkerRegistrationToken.routes";
@@ -44,6 +45,15 @@ adminWorkerRouter.get(
 );
 
 adminWorkerRouter.get("/:worker_id", adminWorkerController.show);
+
+adminWorkerRouter.put(
+  "/:worker_id",
+  validateRequest({
+    schema: AdminWorkerUpdateSchema,
+    segment: "BODY",
+  }),
+  adminWorkerController.update,
+);
 
 adminWorkerRouter.delete("/:worker_id", adminWorkerController.delete);
 

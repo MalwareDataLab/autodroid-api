@@ -11,6 +11,16 @@ import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 @ArgsType()
 class ProcessingIndexSchema {
   @ValidString({ nullable: "allowUndefined" })
+  @IsUUID()
+  @Field(() => String, { nullable: true })
+  processor_id?: string;
+
+  @ValidString({ nullable: "allowUndefined" })
+  @IsUUID()
+  @Field(() => String, { nullable: true })
+  dataset_id?: string;
+
+  @ValidString({ nullable: "allowUndefined" })
   @IsEnum(PROCESSING_STATUS)
   @Field(() => PROCESSING_STATUS, { nullable: true })
   status?: PROCESSING_STATUS;
@@ -29,16 +39,6 @@ class ProcessingIndexSchema {
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   finished?: boolean;
-
-  @ValidString({ nullable: "allowUndefined" })
-  @IsUUID()
-  @Field(() => String, { nullable: true })
-  processor_id?: string;
-
-  @ValidString({ nullable: "allowUndefined" })
-  @IsUUID()
-  @Field(() => String, { nullable: true })
-  dataset_id?: string;
 }
 
 export { ProcessingIndexSchema };
