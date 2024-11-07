@@ -91,12 +91,10 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       );
     }
 
-    if (worker.version !== data.version) {
-      await this.workerRepository.updateOne(
-        { id: worker.id },
-        { version: data.version },
-      );
-    }
+    await this.workerRepository.updateOne(
+      { id: worker.id },
+      { version: data.version, last_seen_at: new Date() },
+    );
   }
 
   private async getWorkerById(worker_id: string): Promise<Worker> {

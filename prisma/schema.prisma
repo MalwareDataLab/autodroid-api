@@ -87,7 +87,7 @@ model File {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  dataset   Dataset?     @relation(name: "Dataset_File")
+  dataset Dataset? @relation(name: "Dataset_File")
 
   processing_results Processing[] @relation(name: "Processing_ResultFile")
   processing_metrics Processing[] @relation(name: "Processing_MetricsFile")
@@ -184,10 +184,15 @@ model Worker {
   internal_id String
   signature   String @unique
 
-  version String?
+  version     String?
   system_info Json
   agent_info  Json
   payload     Json
+
+  description String?
+  tags        String?
+
+  last_seen_at DateTime?
 
   archived_at DateTime?
 
@@ -230,7 +235,7 @@ model Processing {
 
   verified_at DateTime?
   attempts    Int?
-  message String?
+  message     String?
 
   keep_until DateTime?
 

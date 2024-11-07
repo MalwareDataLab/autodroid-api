@@ -115,6 +115,9 @@ Table workers {
   system_info Json [not null]
   agent_info Json [not null]
   payload Json [not null]
+  description String
+  tags String
+  last_seen_at DateTime
   archived_at DateTime
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]

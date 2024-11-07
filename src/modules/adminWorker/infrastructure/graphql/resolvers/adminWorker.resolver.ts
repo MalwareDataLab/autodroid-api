@@ -32,7 +32,9 @@ import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 // Service import
 import { AdminWorkerIndexService } from "@modules/adminWorker/services/adminWorkerIndex.service";
 import { AdminWorkerShowService } from "@modules/adminWorker/services/adminWorkerShow.service";
+import { AdminWorkerUpdateService } from "@modules/adminWorker/services/adminWorkerUpdate.service";
 import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
+import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
 
 class AdminWorkerResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -74,6 +76,31 @@ class AdminWorkerResolver {
 
     const worker = await adminWorkerShowService.execute({
       worker_id,
+
+      user: session.user,
+      language,
+    });
+
+    return worker;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Worker)
+  async adminWorkerUpdate(
+    @Arg("worker_id") worker_id: string,
+
+    @Arg("data") data: AdminWorkerUpdateSchema,
+
+    @Ctx() { language, session }: GraphQLContext,
+  ): Promise<Worker> {
+    const adminWorkerUpdateService = container.resolve(
+      AdminWorkerUpdateService,
+    );
+
+    const worker = await adminWorkerUpdateService.execute({
+      worker_id,
+      data,
 
       user: session.user,
       language,

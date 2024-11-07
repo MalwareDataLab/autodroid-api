@@ -3,6 +3,9 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Helper import
+import { isValidCommaSeparatedString } from "@shared/utils/isValidCommaSeparatedString";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "../entities/dataset.entity";
@@ -68,10 +71,7 @@ class UserDatasetUpdateService {
         ),
       });
 
-    if (
-      !!data.tags &&
-      !data.tags.split(",").every((tag: string) => tag.trim().length > 0)
-    )
+    if (!!data.tags && !isValidCommaSeparatedString(data.tags))
       throw new AppError({
         key: "@user_dataset_create_service/TAGS_NOT_PROVIDED",
         message: t(

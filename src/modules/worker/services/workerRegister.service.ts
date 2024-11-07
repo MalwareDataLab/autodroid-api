@@ -86,6 +86,11 @@ class WorkerRegisterService {
         },
         payload: {},
 
+        description: null,
+        tags: null,
+
+        last_seen_at: null,
+
         refresh_token: "",
         refresh_token_expires_at: new Date(),
       });

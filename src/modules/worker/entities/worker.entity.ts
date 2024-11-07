@@ -46,6 +46,15 @@ class Worker implements WorkerEntityType {
   @Field(() => JSONScalar)
   payload: Record<string, any>;
 
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
+  @Field(() => String, { nullable: true })
+  tags: string | null;
+
+  @Field(() => Date, { nullable: true })
+  last_seen_at: Date | null;
+
   @Field(() => Date, { nullable: true })
   archived_at: Date | null;
 
