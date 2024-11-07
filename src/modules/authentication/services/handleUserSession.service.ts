@@ -102,7 +102,7 @@ class HandleUserSessionService {
               },
               language,
             });
-          } catch (error) {
+          } catch {
             throw new AppError({
               key: "@handle_user_session_service/USER_NOT_FOUND",
               message: t(

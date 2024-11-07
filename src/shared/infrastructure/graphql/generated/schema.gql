@@ -354,6 +354,7 @@ type User {
   id: ID!
   is_admin: Boolean!
   language: String
+  learning_data: JSON!
   name: String
   phone_number: String
   updated_at: DateTimeISO!
