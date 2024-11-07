@@ -7,11 +7,9 @@ import { AppError } from "@shared/errors/AppError";
 import { IProcessingRepository } from "@shared/container/repositories";
 
 // Enum import
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Entity import
-import { File } from "@modules/file/entities/file.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { Worker } from "../entities/worker.entity";
 
@@ -21,7 +19,7 @@ interface IRequest {
 }
 
 @injectable()
-class WorkerHandleProcessSuccessService {
+class WorkerHandleProcessingProgressService {
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
@@ -37,22 +35,8 @@ class WorkerHandleProcessSuccessService {
 
     if (!processing)
       throw new AppError({
-        key: "@worker_handle_process_success_service/PROCESSING_NOT_FOUND",
+        key: "@worker_handle_processing_progress_service/PROCESSING_NOT_FOUND",
         message: "Processing not found.",
-      });
-
-    if (!processing.result_file?.id)
-      throw new AppError({
-        key: "@worker_handle_process_success_service/RESULT_FILE_NOT_FOUND",
-        message: "Result file not found.",
-      });
-
-    const file = await File.process(processing.result_file);
-
-    if (!file.public_url || file.provider_status !== FILE_PROVIDER_STATUS.READY)
-      throw new AppError({
-        key: "@worker_handle_process_success_service/RESULT_NOT_AVAILABLE",
-        message: "Result file not sent.",
       });
 
     const updatedProcessing = await this.processingRepository.updateOne(
@@ -60,16 +44,16 @@ class WorkerHandleProcessSuccessService {
       {
         verified_at: new Date(),
         started_at: processing.started_at || new Date(),
-        finished_at: new Date(),
+        finished_at: null,
 
         worker_id: worker.id,
-        status: PROCESSING_STATUS.SUCCEEDED,
+        status: PROCESSING_STATUS.RUNNING,
       },
     );
 
     if (!updatedProcessing)
       throw new AppError({
-        key: "@worker_handle_process_success_service/PROCESSING_UPDATE_FAILED",
+        key: "@worker_handle_processing_progress_service/PROCESSING_UPDATE_FAILED",
         message: "Processing update failed.",
       });
 
@@ -77,4 +61,4 @@ class WorkerHandleProcessSuccessService {
   }
 }
 
-export { WorkerHandleProcessSuccessService };
+export { WorkerHandleProcessingProgressService };

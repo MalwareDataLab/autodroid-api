@@ -19,6 +19,8 @@ model User {
   name         String?
   phone_number String?
 
+  learning_data Json @default("{}")
+
   language String?
 
   created_at DateTime @default(now())
@@ -86,7 +88,9 @@ model File {
   updated_at DateTime @updatedAt
 
   dataset   Dataset?     @relation(name: "Dataset_File")
-  processes Processing[] @relation(name: "Processing_ResultFile")
+
+  processing_results Processing[] @relation(name: "Processing_ResultFile")
+  processing_metrics Processing[] @relation(name: "Processing_MetricsFile")
 
   @@map("files")
 }
@@ -180,6 +184,7 @@ model Worker {
   internal_id String
   signature   String @unique
 
+  version String?
   system_info Json
   agent_info  Json
   payload     Json
@@ -212,6 +217,9 @@ model Processing {
 
   result_file_id String?
   result_file    File?   @relation(name: "Processing_ResultFile", fields: [result_file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  metrics_file_id String?
+  metrics_file    File?   @relation(name: "Processing_MetricsFile", fields: [metrics_file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   status String
 

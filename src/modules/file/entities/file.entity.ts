@@ -96,7 +96,11 @@ class File implements FileEntityType {
 
   @Exclude()
   @Type(() => Processing)
-  processes: Processing[];
+  processing_results: Processing[];
+
+  @Exclude()
+  @Type(() => Processing)
+  processing_metrics: Processing[];
 
   static async process(params: File): Promise<File> {
     const processFilePublicAccessService = container.resolve(

@@ -1,5 +1,8 @@
 import { inject, injectable } from "tsyringe";
 
+// i18n import
+import { DEFAULT_LANGUAGE } from "@shared/i18n";
+
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
@@ -14,7 +17,7 @@ import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Entity import
-import { Processing } from "@modules/processing/entities/processing.entity";
+import { File } from "@modules/file/entities/file.entity";
 
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
@@ -33,7 +36,7 @@ interface IRequest {
 }
 
 @injectable()
-class WorkerGenerateProcessUploadFileService {
+class WorkerGenerateProcessingResultUploadFileService {
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
@@ -47,25 +50,31 @@ class WorkerGenerateProcessUploadFileService {
     processing_id,
     agent_info,
     data,
-  }: IRequest): Promise<Processing> {
+  }: IRequest): Promise<File> {
     const processing = await this.processingRepository.findOne({
       id: processing_id,
     });
 
     if (!processing)
       throw new AppError({
-        key: "@worker_generate_process_upload_file_service/PROCESSING_NOT_FOUND",
+        key: "@worker_generate_processing_result_upload_file_service/PROCESSING_NOT_FOUND",
         message: "Processing not found.",
+      });
+
+    if (processing.result_file?.id)
+      await this.storageProvider.removeFileByPath({
+        path: processing.result_file.provider_path,
+        language: DEFAULT_LANGUAGE,
       });
 
     const file = await this.storageProvider.generateUploadSignedUrl({
       filename: data.filename,
       mimeType: data.mime_type,
-      fileType: FILE_TYPE.PROCESSING,
+      fileType: FILE_TYPE.PROCESSING_RESULT,
       size: data.size,
       md5Hash: data.md5_hash,
 
-      cloudDirDestination: "processes",
+      cloudDirDestination: "processing_results",
       allowPublicAccess: true,
 
       user: processing.user,
@@ -86,14 +95,14 @@ class WorkerGenerateProcessUploadFileService {
       },
     );
 
-    if (!updatedProcessing)
+    if (!updatedProcessing?.result_file)
       throw new AppError({
-        key: "@worker_generate_process_upload_file_service/PROCESSING_UPDATE_FAILED",
+        key: "@worker_generate_processing_result_upload_file_service/PROCESSING_UPDATE_FAILED",
         message: "Processing update failed.",
       });
 
-    return updatedProcessing;
+    return updatedProcessing.result_file;
   }
 }
 
-export { WorkerGenerateProcessUploadFileService };
+export { WorkerGenerateProcessingResultUploadFileService };

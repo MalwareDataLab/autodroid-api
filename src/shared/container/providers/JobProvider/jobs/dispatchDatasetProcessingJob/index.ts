@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 import { DoneCallback, Job } from "bull";
 
 // Error import
@@ -8,13 +8,17 @@ import { AppError } from "@shared/errors/AppError";
 import { IJob } from "@shared/container/providers/JobProvider/models/IJob";
 
 // Provider import
-import { sleep } from "@shared/utils/sleep";
+import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
+
+// DTO import
 import {
   IJobOptionsDTO,
   IQueueOptionsDTO,
 } from "../../types/IAddJobOptions.dto";
 
-type IDispatchDatasetProcessingJob = any;
+type IDispatchDatasetProcessingJob = {
+  processing_id: string;
+};
 
 @injectable()
 class DispatchDatasetProcessingJob implements IJob {
@@ -24,23 +28,30 @@ class DispatchDatasetProcessingJob implements IJob {
   public readonly jobOptions: IJobOptionsDTO = {};
   public readonly queueOptions: IQueueOptionsDTO = {};
 
-  constructor() {}
+  constructor(
+    @inject("DatasetProcessorProvider")
+    private datasetProcessorProvider: IDatasetProcessorProvider,
+  ) {}
 
   public async handle(
     job: Job<IDispatchDatasetProcessingJob>,
     done: DoneCallback,
   ): Promise<void> {
+    const { processing_id } = job.data;
     try {
-      console.log(`inside job id ${job.id} DATA: ${JSON.stringify(job.data)}`);
-      await sleep(5000);
-      if (Math.random() < 0.7) throw new Error("Random failure");
+      const processing = await this.datasetProcessorProvider.dispatchProcess({
+        processing_id,
+      });
 
-      done(null, `Test job success.`);
+      done(
+        null,
+        `Processing ${processing.id} dispatched successfully to worker ${processing.worker_id}.`,
+      );
     } catch (error: any) {
       done(
         new AppError({
-          key: "@test_job/ERROR",
-          message: `Test job error. ${error.message}`,
+          key: "@dispatch_dataset_processing_job/ERROR",
+          message: `Fail to dispatch processing ${processing_id}. ${error.message}`,
         }),
       );
     }
