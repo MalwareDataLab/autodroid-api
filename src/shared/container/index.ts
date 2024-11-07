@@ -53,9 +53,9 @@ const secondaryProviders = {
 const secondaryProviderKeys = Object.keys(secondaryProviders) as ReadonlyArray<keyof typeof secondaryProviders>;
 
 const providers = { ...primaryProviders, ...secondaryProviders } as const;
-const providerKeys = [...primaryProviderKeys, ...secondaryProviderKeys] as const;
+type ProviderKeys = (typeof primaryProviderKeys)[number] | (typeof secondaryProviderKeys)[number];
 
-const initContainerByKeys = ({ selectedContainer = mainContainer, containers }: { selectedContainer: DependencyContainer; containers: ReadonlyArray<(typeof providerKeys)[number]> }) => {
+const initContainerByKeys = ({ selectedContainer = mainContainer, containers }: { selectedContainer: DependencyContainer; containers: ReadonlyArray<ProviderKeys> }) => {
   containers.forEach(containerKey => {
     const provider = providers[containerKey];
     selectedContainer.registerSingleton<InstanceType<typeof provider>>(containerKey, provider);
@@ -97,7 +97,7 @@ const standardPreRequisites = [
 
   // Quaternary
   "JobProvider",
-] satisfies ReadonlyArray<(typeof providerKeys)[number]>;
+] satisfies ReadonlyArray<ProviderKeys>;
 const initAndWaitPreRequisites = async (selectedContainer: DependencyContainer = mainContainer, prerequisites = standardPreRequisites) => {
   await prerequisites.reduce<Promise<any>>((promise, prerequisite) => {
     return promise.then(async () => {
