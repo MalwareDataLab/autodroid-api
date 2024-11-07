@@ -97,6 +97,7 @@ class HandleUserSessionService {
                 email: userData.email,
                 name: userData.name || null,
                 phone_number: userData.phone_number || null,
+                learning_data: {},
                 language,
               },
               language,

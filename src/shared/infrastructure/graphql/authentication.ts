@@ -3,7 +3,7 @@ import { AuthChecker } from "type-graphql";
 import { GraphQLContext } from "./context";
 
 const authenticationHandler: AuthChecker<GraphQLContext> = (
-  { context: { session } },
+  { context: { session, worker_session } },
   roles,
 ) => {
   // if `@Authorized()`, check only if user exists
@@ -12,6 +12,8 @@ const authenticationHandler: AuthChecker<GraphQLContext> = (
   if (!session) return false;
 
   if (roles.includes("ADMIN") && session.is_admin) return true;
+
+  if (roles.includes("WORKER") && worker_session?.worker?.id) return true;
 
   return false;
 };

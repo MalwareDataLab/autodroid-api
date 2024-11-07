@@ -9,8 +9,14 @@ import { WorkerHandleProcessFailureSchema } from "@modules/worker/schemas/worker
 
 // Controller import
 import { WorkerProcessingController } from "../controllers/workerProcessing.controller";
+import { WorkerProcessingResultFileController } from "../controllers/workerProcessingResultFile.controller";
+import { WorkerProcessingMetricsFileController } from "../controllers/workerProcessingMetricsFile.controller";
 
 const workerProcessingController = new WorkerProcessingController();
+const workerProcessingResultFileController =
+  new WorkerProcessingResultFileController();
+const workerProcessingMetricsFileController =
+  new WorkerProcessingMetricsFileController();
 
 const workerProcessingRouter = Router();
 
@@ -22,17 +28,31 @@ workerProcessingRouter.post(
 );
 
 workerProcessingRouter.post(
-  "/:processing_id/generate_upload",
+  "/:processing_id/result_file/generate_upload",
   validateRequest({
     schema: RequestFileUploadSignedUrlSchema,
     segment: "BODY",
   }),
-  workerProcessingController.generateUploadFile,
+  workerProcessingResultFileController.create,
 );
 
 workerProcessingRouter.post(
-  "/:processing_id/uploaded",
-  workerProcessingController.handleUploadFile,
+  "/:processing_id/result_file/uploaded",
+  workerProcessingResultFileController.update,
+);
+
+workerProcessingRouter.post(
+  "/:processing_id/metrics_file/generate_upload",
+  validateRequest({
+    schema: RequestFileUploadSignedUrlSchema,
+    segment: "BODY",
+  }),
+  workerProcessingMetricsFileController.create,
+);
+
+workerProcessingRouter.post(
+  "/:processing_id/metrics_file/uploaded",
+  workerProcessingMetricsFileController.update,
 );
 
 workerProcessingRouter.post(

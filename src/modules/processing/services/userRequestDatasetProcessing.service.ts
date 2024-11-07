@@ -6,29 +6,33 @@ import { AppError } from "@shared/errors/AppError";
 // Configuration import
 import { getProcessingConfig } from "@config/processing";
 
+// Provider import
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+
 // Repository import
 import {
   IDatasetRepository,
   IProcessorRepository,
 } from "@shared/container/repositories";
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
+// Util import
+import { DateHelper } from "@shared/utils/dateHelpers";
+import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
+import { validateAndParseProcessingParameters } from "@modules/processing/utils/validateAndParseProcessingParameters.util";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { File } from "@modules/file/entities/file.entity";
-import { DateHelper } from "@shared/utils/dateHelpers";
-import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 import { Processing } from "../entities/processing.entity";
 
 // Guard import
 import { ProcessingGuard } from "../guards/processing.guard";
-
-// Util import
-import { validateAndParseProcessingParameters } from "../utils/validateAndParseProcessingParameters.util";
 
 // Schema import
 import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
@@ -55,8 +59,8 @@ class UserRequestDatasetProcessingService {
     @inject("ProcessorRepository")
     private processorRepository: IProcessorRepository,
 
-    @inject("DatasetProcessorProvider")
-    private datasetProcessorProvider: IDatasetProcessorProvider,
+    @inject("JobProvider")
+    private jobProvider: IJobProvider,
   ) {
     this.processingGuard = new ProcessingGuard(
       this.processingRepository,
@@ -95,6 +99,8 @@ class UserRequestDatasetProcessingService {
         ),
       });
 
+    await validateProcessor(processor);
+
     const configuration = validateAndParseProcessingParameters({
       parameters,
       processor,
@@ -125,9 +131,10 @@ class UserRequestDatasetProcessingService {
 
       worker_id: null,
       result_file_id: null,
+      metrics_file_id: null,
     });
 
-    await this.datasetProcessorProvider.dispatchProcess({
+    this.jobProvider.add("DispatchDatasetProcessingJob", {
       processing_id: processing.id,
     });
 

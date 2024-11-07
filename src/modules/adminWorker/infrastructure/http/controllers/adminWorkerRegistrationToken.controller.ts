@@ -14,8 +14,8 @@ import { AdminWorkerRegistrationTokenShowService } from "@modules/adminWorker/se
 import { AdminWorkerRegistrationTokenDeleteService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenDelete.service";
 
 // Schema import
-import { WorkerRegistrationTokenIndexSchema } from "@modules/worker/schemas/workerRegistrationToken.schema";
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+import { WorkerRegistrationTokenIndexSchema } from "@modules/worker/schemas/workerRegistrationToken.schema";
 
 class AdminWorkerRegistrationTokenController {
   public async create(req: Request, res: Response) {

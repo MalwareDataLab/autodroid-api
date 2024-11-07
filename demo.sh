@@ -318,8 +318,9 @@ call_backend() {
   local CALL_BACKEND_METHOD="$1"
   local CALL_BACKEND_ENDPOINT="$HOST:$PORT$2"
   local CALL_BACKEND_TOKEN="$(refresh_and_get_token)"
+  local CALL_BACKEND_BODY="$3"
 
-  RESPONSE=$(curl -s -X $CALL_BACKEND_METHOD -H "Authorization: Bearer $CALL_BACKEND_TOKEN" $CALL_BACKEND_ENDPOINT)
+  RESPONSE=$(curl -s -X $CALL_BACKEND_METHOD -H "Authorization: Bearer $CALL_BACKEND_TOKEN" -H "Content-Type: application/json" -d "$CALL_BACKEND_BODY" $CALL_BACKEND_ENDPOINT)
 
   if echo "$RESPONSE" | jq . >/dev/null 2>&1; then
     echo "$RESPONSE"
@@ -332,7 +333,10 @@ call_backend() {
 # STEP 1
 #
 step "Step 1" "Create a dataset - getting the upload_url to send it."
-call_backend "GET" "/user"
+call_backend "POST" "/dataset" "{
+    "description": "aaa",
+    "tags": "aa,bb,cc"
+}"
 
 #
 #

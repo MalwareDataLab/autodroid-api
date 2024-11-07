@@ -13,13 +13,17 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { Worker } from "../entities/worker.entity";
 
+// Schema import
+import { WorkerHandleProcessFailureSchema } from "../schemas/workerHandleProcessFailure.schema";
+
 interface IRequest {
   worker: Worker;
   processing_id: string;
+  data?: WorkerHandleProcessFailureSchema | null;
 }
 
 @injectable()
-class WorkerHandleProcessProgressService {
+class WorkerHandleProcessingFailureService {
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
@@ -28,6 +32,7 @@ class WorkerHandleProcessProgressService {
   public async execute({
     worker,
     processing_id,
+    data,
   }: IRequest): Promise<Processing> {
     const processing = await this.processingRepository.findOne({
       id: processing_id,
@@ -35,7 +40,7 @@ class WorkerHandleProcessProgressService {
 
     if (!processing)
       throw new AppError({
-        key: "@worker_handle_process_progress_service/PROCESSING_NOT_FOUND",
+        key: "@worker_handle_processing_failure_service/PROCESSING_NOT_FOUND",
         message: "Processing not found.",
       });
 
@@ -44,16 +49,17 @@ class WorkerHandleProcessProgressService {
       {
         verified_at: new Date(),
         started_at: processing.started_at || new Date(),
-        finished_at: null,
+        finished_at: new Date(),
 
         worker_id: worker.id,
-        status: PROCESSING_STATUS.RUNNING,
+        status: PROCESSING_STATUS.FAILED,
+        message: data?.reason || null,
       },
     );
 
     if (!updatedProcessing)
       throw new AppError({
-        key: "@worker_handle_process_progress_service/PROCESSING_UPDATE_FAILED",
+        key: "@worker_handle_processing_failure_service/PROCESSING_UPDATE_FAILED",
         message: "Processing update failed.",
       });
 
@@ -61,4 +67,4 @@ class WorkerHandleProcessProgressService {
   }
 }
 
-export { WorkerHandleProcessProgressService };
+export { WorkerHandleProcessingFailureService };

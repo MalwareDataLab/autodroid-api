@@ -54,6 +54,8 @@ const processorFactory = ProcessorFactory.define(
         dataset_output_argument: "",
         dataset_output_value: "",
         command: "",
+        output_metrics_file_glob_patterns: ["*"],
+        output_result_file_glob_patterns: ["*"],
       },
 
       /** Simulated */

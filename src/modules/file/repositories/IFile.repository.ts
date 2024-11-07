@@ -13,6 +13,8 @@ export interface IFileRepository {
 
   findOne(filter: IFindFileDTO): Promise<File | null>;
 
+  findMany(filter: IFindFileDTO): Promise<File[]>;
+
   updateOne(filter: IFindFileDTO, data: IUpdateFileDTO): Promise<File | null>;
 
   deleteOne(filter: IFindFileDTO): Promise<File | null>;

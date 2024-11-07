@@ -64,12 +64,44 @@ class PrismaProcessingRepository implements IProcessingRepository {
       dataset_id,
       worker_id,
       result_file_id,
+      metrics_file_id,
 
       started,
       finished,
+
+      keep_until_start_date,
+      keep_until_end_date,
     }: IFindProcessingDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.ProcessingWhereInput {
+    const conditions: DatabaseHelperTypes.ProcessingWhereInput[] = [];
+
+    if (started !== undefined)
+      conditions.push({
+        started_at: started ? { not: null } : null,
+      });
+
+    if (finished !== undefined)
+      conditions.push({
+        finished_at: finished ? { not: null } : null,
+      });
+
+    if (keep_until_start_date !== undefined)
+      conditions.push({
+        keep_until: {
+          not: null,
+          gte: keep_until_start_date,
+        },
+      });
+
+    if (keep_until_end_date !== undefined)
+      conditions.push({
+        keep_until: {
+          not: null,
+          lte: keep_until_end_date,
+        },
+      });
+
     return {
       id,
       status,
@@ -80,14 +112,9 @@ class PrismaProcessingRepository implements IProcessingRepository {
       dataset_id,
       worker_id,
       result_file_id,
+      metrics_file_id,
 
-      ...(started !== undefined && {
-        started_at: started ? { not: null } : null,
-      }),
-
-      ...(finished !== undefined && {
-        finished_at: finished ? { not: null } : null,
-      }),
+      AND: conditions,
     };
   }
 

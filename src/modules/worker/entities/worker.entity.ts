@@ -11,37 +11,26 @@ import { PaginationConnection } from "@modules/pagination/entities/paginationCon
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { WorkerRegistrationToken } from "./workerRegistrationToken.entity";
 
-@Authorized(["ADMIN"])
-@Exclude()
 @ObjectType()
 class Worker implements WorkerEntityType {
   @Field(() => ID)
   id: string;
 
-  @Authorized(["ADMIN"])
-  @Directive("@auth(requires: ADMIN)")
-  @Exclude()
   @Field()
   refresh_token: string;
 
   @Field()
   refresh_token_expires_at: Date;
 
-  @Authorized(["ADMIN"])
-  @Directive("@auth(requires: ADMIN)")
-  @Exclude()
   @Field()
   internal_id: string;
 
-  @Authorized(["ADMIN"])
-  @Directive("@auth(requires: ADMIN)")
-  @Exclude()
   @Field()
   signature: string;
 
-  @Authorized(["ADMIN"])
-  @Directive("@auth(requires: ADMIN)")
-  @Exclude()
+  @Field(() => String, { nullable: true })
+  version: string | null;
+
   @Field(() => JSONScalar)
   system_info: Record<string, any>;
 

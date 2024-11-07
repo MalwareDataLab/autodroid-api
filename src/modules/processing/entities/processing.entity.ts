@@ -108,6 +108,13 @@ class Processing implements ProcessingEntityType {
   @Field(() => File, { nullable: true })
   @Type(() => File)
   result_file: File | null;
+
+  @Field(() => String, { nullable: true })
+  metrics_file_id: string | null;
+
+  @Field(() => File, { nullable: true })
+  @Type(() => File)
+  metrics_file: File | null;
 }
 
 const PaginatedProcessing = PaginationConnection(Processing);

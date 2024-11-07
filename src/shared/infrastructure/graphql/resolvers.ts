@@ -3,8 +3,8 @@ import { BuildSchemaOptions } from "type-graphql";
 /**
  * General
  */
+import { HealthCheckResolver } from "@modules/healthCheck/infrastructure/graphql/resolvers/healthCheck.resolver";
 import { FileFieldResolver } from "@modules/file/infrastructure/graphql/resolvers/fileField.resolver";
-
 /**
  * Admin
  */
@@ -25,11 +25,20 @@ import { UserProcessorResolver } from "@modules/processor/infrastructure/graphql
 import { UserProcessorFieldResolver } from "@modules/processor/infrastructure/graphql/resolvers/userProcessorField.resolver";
 import { UserProcessingResolver } from "@modules/processing/infrastructure/graphql/resolvers/userProcessing.resolver";
 
+/**
+ * Worker
+ */
+import { WorkerResolver } from "@modules/worker/infrastructure/graphql/resolvers/worker.resolver";
+import { WorkerProcessingResolver } from "@modules/worker/infrastructure/graphql/resolvers/workerProcessing.resolver";
+import { WorkerProcessingFileResolver } from "@modules/worker/infrastructure/graphql/resolvers/workerProcessingFile.resolver";
+import { WorkerRegistrationResolver } from "@modules/worker/infrastructure/graphql/resolvers/workerRegistration.resolver";
+
 const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
   resolvers: [
     /**
      * General
      */
+    HealthCheckResolver,
     FileFieldResolver,
 
     /**
@@ -51,6 +60,14 @@ const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
     UserProcessorResolver,
     UserProcessorFieldResolver,
     UserProcessingResolver,
+
+    /**
+     * Worker
+     */
+    WorkerResolver,
+    WorkerProcessingResolver,
+    WorkerProcessingFileResolver,
+    WorkerRegistrationResolver,
   ],
 };
 

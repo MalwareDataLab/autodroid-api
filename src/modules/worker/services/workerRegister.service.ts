@@ -79,6 +79,7 @@ class WorkerRegisterService {
 
         user_id: registrationToken.user_id,
 
+        version: null,
         system_info,
         agent_info: {
           ...agent_info,
