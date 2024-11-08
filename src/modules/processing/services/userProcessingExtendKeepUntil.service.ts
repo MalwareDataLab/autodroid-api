@@ -117,7 +117,7 @@ class UserProcessingExtendKeepUntilService {
         ),
       });
 
-    return processing;
+    return updatedProcessing;
   }
 }
 

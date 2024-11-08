@@ -5,56 +5,176 @@ import { AppError } from "@shared/errors/AppError";
 
 // Repository import
 import {
-  IDatasetRepository,
   IProcessingRepository,
+  IWorkerRepository,
 } from "@shared/container/repositories";
+
+// Util import
+import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
 
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
+import { Worker } from "@modules/worker/entities/worker.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
 // Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { IWebsocketProvider } from "@shared/container/providers/WebsocketProvider/models/IWebsocket.provider";
 
+// Type import
+import { ISocketWorkerStatusMessage } from "@shared/infrastructure/websocket/socket.types";
+import { IDispatchProcessDTO } from "../types/IDatasetProcessor.dto";
+
 // Interface import
 import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider";
-
-// DTO import
-import { IDispatchProcessDTO } from "../types/IDatasetProcessor.dto";
 
 @injectable()
 class DatasetProcessorProvider implements IDatasetProcessorProvider {
   public readonly initialization: Promise<void>;
 
+  private readonly inMemoryIdleKey = "worker:IDLE";
+
   constructor(
-    @inject("DatasetRepository")
-    private datasetRepository: IDatasetRepository,
+    @inject("WorkerRepository")
+    private workerRepository: IWorkerRepository,
 
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
-
-    @inject("StorageProvider")
-    private storageProvider: IStorageProvider,
 
     @inject("InMemoryDatabaseProvider")
     private inMemoryDatabaseProvider: IInMemoryDatabaseProvider,
 
     @inject("WebsocketProvider")
     public websocketProvider: IWebsocketProvider,
-  ) {}
+  ) {
+    this.initialization = this.init();
+  }
 
-  public async dispatchProcess(
-    params: IDispatchProcessDTO,
+  private async init(): Promise<void> {
+    await this.websocketProvider.initialization;
+    await this.inMemoryDatabaseProvider.initialization;
+
+    this.websocketProvider.on("worker:status", ({ worker_id, ...data }) =>
+      this.handleWorkerStatus({
+        worker_id,
+        data,
+      }),
+    );
+  }
+
+  private async handleWorkerStatus({
+    worker_id,
+    data,
+  }: {
+    worker_id: string;
+    data: ISocketWorkerStatusMessage;
+  }): Promise<void> {
+    const worker = await this.workerRepository.findOne({ id: worker_id });
+
+    if (!worker)
+      throw new AppError({
+        key: "@dataset_processor_provider_handle_worker_status/WORKER_NOT_FOUND",
+        message: "Worker not found.",
+      });
+
+    if (data.status === "WORK") {
+      await this.inMemoryDatabaseProvider.connection.del(
+        `${this.inMemoryIdleKey}:${worker_id}`,
+      );
+    } else if (data.status === "IDLE") {
+      await this.inMemoryDatabaseProvider.connection.set(
+        `${this.inMemoryIdleKey}:${worker_id}`,
+        "1",
+        "EX",
+        60,
+      );
+    }
+
+    await this.workerRepository.updateOne(
+      { id: worker.id },
+      { version: data.version, last_seen_at: new Date() },
+    );
+  }
+
+  private async getWorkerById(worker_id: string): Promise<Worker> {
+    const worker = await this.workerRepository.findOne({ id: worker_id });
+
+    if (!worker)
+      throw new AppError({
+        key: "@dataset_processor_provider_get_worker_by_id/WORKER_NOT_FOUND",
+        message: "Worker not found.",
+      });
+
+    try {
+      await this.websocketProvider.sendMessageToRoom(
+        `worker:${worker_id}`,
+        "worker:get-status",
+      );
+
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(
+            new AppError({
+              key: "@dataset_processor_provider_get_worker_by_id/WORKER_TIMEOUT",
+              message: "Worker timeout.",
+            }),
+          );
+        }, 5000);
+
+        this.websocketProvider.once(
+          `worker:${worker.id}:status`,
+          async data => {
+            clearTimeout(timeout);
+            if (data.status === "IDLE" && data.processing_ids.length === 0) {
+              resolve(data);
+            } else {
+              reject(new Error("Worker not idle."));
+            }
+          },
+        );
+      });
+
+      return worker;
+    } catch (error) {
+      if (AppError.isInstance(error)) throw error;
+
+      await this.inMemoryDatabaseProvider.connection.del(
+        `${this.inMemoryIdleKey}:${worker_id}`,
+      );
+
+      throw new AppError({
+        key: "@dataset_processor_provider_get_worker_by_id/WORKER_NOT_AVAILABLE",
+        message: "Worker not available.",
+      });
+    }
+  }
+
+  private async getAvailableWorkerIds(): Promise<string[]> {
+    const [, workers] = await this.inMemoryDatabaseProvider.connection.scan(
+      "0",
+      "MATCH",
+      `${this.inMemoryIdleKey}:*`,
+      "COUNT",
+      10,
+    );
+
+    return (workers || []).map(worker =>
+      worker.replace(`${this.inMemoryIdleKey}:`, ""),
+    );
+  }
+
+  private async dispatchProcessToWorker(
+    params: IDispatchProcessDTO & { worker_id: string },
   ): Promise<Processing> {
     const { processing_id } = params;
     const processing = await this.processingRepository.findOne({
       id: processing_id,
     });
+
+    const worker = await this.getWorkerById(params.worker_id);
 
     if (!processing)
       throw new AppError({
@@ -74,6 +194,8 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         message: "Dataset file not found.",
       });
 
+    await validateProcessor(processing.processor);
+
     try {
       const file = await File.process(processing.dataset.file);
 
@@ -86,11 +208,24 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Dataset not available.",
         });
 
-      await this.websocketProvider.sendMessageToRoom("worker", "worker:work", {
-        processing_id,
-      });
+      const updatedProcessing = await this.processingRepository.updateOne(
+        { id: processing.id },
+        { worker_id: worker.id },
+      );
 
-      return processing;
+      if (!updatedProcessing)
+        throw new AppError({
+          key: "@dataset_processor_provider_dispatch_process/PROCESSING_UPDATE_ERROR",
+          message: "Fail to update processing.",
+        });
+
+      await this.websocketProvider.sendMessageToRoom(
+        `worker:${worker.id}`,
+        "worker:work",
+        { processing_id },
+      );
+
+      return updatedProcessing;
     } catch (error) {
       const isAppError = AppError.isInstance(error);
       await this.processingRepository
@@ -110,6 +245,24 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         debug: { error },
       });
     }
+  }
+
+  public async dispatchProcess(
+    params: IDispatchProcessDTO,
+  ): Promise<Processing> {
+    const workerIds = await this.getAvailableWorkerIds();
+
+    if (workerIds.length === 0)
+      throw new AppError({
+        key: "@dataset_processor_provider_dispatch_process/NO_WORKER_AVAILABLE",
+        message: "No worker available.",
+      });
+
+    const worker_id = workerIds[0];
+
+    const worker = await this.getWorkerById(worker_id);
+
+    return this.dispatchProcessToWorker({ ...params, worker_id: worker.id });
   }
 }
 

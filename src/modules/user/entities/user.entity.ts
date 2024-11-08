@@ -4,6 +4,9 @@ import { Exclude, Expose, Type } from "class-transformer";
 // Configuration import
 import { getAdminConfig } from "@config/admin";
 
+// Scalar import
+import { JSONScalar } from "@shared/types/json.scalar";
+
 // Type import
 import { UserEntityType } from "@shared/types/models";
 
@@ -29,6 +32,9 @@ class User implements UserEntityType {
 
   @Field(() => String, { nullable: true })
   phone_number: string | null;
+
+  @Field(() => JSONScalar)
+  learning_data: Record<string, any>;
 
   @Field(() => String, { nullable: true })
   language: string | null;

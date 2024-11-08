@@ -291,8 +291,8 @@ class GoogleStorageProvider implements IStorageProvider {
         upload_url: url,
         upload_url_expires_at: uploadSignedUrlExpirationDate,
 
-        public_url: url,
-        public_url_expires_at: uploadSignedUrlExpirationDate,
+        public_url: null,
+        public_url_expires_at: null,
 
         type: fileType,
         provider_status: FILE_PROVIDER_STATUS.PENDING,
@@ -366,12 +366,12 @@ class GoogleStorageProvider implements IStorageProvider {
       const [exists] = await cloudFile.exists();
 
       if (!exists) {
-        const isUploadProcessExpired =
+        const isUploadProcessOpen =
           !!file.upload_url &&
           !!file.upload_url_expires_at &&
-          isAfter(new Date(), file.upload_url_expires_at);
+          isAfter(file.upload_url_expires_at, new Date());
 
-        if (!isUploadProcessExpired) {
+        if (isUploadProcessOpen) {
           const updatedFile = await this.fileRepository.updateOne(
             { id: file.id },
             {

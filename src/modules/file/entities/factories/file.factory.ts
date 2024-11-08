@@ -80,7 +80,8 @@ const fileFactory = FileFactory.define(
         ...(transientParams.withRelations &&
           ({
             dataset: null,
-            processes: [],
+            processing_results: [],
+            processing_metrics: [],
           } satisfies Pick<File, FileRelationFields>)),
       },
       {

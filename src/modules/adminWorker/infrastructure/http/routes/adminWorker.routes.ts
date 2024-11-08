@@ -13,14 +13,18 @@ import { Worker } from "@modules/worker/entities/worker.entity";
 
 // Schema import
 import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
+import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
 
 // Router import
 import { adminWorkerRegistrationTokenRouter } from "./adminWorkerRegistrationToken.routes";
 
 // Controller import
 import { AdminWorkerController } from "../controllers/adminWorker.controller";
+import { AdminWorkerCleanMissingController } from "../controllers/adminWorkerCleanMissing.controller";
 
 const adminWorkerController = new AdminWorkerController();
+const adminWorkerCleanMissingController =
+  new AdminWorkerCleanMissingController();
 
 const adminWorkerRouter = Router();
 
@@ -45,6 +49,20 @@ adminWorkerRouter.get(
 
 adminWorkerRouter.get("/:worker_id", adminWorkerController.show);
 
+adminWorkerRouter.put(
+  "/:worker_id",
+  validateRequest({
+    schema: AdminWorkerUpdateSchema,
+    segment: "BODY",
+  }),
+  adminWorkerController.update,
+);
+
 adminWorkerRouter.delete("/:worker_id", adminWorkerController.delete);
+
+adminWorkerRouter.delete(
+  "/clean-missing",
+  adminWorkerCleanMissingController.delete,
+);
 
 export { adminWorkerRouter };

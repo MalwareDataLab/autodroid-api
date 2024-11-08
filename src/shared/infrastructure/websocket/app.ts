@@ -41,13 +41,21 @@ class WebsocketApp {
 
     this.middlewares();
 
+    const bus = WebsocketAdapter.initialize(this.server);
+
     this.server.on("connection", socket => {
       socket.on("ping", () => {
         socket.emit("pong");
       });
-    });
 
-    WebsocketAdapter.initialize(this.server);
+      socket.on("worker:status", data => {
+        bus.emit(`worker:status`, {
+          ...data,
+          worker_id: socket.data.worker_session.worker.id,
+        });
+        bus.emit(`worker:${socket.data.worker_session.worker.id}:status`, data);
+      });
+    });
   }
 
   private middlewares(): void {

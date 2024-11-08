@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { validateOrReject, ValidationError } from "class-validator";
-import { ClassConstructor } from "class-transformer";
+import { ClassConstructor, plainToInstance } from "class-transformer";
 
 // i18n import
 import { TFunction } from "@shared/i18n";
@@ -27,8 +27,9 @@ async function validateSchema<T extends object>(params: {
   const { t, schema: Schema, value } = params;
 
   try {
-    const dto = new Schema();
-    Object.assign(dto, value);
+    const dto = plainToInstance(Schema, value, {
+      ignoreDecorators: true,
+    });
     await validateOrReject(dto, {
       whitelist: true,
       forbidNonWhitelisted: true,
@@ -49,6 +50,10 @@ async function validateSchema<T extends object>(params: {
       throw new AppError({
         key: "@general/VALIDATION_FAIL",
         message: message || t("@general/VALIDATION_FAIL", "Validation error."),
+        statusCode: 400,
+        payload: {
+          errors: Array.isArray(err) ? err : [err],
+        },
       });
     }
     throw new AppError({
@@ -67,12 +72,27 @@ function validationMiddleware<T extends object>(params: {
   segment: keyof typeof Segments;
 }) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    await validateSchema({
-      value: req[Segments[params.segment]],
-      t: req.t,
-      schema: params.schema,
-    });
-    next();
+    try {
+      await validateSchema({
+        value: req[Segments[params.segment]],
+        t: req.t,
+        schema: params.schema,
+      });
+      return next();
+    } catch (error) {
+      if (
+        AppError.isInstance(error) &&
+        error.key === "@general/VALIDATION_FAIL" &&
+        error.payload?.errors
+      ) {
+        return res.status(error.statusCode || 400).json({
+          key: error.key,
+          message: error.message,
+          errors: error.payload.errors,
+        });
+      }
+      throw error;
+    }
   };
 }
 

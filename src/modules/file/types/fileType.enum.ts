@@ -2,7 +2,8 @@ import { registerEnumType } from "type-graphql";
 
 enum FILE_TYPE {
   DATASET = "DATASET",
-  PROCESSING = "PROCESSING",
+  PROCESSING_RESULT = "PROCESSING_RESULT",
+  PROCESSING_METRICS = "PROCESSING_METRICS",
 }
 
 registerEnumType(FILE_TYPE, {

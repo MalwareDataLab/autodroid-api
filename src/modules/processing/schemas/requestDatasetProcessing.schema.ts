@@ -29,7 +29,7 @@ class RequestDatasetProcessingSchema {
   dataset_id: string;
 
   @IsArray()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => RequestDatasetProcessingParameterSchema)
   @Field(() => [RequestDatasetProcessingParameterSchema])
   parameters: RequestDatasetProcessingParameterSchema[];

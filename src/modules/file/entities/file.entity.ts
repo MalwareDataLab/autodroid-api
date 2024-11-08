@@ -1,6 +1,6 @@
 import { container } from "tsyringe";
 import {
-  // Authorized, // TODO
+  Authorized,
   Directive,
   Field,
   ID,
@@ -76,8 +76,9 @@ class File implements FileEntityType {
   @Field()
   md5_hash: string;
 
-  // @Authorized(["ADMIN"]) // TODO
+  @Authorized(["ADMIN"])
   @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Field(() => JSONScalar)
   payload: Record<string, any>;
 
@@ -95,7 +96,11 @@ class File implements FileEntityType {
 
   @Exclude()
   @Type(() => Processing)
-  processes: Processing[];
+  processing_results: Processing[];
+
+  @Exclude()
+  @Type(() => Processing)
+  processing_metrics: Processing[];
 
   static async process(params: File): Promise<File> {
     const processFilePublicAccessService = container.resolve(

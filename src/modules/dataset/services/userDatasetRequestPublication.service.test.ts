@@ -40,6 +40,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       name: faker.person.fullName(),
       language: "en",
       phone_number: null,
+      learning_data: {},
     });
 
     userDatasetRequestPublicationService =

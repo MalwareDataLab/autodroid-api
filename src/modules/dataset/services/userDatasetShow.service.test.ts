@@ -40,6 +40,7 @@ describe("Service: UserDatasetShowService", () => {
       name: faker.person.fullName(),
       language: "en",
       phone_number: null,
+      learning_data: {},
     });
 
     userDatasetShowService = new UserDatasetShowService(datasetRepository);

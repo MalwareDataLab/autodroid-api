@@ -16,22 +16,21 @@ import {
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
-// Enum import
-import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-
 // Schema import
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
+import { RequestDatasetProcessingSchema } from "@modules/processing/schemas/requestDatasetProcessing.schema";
+import { ProcessingUpdateVisibilitySchema } from "@modules/processing/schemas/processingUpdateVisibility.schema";
+import { UserProcessingExtendKeepUntilSchema } from "@modules/processing/schemas/processingExtendKeepUntil.schema";
 
 // Service import
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";
 import { UserProcessingShowService } from "@modules/processing/services/userProcessingShow.service";
 import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
 import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
-import { UserProcessingUpdateVisibilityService } from "@modules/processing/services/userProcessingUpdateVisibility.service";
 import { UserProcessingExtendKeepUntilService } from "@modules/processing/services/userProcessingExtendKeepUntil.service";
-import { RequestDatasetProcessingSchema } from "@modules/processing/schemas/requestDatasetProcessing.schema";
+import { UserProcessingUpdateVisibilityService } from "@modules/processing/services/userProcessingUpdateVisibility.service";
 
 class UserProcessingResolver {
   @Authorized()
@@ -110,8 +109,8 @@ class UserProcessingResolver {
   @Mutation(() => Processing)
   async userProcessingUpdateVisibility(
     @Arg("processing_id") processing_id: string,
-    @Arg("visibility", () => PROCESSING_VISIBILITY)
-    visibility: PROCESSING_VISIBILITY,
+
+    @Args() params: ProcessingUpdateVisibilitySchema,
 
     @Ctx() { language, session }: GraphQLContext,
   ) {
@@ -121,7 +120,7 @@ class UserProcessingResolver {
 
     const processing = await userProcessingUpdateVisibilityService.execute({
       processing_id,
-      visibility,
+      visibility: params.visibility,
 
       user: session.user,
       language,
@@ -134,8 +133,8 @@ class UserProcessingResolver {
   @Mutation(() => Processing)
   async userProcessingExtendKeepUntil(
     @Arg("processing_id") processing_id: string,
-    @Arg("keep_until", () => Date)
-    keep_until: Date,
+
+    @Args() params: UserProcessingExtendKeepUntilSchema,
 
     @Ctx() { language, session }: GraphQLContext,
   ) {
@@ -145,7 +144,7 @@ class UserProcessingResolver {
 
     const processing = await userProcessingExtendKeepUntilService.execute({
       processing_id,
-      keep_until,
+      keep_until: params.keep_until,
 
       user: session.user,
       language,

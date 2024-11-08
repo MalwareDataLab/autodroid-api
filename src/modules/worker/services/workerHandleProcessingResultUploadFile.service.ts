@@ -11,7 +11,6 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
 // Entity import
-import { Processing } from "@modules/processing/entities/processing.entity";
 import { File } from "@modules/file/entities/file.entity";
 import { Worker } from "../entities/worker.entity";
 
@@ -21,29 +20,26 @@ interface IRequest {
 }
 
 @injectable()
-class WorkerHandleProcessUploadFileService {
+class WorkerHandleProcessingResultUploadFileService {
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
   ) {}
 
-  public async execute({
-    worker,
-    processing_id,
-  }: IRequest): Promise<Processing> {
+  public async execute({ worker, processing_id }: IRequest): Promise<File> {
     const processing = await this.processingRepository.findOne({
       id: processing_id,
     });
 
     if (!processing)
       throw new AppError({
-        key: "@worker_handle_process_upload_file/PROCESSING_NOT_FOUND",
+        key: "@worker_handle_processing_result_upload_file_service/PROCESSING_NOT_FOUND",
         message: "Processing not found.",
       });
 
     if (!processing.result_file?.id)
       throw new AppError({
-        key: "@worker_handle_process_upload_file/RESULT_FILE_NOT_FOUND",
+        key: "@worker_handle_processing_result_upload_file_service/RESULT_FILE_NOT_FOUND",
         message: "Result file not found.",
       });
 
@@ -51,7 +47,7 @@ class WorkerHandleProcessUploadFileService {
 
     if (!file.public_url || file.provider_status !== FILE_PROVIDER_STATUS.READY)
       throw new AppError({
-        key: "@worker_handle_process_upload_file/RESULT_NOT_AVAILABLE",
+        key: "@worker_handle_processing_result_upload_file_service/RESULT_NOT_AVAILABLE",
         message: "Result file not sent.",
       });
 
@@ -67,14 +63,14 @@ class WorkerHandleProcessUploadFileService {
       },
     );
 
-    if (!updatedProcessing)
+    if (!updatedProcessing?.result_file)
       throw new AppError({
-        key: "@worker_handle_process_upload_file/PROCESSING_UPDATE_FAILED",
+        key: "@worker_handle_processing_result_upload_file_service/PROCESSING_UPDATE_FAILED",
         message: "Processing update failed.",
       });
 
-    return updatedProcessing;
+    return updatedProcessing.result_file;
   }
 }
 
-export { WorkerHandleProcessUploadFileService };
+export { WorkerHandleProcessingResultUploadFileService };

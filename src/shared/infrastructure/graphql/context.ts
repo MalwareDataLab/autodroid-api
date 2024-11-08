@@ -5,6 +5,7 @@ import { ExpressContextFunctionArgument } from "@apollo/server/express4";
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 import { Session } from "@modules/user/types/IUserSession.dto";
+import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
 
 export type GraphQLContext = {
   // HTTP context
@@ -22,6 +23,7 @@ export type GraphQLContext = {
 
   // Session context
   session: Session;
+  worker_session: WorkerSession;
 };
 
 export async function contextHandler({
@@ -44,5 +46,6 @@ export async function contextHandler({
 
     // Session context
     session: req.session,
+    worker_session: req.worker_session,
   };
 }
