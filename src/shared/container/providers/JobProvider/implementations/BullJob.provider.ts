@@ -121,6 +121,11 @@ class BullJobProvider implements IJobProvider {
         rule: "0 * * * *",
         data: null,
       },
+      {
+        name: "WorkerCleanMissingJob",
+        rule: "0 * * * *",
+        data: null,
+      },
     ];
 
     await Promise.all(

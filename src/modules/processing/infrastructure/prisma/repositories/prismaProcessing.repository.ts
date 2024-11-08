@@ -45,6 +45,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     },
     processor: true,
     result_file: true,
+    metrics_file: true,
     worker: true,
   } satisfies DatabaseHelperTypes.ProcessingInclude;
 

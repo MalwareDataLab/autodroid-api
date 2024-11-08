@@ -4,6 +4,7 @@ import {
   Authorized,
   Ctx,
   Directive,
+  Int,
   Mutation,
   Query,
 } from "type-graphql";
@@ -35,6 +36,7 @@ import { AdminWorkerShowService } from "@modules/adminWorker/services/adminWorke
 import { AdminWorkerUpdateService } from "@modules/adminWorker/services/adminWorkerUpdate.service";
 import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
 import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
+import { AdminWorkerCleanMissingService } from "@modules/adminWorker/services/adminWorkerCleanMissing.service";
 
 class AdminWorkerResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -129,6 +131,24 @@ class AdminWorkerResolver {
     });
 
     return worker;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Int)
+  async adminWorkerCleanMissing(
+    @Ctx() { language, session }: GraphQLContext,
+  ): Promise<number> {
+    const adminWorkerCleanMissingService = container.resolve(
+      AdminWorkerCleanMissingService,
+    );
+
+    const count = await adminWorkerCleanMissingService.execute({
+      user: session.user,
+      language,
+    });
+
+    return count;
   }
 }
 

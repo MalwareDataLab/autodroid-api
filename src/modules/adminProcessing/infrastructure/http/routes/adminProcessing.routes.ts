@@ -11,8 +11,12 @@ import {
 
 // Controller import
 import { AdminProcessingController } from "../controllers/adminProcessing.controller";
+import { AdminProcessingCleanExpiredController } from "../controllers/adminProcessingCleanExpired.controller";
 
 const adminProcessingController = new AdminProcessingController();
+const adminProcessingCleanExpiredController =
+  new AdminProcessingCleanExpiredController();
+
 const adminProcessingRouter = Router();
 
 adminProcessingRouter.get(
@@ -36,6 +40,11 @@ adminProcessingRouter.put(
 adminProcessingRouter.delete(
   "/:processing_id",
   adminProcessingController.delete,
+);
+
+adminProcessingRouter.delete(
+  "/clean-expired",
+  adminProcessingCleanExpiredController.delete,
 );
 
 export { adminProcessingRouter };

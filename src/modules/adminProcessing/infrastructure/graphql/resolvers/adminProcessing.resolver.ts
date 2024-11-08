@@ -4,6 +4,7 @@ import {
   Authorized,
   Ctx,
   Directive,
+  Int,
   Mutation,
   Query,
 } from "type-graphql";
@@ -37,6 +38,7 @@ import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/
 import { AdminProcessingIndexService } from "@modules/adminProcessing/services/adminProcessingIndex.service";
 import { AdminProcessingShowService } from "@modules/adminProcessing/services/adminProcessingShow.service";
 import { AdminProcessingUpdateService } from "@modules/adminProcessing/services/adminProcessingUpdate.service";
+import { AdminProcessingCleanExpiredService } from "@modules/adminProcessing/services/adminProcessingCleanExpired.service";
 
 class AdminProcessingResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -133,6 +135,24 @@ class AdminProcessingResolver {
     });
 
     return processing;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Int)
+  async adminProcessingCleanExpired(
+    @Ctx() { language, session }: GraphQLContext,
+  ): Promise<number> {
+    const adminProcessingCleanExpiredService = container.resolve(
+      AdminProcessingCleanExpiredService,
+    );
+
+    const count = await adminProcessingCleanExpiredService.execute({
+      user: session.user,
+      language,
+    });
+
+    return count;
   }
 }
 

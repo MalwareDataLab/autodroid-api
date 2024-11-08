@@ -46,14 +46,36 @@ class PrismaWorkerRepository implements IWorkerRepository {
       id,
       refresh_token,
       user_id,
+      registration_token,
       registration_token_id,
       internal_id,
       signature,
+
+      last_seen_at_start_date,
+      last_seen_at_end_date,
 
       archived,
     }: IFindWorkerDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.WorkerWhereInput {
+    const conditions: DatabaseHelperTypes.WorkerWhereInput[] = [];
+
+    if (last_seen_at_start_date !== undefined)
+      conditions.push({
+        last_seen_at: {
+          not: null,
+          gte: last_seen_at_start_date,
+        },
+      });
+
+    if (last_seen_at_end_date !== undefined)
+      conditions.push({
+        last_seen_at: {
+          not: null,
+          lte: last_seen_at_end_date,
+        },
+      });
+
     return {
       id,
       refresh_token,
@@ -67,8 +89,10 @@ class PrismaWorkerRepository implements IWorkerRepository {
       }),
 
       registration_token: relations_enabled
-        ? { token: registration_token_id }
+        ? { token: registration_token }
         : undefined,
+
+      AND: conditions,
     };
   }
 

@@ -21,9 +21,10 @@ class ProcessingCleanExpiredService {
     @inject("StorageProvider")
     private storageProvider: IStorageProvider,
   ) {}
+
   public async execute(): Promise<number> {
     const expiredProcesses = await this.processingRepository.findMany({
-      keep_until_start_date: new Date(),
+      keep_until_end_date: new Date(),
     });
 
     let count = 0;

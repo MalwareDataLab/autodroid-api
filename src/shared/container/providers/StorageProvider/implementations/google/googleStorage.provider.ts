@@ -291,8 +291,8 @@ class GoogleStorageProvider implements IStorageProvider {
         upload_url: url,
         upload_url_expires_at: uploadSignedUrlExpirationDate,
 
-        public_url: url,
-        public_url_expires_at: uploadSignedUrlExpirationDate,
+        public_url: null,
+        public_url_expires_at: null,
 
         type: fileType,
         provider_status: FILE_PROVIDER_STATUS.PENDING,
