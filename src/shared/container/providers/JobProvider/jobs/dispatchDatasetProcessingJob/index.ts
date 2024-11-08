@@ -1,4 +1,4 @@
-import { injectable, inject } from "tsyringe";
+import { injectable, container } from "tsyringe";
 import { DoneCallback, Job } from "bull";
 
 // Error import
@@ -28,10 +28,7 @@ class DispatchDatasetProcessingJob implements IJob {
   public readonly jobOptions: IJobOptionsDTO = {};
   public readonly queueOptions: IQueueOptionsDTO = {};
 
-  constructor(
-    @inject("DatasetProcessorProvider")
-    private datasetProcessorProvider: IDatasetProcessorProvider,
-  ) {}
+  constructor() {}
 
   public async handle(
     job: Job<IDispatchDatasetProcessingJob>,
@@ -39,7 +36,11 @@ class DispatchDatasetProcessingJob implements IJob {
   ): Promise<void> {
     const { processing_id } = job.data;
     try {
-      const processing = await this.datasetProcessorProvider.dispatchProcess({
+      const datasetProcessorProvider =
+        container.resolve<IDatasetProcessorProvider>(
+          "DatasetProcessorProvider",
+        );
+      const processing = await datasetProcessorProvider.dispatchProcess({
         processing_id,
       });
 

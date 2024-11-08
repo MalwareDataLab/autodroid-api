@@ -88,6 +88,8 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       await this.inMemoryDatabaseProvider.connection.set(
         `${this.inMemoryIdleKey}:${worker_id}`,
         "1",
+        "EX",
+        60,
       );
     }
 
@@ -123,11 +125,13 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         }, 5000);
 
         this.websocketProvider.once(
-          `worker:${worker_id}:status`,
+          `worker:${worker.id}:status`,
           async data => {
-            if (data.status === "WORK" && data.processing_ids.length === 0) {
-              clearTimeout(timeout);
+            clearTimeout(timeout);
+            if (data.status === "IDLE" && data.processing_ids.length === 0) {
               resolve(data);
+            } else {
+              reject(new Error("Worker not idle."));
             }
           },
         );
@@ -136,6 +140,10 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       return worker;
     } catch (error) {
       if (AppError.isInstance(error)) throw error;
+
+      await this.inMemoryDatabaseProvider.connection.del(
+        `${this.inMemoryIdleKey}:${worker_id}`,
+      );
 
       throw new AppError({
         key: "@dataset_processor_provider_get_worker_by_id/WORKER_NOT_AVAILABLE",
@@ -153,7 +161,9 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       10,
     );
 
-    return workers || [];
+    return (workers || []).map(worker =>
+      worker.replace(`${this.inMemoryIdleKey}:`, ""),
+    );
   }
 
   private async dispatchProcessToWorker(
@@ -198,12 +208,12 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Dataset not available.",
         });
 
-      const updateProcessing = await this.processingRepository.updateOne(
+      const updatedProcessing = await this.processingRepository.updateOne(
         { id: processing.id },
         { worker_id: worker.id },
       );
 
-      if (!updateProcessing)
+      if (!updatedProcessing)
         throw new AppError({
           key: "@dataset_processor_provider_dispatch_process/PROCESSING_UPDATE_ERROR",
           message: "Fail to update processing.",
@@ -215,7 +225,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         { processing_id },
       );
 
-      return processing;
+      return updatedProcessing;
     } catch (error) {
       const isAppError = AppError.isInstance(error);
       await this.processingRepository

@@ -20,8 +20,11 @@ import { adminWorkerRegistrationTokenRouter } from "./adminWorkerRegistrationTok
 
 // Controller import
 import { AdminWorkerController } from "../controllers/adminWorker.controller";
+import { AdminWorkerCleanMissingController } from "../controllers/adminWorkerCleanMissing.controller";
 
 const adminWorkerController = new AdminWorkerController();
+const adminWorkerCleanMissingController =
+  new AdminWorkerCleanMissingController();
 
 const adminWorkerRouter = Router();
 
@@ -56,5 +59,10 @@ adminWorkerRouter.put(
 );
 
 adminWorkerRouter.delete("/:worker_id", adminWorkerController.delete);
+
+adminWorkerRouter.delete(
+  "/clean-missing",
+  adminWorkerCleanMissingController.delete,
+);
 
 export { adminWorkerRouter };

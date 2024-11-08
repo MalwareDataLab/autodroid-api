@@ -31,8 +31,8 @@ class RemoveAllDanglingFilesService {
   public async execute(): Promise<number> {
     const expiredUploadFiles = await this.fileRepository.findMany({
       provider_status: FILE_PROVIDER_STATUS.PENDING,
-      upload_url_expires_start_date: DateHelper.now()
-        .add(5, "minutes")
+      upload_url_expires_end_date: DateHelper.now()
+        .subtract(3, "hours")
         .toDate(),
     });
 

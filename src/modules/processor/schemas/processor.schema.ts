@@ -89,19 +89,17 @@ class ProcessorConfigurationSchema implements ProcessorConfiguration {
 
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => String)
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
+  @Type(() => String)
   @Field(() => [String])
   output_result_file_glob_patterns: string[];
 
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => String)
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
+  @Type(() => String)
   @Field(() => [String])
   output_metrics_file_glob_patterns: string[];
 }
