@@ -39,6 +39,7 @@ describe("Service: CreateUserService", () => {
       name: faker.person.fullName(),
       language: "en",
       phone_number: faker.phone.number(),
+      learning_data: {},
     };
 
     userRepositoryMock.createOne.mockResolvedValueOnce(parse(User, data));
@@ -57,6 +58,7 @@ describe("Service: CreateUserService", () => {
       name: faker.person.fullName(),
       language: "en",
       phone_number: faker.phone.number(),
+      learning_data: {},
     };
 
     userRepositoryMock.createOne.mockRejectedValueOnce(new Error());

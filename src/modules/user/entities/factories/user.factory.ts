@@ -29,6 +29,7 @@ const userFactory = UserFactory.define(({ onCreate, associations }) => {
     email: faker.internet.email(),
     name: faker.person.firstName(),
     phone_number: faker.phone.number(),
+    learning_data: {},
     language: "en",
 
     /** Simulated */

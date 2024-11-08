@@ -1,4 +1,11 @@
-import { Field, ID, Int, ObjectType } from "type-graphql";
+import {
+  Authorized,
+  Directive,
+  Field,
+  ID,
+  Int,
+  ObjectType,
+} from "type-graphql";
 import { Exclude, Type } from "class-transformer";
 
 // Scalar import
@@ -53,6 +60,9 @@ class Processing implements ProcessingEntityType {
   @Type(() => ProcessingParameter)
   configuration: Record<string, any>;
 
+  @Authorized(["ADMIN"])
+  @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Field(() => JSONScalar)
   payload: Record<string, any>;
 
@@ -98,6 +108,13 @@ class Processing implements ProcessingEntityType {
   @Field(() => File, { nullable: true })
   @Type(() => File)
   result_file: File | null;
+
+  @Field(() => String, { nullable: true })
+  metrics_file_id: string | null;
+
+  @Field(() => File, { nullable: true })
+  @Type(() => File)
+  metrics_file: File | null;
 }
 
 const PaginatedProcessing = PaginationConnection(Processing);

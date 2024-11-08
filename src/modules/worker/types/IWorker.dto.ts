@@ -36,6 +36,9 @@ export type IFindWorkerDTO = Partial<
 > & {
   registration_token?: string;
   archived?: boolean;
+
+  last_seen_at_start_date?: Date;
+  last_seen_at_end_date?: Date;
 };
 
 export type IUpdateWorkerDTO = Partial<ICreateWorkerDTO>;

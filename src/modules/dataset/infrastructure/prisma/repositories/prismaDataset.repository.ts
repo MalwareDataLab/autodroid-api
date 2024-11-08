@@ -57,17 +57,21 @@ class PrismaDatasetRepository implements IDatasetRepository {
     };
   }
 
-  private getWhereClausePublicOrUserPrivate(
-    filter: IFindDatasetPublicOrUserPrivateDTO,
-  ): DatabaseHelperTypes.DatasetWhereInput {
+  private getWhereClausePublicOrUserPrivate({
+    user_id,
+    ...filter
+  }: IFindDatasetPublicOrUserPrivateDTO): DatabaseHelperTypes.DatasetWhereInput {
     return {
-      OR: [
-        { visibility: DATASET_VISIBILITY.PUBLIC },
-        {
-          visibility: DATASET_VISIBILITY.PRIVATE,
-          user_id: filter.user_id,
-        },
-      ],
+      ...this.getWhereClause(filter),
+      AND: {
+        OR: [
+          { visibility: DATASET_VISIBILITY.PUBLIC },
+          {
+            visibility: DATASET_VISIBILITY.PRIVATE,
+            user_id,
+          },
+        ],
+      },
     };
   }
 

@@ -7,6 +7,7 @@ Table users {
   email String [unique, not null]
   name String
   phone_number String
+  learning_data Json [not null, default: '{}']
   language String
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -50,7 +51,8 @@ Table files {
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   dataset datasets
-  processes processes [not null]
+  processing_results processes [not null]
+  processing_metrics processes [not null]
 }
 
 Table datasets {
@@ -109,9 +111,13 @@ Table workers {
   refresh_token_expires_at DateTime [not null]
   internal_id String [not null]
   signature String [unique, not null]
+  version String
   system_info Json [not null]
   agent_info Json [not null]
   payload Json [not null]
+  description String
+  tags String
+  last_seen_at DateTime
   archived_at DateTime
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
@@ -130,6 +136,8 @@ Table processes {
   worker workers
   result_file_id String
   result_file files
+  metrics_file_id String
+  metrics_file files
   status String [not null]
   visibility String [not null]
   started_at DateTime
@@ -167,3 +175,5 @@ Ref: processes.dataset_id > datasets.id [delete: Cascade]
 Ref: processes.worker_id > workers.id [delete: Cascade]
 
 Ref: processes.result_file_id > files.id [delete: Cascade]
+
+Ref: processes.metrics_file_id > files.id [delete: Cascade]

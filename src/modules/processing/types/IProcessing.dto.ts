@@ -6,12 +6,17 @@ import { Processing } from "../entities/processing.entity";
 
 export type ProcessingRelationFields = keyof Pick<
   Processing,
-  "user" | "processor" | "dataset" | "worker" | "result_file"
+  "user" | "processor" | "dataset" | "worker" | "result_file" | "metrics_file"
 >;
 
 export type ProcessingForeignKeys = keyof Pick<
   Processing,
-  "user_id" | "processor_id" | "dataset_id" | "worker_id" | "result_file_id"
+  | "user_id"
+  | "processor_id"
+  | "dataset_id"
+  | "worker_id"
+  | "result_file_id"
+  | "metrics_file_id"
 >;
 
 export type IProcessingBase = Omit<Processing, ProcessingRelationFields>;
@@ -36,6 +41,13 @@ export type IFindProcessingDTO = Partial<
 > & {
   started?: boolean;
   finished?: boolean;
+
+  keep_until_start_date?: Date;
+  keep_until_end_date?: Date;
 };
 
-export type IFindProcessingPublicOrUserPrivateDTO = Pick<Processing, "user_id">;
+export type IFindProcessingPublicOrUserPrivateDTO = Pick<
+  Processing,
+  "user_id"
+> &
+  IFindProcessingDTO;

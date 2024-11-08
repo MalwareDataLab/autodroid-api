@@ -45,6 +45,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     },
     processor: true,
     result_file: true,
+    metrics_file: true,
     worker: true,
   } satisfies DatabaseHelperTypes.ProcessingInclude;
 
@@ -57,49 +58,82 @@ class PrismaProcessingRepository implements IProcessingRepository {
     {
       id,
       status,
+      visibility,
 
       user_id,
       processor_id,
       dataset_id,
       worker_id,
       result_file_id,
+      metrics_file_id,
 
       started,
       finished,
+
+      keep_until_start_date,
+      keep_until_end_date,
     }: IFindProcessingDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.ProcessingWhereInput {
+    const conditions: DatabaseHelperTypes.ProcessingWhereInput[] = [];
+
+    if (started !== undefined)
+      conditions.push({
+        started_at: started ? { not: null } : null,
+      });
+
+    if (finished !== undefined)
+      conditions.push({
+        finished_at: finished ? { not: null } : null,
+      });
+
+    if (keep_until_start_date !== undefined)
+      conditions.push({
+        keep_until: {
+          not: null,
+          gte: keep_until_start_date,
+        },
+      });
+
+    if (keep_until_end_date !== undefined)
+      conditions.push({
+        keep_until: {
+          not: null,
+          lte: keep_until_end_date,
+        },
+      });
+
     return {
       id,
       status,
+      visibility,
 
       user_id,
       processor_id,
       dataset_id,
       worker_id,
       result_file_id,
+      metrics_file_id,
 
-      ...(started !== undefined && {
-        started_at: started ? { not: null } : null,
-      }),
-
-      ...(finished !== undefined && {
-        finished_at: finished ? { not: null } : null,
-      }),
+      AND: conditions,
     };
   }
 
-  private getWhereClausePublicOrUserPrivate(
-    filter: IFindProcessingPublicOrUserPrivateDTO,
-  ): DatabaseHelperTypes.ProcessingWhereInput {
+  private getWhereClausePublicOrUserPrivate({
+    user_id,
+    ...filter
+  }: IFindProcessingPublicOrUserPrivateDTO): DatabaseHelperTypes.ProcessingWhereInput {
     return {
-      OR: [
-        { visibility: PROCESSING_VISIBILITY.PUBLIC },
-        {
-          visibility: PROCESSING_VISIBILITY.PRIVATE,
-          user_id: filter.user_id,
-        },
-      ],
+      ...this.getWhereClause(filter),
+      AND: {
+        OR: [
+          { visibility: PROCESSING_VISIBILITY.PUBLIC },
+          {
+            visibility: PROCESSING_VISIBILITY.PRIVATE,
+            user_id,
+          },
+        ],
+      },
     };
   }
 

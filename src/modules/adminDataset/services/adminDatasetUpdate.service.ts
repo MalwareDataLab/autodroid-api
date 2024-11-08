@@ -13,6 +13,9 @@ import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPe
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 
+// Helper import
+import { isValidCommaSeparatedString } from "@shared/utils/isValidCommaSeparatedString";
+
 // Repository import
 import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
@@ -64,10 +67,7 @@ class AdminDatasetUpdateService {
         ),
       });
 
-    if (
-      !!data.tags &&
-      !data.tags.split(",").every((tag: string) => tag.trim().length > 0)
-    )
+    if (!!data.tags && !isValidCommaSeparatedString(data.tags))
       throw new AppError({
         key: "@dataset_create_service/TAGS_NOT_PROVIDED",
         message: t(

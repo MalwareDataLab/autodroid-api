@@ -25,11 +25,7 @@ class CannotWithConstraint implements ValidatorConstraintInterface {
 }
 
 const CannotWith = (props: Array<string>, options?: ValidationOptions) => {
-  return (
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    { constructor: target }: Object,
-    propertyName: string,
-  ): void => {
+  return ({ constructor: target }: object, propertyName: string): void => {
     registerDecorator({
       target,
       propertyName,

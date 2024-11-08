@@ -110,7 +110,23 @@ class BullJobProvider implements IJobProvider {
   }
 
   private async startCronJobs() {
-    const cronJobs: { name: keyof typeof Jobs; rule: string; data: any }[] = [];
+    const cronJobs: { name: keyof typeof Jobs; rule: string; data: any }[] = [
+      {
+        name: "ProcessingCleanExpiredJob",
+        rule: "0 0 * * *",
+        data: null,
+      },
+      {
+        name: "RemoveAllDanglingFilesJob",
+        rule: "0 * * * *",
+        data: null,
+      },
+      {
+        name: "WorkerCleanMissingJob",
+        rule: "0 * * * *",
+        data: null,
+      },
+    ];
 
     await Promise.all(
       this.modules.map(async ({ queue }) => {

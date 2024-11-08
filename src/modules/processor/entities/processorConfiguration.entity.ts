@@ -22,6 +22,12 @@ class ProcessorConfiguration {
 
   @Field()
   command: string;
+
+  @Field(() => [String])
+  output_result_file_glob_patterns: string[];
+
+  @Field(() => [String])
+  output_metrics_file_glob_patterns: string[];
 }
 
 export { ProcessorConfiguration };

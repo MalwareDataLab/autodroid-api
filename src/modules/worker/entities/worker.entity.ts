@@ -1,5 +1,5 @@
 import { Exclude, Type } from "class-transformer";
-import { Authorized, Field, ID, ObjectType } from "type-graphql";
+import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 import { JSONScalar } from "@shared/types/json.scalar";
 
 // Type import
@@ -11,37 +11,49 @@ import { PaginationConnection } from "@modules/pagination/entities/paginationCon
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { WorkerRegistrationToken } from "./workerRegistrationToken.entity";
 
-@Authorized(["ADMIN"])
 @ObjectType()
 class Worker implements WorkerEntityType {
   @Field(() => ID)
   id: string;
 
-  @Authorized(["ADMIN"])
   @Field()
   refresh_token: string;
 
   @Field()
   refresh_token_expires_at: Date;
 
-  @Authorized(["ADMIN"])
   @Field()
   internal_id: string;
 
-  @Authorized(["ADMIN"])
   @Field()
   signature: string;
 
-  @Authorized(["ADMIN"])
+  @Field(() => String, { nullable: true })
+  version: string | null;
+
   @Field(() => JSONScalar)
   system_info: Record<string, any>;
 
   @Authorized(["ADMIN"])
+  @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Field(() => JSONScalar)
   agent_info: Record<string, any>;
 
+  @Authorized(["ADMIN"])
+  @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Field(() => JSONScalar)
   payload: Record<string, any>;
+
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
+  @Field(() => String, { nullable: true })
+  tags: string | null;
+
+  @Field(() => Date, { nullable: true })
+  last_seen_at: Date | null;
 
   @Field(() => Date, { nullable: true })
   archived_at: Date | null;
@@ -65,6 +77,8 @@ class Worker implements WorkerEntityType {
   registration_token_id: string;
 
   @Authorized(["ADMIN"])
+  @Directive("@auth(requires: ADMIN)")
+  @Exclude()
   @Type(() => WorkerRegistrationToken)
   @Field(() => WorkerRegistrationToken)
   registration_token: WorkerRegistrationToken;

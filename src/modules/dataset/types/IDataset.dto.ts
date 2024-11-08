@@ -26,4 +26,5 @@ export type IFindDatasetDTO = Partial<
   Pick<Dataset, "id" | "user_id" | "file_id" | "visibility">
 >;
 
-export type IFindDatasetPublicOrUserPrivateDTO = Pick<Dataset, "user_id">;
+export type IFindDatasetPublicOrUserPrivateDTO = Pick<Dataset, "user_id"> &
+  IFindDatasetDTO;

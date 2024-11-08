@@ -31,13 +31,42 @@ class PrismaFileRepository implements IFileRepository {
   ) {}
 
   private getWhereClause(
-    { id, provider_path, public_url }: IFindFileDTO,
+    {
+      id,
+      provider_path,
+      public_url,
+      provider_status,
+
+      upload_url_expires_end_date,
+      upload_url_expires_start_date,
+    }: IFindFileDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.FileWhereInput {
+    const conditions: DatabaseHelperTypes.FileWhereInput[] = [];
+
+    if (upload_url_expires_start_date !== undefined)
+      conditions.push({
+        upload_url_expires_at: {
+          not: null,
+          gte: upload_url_expires_start_date,
+        },
+      });
+
+    if (upload_url_expires_end_date !== undefined)
+      conditions.push({
+        upload_url_expires_at: {
+          not: null,
+          lte: upload_url_expires_end_date,
+        },
+      });
+
     return {
       id,
       provider_path,
       public_url,
+      provider_status,
+
+      AND: conditions,
     };
   }
 
@@ -54,6 +83,14 @@ class PrismaFileRepository implements IFileRepository {
 
   public async findOne(filter: IFindFileDTO): Promise<File | null> {
     const file = await this.databaseProvider.client.file.findFirst({
+      where: this.getWhereClause(filter),
+    });
+
+    return parse(File, file);
+  }
+
+  public async findMany(filter: IFindFileDTO): Promise<File[]> {
+    const file = await this.databaseProvider.client.file.findMany({
       where: this.getWhereClause(filter),
     });
 

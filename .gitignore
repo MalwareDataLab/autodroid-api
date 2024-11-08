@@ -16,3 +16,4 @@ translation.missing.json
 service-account.json
 
 .docker
+docker-compose.yml

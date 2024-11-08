@@ -20,6 +20,9 @@ import { Dataset } from "@modules/dataset/entities/dataset.entity";
 import { IProcessorRepository } from "@shared/container/repositories";
 import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
+// Helper import
+import { isValidCommaSeparatedString } from "@shared/utils/isValidCommaSeparatedString";
+
 // Enum import
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
@@ -65,10 +68,7 @@ class UserDatasetCreateService {
         ),
       });
 
-    if (
-      !!data.tags &&
-      !data.tags.split(",").every((tag: string) => tag.trim().length > 0)
-    )
+    if (!!data.tags && !isValidCommaSeparatedString(data.tags))
       throw new AppError({
         key: "@user_dataset_create_service/TAGS_NOT_PROVIDED",
         message: t(

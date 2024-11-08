@@ -79,11 +79,17 @@ class WorkerRegisterService {
 
         user_id: registrationToken.user_id,
 
+        version: null,
         system_info,
         agent_info: {
           ...agent_info,
         },
         payload: {},
+
+        description: null,
+        tags: null,
+
+        last_seen_at: null,
 
         refresh_token: "",
         refresh_token_expires_at: new Date(),
