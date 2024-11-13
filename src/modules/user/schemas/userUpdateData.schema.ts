@@ -1,11 +1,12 @@
-import { Field, InputType } from "type-graphql";
-import { IsLocale, IsPhoneNumber } from "class-validator";
+import { ArgsType, Field, InputType } from "type-graphql";
+import { IsLocale, IsObject, IsPhoneNumber } from "class-validator";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
 import { NameString } from "@shared/decorators/nameString.decorator";
 
 // DTO import
+import { JSONScalar } from "@shared/types/json.scalar";
 import { IUpdateUserDTO } from "../types/IUser.dto";
 
 @InputType()
@@ -25,4 +26,11 @@ class UserUpdateDataSchema implements IUpdateUserDTO {
   language?: string | null;
 }
 
-export { UserUpdateDataSchema };
+@ArgsType()
+class UserUpdateLearningDataSchema {
+  @IsObject()
+  @Field(() => JSONScalar)
+  data: Record<string, any>;
+}
+
+export { UserUpdateDataSchema, UserUpdateLearningDataSchema };
