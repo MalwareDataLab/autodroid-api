@@ -4,6 +4,7 @@ import { Redis, RedisOptions } from "ioredis";
 import { getRedisConfig } from "@config/redis";
 
 // Util import
+import { logger } from "@shared/utils/logger";
 import { executeAction } from "@shared/utils/executeAction";
 
 // Interface import
@@ -36,22 +37,22 @@ class RedisInMemoryDatabaseProvider implements InMemoryDatabaseProviderAdapter {
     });
 
     redisClient.on("error", message =>
-      console.log(`❌ Redis ${this.connection_name} error: "${message}"`),
+      logger.error(`❌ Redis ${this.connection_name} error: "${message}"`),
     );
 
     redisClient.on("error", err =>
-      console.log(
+      logger.error(
         `❌ Redis ${this.connection_name} disconnected ${err?.message || ""}`,
       ),
     );
 
     redisClient.on("reconnecting", () =>
-      console.log(`🔄 Redis ${this.connection_name} reconnecting...`),
+      logger.info(`🔄 Redis ${this.connection_name} reconnecting...`),
     );
 
     redisClient.on("end", () => {
       clearInterval(this.healthCheckInterval);
-      console.log(`🔄 Redis ${this.connection_name} connection closed`);
+      logger.info(`🔄 Redis ${this.connection_name} connection closed`);
     });
 
     const healthCheck = async () => {
@@ -59,7 +60,7 @@ class RedisInMemoryDatabaseProvider implements InMemoryDatabaseProviderAdapter {
         await this.inMemoryDatabaseProvider.ping();
       } catch (err: any) {
         if (this.inMemoryDatabaseProvider.status === "end") return;
-        console.log(
+        logger.error(
           `❌ Cannot reach Redis ${this.connection_name}. Status: ${
             this.inMemoryDatabaseProvider.status
           }. ${err?.message || ""} `,

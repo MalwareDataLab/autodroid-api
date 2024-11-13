@@ -6,6 +6,9 @@ import * as Sentry from "@sentry/node";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 const errorMiddleware = async (
   err: Error,
   req: Request,
@@ -36,7 +39,7 @@ const errorMiddleware = async (
       message: "Your request has problems on the JSON structure.",
     });
 
-  console.log(
+  logger.error(
     `❌ Application failure: `,
     util.inspect(errors, false, null, true),
   );

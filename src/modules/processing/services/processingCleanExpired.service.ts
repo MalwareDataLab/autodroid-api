@@ -9,6 +9,9 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 // Repository import
 import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
@@ -58,7 +61,7 @@ class ProcessingCleanExpiredService {
             },
           });
 
-          console.log(err);
+          logger.error(err);
         }
       }),
     );

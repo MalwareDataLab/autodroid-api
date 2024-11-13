@@ -17,6 +17,9 @@ import util from "node:util";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 export const errorPlugin: ApolloServerPlugin = {
   async requestDidStart() {
     return {
@@ -120,7 +123,7 @@ export function errorHandler(
     )
       return formattedError;
 
-    console.log(
+    logger.error(
       `❌ Application failure: `,
       util.inspect(error, false, null, true),
     );
