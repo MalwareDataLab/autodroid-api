@@ -1,4 +1,4 @@
-import { Arg, Authorized, Ctx, Mutation, Resolver } from "type-graphql";
+import { Arg, Args, Authorized, Ctx, Mutation, Resolver } from "type-graphql";
 import { container } from "tsyringe";
 
 // Context import
@@ -11,7 +11,11 @@ import { User } from "@modules/user/entities/user.entity";
 import { UserUpdateDataService } from "@modules/user/services/userUpdateData.service";
 
 // Schema import
-import { UserUpdateDataSchema } from "@modules/user/schemas/userUpdateData.schema";
+import {
+  UserUpdateDataSchema,
+  UserUpdateLearningDataSchema,
+} from "@modules/user/schemas/userUpdateData.schema";
+import { UserUpdateLearningDataService } from "@modules/user/services/userUpdateLearningData.service";
 
 @Resolver()
 class UserUpdateDataResolver {
@@ -27,6 +31,27 @@ class UserUpdateDataResolver {
     const user = await userUpdateDataService.execute({
       user: session.user,
       data,
+      language,
+    });
+
+    return user;
+  }
+
+  @Authorized()
+  @Mutation(() => User)
+  async userUpdateLearningData(
+    @Args()
+    params: UserUpdateLearningDataSchema,
+
+    @Ctx() { session, language }: GraphQLContext,
+  ): Promise<User> {
+    const userUpdateLearningDataService = container.resolve(
+      UserUpdateLearningDataService,
+    );
+
+    const user = await userUpdateLearningDataService.execute({
+      user: session.user,
+      params,
       language,
     });
 
