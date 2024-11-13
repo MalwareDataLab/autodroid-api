@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+
 // i18n import
 import { i18n } from "@shared/i18n";
 
