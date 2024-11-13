@@ -5,6 +5,9 @@ import util from "node:util";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 interface IAppError {
   key: string;
   message: string;
@@ -93,7 +96,7 @@ class AppError extends Error {
       Sentry.captureException(this);
 
       if (envConfig.DEBUG === "true")
-        console.log(`❌ Error debug: `, util.inspect(this, false, 4, true));
+        logger.error(`❌ Error debug: `, util.inspect(this, false, 4, true));
     }
   }
 

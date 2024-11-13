@@ -3,7 +3,7 @@ import { IsDate, IsEnum, IsUUID, MaxDate, MinDate } from "class-validator";
 import { Type } from "class-transformer";
 
 // Helper import
-import { DateHelper } from "@shared/utils/dateHelpers";
+import { DateUtils } from "@shared/utils/dateUtils";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
@@ -48,7 +48,7 @@ class AdminProcessingUpdateSchema {
   @MinDate(() => new Date(), {
     message: "The date must be greater than or equal to the current date",
   })
-  @MaxDate(() => DateHelper.now().add(30, "days").toDate(), {
+  @MaxDate(() => DateUtils.now().add(30, "days").toDate(), {
     message: "The date must be less than or equal to 30 days from now",
   })
   @Type(() => Date)

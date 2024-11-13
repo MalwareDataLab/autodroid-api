@@ -4,6 +4,9 @@ import { container, inject, injectable } from "tsyringe";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 // Interface import
 import { IJobProvider, JobType } from "../models/IJob.provider";
 import { IJob } from "../models/IJob";
@@ -94,7 +97,7 @@ class BullJobProvider implements IJobProvider {
   }
 
   private log(msg: string) {
-    if (this.isLoggingEnabled) console.log(msg);
+    if (this.isLoggingEnabled) logger.info(msg);
   }
 
   private async init() {
@@ -143,7 +146,7 @@ class BullJobProvider implements IJobProvider {
                 )
               ) {
                 await queue.removeRepeatableByKey(existingJob.key);
-                console.log("🗑 Removed repeatable job: ", existingJob.key);
+                this.log(`🗑 Removed repeatable job: ${existingJob.key}`);
               }
             }),
           );
@@ -216,7 +219,7 @@ class BullJobProvider implements IJobProvider {
 
       queue.queue.on("waiting", jobId => {
         // A Job is waiting to be processed as soon as a worker is idling.
-        this.log(`⏸  Job [${queue.name}] with id [${jobId}] waiting...`);
+        this.log(`🔜 Job [${queue.name}] with id [${jobId}] waiting...`);
       });
 
       queue.queue.on("active", (job, _) => {
@@ -268,7 +271,7 @@ class BullJobProvider implements IJobProvider {
 
       queue.queue.on("paused", () => {
         // The queue has been paused.
-        this.log(`⏸ Queue [${queue.name}] has been paused.`);
+        this.log(`🔜 Queue [${queue.name}] has been paused.`);
       });
 
       queue.queue.on("resumed", () => {
@@ -284,7 +287,7 @@ class BullJobProvider implements IJobProvider {
 
       queue.queue.on("drained", () => {
         // Emitted every time the queue has processed all the waiting jobs (even if there can be some delayed jobs not yet processed)
-        this.log(`⏸  Queue [${queue.name}] is now drained.`);
+        this.log(`*️⃣  Queue [${queue.name}] is now drained.`);
       });
 
       queue.queue.on("removed", job => {

@@ -9,8 +9,9 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
-// Helper import
-import { DateHelper } from "@shared/utils/dateHelpers";
+// Util import
+import { logger } from "@shared/utils/logger";
+import { DateUtils } from "@shared/utils/dateUtils";
 
 // Repository import
 import { IFileRepository } from "../repositories/IFile.repository";
@@ -31,7 +32,7 @@ class RemoveAllDanglingFilesService {
   public async execute(): Promise<number> {
     const expiredUploadFiles = await this.fileRepository.findMany({
       provider_status: FILE_PROVIDER_STATUS.PENDING,
-      upload_url_expires_end_date: DateHelper.now()
+      upload_url_expires_end_date: DateUtils.now()
         .subtract(3, "hours")
         .toDate(),
     });
@@ -71,7 +72,7 @@ class RemoveAllDanglingFilesService {
             },
           });
 
-          console.log(err);
+          logger.error(err);
         }
       }),
     );

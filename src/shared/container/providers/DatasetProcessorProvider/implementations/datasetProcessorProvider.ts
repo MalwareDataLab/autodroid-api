@@ -18,6 +18,7 @@ import { Worker } from "@modules/worker/entities/worker.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Enum import
+import { WORKER_STATUS } from "@modules/worker/utils/workerStatus.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
 // Provider import
@@ -80,16 +81,16 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         message: "Worker not found.",
       });
 
-    if (data.status === "WORK") {
-      await this.inMemoryDatabaseProvider.connection.del(
-        `${this.inMemoryIdleKey}:${worker_id}`,
-      );
-    } else if (data.status === "IDLE") {
+    if (data.status === WORKER_STATUS.IDLE) {
       await this.inMemoryDatabaseProvider.connection.set(
         `${this.inMemoryIdleKey}:${worker_id}`,
         "1",
         "EX",
         60,
+      );
+    } else {
+      await this.inMemoryDatabaseProvider.connection.del(
+        `${this.inMemoryIdleKey}:${worker_id}`,
       );
     }
 
@@ -110,7 +111,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
     try {
       await this.websocketProvider.sendMessageToRoom(
-        `worker:${worker_id}`,
+        `worker:${worker.id}`,
         "worker:get-status",
       );
 
@@ -139,11 +140,11 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
       return worker;
     } catch (error) {
-      if (AppError.isInstance(error)) throw error;
-
       await this.inMemoryDatabaseProvider.connection.del(
-        `${this.inMemoryIdleKey}:${worker_id}`,
+        `${this.inMemoryIdleKey}:${worker.id}`,
       );
+
+      if (AppError.isInstance(error)) throw error;
 
       throw new AppError({
         key: "@dataset_processor_provider_get_worker_by_id/WORKER_NOT_AVAILABLE",
@@ -153,12 +154,8 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
   }
 
   private async getAvailableWorkerIds(): Promise<string[]> {
-    const [, workers] = await this.inMemoryDatabaseProvider.connection.scan(
-      "0",
-      "MATCH",
+    const workers = await this.inMemoryDatabaseProvider.connection.keys(
       `${this.inMemoryIdleKey}:*`,
-      "COUNT",
-      10,
     );
 
     return (workers || []).map(worker =>
@@ -219,6 +216,9 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Fail to update processing.",
         });
 
+      await this.inMemoryDatabaseProvider.connection.del(
+        `${this.inMemoryIdleKey}:${worker.id}`,
+      );
       await this.websocketProvider.sendMessageToRoom(
         `worker:${worker.id}`,
         "worker:work",

@@ -4,6 +4,7 @@ import * as Mongoose from "mongoose";
 import { getEnvConfig } from "@config/env";
 
 // Util import
+import { logger } from "@shared/utils/logger";
 import { executeAction } from "@shared/utils/executeAction";
 
 // Interface import
@@ -24,11 +25,11 @@ class MongooseNonRelationalDatabaseProvider
 
     if (logEnabled) {
       mongooseClient.on("error", error => {
-        console.log(`❌ MongoDB: ${error}`);
+        logger.error(`❌ MongoDB: ${error}`);
       });
 
       mongooseClient.on("disconnected", () => {
-        console.log("❌ MongoDB: disconnected from the database.");
+        logger.error("❌ MongoDB: disconnected from the database.");
       });
     }
 

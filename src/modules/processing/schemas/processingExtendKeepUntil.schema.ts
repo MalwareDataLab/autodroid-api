@@ -2,7 +2,7 @@ import { ArgsType, Field } from "type-graphql";
 import { IsDate, MaxDate, MinDate } from "class-validator";
 
 // Helper import
-import { DateHelper } from "@shared/utils/dateHelpers";
+import { DateUtils } from "@shared/utils/dateUtils";
 import { Type } from "class-transformer";
 
 @ArgsType()
@@ -11,7 +11,7 @@ class UserProcessingExtendKeepUntilSchema {
   @MinDate(() => new Date(), {
     message: "The date must be greater than or equal to the current date",
   })
-  @MaxDate(() => DateHelper.now().add(30, "days").toDate(), {
+  @MaxDate(() => DateUtils.now().add(30, "days").toDate(), {
     message: "The date must be less than or equal to 30 days from now",
   })
   @Type(() => Date)
