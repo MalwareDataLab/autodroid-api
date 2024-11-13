@@ -8,7 +8,7 @@ import { process } from "@shared/utils/instanceParser";
 import { UserUpdateDataService } from "@modules/user/services/userUpdateData.service";
 
 class UserController {
-  public async get(req: Request, res: Response) {
+  public async show(req: Request, res: Response) {
     return res.json(process(req.session?.user));
   }
 
