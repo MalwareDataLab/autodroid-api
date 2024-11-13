@@ -10,8 +10,10 @@ import { getEnvConfig } from "@config/env";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Logs for i18n
-const logs = false;
+// Util import
+import { logger } from "@shared/utils/logger";
+
+const logsEnabled = false;
 
 const DEFAULT_LANGUAGE = getEnvConfig().DEFAULT_LANGUAGE || "en";
 
@@ -121,25 +123,25 @@ i18next
   .init(options);
 
 // Log only in development environment
-if (getEnvConfig().NODE_ENV === "development" && logs) {
+if (getEnvConfig().NODE_ENV === "development" && logsEnabled) {
   i18next.on("initialized", () => {
-    console.log("🆗 Translation initialized");
+    logger.info("🆗 Translation initialized");
   });
 
   i18next.on("languageChanged", lng => {
-    console.log(`🔁 Language changed to ${Object.keys(lng).join(" ")}`);
+    logger.info(`🔁 Language changed to ${Object.keys(lng).join(" ")}`);
   });
 
   i18next.on("loaded", loaded => {
-    console.log(`🔃 Translation loaded ${Object.keys(loaded).join(", ")}`);
+    logger.info(`🔃 Translation loaded ${Object.keys(loaded).join(", ")}`);
   });
 
   i18next.on("failedLoading", lng => {
-    console.log(`❌ Fail to load translation "${lng}"`);
+    logger.error(`❌ Fail to load translation "${lng}"`);
   });
 
   i18next.on("missingKey", (lngs, namespace, key) => {
-    console.log(
+    logger.error(
       `❌ Missing key [${Object.keys(key).join(
         " ",
       )}] in language [${Object.keys(lngs).join(

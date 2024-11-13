@@ -6,6 +6,9 @@ import { getProcessingConfig } from "@config/processing";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Util import
+import { DateUtils } from "@shared/utils/dateUtils";
+
 // Repository import
 import {
   IDatasetRepository,
@@ -15,7 +18,6 @@ import { IProcessingRepository } from "@modules/processing/repositories/IProcess
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
-import { DateHelper } from "@shared/utils/dateHelpers";
 import { Processing } from "../entities/processing.entity";
 
 // Guard import
@@ -76,7 +78,7 @@ class UserProcessingExtendKeepUntilService {
         ),
       });
 
-    const target_keep_until = DateHelper.parse(keep_until);
+    const target_keep_until = DateUtils.parse(keep_until);
 
     if (!target_keep_until?.isValid())
       throw new AppError({
@@ -89,7 +91,7 @@ class UserProcessingExtendKeepUntilService {
 
     if (
       target_keep_until.isAfter(
-        DateHelper.now().add(
+        DateUtils.now().add(
           processingConfig.PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND_MS,
           "milliseconds",
         ),

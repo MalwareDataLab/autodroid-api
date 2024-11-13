@@ -3,8 +3,9 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Helper import
-import { DateHelper } from "@shared/utils/dateHelpers";
+// Util import
+import { logger } from "@shared/utils/logger";
+import { DateUtils } from "@shared/utils/dateUtils";
 
 // Repository import
 import { IWorkerRepository } from "../repositories/IWorker.repository";
@@ -17,7 +18,7 @@ class WorkerCleanMissingService {
   ) {}
   public async execute(): Promise<number> {
     const missingWorkers = await this.workerRepository.findMany({
-      last_seen_at_end_date: DateHelper.now().subtract(7, "days").toDate(),
+      last_seen_at_end_date: DateUtils.now().subtract(7, "days").toDate(),
     });
 
     let count = 0;
@@ -39,7 +40,7 @@ class WorkerCleanMissingService {
             },
           });
 
-          console.log(err);
+          logger.error(err);
         }
       }),
     );
