@@ -54,7 +54,7 @@ const shutdownHandler = async (signal: string) => {
   if (shutdownInProgress) return;
   shutdownInProgress = true;
 
-  console.info("⛔ Shutting down...");
+  logger.info("⛔ Shutting down...");
 
   try {
     await new Promise<void>(resolve => {
@@ -63,7 +63,7 @@ const shutdownHandler = async (signal: string) => {
       });
     })
       .then(() => {
-        console.info("💻 Server closed.");
+        logger.info("💻 Server closed.");
       })
       .catch(() => null);
 
@@ -71,7 +71,7 @@ const shutdownHandler = async (signal: string) => {
       app.websocketServer.server.local.disconnectSockets(true),
     )
       .then(() => {
-        console.info("📡 Websocket server closed.");
+        logger.info("📡 Websocket server closed.");
       })
       .catch(() => null);
 
@@ -79,7 +79,7 @@ const shutdownHandler = async (signal: string) => {
     await jobProvider
       .close()
       .then(() => {
-        console.info("🔂 Background jobs stopped.");
+        logger.info("🔂 Background jobs stopped.");
       })
       .catch(() => null);
 
@@ -88,7 +88,7 @@ const shutdownHandler = async (signal: string) => {
     await databaseProvider.client
       .$disconnect()
       .then(() => {
-        console.info("💾 Database connection closed.");
+        logger.info("💾 Database connection closed.");
       })
       .catch(() => null);
 
@@ -97,7 +97,7 @@ const shutdownHandler = async (signal: string) => {
     await inMemoryDatabaseProvider.connection
       .quit()
       .then(() => {
-        console.info("💿 Redis connection closed.");
+        logger.info("💿 Redis connection closed.");
       })
       .catch(() => null);
 
@@ -107,11 +107,11 @@ const shutdownHandler = async (signal: string) => {
     await authenticationProvider
       .dispose()
       .then(() => {
-        console.info("🔒 Authentication provided closed.");
+        logger.info("🔒 Authentication provided closed.");
       })
       .catch(() => null);
 
-    console.info(`⛔ Got ${signal} - Shutdown complete. Exiting...`);
+    logger.info(`⛔ Got ${signal} - Shutdown complete. Exiting...`);
     process.exit(0);
   } catch (err: any) {
     logger.error(`❌ Got ${signal} - Shutdown failed. ${err?.message}`);
