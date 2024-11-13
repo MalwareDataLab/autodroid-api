@@ -3,6 +3,7 @@ import { getEnvConfig } from "@config/env";
 
 // Util import
 import { sleep } from "@shared/utils/sleep";
+import { logger } from "@shared/utils/logger";
 
 interface IParams {
   actionName: string;
@@ -25,7 +26,7 @@ const executeAction = async (params: IParams): Promise<any> => {
   try {
     const result = await action();
     if (logging && !getEnvConfig().isTestEnv)
-      console.log(
+      logger.info(
         attempt > 1
           ? `🆗 ${actionName} success with attempt ${attempt} ❎. `
           : `🆗 ${actionName} success.`,
@@ -40,7 +41,7 @@ const executeAction = async (params: IParams): Promise<any> => {
       );
 
     if (logging)
-      console.log(
+      logger.error(
         `❌ ${actionName} attempt ${attempt} failed. 🔄 Retrying... ${err.message} `,
       );
     await sleep(params.retryDelay || 5000);

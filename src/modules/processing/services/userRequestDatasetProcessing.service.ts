@@ -22,7 +22,7 @@ import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisib
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Util import
-import { DateHelper } from "@shared/utils/dateHelpers";
+import { DateUtils } from "@shared/utils/dateUtils";
 import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
 import { validateAndParseProcessingParameters } from "@modules/processing/utils/validateAndParseProcessingParameters.util";
 
@@ -115,7 +115,7 @@ class UserRequestDatasetProcessingService {
       started_at: null,
       finished_at: null,
 
-      keep_until: DateHelper.now()
+      keep_until: DateUtils.now()
         .add(processingConfig.PROCESSING_DEFAULT_KEEP_UNTIL_MS, "milliseconds")
         .toDate(),
 

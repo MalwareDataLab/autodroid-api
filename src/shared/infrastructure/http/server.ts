@@ -10,6 +10,9 @@ import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/
 import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 // Server import
 import { app } from "./app";
 
@@ -20,7 +23,7 @@ const init = async () => {
   await app.websocketServer.initialization;
 
   app.httpServer.listen(getEnvConfig().APP_PORT, () => {
-    console.log(
+    logger.info(
       `⚡️ ${getEnvConfig().APP_INFO.name || "API"} ${
         getEnvConfig().NODE_ENV
       } version ${semver.clean(
@@ -76,7 +79,7 @@ const shutdownHandler = async (signal: string) => {
     await jobProvider
       .close()
       .then(() => {
-        console.info("⏹ Background jobs stopped.");
+        console.info("🔂 Background jobs stopped.");
       })
       .catch(() => null);
 
@@ -111,7 +114,7 @@ const shutdownHandler = async (signal: string) => {
     console.info(`⛔ Got ${signal} - Shutdown complete. Exiting...`);
     process.exit(0);
   } catch (err: any) {
-    console.error(`❌ Got ${signal} - Shutdown failed. ${err?.message}`);
+    logger.error(`❌ Got ${signal} - Shutdown failed. ${err?.message}`);
     process.exit(1);
   }
 };

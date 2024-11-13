@@ -4,6 +4,9 @@ import {
   initAndWaitPreRequisites,
 } from "@shared/container/index";
 
+// Util import
+import { logger } from "@shared/utils/logger";
+
 const Bootstrap = (async () => {
   try {
     console.clear();
@@ -20,8 +23,8 @@ const Bootstrap = (async () => {
 
     await init();
   } catch (err: any) {
-    console.log(`❌ Bootstrap failed. Shutting down. ${err?.message}`);
-    console.log(`${err?.message}`);
+    logger.error(`❌ Bootstrap failed. Shutting down. ${err?.message}`);
+    logger.error(`${err?.message}`);
     process.exit(1);
   }
 })();

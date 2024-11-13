@@ -8,7 +8,7 @@ import { getEnvConfig } from "@config/env";
 import { AppError } from "@shared/errors/AppError";
 
 // Util import
-import { DateHelper } from "@shared/utils/dateHelpers";
+import { DateUtils } from "@shared/utils/dateUtils";
 import { generateWorkerTokenPayload } from "./generateWorkerTokenPayload.util";
 
 // Entity import
@@ -59,7 +59,7 @@ const generateWorkerToken = (worker: Worker, type: "REFRESH" | "ACCESS") => {
 
   return {
     token,
-    expires_at: DateHelper.adapter.unix(info.exp).toDate(),
+    expires_at: DateUtils.adapter.unix(info.exp).toDate(),
   };
 };
 
