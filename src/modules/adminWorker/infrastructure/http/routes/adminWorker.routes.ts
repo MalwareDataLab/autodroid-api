@@ -29,7 +29,7 @@ const adminWorkerCleanMissingController =
 const adminWorkerRouter = Router();
 
 adminWorkerRouter.use(
-  "/worker-registration-token",
+  "/registration-token",
   adminWorkerRegistrationTokenRouter,
 );
 
