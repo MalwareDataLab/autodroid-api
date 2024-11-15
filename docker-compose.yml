@@ -98,11 +98,11 @@ services:
       - autodroid_api_mongo_prod
       - autodroid_api_redis_prod
     healthcheck:
-      test: curl -f http://autodroid_api_gateway_prod:3333/health/ready || exit 1
-      interval: 1m
-      timeout: 20s
+      test: wget --spider -q http://autodroid_api_gateway_prod:3333/health/readiness || exit 1
+      interval: 30s
+      timeout: 10s
       retries: 3
-      start_period: 1m
+      start_period: 20s
     restart: always
     networks:
       - autodroid_api_network_prod
