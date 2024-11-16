@@ -2,9 +2,13 @@
 
 HOST=http://localhost
 PORT=3333
-IMAGE_NAME="malwaredatalab/autodroid-worker"
+
+API_IMAGE_NAME="malwaredatalab/autodroid-api"
+WORKER_IMAGE_NAME="malwaredatalab/autodroid-worker"
 CONTAINER_NAME="autodroid_worker"
 VOLUME_NAME="autodroid_worker_data"
+
+DATASET_FILE_PATH="./docs/samples/dataset_example.csv"
 
 show_help() {
   echo "Usage: $0 [-k FIREBASEKEY] [-u USERNAME] [-p PASSWORD]"
@@ -71,6 +75,13 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+dropVolumeData() {
+  if [ -d "./.runtime" ]; then
+    echo "[INFO] Removing ./.runtime directory..." >&2
+    docker run --rm -v "$(pwd)":/workdir busybox rm -rf /workdir/.runtime
+  fi
+}
+
 cleanup() {
   docker-compose down -v
 
@@ -83,6 +94,8 @@ cleanup() {
     echo "[INFO] Removing existing $VOLUME_NAME volume..." >&2
     docker volume rm $VOLUME_NAME
   fi
+
+  dropVolumeData
 }
 
 stop() {
@@ -98,6 +111,7 @@ stop() {
 exit_on_error() {
   echo "[ERROR] $1" >&2
   cleanup
+  wait
   exit 1
 }
 
@@ -254,6 +268,14 @@ check_if_admin() {
 
 greeting
 
+if [ ! -f "$DATASET_FILE_PATH" ]; then
+  exit_on_error "File $DATASET_FILE_PATH not found."
+fi
+
+FILE_SIZE=$(stat -c%s "$DATASET_FILE_PATH")
+FILE_MD5=$(md5sum "$DATASET_FILE_PATH" | awk '{ print $1 }')
+MIME_TYPE=$(file --mime-type -b "$DATASET_FILE_PATH")
+
 while [ -z "$FIREBASEKEY" ] || [ ${#FIREBASEKEY} -lt 10 ]; do
   echo "Enter Firebase API KEY (find it inside your Firebase Project Settings → General → Your Apps → Select App → apiKey value):"
   read FIREBASEKEY
@@ -298,15 +320,19 @@ while [ -z "$PASSWORD" ] || [ ${#PASSWORD} -le 1 ] || [ -z "$ID_TOKEN"]; do
   fi
 done
 
-trap stop INT
+trap 'stop' 0
+trap 'stop' INT
+
+set -e
+
 echo "[INFO] Press Ctrl+C to stop the demo."
 
-docker pull $IMAGE_NAME
 docker-compose down
+dropVolumeData
 docker-compose pull
 docker-compose up -d
 
-until [ "$(curl -s -o /dev/null -w ''%{http_code}'' $HOST:$PORT/health/ready)" -eq 200 ]; do
+until [ "$(curl -s -o /dev/null -w ''%{http_code}'' $HOST:$PORT/health/readiness)" -eq 200 ]; do
   echo "[INFO] Waiting for backend to be ready..."
   sleep 5
 done
@@ -320,29 +346,237 @@ call_backend() {
   local CALL_BACKEND_TOKEN="$(refresh_and_get_token)"
   local CALL_BACKEND_BODY="$3"
 
-  RESPONSE=$(curl -s -X $CALL_BACKEND_METHOD -H "Authorization: Bearer $CALL_BACKEND_TOKEN" -H "Content-Type: application/json" -d "$CALL_BACKEND_BODY" $CALL_BACKEND_ENDPOINT)
+  RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" -X $CALL_BACKEND_METHOD -H "Authorization: Bearer $CALL_BACKEND_TOKEN" -H "Content-Type: application/json" -d "$CALL_BACKEND_BODY" $CALL_BACKEND_ENDPOINT)
 
-  if echo "$RESPONSE" | jq . >/dev/null 2>&1; then
-    echo "$RESPONSE"
+  RESPONSE_BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+  RESPONSE_HTTP_STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+  if ! echo "$RESPONSE_HTTP_STATUS" | grep -qE '^[0-9]+$'; then
+    echo "ERROR RESPONSE: " "$RESPONSE_BODY" >&2
+    exit_on_error "Invalid HTTP status: $RESPONSE_HTTP_STATUS"
+  elif [ "$RESPONSE_HTTP_STATUS" -lt 200 ] || [ "$RESPONSE_HTTP_STATUS" -ge 300 ]; then
+    echo "ERROR RESPONSE: " "$RESPONSE_BODY" >&2
+    exit_on_error "Backend returned HTTP status $RESPONSE_HTTP_STATUS."
+  elif echo "$RESPONSE_BODY" | jq . >/dev/null 2>&1; then
+    echo "$RESPONSE_BODY"
   else
-    exit_on_error "[ERROR] Failed to parse JSON response."
+    exit_on_error "Failed to parse JSON response."
   fi
 }
 
 #
 # STEP 1
 #
-step "Step 1" "Create a dataset - getting the upload_url to send it."
-call_backend "POST" "/dataset" "{
-    "description": "aaa",
-    "tags": "aa,bb,cc"
-}"
+step "Step 1" "Create a processor - getting the processor_id to request processing."
+PROCESSOR_CREATE_RESPONSE=$(call_backend "POST" "/admin/processor" "{
+            \"name\": \"DroidAugmentor\",
+            \"version\": \"0.0.1\",
+            \"image_tag\": \"malwaredatalab/droidaugmentor:latest\",
+            \"description\": \"Expande datasets de malware\",
+            \"tags\": \"one,two,three\",
+            \"allowed_mime_types\": \"text/csv\",
+            \"visibility\": \"HIDDEN\",
+            \"configuration\": {
+                \"parameters\": [
+                    {
+                      \"sequence\": 1, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"data_type\", \"description\": \"data_type\"
+                    },
+                    {
+                      \"sequence\": 2, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"num_samples_class_malware\", \"description\": \"num_samples_class_malware\"
+                    },
+                    {
+                      \"sequence\": 3, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"num_samples_class_benign\", \"description\": \"num_samples_class_benign\"
+                    },
+                    {
+                      \"sequence\": 4, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"number_epochs\", \"description\": \"number_epochs\"
+                    },
+                    {
+                      \"sequence\": 5, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"k_fold\", \"description\": \"k_fold\"
+                    },
+                    {
+                      \"sequence\": 6, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"initializer_mean\", \"description\": \"initializer_mean\"
+                    },
+                    {
+                      \"sequence\": 7, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"initializer_deviation\", \"description\": \"initializer_deviation\"
+                    },
+                    {
+                      \"sequence\": 8, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"latent_dimension\", \"description\": \"latent_dimension\"
+                    },
+                    {
+                      \"sequence\": 9, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"training_algorithm\", \"description\": \"training_algorithm\"
+                    },
+                    {
+                      \"sequence\": 10, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"activation_function\", \"description\": \"activation_function\"
+                    },
+                    {
+                      \"sequence\": 11, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"dropout_decay_rate_g\", \"description\": \"dropout_decay_rate_g\"
+                    },
+                    {
+                      \"sequence\": 12, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"dropout_decay_rate_d\", \"description\": \"dropout_decay_rate_d\"
+                    },
+                    {
+                      \"sequence\": 13, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"dense_layer_sizes_g\", \"description\": \"dense_layer_sizes_g\"
+                    },
+                    {
+                      \"sequence\": 14, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"dense_layer_sizes_d\", \"description\": \"dense_layer_sizes_d\"
+                    },
+                    {
+                      \"sequence\": 15, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"batch_size\", \"description\": \"batch_size\"
+                    },
+                    {
+                      \"sequence\": 16, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"verbosity\", \"description\": \"verbosity\"
+                    },
+                    {
+                      \"sequence\": 17, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"save_models\", \"description\": \"save_models\"
+                    },
+                    {
+                      \"sequence\": 18, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"path_confusion_matrix\", \"description\": \"path_confusion_matrix\"
+                    },
+                    {
+                      \"sequence\": 19, \"type\": \"STRING\", \"is_required\": false, \"default_value\": null,
+                      \"name\": \"path_curve_loss\", \"description\": \"path_curve_loss\"
+                    }
+                ],
+                \"dataset_input_argument\": \"input_dataset\",
+                \"dataset_input_value\": \"/droidaugmentor/shared/inputs\",
+                \"dataset_output_argument\": \"output_dir\",
+                \"dataset_output_value\": \"/droidaugmentor/shared/outputs\",
+                \"command\": \"/droidaugmentor/shared/app_run.sh\",
+                \"output_result_file_glob_patterns\": [\"*\"],
+                \"output_metrics_file_glob_patterns\": [\"*\"]
+            }
+        }")
+PROCESSOR_ID=$(echo "$PROCESSOR_CREATE_RESPONSE" | jq -r .id)
+if [ -z "$PROCESSOR_ID" ] || [ "$PROCESSOR_ID" = "null" ]; then
+  exit_on_error "Failed to create processor. Processor ID is missing."
+fi
+echo "Processor ID: $PROCESSOR_ID"
+
 
 #
+# STEP 2
 #
+step "Step 2" "Create a registration token to register a worker."
+WORKER_REGISTRATION_TOKEN=$(call_backend "POST" "/admin/worker/registration-token" "{
+  \"is_unlimited_usage\": true
+}" | jq -r .token)
+if [ -z "$WORKER_REGISTRATION_TOKEN" ] || [ "$WORKER_REGISTRATION_TOKEN" = "null" ]; then
+  exit_on_error "Failed to create worker registration token."
+fi
+echo "Worker Registration Token: $WORKER_REGISTRATION_TOKEN"
+
+
 #
-step
-WORKER_REGISTRATION_TOKEN=GE34LlIhFF4tQfXqk3qlZ1W89ULvxHVJ
-docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp $IMAGE_NAME -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
+# STEP 3
+#
+step "Step 3" "Start a worker container."
+docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp $WORKER_IMAGE_NAME -e development -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
+echo "Worker container started."
+
+#
+# STEP 4
+#
+step "Step 4" "Create a dataset - getting the upload_url to send it."
+echo "Dataset Information" "Size: $FILE_SIZE bytes" "MD5 Hash: $FILE_MD5" "MIME Type: $MIME_TYPE"
+DATASET_CREATE_RESPONSE=$(call_backend "POST" "/dataset" "{
+  \"description\": \"Test dataset\",
+  \"tags\": \"test,remove\",
+  \"filename\": \"dataset_example.csv\",
+  \"md5_hash\": \"$FILE_MD5\",
+  \"size\": $FILE_SIZE,
+  \"mime_type\": \"$MIME_TYPE\"
+}")
+DATASET_ID=$(echo "$DATASET_CREATE_RESPONSE" | jq -r .id)
+UPLOAD_URL=$(echo "$DATASET_CREATE_RESPONSE" | jq -r .file.upload_url)
+
+if [ -z "$DATASET_ID" ] || [ "$DATASET_ID" = "null" ]; then
+  exit_on_error "Failed to create dataset. Dataset ID is missing."
+fi
+
+if [ -z "$UPLOAD_URL" ] || [ "$UPLOAD_URL" = "null" ]; then
+  exit_on_error "Failed to create dataset. Upload URL is missing."
+fi
+
+echo "Dataset ID: $DATASET_ID"
+
+#
+# STEP 5
+#
+step "Step 5" "Upload the dataset to the storage provider."
+UPLOAD_RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" -X PUT -H "Content-Type: $MIME_TYPE" --data-binary @"$DATASET_FILE_PATH" "$UPLOAD_URL")
+UPLOAD_RESPONSE_BODY=$(echo "$UPLOAD_RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+UPLOAD_HTTP_STATUS=$(echo "$UPLOAD_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+if ! echo "$UPLOAD_HTTP_STATUS" | grep -qE '^[0-9]+$'; then
+  echo "ERROR RESPONSE: " "$UPLOAD_RESPONSE" >&2
+  exit_on_error "Invalid HTTP status: $UPLOAD_HTTP_STATUS"
+elif [ "$UPLOAD_HTTP_STATUS" -ne 200 ]; then
+  echo "ERROR RESPONSE: " "$UPLOAD_RESPONSE" >&2
+  exit_on_error "Failed to upload dataset. HTTP status $UPLOAD_HTTP_STATUS."
+else
+  echo "[INFO] Dataset uploaded successfully."
+fi
+
+#
+# STEP 6
+#
+step "Step 6" "Request processing for the dataset."
+PROCESSING_REQUEST_RESPONSE=$(call_backend "POST" "/processing" "{
+  \"dataset_id\": \"$DATASET_ID\",
+  \"processor_id\": \"$PROCESSOR_ID\",
+  \"parameters\": []
+}")
+PROCESSING_REQUEST_ID=$(echo "$PROCESSING_REQUEST_RESPONSE" | jq -r .id)
+if [ -z "$PROCESSING_REQUEST_ID" ] || [ "$PROCESSING_REQUEST_ID" = "null" ]; then
+  exit_on_error "Failed to request processing. Processing Request ID is missing."
+fi
+echo "Processing Request ID: $PROCESSING_REQUEST_ID"
+
+#
+# STEP 7
+#
+step "Step 7" "Check the processing status. - Waiting for the processing to finish."
+while true; do
+  PROCESSING_STATUS_RESPONSE=$(call_backend "GET" "/processing/$PROCESSING_REQUEST_ID")
+  PROCESSING_STATUS=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .status)
+
+
+  if [ "$PROCESSING_STATUS" = "SUCCEEDED" ]; then
+    echo "Processing SUCCEEDED."
+
+    PROCESSING_RESULT_URL=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .result_file.public_url)
+    PROCESSING_METRICS_URL=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .metrics_file.public_url)
+    if [ -n "$PROCESSING_RESULT_URL" ] && [ -n "$PROCESSING_METRICS_URL" ]; then
+      echo "Result File URL: $PROCESSING_RESULT_URL"
+      echo "Metrics File URL: $PROCESSING_METRICS_URL"
+      break
+    else
+      echo "Waiting for the files to be available..."
+    fi
+  elif [ "$PROCESSING_STATUS" = "FAILED" ]; then
+    exit_on_error "Processing FAILED."
+  else
+    echo "[INFO] Processing status: $PROCESSING_STATUS"
+    sleep 5
+  fi
+done
 
 stop "Project demonstration finished.\n" "Homepage: https://malwaredatalab.github.io/" "Developer: luiz@laviola.dev\n" "Enjoy!"
