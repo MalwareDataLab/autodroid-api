@@ -99,7 +99,7 @@ describe("Service: UserSessionsCloseService", () => {
 
     userAuthProviderConnRepositoryMock.findOne.mockResolvedValueOnce(null);
 
-    expect(
+    await expect(
       userSessionsCloseService.execute({
         user,
         language: "en",

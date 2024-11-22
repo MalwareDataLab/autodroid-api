@@ -1,12 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { Bucket, Storage } from "@google-cloud/storage";
-import {
-  addDays,
-  addMilliseconds,
-  isAfter,
-  isBefore,
-  subMinutes,
-} from "date-fns";
+import { addDays, addMilliseconds, isAfter, isBefore } from "date-fns";
 
 // Configuration import
 import { getGoogleStorageProviderConfig } from "@config/google";
@@ -23,6 +17,7 @@ import { AppError } from "@shared/errors/AppError";
 import { i18n, TFunction } from "@shared/i18n";
 
 // Util import
+import { DateUtils } from "@shared/utils/dateUtils";
 import { executeAction } from "@shared/utils/executeAction";
 import { generateRandomFilename } from "@shared/utils/generateRandomFilename";
 import { getFileExtensionFromFilename } from "@shared/utils/getFileExtensionFromFilename";
@@ -338,7 +333,12 @@ class GoogleStorageProvider implements IStorageProvider {
       !file.upload_url_expires_at &&
       file.public_url &&
       file.public_url_expires_at &&
-      isBefore(subMinutes(new Date(), 30), file.public_url_expires_at)
+      DateUtils.isBefore(
+        new Date(),
+        DateUtils.parse(file.public_url_expires_at)
+          .subtract(30, "minutes")
+          .toDate(),
+      )
     )
       return file;
 
