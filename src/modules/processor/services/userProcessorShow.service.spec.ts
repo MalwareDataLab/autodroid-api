@@ -110,7 +110,7 @@ describe("Service: UserProcessorShowService", () => {
 
     processorRepositoryMock.findOne.mockResolvedValueOnce(processor);
 
-    expect(() =>
+    await expect(() =>
       userProcessorShowService.execute({
         user,
         processor_id: processor.id,
@@ -128,7 +128,7 @@ describe("Service: UserProcessorShowService", () => {
 
     processorRepositoryMock.findOne.mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userProcessorShowService.execute({
         user,
         processor_id: faker.string.uuid(),

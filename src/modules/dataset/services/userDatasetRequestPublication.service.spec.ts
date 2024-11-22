@@ -84,7 +84,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
     datasetRepositoryMock.updateOne.mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userDatasetRequestPublicationService.execute({
         dataset_id,
         user: {
@@ -114,7 +114,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
-    expect(() =>
+    await expect(() =>
       userDatasetRequestPublicationService.execute({
         dataset_id,
         user: {
@@ -134,7 +134,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userDatasetRequestPublicationService.execute({
         dataset_id,
         user: {

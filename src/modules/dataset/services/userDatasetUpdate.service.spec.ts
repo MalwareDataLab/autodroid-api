@@ -133,7 +133,7 @@ describe("Service: UserDatasetUpdateService", () => {
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
     datasetRepositoryMock.updateOne.mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id,
         data,
@@ -168,7 +168,7 @@ describe("Service: UserDatasetUpdateService", () => {
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id,
         data,
@@ -203,7 +203,7 @@ describe("Service: UserDatasetUpdateService", () => {
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id,
         data,
@@ -239,7 +239,7 @@ describe("Service: UserDatasetUpdateService", () => {
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(dataset);
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id,
         data,
@@ -258,7 +258,7 @@ describe("Service: UserDatasetUpdateService", () => {
   it("should throw if the dataset was not found", async () => {
     datasetRepositoryMock.findOne.mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id: faker.string.uuid(),
         data: {

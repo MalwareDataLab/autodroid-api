@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { isBefore, subMinutes } from "date-fns";
 
 // i18n import
 import { t } from "@shared/i18n";
@@ -8,6 +7,7 @@ import { t } from "@shared/i18n";
 import { AppError } from "@shared/errors/AppError";
 
 // Util import
+import { DateUtils } from "@shared/utils/dateUtils";
 import { parse, ClassConstructor } from "@shared/utils/instanceParser";
 
 // Provider import
@@ -42,7 +42,12 @@ class ProcessFilePublicAccessService {
         !data.upload_url_expires_at &&
         data.public_url &&
         data.public_url_expires_at &&
-        isBefore(subMinutes(new Date(), 30), data.public_url_expires_at)
+        DateUtils.isBefore(
+          new Date(),
+          DateUtils.parse(data.public_url_expires_at)
+            .subtract(30, "minutes")
+            .toDate(),
+        )
       )
         return data;
 
