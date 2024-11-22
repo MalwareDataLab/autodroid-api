@@ -67,7 +67,7 @@ describe("Service: UserDatasetShowService", () => {
 
     datasetRepositoryMock.findOne.mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userDatasetShowService.execute({
         dataset_id,
         user: {

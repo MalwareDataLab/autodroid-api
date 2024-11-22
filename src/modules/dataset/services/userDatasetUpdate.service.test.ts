@@ -180,7 +180,7 @@ describe("Service: UserDatasetUpdateService", () => {
 
     vi.spyOn(datasetRepository, "updateOne").mockResolvedValueOnce(null);
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id: dataset.id,
         data,
@@ -228,7 +228,7 @@ describe("Service: UserDatasetUpdateService", () => {
       user_id: user.id,
     });
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id: dataset.id,
         data,
@@ -276,7 +276,7 @@ describe("Service: UserDatasetUpdateService", () => {
       user_id: user.id,
     });
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id: dataset.id,
         data,
@@ -324,7 +324,7 @@ describe("Service: UserDatasetUpdateService", () => {
       user_id: user.id,
     });
 
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id: dataset.id,
         data,
@@ -339,7 +339,7 @@ describe("Service: UserDatasetUpdateService", () => {
   });
 
   it("should throw if the dataset was not found", async () => {
-    expect(() =>
+    await expect(() =>
       userDatasetUpdateService.execute({
         dataset_id: faker.string.uuid(),
         data: {

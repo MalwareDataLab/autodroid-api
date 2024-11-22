@@ -488,7 +488,7 @@ echo "Worker Registration Token: $WORKER_REGISTRATION_TOKEN"
 # STEP 3
 #
 step "Step 3" "Start a worker container."
-docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp $WORKER_IMAGE_NAME -e development -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
+docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp --pull always $WORKER_IMAGE_NAME -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
 echo "Worker container started."
 
 #

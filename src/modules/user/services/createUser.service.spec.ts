@@ -63,7 +63,7 @@ describe("Service: CreateUserService", () => {
 
     userRepositoryMock.createOne.mockRejectedValueOnce(new Error());
 
-    expect(
+    await expect(
       createUserService.execute({
         data,
         language: "en",
