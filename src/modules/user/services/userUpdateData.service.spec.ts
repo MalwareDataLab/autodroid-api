@@ -130,7 +130,7 @@ describe("Service: UserUpdateDataService", () => {
       name: `${faker.person.fullName()}updated`,
     };
 
-    expect(
+    await expect(
       userUpdateDataService.execute({
         user,
         data,
@@ -170,7 +170,7 @@ describe("Service: UserUpdateDataService", () => {
 
     userRepositoryMock.updateOne.mockResolvedValueOnce(user);
 
-    expect(
+    await expect(
       userUpdateDataService.execute({
         user,
         data,
@@ -209,7 +209,7 @@ describe("Service: UserUpdateDataService", () => {
 
     userRepositoryMock.updateOne.mockResolvedValueOnce(null);
 
-    expect(
+    await expect(
       userUpdateDataService.execute({
         user,
         data,

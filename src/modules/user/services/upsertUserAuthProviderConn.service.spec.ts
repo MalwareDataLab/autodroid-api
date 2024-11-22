@@ -104,7 +104,7 @@ describe("Service: UpsertUserAuthProviderConnService", () => {
 
     userAuthProviderConnRepositoryMock.updateOne.mockResolvedValueOnce(null);
 
-    expect(
+    await expect(
       upsertUserAuthProviderConnService.execute(data),
     ).rejects.toThrowError(
       expect.objectContaining({

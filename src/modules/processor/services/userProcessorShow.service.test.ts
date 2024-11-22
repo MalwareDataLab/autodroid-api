@@ -34,7 +34,7 @@ describe("Service: UserProcessorShowService", () => {
   });
 
   it("should throw if processor was not found", async () => {
-    expect(() =>
+    await expect(() =>
       userProcessorShowService.execute({
         user,
         processor_id: faker.string.uuid(),

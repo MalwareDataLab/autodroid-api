@@ -19,7 +19,7 @@ describe("Decorator: RequireAdminPermission", () => {
     expect(result).toBeInstanceOf(Function);
   });
 
-  it("should continue the original method if the user is an admin", () => {
+  it("should continue the original method if the user is an admin", async () => {
     const flag = vi.fn();
 
     class DecoratorTest {
@@ -46,7 +46,7 @@ describe("Decorator: RequireAdminPermission", () => {
     expect(flag).toHaveBeenCalledTimes(1);
   });
 
-  it("should continue the original method if the user is an admin in a class", () => {
+  it("should continue the original method if the user is an admin in a class", async () => {
     const flag = vi.fn();
     const instance = setupClassDouble(flag);
 

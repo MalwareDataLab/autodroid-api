@@ -85,7 +85,7 @@ describe("Service: UserDatasetShowService", () => {
   });
 
   it("should throw if dataset was not found", async () => {
-    expect(() =>
+    await expect(() =>
       userDatasetShowService.execute({
         dataset_id: faker.string.uuid(),
         user,
