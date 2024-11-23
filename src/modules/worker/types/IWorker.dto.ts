@@ -32,6 +32,7 @@ export type IFindWorkerDTO = Partial<
     | "registration_token_id"
     | "internal_id"
     | "signature"
+    | "missing"
   >
 > & {
   registration_token?: string;

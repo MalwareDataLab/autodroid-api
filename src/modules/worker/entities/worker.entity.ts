@@ -28,6 +28,9 @@ class Worker implements WorkerEntityType {
   @Field()
   signature: string;
 
+  @Field()
+  missing: boolean;
+
   @Field(() => String, { nullable: true })
   version: string | null;
 

@@ -312,7 +312,7 @@ type Query {
   adminWorker(worker_id: String!): Worker! @auth(requires: "ADMIN")
   adminWorkerRegistrationToken(worker_registration_token_id: String!): WorkerRegistrationToken! @auth(requires: "ADMIN")
   adminWorkerRegistrationTokens(activatable: Boolean, activated: Boolean, after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, expired: Boolean, first: Int, is_unlimited_usage: Boolean, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int, token: String, user_id: String): WorkerRegistrationTokenPaginationConnection! @auth(requires: "ADMIN")
-  adminWorkers(after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, first: Int, last: Int, registration_token_id: String, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String): WorkerPaginationConnection! @auth(requires: "ADMIN")
+  adminWorkers(after: ConnectionCursor, archived: Boolean, before: ConnectionCursor, first: Int, last: Int, missing: Boolean, registration_token_id: String, skip: Int, sorting: [SortingFieldSchema!], take: Int, user_id: String): WorkerPaginationConnection! @auth(requires: "ADMIN")
   healthCheck: DateTimeISO!
   healthLivenessCheck: DateTimeISO!
   healthReadinessCheck: DateTimeISO!
@@ -427,6 +427,7 @@ type Worker {
   id: ID!
   internal_id: String!
   last_seen_at: DateTimeISO
+  missing: Boolean!
   payload: JSON! @auth(requires: "ADMIN")
   refresh_token: String!
   refresh_token_expires_at: DateTimeISO!

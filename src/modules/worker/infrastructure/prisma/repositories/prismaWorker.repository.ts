@@ -50,6 +50,7 @@ class PrismaWorkerRepository implements IWorkerRepository {
       registration_token_id,
       internal_id,
       signature,
+      missing,
 
       last_seen_at_start_date,
       last_seen_at_end_date,
@@ -83,6 +84,7 @@ class PrismaWorkerRepository implements IWorkerRepository {
       registration_token_id,
       internal_id,
       signature,
+      missing,
 
       ...(archived !== undefined && {
         archived_at: archived ? { not: null } : null,

@@ -96,12 +96,15 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
     await this.workerRepository.updateOne(
       { id: worker.id },
-      { version: data.version, last_seen_at: new Date() },
+      { version: data.version, last_seen_at: new Date(), missing: false },
     );
   }
 
   private async getWorkerById(worker_id: string): Promise<Worker> {
-    const worker = await this.workerRepository.findOne({ id: worker_id });
+    const worker = await this.workerRepository.findOne({
+      id: worker_id,
+      missing: false,
+    });
 
     if (!worker)
       throw new AppError({
