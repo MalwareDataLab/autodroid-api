@@ -19,15 +19,17 @@ class WorkerCleanMissingService {
   public async execute(): Promise<number> {
     const missingWorkers = await this.workerRepository.findMany({
       last_seen_at_end_date: DateUtils.now().subtract(7, "days").toDate(),
+      missing: false,
     });
 
     let count = 0;
     await Promise.all(
       missingWorkers.map(async worker => {
         try {
-          await this.workerRepository.deleteOne({
-            id: worker.id,
-          });
+          await this.workerRepository.updateOne(
+            { id: worker.id },
+            { missing: true },
+          );
 
           count += 1;
         } catch (error) {

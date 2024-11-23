@@ -76,6 +76,7 @@ class WorkerRegisterService {
         registration_token_id: registrationToken.id,
         internal_id,
         signature,
+        missing: false,
 
         user_id: registrationToken.user_id,
 
