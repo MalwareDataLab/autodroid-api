@@ -111,6 +111,7 @@ Table workers {
   refresh_token_expires_at DateTime [not null]
   internal_id String [not null]
   signature String [unique, not null]
+  missing Boolean [not null, default: false]
   version String
   system_info Json [not null]
   agent_info Json [not null]

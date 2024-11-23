@@ -184,6 +184,8 @@ model Worker {
   internal_id String
   signature   String @unique
 
+  missing Boolean @default(false)
+
   version     String?
   system_info Json
   agent_info  Json
