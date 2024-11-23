@@ -63,6 +63,11 @@ class WorkerIndexSchema implements IFindWorkerDTO {
   @IsNullable({ nullable: "allowUndefined" })
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
+  missing?: boolean;
+
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
   archived?: boolean;
 
   static make(data: WorkerIndexSchema) {
