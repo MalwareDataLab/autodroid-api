@@ -29,7 +29,7 @@ class DispatchDatasetProcessingJob implements IJob {
   public readonly concurrency = 3;
 
   public readonly jobOptions = {
-    attempts: 1,
+    attempts: 1440,
     backoff: {
       type: "fixed",
       delay: 60 * 1000,
