@@ -37,14 +37,15 @@ adminProcessingRouter.put(
   }),
   adminProcessingController.update,
 );
-adminProcessingRouter.delete(
-  "/:processing_id",
-  adminProcessingController.delete,
-);
 
 adminProcessingRouter.delete(
   "/clean-expired",
   adminProcessingCleanExpiredController.delete,
+);
+
+adminProcessingRouter.delete(
+  "/:processing_id",
+  adminProcessingController.delete,
 );
 
 export { adminProcessingRouter };

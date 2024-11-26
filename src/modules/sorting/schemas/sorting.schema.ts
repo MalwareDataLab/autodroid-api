@@ -17,7 +17,11 @@ class SortingFieldSchema<T extends readonly string[]> {
   @Field(() => SORT_ORDER)
   @ValidString()
   @IsEnum(SORT_ORDER)
-  @Transform(({ value }) => SORT_ORDER[value as keyof typeof SORT_ORDER])
+  @Transform(({ value }) =>
+    value
+      ? SORT_ORDER[String(value).toUpperCase() as keyof typeof SORT_ORDER]
+      : null,
+  )
   order: SORT_ORDER;
 }
 

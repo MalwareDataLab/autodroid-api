@@ -488,7 +488,7 @@ echo "Worker Registration Token: $WORKER_REGISTRATION_TOKEN"
 # STEP 3
 #
 step "Step 3" "Start a worker container."
-docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp --pull always $WORKER_IMAGE_NAME -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
+docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp:rw --pull always $WORKER_IMAGE_NAME -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
 echo "Worker container started."
 
 #
@@ -565,8 +565,7 @@ while true; do
     PROCESSING_RESULT_URL=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .result_file.public_url)
     PROCESSING_METRICS_URL=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .metrics_file.public_url)
     if [ -n "$PROCESSING_RESULT_URL" ] && [ -n "$PROCESSING_METRICS_URL" ]; then
-      echo "Result File URL: $PROCESSING_RESULT_URL"
-      echo "Metrics File URL: $PROCESSING_METRICS_URL"
+      echo "Process completed."
       break
     else
       echo "Waiting for the files to be available..."
@@ -579,4 +578,4 @@ while true; do
   fi
 done
 
-stop "Project demonstration finished.\n" "Homepage: https://malwaredatalab.github.io/" "Developer: luiz@laviola.dev\n" "Enjoy!"
+stop "Project demonstration finished.\n" "Result File URL: $PROCESSING_RESULT_URL\n" "Metrics File URL: $PROCESSING_METRICS_URL\n" "Homepage: https://malwaredatalab.github.io/" "Developer: luiz@laviola.dev\n" "Enjoy!"

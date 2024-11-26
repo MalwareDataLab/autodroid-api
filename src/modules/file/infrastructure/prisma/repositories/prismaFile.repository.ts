@@ -90,11 +90,16 @@ class PrismaFileRepository implements IFileRepository {
   }
 
   public async findMany(filter: IFindFileDTO): Promise<File[]> {
-    const file = await this.databaseProvider.client.file.findMany({
+    const files = await this.databaseProvider.client.file.findMany({
       where: this.getWhereClause(filter),
     });
 
-    return parse(File, file);
+    const result = await File.processAnyNested({
+      cls: File,
+      data: parse(File, files),
+    });
+
+    return result;
   }
 
   public async updateOne(

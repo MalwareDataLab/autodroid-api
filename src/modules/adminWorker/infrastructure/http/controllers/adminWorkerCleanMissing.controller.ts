@@ -1,9 +1,6 @@
 import { container } from "tsyringe";
 import { Request, Response } from "express";
 
-// Util import
-import { process } from "@shared/utils/instanceParser";
-
 // Service import
 import { AdminWorkerCleanMissingService } from "@modules/adminWorker/services/adminWorkerCleanMissing.service";
 
@@ -12,11 +9,13 @@ class AdminWorkerCleanMissingController {
     const adminWorkerCleanMissingService = container.resolve(
       AdminWorkerCleanMissingService,
     );
-    const worker = await adminWorkerCleanMissingService.execute({
+
+    await adminWorkerCleanMissingService.execute({
       user: req.session.user,
       language: req.language,
     });
-    return res.json(process(worker));
+
+    return res.sendStatus(200);
   }
 }
 

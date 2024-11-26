@@ -15,6 +15,7 @@ import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
 
 // Entity import
+import { File } from "@modules/file/entities/file.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 
 // Interface import
@@ -105,7 +106,12 @@ class PrismaDatasetRepository implements IDatasetRepository {
       ...makePaginationObj(pagination),
     });
 
-    return parse(Dataset, datasets);
+    const result = await File.processAnyNested({
+      cls: Dataset,
+      data: parse(Dataset, datasets),
+    });
+
+    return result;
   }
 
   public async findManyPublicOrUserPrivate(
@@ -125,7 +131,12 @@ class PrismaDatasetRepository implements IDatasetRepository {
       ...makePaginationObj(pagination),
     });
 
-    return parse(Dataset, datasets);
+    const result = await File.processAnyNested({
+      cls: Dataset,
+      data: parse(Dataset, datasets),
+    });
+
+    return result;
   }
 
   public async getCount(filter: IFindDatasetDTO): Promise<number> {
