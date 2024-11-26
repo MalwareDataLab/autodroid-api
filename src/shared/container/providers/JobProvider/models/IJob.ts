@@ -11,6 +11,8 @@ interface IJob {
   queueOptions: IQueueOptionsDTO;
 
   handle(job: Job, done: DoneCallback): Promise<void>;
+
+  onFailed(job: Job, error: Error): Promise<void>;
 }
 
 export type { IJob };

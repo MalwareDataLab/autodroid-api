@@ -19,6 +19,7 @@
 - [📖 Sobre](#about)
 - [✨ Visão Geral do Projeto](#overview)
 - [✅ Requisitos Funcionais e Não Funcionais](https://docs.google.com/document/d/1tCNZw9VFt5honSpTOx_DjVQ7-l0qdYta)
+- [📚 SDK](https://www.npmjs.com/package/autodroid)
 - [🏦 Arquitetura](#architecture)
 - [⛏️ Tecnologias Utilizadas](#built_using)
 - [💻 Ambiente do Usuário](#user_environment)
@@ -85,6 +86,7 @@ Visão de componente:
 - `Processor`: representa um processador que será usado para processar um conjunto de dados. É uma imagem Docker que será usada para processar a solicitação de processamento do usuário com os parâmetros fornecidos.
 - `Dataset`: representa um conjunto de dados que será usado por um processador, é um arquivo que será usado como entrada para o processador.
 - `Processing`: representa uma solicitação de processamento feita por um usuário. É uma solicitação para processar um conjunto de dados usando um processador com os parâmetros fornecidos. Todo o ciclo de vida do processamento está disponível nesta entidade, incluindo o status de execução e seu resultado.
+- `Worker`: representa uma instância da aplicação Worker, que é responsável por processar os jobs em background.
 
 ### Estrutura do código
 
@@ -293,6 +295,14 @@ Obtidos o `processor_id` e `dataset_id` a partir da criação dos dois passos an
 
 O resultado pode ser obtido através do download do arquivo zip fornecido pelo campo `public_url` após a conclusão do processamento (campo `status`). [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-6f8c7085-04f4-47d0-8f83-abe90fbffd25?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
+### Worker
+
+O worker é uma aplicação (imagem Docker) que será utilizada para processar os jobs em background. O worker é uma aplicação separada da API e deve ser configurada para funcionar corretamente.
+
+Inicialmente o administrador cria um `WorkerRegistrationToken` onde o campo `token` será utilizado para authenticar a aplicação com o backend. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-bddce5bd-44f1-4ccc-89f3-aee615c7e7d6?action=share&source=copy-link&creator=17242387&ctx=documentation).
+
+Siga as instruções em [worker](https://github.com/MalwareDataLab/autodroid-worker) para a instalação e configuração do worker.
+
 ### Fluxo comum
 
 O fluxograma a seguir descreve o fluxo comum da aplicação:
@@ -302,6 +312,12 @@ O fluxograma a seguir descreve o fluxo comum da aplicação:
 </p>
 
 ## ✅ Testes <a name = "tests"></a>
+
+Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando:
+
+```bash
+./demo.sh
+```
 
 Para executar os testes, por favor execute o comando abaixo:
 ```bash

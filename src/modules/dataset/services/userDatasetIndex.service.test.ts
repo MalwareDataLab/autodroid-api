@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
 
 // Entity import
@@ -7,12 +7,16 @@ import { User } from "@modules/user/entities/user.entity";
 // Repository import
 import { IDatasetRepository } from "@shared/container/repositories";
 
+// Provider import
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+
+// Enum import
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "../entities/factories/dataset.factory";
-
-// Enum import
-import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 // Service import
 import { UserDatasetIndexService } from "./userDatasetIndex.service";
@@ -24,6 +28,16 @@ describe("Service: UserDatasetIndexService", () => {
   let userDatasetIndexService: UserDatasetIndexService;
 
   beforeEach(async () => {
+    container.registerInstance<IStorageProvider>("StorageProvider", {
+      provider_code: STORAGE_PROVIDER.GOOGLE_CLOUD_STORAGE,
+      initialization: Promise.resolve(),
+      generateUploadSignedUrl: vi.fn(() => {
+        throw new Error("Not implemented.");
+      }),
+      refreshFile: vi.fn(),
+      removeFileByPath: vi.fn(),
+    });
+
     datasetRepository = container.resolve("DatasetRepository");
 
     user = await userFactory.create();

@@ -15,6 +15,7 @@ import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
 
 // Entity import
+import { File } from "@modules/file/entities/file.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Interface import
@@ -167,7 +168,12 @@ class PrismaProcessingRepository implements IProcessingRepository {
       ...makePaginationObj(pagination),
     });
 
-    return parse(Processing, processes);
+    const result = await File.processAnyNested({
+      cls: Processing,
+      data: parse(Processing, processes),
+    });
+
+    return result;
   }
 
   public async findManyPublicOrUserPrivate(
@@ -187,7 +193,12 @@ class PrismaProcessingRepository implements IProcessingRepository {
       ...makePaginationObj(pagination),
     });
 
-    return parse(Processing, processes);
+    const result = await File.processAnyNested({
+      cls: Processing,
+      data: parse(Processing, processes),
+    });
+
+    return result;
   }
 
   public async getCount(filter: IFindProcessingDTO): Promise<number> {

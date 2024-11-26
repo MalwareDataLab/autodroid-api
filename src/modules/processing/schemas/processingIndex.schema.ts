@@ -2,6 +2,7 @@ import { IsBoolean, IsEnum, IsUUID } from "class-validator";
 import { ArgsType, Field } from "type-graphql";
 
 // Decorator import
+import { IsNullable } from "@shared/decorators/isNullable.decorator";
 import { ValidString } from "@shared/decorators/validString.decorator";
 
 // Enum import
@@ -30,12 +31,12 @@ class ProcessingIndexSchema {
   @Field(() => PROCESSING_VISIBILITY, { nullable: true })
   visibility?: PROCESSING_VISIBILITY;
 
-  @ValidString({ nullable: "allowUndefined" })
+  @IsNullable({ nullable: "allowUndefined" })
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   started?: boolean;
 
-  @ValidString({ nullable: "allowUndefined" })
+  @IsNullable({ nullable: "allowUndefined" })
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   finished?: boolean;

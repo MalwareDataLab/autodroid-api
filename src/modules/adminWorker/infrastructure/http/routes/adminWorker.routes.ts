@@ -58,11 +58,11 @@ adminWorkerRouter.put(
   adminWorkerController.update,
 );
 
-adminWorkerRouter.delete("/:worker_id", adminWorkerController.delete);
-
 adminWorkerRouter.delete(
   "/clean-missing",
   adminWorkerCleanMissingController.delete,
 );
+
+adminWorkerRouter.delete("/:worker_id", adminWorkerController.delete);
 
 export { adminWorkerRouter };
