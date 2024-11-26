@@ -366,12 +366,13 @@ Verifique as restrições da sua rede local e ISP.
 
 ## 🔃 Atualizando <a name = "updating"></a>
 
-Para atualizar a aplicação, siga os passos abaixo:
+O docker compose está instrumentado com a ferramenta [watchtower](https://containrrr.dev/watchtower/) para atualizações automáticas.
+
+Para realizar atualização manual, execute o seguinte comando:
 
 ```bash
-git pull
 docker compose down
-docker compose build --no-cache
+docker compose pull
 docker compose up -d
 ```
 
