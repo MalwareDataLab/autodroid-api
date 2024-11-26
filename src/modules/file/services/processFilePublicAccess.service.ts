@@ -55,6 +55,7 @@ class ProcessFilePublicAccessService {
         file: data,
         language,
       });
+
       return file;
     }
 

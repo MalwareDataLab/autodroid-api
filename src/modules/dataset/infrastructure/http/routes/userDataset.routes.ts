@@ -2,6 +2,14 @@ import { Router } from "express";
 
 // Middleware import
 import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
+import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
+import { paginationMiddleware } from "@modules/pagination/infrastructure/http/middlewares/pagination.middleware";
+
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
 
 // Schema import
 import {
@@ -18,6 +26,18 @@ const userDatasetPublicationController = new UserDatasetPublicationController();
 
 const userDatasetRouter = Router();
 
+userDatasetRouter.get(
+  "/",
+  paginationMiddleware({ segment: "QUERY" }),
+  sortingMiddleware<Dataset>({
+    segment: "QUERY",
+    allowed: DatasetSortingOptions,
+  }),
+  userDatasetController.index,
+);
+
+userDatasetRouter.get("/:dataset_id", userDatasetController.show);
+
 userDatasetRouter.post(
   "/",
   validateRequest({
@@ -26,8 +46,6 @@ userDatasetRouter.post(
   }),
   userDatasetController.create,
 );
-userDatasetRouter.get("/", userDatasetController.index);
-userDatasetRouter.get("/:dataset_id", userDatasetController.show);
 
 userDatasetRouter.put(
   "/:dataset_id",

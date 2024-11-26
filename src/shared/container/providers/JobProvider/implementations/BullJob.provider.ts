@@ -181,6 +181,7 @@ class BullJobProvider implements IJobProvider {
         queueOptions: queueSettings,
 
         handle: job.handle,
+        onFailed: job.onFailed,
 
         queue: new Bull(job.name, {
           settings: queueSettings,
@@ -207,93 +208,102 @@ class BullJobProvider implements IJobProvider {
   }
 
   private process() {
-    return this.modules.forEach(queue => {
-      queue.queue.process(queue.concurrency, async (job: BullJob, done) => {
-        await queue.handle(job, done);
-      });
+    return this.modules.forEach(jobModule => {
+      jobModule.queue.process(
+        jobModule.concurrency,
+        async (job: BullJob, done) => {
+          await jobModule.handle(job, done);
+        },
+      );
 
-      queue.queue.on("error", error => {
+      jobModule.queue.on("error", error => {
         // An error occurred.
-        this.log(`❌ Job [${queue.name}] failed! Error: ${error.message}`);
+        this.log(`❌ Job [${jobModule.name}] failed! Error: ${error.message}`);
       });
 
-      queue.queue.on("waiting", jobId => {
+      jobModule.queue.on("waiting", jobId => {
         // A Job is waiting to be processed as soon as a worker is idling.
-        this.log(`🔜 Job [${queue.name}] with id [${jobId}] waiting...`);
+        this.log(`🔜 Job [${jobModule.name}] with id [${jobId}] waiting...`);
       });
 
-      queue.queue.on("active", (job, _) => {
+      jobModule.queue.on("active", (job, _) => {
         // A job has started. You can use `jobPromise.cancel()`` to abort it.
         this.log(
-          `⏩ Job [${queue.name}] with id [${job.id}] is now on process...`,
+          `⏩ Job [${jobModule.name}] with id [${job.id}] is now on process...`,
         );
       });
 
-      queue.queue.on("stalled", job => {
+      jobModule.queue.on("stalled", job => {
         // A job has been marked as stalled. This is useful for debugging job
         // workers that crash or pause the event loop.
-        this.log(`🆘 Job [${queue.name}] with id [${job.id}] is stalled!`);
+        this.log(`🆘 Job [${jobModule.name}] with id [${job.id}] is stalled!`);
       });
 
-      queue.queue.on("lock-extension-failed", (job, err) => {
+      jobModule.queue.on("lock-extension-failed", (job, err) => {
         // A job failed to extend lock. This will be useful to debug redis
         // connection issues and jobs getting restarted because workers
         // are not able to extend locks.
         this.log(
-          `🔒 Job [${queue.name}] with id [${job.id}] lock extension failed! Error: ${err.message}`,
+          `🔒 Job [${jobModule.name}] with id [${job.id}] lock extension failed! Error: ${err.message}`,
         );
       });
 
-      queue.queue.on("progress", (job, progress) => {
+      jobModule.queue.on("progress", (job, progress) => {
         // A job's progress was updated!
         this.log(
-          `🔂 Job [${queue.name}] with id [${job.id}] has updated his progress to ${progress}!`,
+          `🔂 Job [${jobModule.name}] with id [${job.id}] has updated his progress to ${progress}!`,
         );
       });
 
-      queue.queue.on("completed", (job, result) => {
+      jobModule.queue.on("completed", (job, result) => {
         // A job successfully completed with a `result`.
         this.log(
-          `✅ Job [${queue.name}] with id [${job.id}] has been completed. ${
+          `✅ Job [${jobModule.name}] with id [${job.id}] has been completed. ${
             result ? `Message: ${result}` : ""
           }`,
         );
       });
 
-      queue.queue.on("failed", (job, err) => {
+      jobModule.queue.on("failed", (job, err) => {
         // A job failed with reason `err`!
         this.log(
-          `❌ Job [${queue.name}] with id [${job.id}] failed! ${
+          `❌ Job [${jobModule.name}] with id [${job.id}] failed! ${
             err.message ? `Message: ${err.message}` : ""
           }`,
         );
+
+        jobModule.onFailed(job, err).catch(error => {
+          this.log(
+            `❌ Job [${jobModule.name}] with id [${job.id}] failed to execute onFailed method! Error: ${error.message}`,
+          );
+        });
       });
 
-      queue.queue.on("paused", () => {
+      jobModule.queue.on("paused", () => {
         // The queue has been paused.
-        this.log(`🔜 Queue [${queue.name}] has been paused.`);
+        this.log(`🔜 Queue [${jobModule.name}] has been paused.`);
       });
 
-      queue.queue.on("resumed", () => {
+      jobModule.queue.on("resumed", () => {
         // The queue has been resumed.
-        this.log(`⏯ Queue [${queue.name}] has been resumed.`);
+        this.log(`⏯ Queue [${jobModule.name}] has been resumed.`);
       });
 
-      queue.queue.on("cleaned", () => {
+      jobModule.queue.on("cleaned", () => {
         // Old jobs have been cleaned from the queue. `jobs` is an array of cleaned
         // jobs, and `type` is the type of jobs cleaned.
-        this.log(`⏯ Queue [${queue.name}] jobs have been cleaned.`);
+        this.log(`⏯ Queue [${jobModule.name}] jobs have been cleaned.`);
       });
 
-      queue.queue.on("drained", () => {
+      jobModule.queue.on("drained", () => {
         // Emitted every time the queue has processed all the waiting jobs (even if there can be some delayed jobs not yet processed)
-        this.log(`*️⃣  Queue [${queue.name}] is now drained.`);
+        this.log(`*️⃣  Queue [${jobModule.name}] is now drained.`);
       });
 
-      queue.queue.on("removed", job => {
+      jobModule.queue.on("removed", job => {
         // A job successfully removed.
         this.log(
-          `❎ Job [${queue.name}] with id [${job.id}] was successfully removed.`,
+          `❎ Job [${jobModule.name}] with id [${job.id}] was successfully removed.`,
         );
       });
     });

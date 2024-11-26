@@ -15,6 +15,9 @@ import { FileEntityType } from "@shared/types/models";
 // Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
 
+// Util import
+import { ClassConstructor } from "@shared/utils/instanceParser";
+
 // Entity import
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
@@ -110,6 +113,23 @@ class File implements FileEntityType {
       cls: File,
       obj: params,
     });
+  }
+
+  static async processAnyNested<T, V>({
+    cls,
+    data,
+  }: {
+    cls: ClassConstructor<T>;
+    data: V;
+  }): Promise<V> {
+    const processFilePublicAccessService = container.resolve(
+      ProcessFilePublicAccessService,
+    );
+
+    return processFilePublicAccessService.execute({
+      cls,
+      obj: data,
+    }) as V;
   }
 }
 

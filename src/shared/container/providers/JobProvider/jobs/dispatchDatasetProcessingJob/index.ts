@@ -10,6 +10,9 @@ import { IJob } from "@shared/container/providers/JobProvider/models/IJob";
 // Provider import
 import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 
+// Service import
+import { ProcessingHandleFailureService } from "@modules/processing/services/processingHandleFailure.service";
+
 // DTO import
 import {
   IJobOptionsDTO,
@@ -23,9 +26,15 @@ type IDispatchDatasetProcessingJob = {
 @injectable()
 class DispatchDatasetProcessingJob implements IJob {
   public readonly name = "DispatchDatasetProcessingJob";
-  public readonly concurrency = 1;
+  public readonly concurrency = 3;
 
-  public readonly jobOptions: IJobOptionsDTO = {};
+  public readonly jobOptions = {
+    attempts: 1,
+    backoff: {
+      type: "fixed",
+      delay: 60 * 1000,
+    },
+  } satisfies IJobOptionsDTO;
   public readonly queueOptions: IQueueOptionsDTO = {};
 
   constructor() {}
@@ -55,6 +64,19 @@ class DispatchDatasetProcessingJob implements IJob {
           message: `Fail to dispatch processing ${processing_id}. ${error.message}`,
         }),
       );
+    }
+  }
+
+  public async onFailed(job: Job, err: Error): Promise<void> {
+    if (job.attemptsMade >= this.jobOptions.attempts) {
+      const processingHandleFailureService = container.resolve(
+        ProcessingHandleFailureService,
+      );
+
+      await processingHandleFailureService.execute({
+        processing_id: job.data.processing_id,
+        message: `Fail to dispatch processing ${job.data.processing_id} after ${job.attemptsMade} attempts. ${err.message}`,
+      });
     }
   }
 }

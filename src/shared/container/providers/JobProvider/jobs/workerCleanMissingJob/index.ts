@@ -47,6 +47,8 @@ class WorkerCleanMissingJob implements IJob {
       );
     }
   }
+
+  public async onFailed(_: Job, __: Error): Promise<void> {}
 }
 
 export type { IWorkerCleanMissingJob };
