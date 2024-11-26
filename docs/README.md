@@ -299,7 +299,7 @@ O resultado pode ser obtido através do download do arquivo zip fornecido pelo c
 
 O worker é uma aplicação (imagem Docker) que será utilizada para processar os jobs em background. O worker é uma aplicação separada da API e deve ser configurada para funcionar corretamente.
 
-Inicialmente o administrador cria um `WorkerRegistrationToken` onde o campo `token` será utilizado para authenticar a aplicação com o backend. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-bddce5bd-44f1-4ccc-89f3-aee615c7e7d6?action=share&source=copy-link&creator=17242387&ctx=documentation).
+Inicialmente o administrador cria um `WorkerRegistrationToken` onde o campo `token` será utilizado para autenticar a aplicação com o backend. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-bddce5bd-44f1-4ccc-89f3-aee615c7e7d6?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
 Siga as instruções em [worker](https://github.com/MalwareDataLab/autodroid-worker) para a instalação e configuração do worker.
 
@@ -386,7 +386,7 @@ Se você estiver enfrentando alguns erros antes da inicialização da aplicaçã
 
 - Verifique se a máquina atende aos [requisitos](#server_environment).
 - Verifique se todos os passos especificados em [antes de começar](#before_start) foram completados, refaça-os se necessário.
-- Verifique se seu usário possui permissões de uso ao Docker, executando o comando `docker run --rm hello-world:latest`.
+- Verifique se seu usuário possui permissões de uso ao Docker, executando o comando `docker run --rm hello-world:latest`.
 - Realize os processos de pós-instalação do Docker, conforme [documentação oficial](https://docs.docker.com/engine/install/linux-postinstall/).
 
 ### Limpando o ambiente do Docker
