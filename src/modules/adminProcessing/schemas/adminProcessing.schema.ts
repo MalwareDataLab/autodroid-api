@@ -41,25 +41,25 @@ class AdminProcessingIndexSchema extends ProcessingIndexSchema {
   @IsNullable({ nullable: "allowUndefined" })
   @IsDate()
   @Type(() => Date)
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   keep_until_start_date?: Date;
 
   @IsNullable({ nullable: "allowUndefined" })
   @IsDate()
   @Type(() => Date)
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   keep_until_end_date?: Date;
 
   @IsNullable({ nullable: "allowUndefined" })
   @IsDate()
   @Type(() => Date)
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   created_at_start_date?: Date;
 
   @IsNullable({ nullable: "allowUndefined" })
   @IsDate()
   @Type(() => Date)
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   created_at_end_date?: Date;
 }
 
@@ -87,7 +87,7 @@ class AdminProcessingFailDanglingSchema {
   @IsNullable({ nullable: "allowUndefined" })
   @IsDate()
   @Type(() => Date)
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   created_at_end_date?: Date;
 
   @ValidString({ nullable: "allowUndefined" })
