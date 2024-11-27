@@ -34,6 +34,9 @@ import { sleep } from "@shared/utils/sleep";
 // Type import
 import { TestContext } from "../../types/testContext.type";
 
+// Mock import
+import { setupGlobalMocks } from "./globalMocks";
+
 const initRelationalDatabase = async (context: TestContext) => {
   const initialDatabaseUrl = process.env.DATABASE_URL;
   const url = new URL(initialDatabaseUrl!);
@@ -162,6 +165,8 @@ beforeEach(async context => {
     },
     {} as TestContext["repositories"],
   );
+
+  setupGlobalMocks();
 });
 
 afterEach(async context => {

@@ -73,6 +73,9 @@ class PrismaProcessingRepository implements IProcessingRepository {
 
       keep_until_start_date,
       keep_until_end_date,
+
+      created_at_start_date,
+      created_at_end_date,
     }: IFindProcessingDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.ProcessingWhereInput {
@@ -101,6 +104,20 @@ class PrismaProcessingRepository implements IProcessingRepository {
         keep_until: {
           not: null,
           lte: keep_until_end_date,
+        },
+      });
+
+    if (created_at_start_date !== undefined)
+      conditions.push({
+        created_at: {
+          gte: created_at_start_date,
+        },
+      });
+
+    if (created_at_end_date !== undefined)
+      conditions.push({
+        created_at: {
+          lte: created_at_end_date,
         },
       });
 

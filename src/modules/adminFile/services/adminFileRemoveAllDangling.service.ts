@@ -21,7 +21,7 @@ interface IRequest {
 }
 
 @injectable()
-class AdminRemoveAllDanglingFilesService {
+class AdminFileRemoveAllDanglingService {
   private removeAllDanglingFilesService: RemoveAllDanglingFilesService;
 
   constructor(
@@ -43,4 +43,4 @@ class AdminRemoveAllDanglingFilesService {
   }
 }
 
-export { AdminRemoveAllDanglingFilesService };
+export { AdminFileRemoveAllDanglingService };

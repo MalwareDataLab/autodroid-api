@@ -44,6 +44,9 @@ export type IFindProcessingDTO = Partial<
 
   keep_until_start_date?: Date;
   keep_until_end_date?: Date;
+
+  created_at_start_date?: Date;
+  created_at_end_date?: Date;
 };
 
 export type IFindProcessingPublicOrUserPrivateDTO = Pick<

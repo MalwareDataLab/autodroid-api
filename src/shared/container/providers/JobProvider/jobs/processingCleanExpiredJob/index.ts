@@ -7,8 +7,10 @@ import { AppError } from "@shared/errors/AppError";
 // Interface import
 import { IJob } from "@shared/container/providers/JobProvider/models/IJob";
 
-// DTO import
+// Service import
 import { ProcessingCleanExpiredService } from "@modules/processing/services/processingCleanExpired.service";
+
+// DTO import
 import {
   IJobOptionsDTO,
   IQueueOptionsDTO,
