@@ -42,11 +42,7 @@ class WorkerHandleProcessingProgressService {
         message: "Processing not found.",
       });
 
-    if (isProcessingSucceededAndComplete(processing))
-      throw new AppError({
-        key: "@worker_handle_processing_progress_service/PROCESSING_ALREADY_SUCCEEDED",
-        message: "Processing already succeeded.",
-      });
+    if (isProcessingSucceededAndComplete(processing)) return processing;
 
     const updatedProcessing = await this.processingRepository.updateOne(
       { id: processing_id },
