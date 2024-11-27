@@ -9,6 +9,7 @@ import { FileFieldResolver } from "@modules/file/infrastructure/graphql/resolver
  * Admin
  */
 import { AdminDatasetResolver } from "@modules/adminDataset/infrastructure/graphql/resolvers/adminDataset.resolver";
+import { AdminFileResolver } from "@modules/adminFile/infrastructure/graphql/resolvers/adminFile.resolver";
 import { AdminProcessingResolver } from "@modules/adminProcessing/infrastructure/graphql/resolvers/adminProcessing.resolver";
 import { AdminProcessorResolver } from "@modules/adminProcessor/infrastructure/graphql/resolvers/adminProcessor.resolver";
 import { AdminWorkerRegistrationTokenResolver } from "@modules/adminWorker/infrastructure/graphql/resolvers/adminWorkerRegistrationToken.resolver";
@@ -46,6 +47,7 @@ const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
      * Admin
      */
     AdminDatasetResolver,
+    AdminFileResolver,
     AdminProcessingResolver,
     AdminProcessorResolver,
     AdminWorkerRegistrationTokenResolver,

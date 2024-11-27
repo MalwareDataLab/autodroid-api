@@ -116,7 +116,12 @@ class BullJobProvider implements IJobProvider {
     const cronJobs: { name: keyof typeof Jobs; rule: string; data: any }[] = [
       {
         name: "ProcessingCleanExpiredJob",
-        rule: "0 0 * * *",
+        rule: "0 * * * *",
+        data: null,
+      },
+      {
+        name: "ProcessingFailDanglingJob",
+        rule: "0 * * * *",
         data: null,
       },
       {

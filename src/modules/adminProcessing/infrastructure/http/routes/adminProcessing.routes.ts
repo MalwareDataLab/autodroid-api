@@ -7,15 +7,19 @@ import { validateRequest } from "@shared/infrastructure/http/middlewares/validat
 import {
   AdminProcessingIndexSchema,
   AdminProcessingUpdateSchema,
+  AdminProcessingFailDanglingSchema,
 } from "@modules/adminProcessing/schemas/adminProcessing.schema";
 
 // Controller import
 import { AdminProcessingController } from "../controllers/adminProcessing.controller";
 import { AdminProcessingCleanExpiredController } from "../controllers/adminProcessingCleanExpired.controller";
+import { AdminProcessingFailDanglingController } from "../controllers/adminProcessingFailDangling.controller";
 
 const adminProcessingController = new AdminProcessingController();
 const adminProcessingCleanExpiredController =
   new AdminProcessingCleanExpiredController();
+const adminProcessingFailDanglingController =
+  new AdminProcessingFailDanglingController();
 
 const adminProcessingRouter = Router();
 
@@ -41,6 +45,15 @@ adminProcessingRouter.put(
 adminProcessingRouter.delete(
   "/clean-expired",
   adminProcessingCleanExpiredController.delete,
+);
+
+adminProcessingRouter.patch(
+  "/fail-dangling",
+  validateRequest({
+    schema: AdminProcessingFailDanglingSchema,
+    segment: "BODY",
+  }),
+  adminProcessingFailDanglingController.update,
 );
 
 adminProcessingRouter.delete(

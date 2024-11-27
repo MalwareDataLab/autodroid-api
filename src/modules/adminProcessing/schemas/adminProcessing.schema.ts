@@ -7,8 +7,10 @@ import { DateUtils } from "@shared/utils/dateUtils";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
+import { IsNullable } from "@shared/decorators/isNullable.decorator";
 
 // Enum import
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 
 // Schema import
@@ -35,6 +37,30 @@ class AdminProcessingIndexSchema extends ProcessingIndexSchema {
   @IsUUID()
   @Field(() => String, { nullable: true })
   metrics_file_id?: string;
+
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  keep_until_start_date?: Date;
+
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  keep_until_end_date?: Date;
+
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  created_at_start_date?: Date;
+
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  created_at_end_date?: Date;
 }
 
 @InputType()
@@ -56,4 +82,22 @@ class AdminProcessingUpdateSchema {
   keep_until?: Date;
 }
 
-export { AdminProcessingIndexSchema, AdminProcessingUpdateSchema };
+@ArgsType()
+class AdminProcessingFailDanglingSchema {
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  created_at_end_date?: Date;
+
+  @ValidString({ nullable: "allowUndefined" })
+  @IsEnum(PROCESSING_STATUS)
+  @Field(() => PROCESSING_STATUS, { nullable: true })
+  status?: PROCESSING_STATUS;
+}
+
+export {
+  AdminProcessingIndexSchema,
+  AdminProcessingUpdateSchema,
+  AdminProcessingFailDanglingSchema,
+};

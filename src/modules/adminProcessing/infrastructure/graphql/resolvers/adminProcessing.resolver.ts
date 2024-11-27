@@ -31,6 +31,7 @@ import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import {
   AdminProcessingIndexSchema,
   AdminProcessingUpdateSchema,
+  AdminProcessingFailDanglingSchema,
 } from "@modules/adminProcessing/schemas/adminProcessing.schema";
 
 // Service import
@@ -39,6 +40,7 @@ import { AdminProcessingIndexService } from "@modules/adminProcessing/services/a
 import { AdminProcessingShowService } from "@modules/adminProcessing/services/adminProcessingShow.service";
 import { AdminProcessingUpdateService } from "@modules/adminProcessing/services/adminProcessingUpdate.service";
 import { AdminProcessingCleanExpiredService } from "@modules/adminProcessing/services/adminProcessingCleanExpired.service";
+import { AdminProcessingFailDanglingService } from "@modules/adminProcessing/services/adminProcessingFailDangling.service";
 
 class AdminProcessingResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -149,6 +151,26 @@ class AdminProcessingResolver {
 
     const count = await adminProcessingCleanExpiredService.execute({
       user: session.user,
+      language,
+    });
+
+    return count;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Int)
+  async adminProcessingFailDangling(
+    @Ctx() { language, session }: GraphQLContext,
+    @Args() params: AdminProcessingFailDanglingSchema,
+  ): Promise<number> {
+    const adminProcessingFailDanglingService = container.resolve(
+      AdminProcessingFailDanglingService,
+    );
+
+    const count = await adminProcessingFailDanglingService.execute({
+      user: session.user,
+      params,
       language,
     });
 
