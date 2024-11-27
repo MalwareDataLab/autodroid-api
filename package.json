@@ -16,7 +16,7 @@
     "start:prod": "node src/index.js -e production",
     "run-ts": "node -r ts-node/register -r reflect-metadata -r dotenv/config -r tsconfig-paths/register",
     "lint": "run-p -c lint:*",
-    "lint:eslint": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "lint:eslint": "eslint '{src,test}/**/*.{ts,tsx}' --fix",
     "lint:tsc": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:dev": "prisma migrate dev",
