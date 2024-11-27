@@ -6,6 +6,9 @@ import { AppError } from "@shared/errors/AppError";
 // Repository import
 import { IProcessingRepository } from "@shared/container/repositories";
 
+// Util import
+import { isProcessingSucceededAndComplete } from "@modules/processing/utils/isProcessingSucceededAndComplete.util";
+
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
@@ -38,6 +41,8 @@ class WorkerHandleProcessingProgressService {
         key: "@worker_handle_processing_progress_service/PROCESSING_NOT_FOUND",
         message: "Processing not found.",
       });
+
+    if (isProcessingSucceededAndComplete(processing)) return processing;
 
     const updatedProcessing = await this.processingRepository.updateOne(
       { id: processing_id },

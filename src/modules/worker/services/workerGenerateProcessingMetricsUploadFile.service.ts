@@ -12,6 +12,9 @@ import { IProcessingRepository } from "@shared/container/repositories";
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
+// Util import
+import { isProcessingSucceededAndComplete } from "@modules/processing/utils/isProcessingSucceededAndComplete.util";
+
 // Enum import
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
@@ -59,6 +62,12 @@ class WorkerGenerateProcessingMetricsUploadFileService {
       throw new AppError({
         key: "@worker_generate_processing_metrics_upload_file_service/PROCESSING_NOT_FOUND",
         message: "Processing not found.",
+      });
+
+    if (isProcessingSucceededAndComplete(processing))
+      throw new AppError({
+        key: "@worker_generate_processing_metrics_upload_file_service/PROCESSING_ALREADY_SUCCEEDED",
+        message: "Processing already succeeded.",
       });
 
     if (processing.metrics_file?.id)

@@ -26,7 +26,7 @@ type IDispatchDatasetProcessingJob = {
 @injectable()
 class DispatchDatasetProcessingJob implements IJob {
   public readonly name = "DispatchDatasetProcessingJob";
-  public readonly concurrency = 3;
+  public readonly concurrency = 1;
 
   public readonly jobOptions = {
     attempts: 1440,
