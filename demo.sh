@@ -10,6 +10,8 @@ VOLUME_NAME="autodroid_worker_data"
 
 DATASET_FILE_PATH="./docs/samples/dataset_example.csv"
 
+clear
+
 show_help() {
   echo "Usage: $0 [-k FIREBASEKEY] [-u USERNAME] [-p PASSWORD]"
   echo
