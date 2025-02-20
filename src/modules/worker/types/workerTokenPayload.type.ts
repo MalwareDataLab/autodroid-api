@@ -1,18 +1,13 @@
 import { JwtPayload } from "jsonwebtoken";
 
-export type WorkerRefreshTokenPayloadInternalFields = {
+export type WorkerTokenPayloadInternalFields = {
   registration_token: string;
   internal_id: string;
   signature: string;
 };
 
-export type WorkerAccessTokenPayloadInternalFields =
-  WorkerRefreshTokenPayloadInternalFields & {
-    refresh_token: string;
-  };
-
 export type WorkerRefreshTokenPayload = JwtPayload &
-  WorkerRefreshTokenPayloadInternalFields;
+  WorkerTokenPayloadInternalFields;
 
-export type WorkerAccessTokenPayload = WorkerRefreshTokenPayload &
-  WorkerAccessTokenPayloadInternalFields;
+export type WorkerAccessTokenPayload = JwtPayload &
+  WorkerTokenPayloadInternalFields;

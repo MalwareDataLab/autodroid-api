@@ -5,7 +5,7 @@ import { DoneCallback, Job } from "bull";
 import { AppError } from "@shared/errors/AppError";
 
 // Interface import
-import { IJob } from "@shared/container/providers/JobProvider/models/IJob";
+import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
 
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";

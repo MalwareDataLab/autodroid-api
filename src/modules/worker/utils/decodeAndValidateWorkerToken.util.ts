@@ -45,7 +45,7 @@ const processAndValidateWorkerToken = <T>({
         key: "@process_and_validate_worker_token/MISSING_SUB",
         message: t(
           "@process_and_validate_worker_token/MISSING_SUB",
-          "Invalid access token sub.",
+          `Invalid ${kind.toLocaleLowerCase()} token sub.`,
         ),
       });
 
@@ -60,7 +60,7 @@ const processAndValidateWorkerToken = <T>({
       key: "@process_and_validate_worker_token/INVALID_TOKEN",
       message: t(
         "@process_and_validate_worker_token/INVALID_TOKEN",
-        "Invalid or expired access token.",
+        `Invalid or expired ${kind.toLocaleLowerCase()} token.`,
       ),
     });
   }

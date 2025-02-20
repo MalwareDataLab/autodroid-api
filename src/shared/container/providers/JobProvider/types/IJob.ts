@@ -1,7 +1,7 @@
 import { Job, DoneCallback } from "bull";
 
 // DTO import
-import { IJobOptionsDTO, IQueueOptionsDTO } from "../types/IAddJobOptions.dto";
+import { IJobOptionsDTO, IQueueOptionsDTO } from "./IAddJobOptions.dto";
 
 interface IJob {
   name: string;

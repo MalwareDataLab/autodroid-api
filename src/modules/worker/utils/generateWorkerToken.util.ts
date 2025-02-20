@@ -33,20 +33,13 @@ const generateWorkerToken = (worker: Worker, type: "REFRESH" | "ACCESS") => {
 
   const payload = generateWorkerTokenPayload(worker);
 
-  const token = jwt.sign(
-    {
-      ...payload,
-      refresh_token: type === "ACCESS" ? payload.refresh_token : undefined,
-    },
-    config.secret,
-    {
-      algorithm: "HS256",
-      expiresIn: config.expiration,
-      subject: worker.id,
-      issuer: envConfig.APP_INFO.name,
-      audience: config.audience,
-    },
-  );
+  const token = jwt.sign(payload, config.secret, {
+    algorithm: "HS256",
+    expiresIn: config.expiration,
+    subject: worker.id,
+    issuer: envConfig.APP_INFO.name,
+    audience: config.audience,
+  });
 
   const info = jwt.decode(token, { json: true });
 

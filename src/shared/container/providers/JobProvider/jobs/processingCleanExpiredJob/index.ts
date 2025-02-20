@@ -5,7 +5,7 @@ import { DoneCallback, Job } from "bull";
 import { AppError } from "@shared/errors/AppError";
 
 // Interface import
-import { IJob } from "@shared/container/providers/JobProvider/models/IJob";
+import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
 
 // Service import
 import { ProcessingCleanExpiredService } from "@modules/processing/services/processingCleanExpired.service";
