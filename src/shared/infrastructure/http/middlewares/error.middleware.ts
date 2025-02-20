@@ -40,8 +40,7 @@ const errorMiddleware = async (
     });
 
   logger.error(
-    `❌ Application failure: `,
-    util.inspect(errors, false, null, true),
+    `❌ Application failure: ${util.inspect(errors, false, null, true)}`,
   );
 
   Sentry.captureException(err);

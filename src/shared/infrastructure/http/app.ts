@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import "reflect-metadata";
+import "@shared/infrastructure/sentry";
+
 import express, { Express } from "express";
 import "express-async-errors";
 import * as Sentry from "@sentry/node";
@@ -16,7 +18,6 @@ import { i18next } from "@shared/i18n";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 import { getCorsConfig } from "@config/cors";
-import { getSentryConfig } from "@config/sentry";
 
 // Middleware import
 import { authenticationMiddleware } from "@modules/authentication/infrastructure/http/middlewares/authentication.middleware";
@@ -43,8 +44,6 @@ class App {
     this.graphqlServer = new GraphQLApp(this.httpServer);
     this.websocketServer = new WebsocketApp(this.httpServer);
     this.express.set("trust proxy", 1);
-
-    Sentry.init(getSentryConfig());
 
     this.middlewares();
     this.routes();

@@ -47,33 +47,35 @@ class AppError extends Error {
 
   public readonly action: Promise<void>;
 
-  constructor(params: IAppError) {
-    super(params.message);
+  constructor(params?: IAppError) {
+    super(params?.message);
     Object.setPrototypeOf(this, AppError.prototype);
 
     if (Error.captureStackTrace) Error.captureStackTrace(this, AppError);
 
-    this.name = params.key;
-    this.message = params.message;
+    if (params) {
+      this.name = params.key;
+      this.message = params.message;
 
-    this.key = params.key;
+      this.key = params.key;
 
-    this.handler = this.constructor.name;
-    this.errorCode = randomUUID();
-    this.statusCode = params.statusCode
-      ? params.statusCode
-      : params.debug
-        ? 500
-        : 400;
+      this.handler = this.constructor.name;
+      this.errorCode = randomUUID();
+      this.statusCode = params.statusCode
+        ? params.statusCode
+        : params.debug
+          ? 500
+          : 400;
 
-    this.debug = params.debug
-      ? {
-          ...params.debug,
-          error_code: this.errorCode,
-        }
-      : undefined;
+      this.debug = params.debug
+        ? {
+            ...(params.debug || {}),
+            error_code: this.errorCode,
+          }
+        : undefined;
 
-    this.payload = params.payload;
+      this.payload = params.payload;
+    }
 
     this.action = this.register();
   }
@@ -96,7 +98,7 @@ class AppError extends Error {
       Sentry.captureException(this);
 
       if (envConfig.DEBUG === "true")
-        logger.error(`❌ Error debug: `, util.inspect(this, false, 4, true));
+        logger.error(`❌ Error debug: ${util.inspect(this, false, 4, true)}`);
     }
   }
 

@@ -13,14 +13,16 @@ const getSentryConfig: () => Sentry.NodeOptions = () => {
     dsn: envConfig.SENTRY_DSN,
     environment: envConfig.APP_ENV || process.env.NODE_ENV,
     release: envConfig.APP_INFO.version,
-    tracesSampleRate: 1.0,
-    beforeSend(event: any) {
-      if (
-        (event.statusCode && Number(event.statusCode) >= 500) ||
-        (event instanceof AppError && !!event.debug)
-      )
-        return event;
-      return null;
+    tracesSampleRate: 0.1,
+    profilesSampleRate: 0.1,
+    beforeSend(event, hint) {
+      const error = hint?.originalException as any;
+      if (!error) return event;
+
+      if (error instanceof AppError && (!error.debug || error.statusCode < 500))
+        return null;
+
+      return event;
     },
   };
 };
