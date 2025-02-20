@@ -12,7 +12,7 @@ import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentIn
 // Util import
 import { generateWorkerRefreshToken } from "../utils/generateWorkerToken.util";
 import { isWorkerTokenSignatureMatch } from "../utils/isWorkerTokenSignatureMatch.util";
-import { verifyAndGetWorkerRefreshTokenPayload } from "../utils/decodeAndValidateWorkerToken.util";
+import { decodeAndGetWorkerRefreshTokenPayload } from "../utils/decodeAndValidateWorkerToken.util";
 
 // Repository import
 import { IWorkerRepository } from "../repositories/IWorker.repository";
@@ -76,7 +76,7 @@ class WorkerUpdateRefreshTokenService {
       });
 
     if (refresh_token || !!worker.refresh_token) {
-      const payload = verifyAndGetWorkerRefreshTokenPayload({
+      const payload = decodeAndGetWorkerRefreshTokenPayload({
         refresh_token,
       });
 

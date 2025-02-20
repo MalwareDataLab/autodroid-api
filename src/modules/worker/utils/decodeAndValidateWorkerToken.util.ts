@@ -35,7 +35,9 @@ const processAndValidateWorkerToken = <T>({
         ? authConfig.worker_access_token_secret
         : authConfig.worker_refresh_token_secret;
     const payload = (
-      action === "VERIFY" ? jwt.verify(token, secret) : jwt.decode(token)
+      action === "VERIFY"
+        ? jwt.verify(token, secret)
+        : jwt.verify(token, secret, { ignoreExpiration: true })
     ) as JwtPayload & T;
 
     const worker_id = payload.sub;
@@ -94,7 +96,37 @@ const verifyAndGetWorkerRefreshTokenPayload = ({
   return payload;
 };
 
+const decodeAndGetWorkerAccessTokenPayload = ({
+  access_token,
+}: {
+  access_token: string;
+}): PayloadWithWorkerId<WorkerAccessTokenPayload> => {
+  const payload = processAndValidateWorkerToken<WorkerAccessTokenPayload>({
+    action: "DECODE",
+    kind: "ACCESS",
+    token: access_token,
+  });
+
+  return payload;
+};
+
+const decodeAndGetWorkerRefreshTokenPayload = ({
+  refresh_token,
+}: {
+  refresh_token: string;
+}): PayloadWithWorkerId<WorkerRefreshTokenPayload> => {
+  const payload = processAndValidateWorkerToken<WorkerRefreshTokenPayload>({
+    action: "DECODE",
+    kind: "REFRESH",
+    token: refresh_token,
+  });
+
+  return payload;
+};
+
 export {
   verifyAndGetWorkerAccessTokenPayload,
   verifyAndGetWorkerRefreshTokenPayload,
+  decodeAndGetWorkerAccessTokenPayload,
+  decodeAndGetWorkerRefreshTokenPayload,
 };
