@@ -47,6 +47,8 @@ export type IFindProcessingDTO = Partial<
 
   created_at_start_date?: Date;
   created_at_end_date?: Date;
+
+  include_archived?: boolean;
 };
 
 export type IFindProcessingPublicOrUserPrivateDTO = Pick<
