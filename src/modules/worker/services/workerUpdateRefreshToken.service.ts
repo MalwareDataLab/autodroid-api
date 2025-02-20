@@ -52,6 +52,7 @@ class WorkerUpdateRefreshTokenService {
       registration_token,
       internal_id,
       signature,
+      refresh_token,
 
       id: worker_id,
     });

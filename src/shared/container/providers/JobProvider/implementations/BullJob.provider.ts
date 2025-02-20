@@ -9,7 +9,7 @@ import { logger } from "@shared/utils/logger";
 
 // Interface import
 import { IJobProvider, JobType } from "../models/IJob.provider";
-import { IJob } from "../models/IJob";
+import { IJob } from "../types/IJob";
 
 // DTO import
 import { IJobOptionsDTO, IQueueOptionsDTO } from "../types/IAddJobOptions.dto";
@@ -28,7 +28,8 @@ const bullRedisOptions = {
   enableReadyCheck: false,
 };
 
-type Queue = IJob & {
+type Queue = {
+  jobModule: IJob;
   queue: BullQueue;
 };
 
@@ -176,75 +177,69 @@ class BullJobProvider implements IJobProvider {
       return container.resolve(job);
     });
 
-    this.modules = Object.values<IJob>(jobInstances).map((job: IJob): Queue => {
-      const queueSettings = { ...this.queueOptions, ...job.queueOptions };
-      return {
-        name: job.name,
-        concurrency: job.concurrency,
-
-        jobOptions: job.jobOptions,
-        queueOptions: queueSettings,
-
-        handle: job.handle,
-        onFailed: job.onFailed,
-
-        queue: new Bull(job.name, {
-          settings: queueSettings,
-          createClient: (type, redisOptions) => {
-            switch (type) {
-              case "client":
-                return this.inMemoryDatabaseClient.provider;
-              case "subscriber":
-                return this.inMemoryDatabaseSubscriber.provider;
-              default:
-                return new this.inMemoryDatabaseProvider.Adapter(
-                  `jobs_bclient_${job.name}`,
-                  defaultOptions => ({
-                    ...defaultOptions,
-                    ...bullRedisOptions,
-                    redisOptions,
-                  }),
-                ).provider;
-            }
-          },
-        }),
-      };
-    });
+    this.modules = Object.values<IJob>(jobInstances).map(
+      (jobModule: IJob): Queue => {
+        const queueSettings = {
+          ...this.queueOptions,
+          ...jobModule.queueOptions,
+        };
+        return {
+          jobModule,
+          queue: new Bull(jobModule.name, {
+            settings: queueSettings,
+            createClient: (type, redisOptions) => {
+              switch (type) {
+                case "client":
+                  return this.inMemoryDatabaseClient.provider;
+                case "subscriber":
+                  return this.inMemoryDatabaseSubscriber.provider;
+                default:
+                  return new this.inMemoryDatabaseProvider.Adapter(
+                    `jobs_bclient_${jobModule.name}`,
+                    defaultOptions => ({
+                      ...defaultOptions,
+                      ...bullRedisOptions,
+                      redisOptions,
+                    }),
+                  ).provider;
+              }
+            },
+          }),
+        };
+      },
+    );
   }
 
   private process() {
-    return this.modules.forEach(jobModule => {
-      jobModule.queue.process(
-        jobModule.concurrency,
-        async (job: BullJob, done) => {
-          await jobModule.handle(job, done);
-        },
-      );
+    return this.modules.forEach(({ queue, jobModule }) => {
+      queue.process(jobModule.concurrency, async (job: BullJob, done) => {
+        await jobModule.handle(job, done);
+      });
 
-      jobModule.queue.on("error", error => {
+      queue.on("error", error => {
         // An error occurred.
         this.log(`❌ Job [${jobModule.name}] failed! Error: ${error.message}`);
       });
 
-      jobModule.queue.on("waiting", jobId => {
+      queue.on("waiting", jobId => {
         // A Job is waiting to be processed as soon as a worker is idling.
         this.log(`🔜 Job [${jobModule.name}] with id [${jobId}] waiting...`);
       });
 
-      jobModule.queue.on("active", (job, _) => {
+      queue.on("active", (job, _) => {
         // A job has started. You can use `jobPromise.cancel()`` to abort it.
         this.log(
           `⏩ Job [${jobModule.name}] with id [${job.id}] is now on process...`,
         );
       });
 
-      jobModule.queue.on("stalled", job => {
+      queue.on("stalled", job => {
         // A job has been marked as stalled. This is useful for debugging job
         // workers that crash or pause the event loop.
         this.log(`🆘 Job [${jobModule.name}] with id [${job.id}] is stalled!`);
       });
 
-      jobModule.queue.on("lock-extension-failed", (job, err) => {
+      queue.on("lock-extension-failed", (job, err) => {
         // A job failed to extend lock. This will be useful to debug redis
         // connection issues and jobs getting restarted because workers
         // are not able to extend locks.
@@ -253,14 +248,14 @@ class BullJobProvider implements IJobProvider {
         );
       });
 
-      jobModule.queue.on("progress", (job, progress) => {
+      queue.on("progress", (job, progress) => {
         // A job's progress was updated!
         this.log(
           `🔂 Job [${jobModule.name}] with id [${job.id}] has updated his progress to ${progress}!`,
         );
       });
 
-      jobModule.queue.on("completed", (job, result) => {
+      queue.on("completed", (job, result) => {
         // A job successfully completed with a `result`.
         this.log(
           `✅ Job [${jobModule.name}] with id [${job.id}] has been completed. ${
@@ -269,43 +264,37 @@ class BullJobProvider implements IJobProvider {
         );
       });
 
-      jobModule.queue.on("failed", (job, err) => {
+      queue.on("failed", (job, err) => {
         // A job failed with reason `err`!
         this.log(
           `❌ Job [${jobModule.name}] with id [${job.id}] failed! ${
             err.message ? `Message: ${err.message}` : ""
           }`,
         );
-
-        jobModule.onFailed(job, err).catch(error => {
-          this.log(
-            `❌ Job [${jobModule.name}] with id [${job.id}] failed to execute onFailed method! Error: ${error.message}`,
-          );
-        });
       });
 
-      jobModule.queue.on("paused", () => {
+      queue.on("paused", () => {
         // The queue has been paused.
         this.log(`🔜 Queue [${jobModule.name}] has been paused.`);
       });
 
-      jobModule.queue.on("resumed", () => {
+      queue.on("resumed", () => {
         // The queue has been resumed.
         this.log(`⏯ Queue [${jobModule.name}] has been resumed.`);
       });
 
-      jobModule.queue.on("cleaned", () => {
+      queue.on("cleaned", () => {
         // Old jobs have been cleaned from the queue. `jobs` is an array of cleaned
         // jobs, and `type` is the type of jobs cleaned.
         this.log(`⏯ Queue [${jobModule.name}] jobs have been cleaned.`);
       });
 
-      jobModule.queue.on("drained", () => {
+      queue.on("drained", () => {
         // Emitted every time the queue has processed all the waiting jobs (even if there can be some delayed jobs not yet processed)
         this.log(`*️⃣  Queue [${jobModule.name}] is now drained.`);
       });
 
-      jobModule.queue.on("removed", job => {
+      queue.on("removed", job => {
         // A job successfully removed.
         this.log(
           `❎ Job [${jobModule.name}] with id [${job.id}] was successfully removed.`,
@@ -319,12 +308,14 @@ class BullJobProvider implements IJobProvider {
     data: JobType<T>,
     options?: IJobOptionsDTO,
   ): void {
-    const selectedModule = this.modules.find(queue => queue.name === name);
+    const selectedModule = this.modules.find(
+      ({ jobModule }) => jobModule.name === name,
+    );
     if (selectedModule)
       selectedModule.queue.add(data, {
         ...this.defaultJobOptions,
         ...options,
-        ...selectedModule.jobOptions,
+        ...selectedModule.jobModule.jobOptions,
       });
   }
 

@@ -10,7 +10,7 @@ import { generateWorkerTokenPayload } from "./generateWorkerTokenPayload.util";
 import { Worker } from "../entities/worker.entity";
 
 // Type import
-import { WorkerAccessTokenPayloadInternalFields } from "../types/workerTokenPayload.type";
+import { WorkerTokenPayloadInternalFields } from "../types/workerTokenPayload.type";
 
 const isWorkerTokenSignatureMatch = ({
   worker,
@@ -25,8 +25,7 @@ const isWorkerTokenSignatureMatch = ({
     registration_token: jwtPayload.registration_token,
     internal_id: jwtPayload.internal_id,
     signature: jwtPayload.signature,
-    refresh_token: jwtPayload.refresh_token,
-  } satisfies WorkerAccessTokenPayloadInternalFields;
+  } satisfies WorkerTokenPayloadInternalFields;
 
   const internalPayload = generateWorkerTokenPayload(worker);
 
