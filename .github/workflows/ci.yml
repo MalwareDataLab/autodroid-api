@@ -68,29 +68,11 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap.sh
 
-      - name: Google auth
-        id: auth
-        uses: 'google-github-actions/auth@v1'
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIAL_JSON_BASE64 }}
-
-      - name: Get secret name
-        id: secret-name
-        run: |
-            echo "secret=$(jq -r '.name' package.json | tr '[:lower:]' '[:upper:]')-TEST-ENV" >> $GITHUB_OUTPUT
-
-      - name: Get secrets from Google Secret Manager
-        id: secrets
-        uses: google-github-actions/get-secretmanager-secrets@v1
-        with:
-          secrets: |-
-            data:${{ vars.GCP_PROJECT_ID }}/${{ steps.secret-name.outputs.secret }}
-
       - name: Parse secrets data dotenv syntax as .env file
         id: parse-secrets
         uses: luizfelipelaviola/parse-plain-dotenv@v1
         with:
-          data: ${{ steps.secrets.outputs.data }}
+          data: ${{ secrets.TEST_ENV }}
           parse-env: false
           write-env-file: true
           env-file-path: .env.test
