@@ -11,7 +11,7 @@
       "changelog-path": ".github/outputs/CHANGELOG-qa.md"
     }
   },
-  "initial-version": "0.0.0-beta",
+  "initial-version": "0.0.1-beta",
   "prerelease": true,
   "prerelease-type": "beta",
   "versioning": "prerelease"
