@@ -82,7 +82,12 @@ jobs:
           ${{ steps.check-pr.outputs.pr_details }}
           EOF
           )"
-          echo "$pr_details" | jq -r '.[] | .number' | xargs -I {} gh pr edit "{}" --add-reviewer $codeowners
+          echo "$pr_details" | jq -r '.[] | .number' | xargs -I {} gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/pulls/{}/requested_reviewers \
+            -f "reviewers[]=$codeowners"
 
   deploy:
     name: Build and Deploy
