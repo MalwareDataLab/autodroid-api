@@ -76,10 +76,17 @@ class PrismaProcessingRepository implements IProcessingRepository {
 
       created_at_start_date,
       created_at_end_date,
+
+      include_archived,
     }: IFindProcessingDTO,
     relations_enabled = true,
   ): DatabaseHelperTypes.ProcessingWhereInput {
     const conditions: DatabaseHelperTypes.ProcessingWhereInput[] = [];
+
+    if (include_archived !== true)
+      conditions.push({
+        archived_at: null,
+      });
 
     if (started !== undefined)
       conditions.push({
@@ -254,8 +261,9 @@ class PrismaProcessingRepository implements IProcessingRepository {
     const record = await this.findOne(filter);
     if (!record) return null;
 
-    const processing = await this.databaseProvider.client.processing.delete({
+    const processing = await this.databaseProvider.client.processing.update({
       where: { id: record.id },
+      data: { archived_at: new Date() },
       include: this.relations,
     });
 

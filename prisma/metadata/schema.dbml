@@ -147,6 +147,7 @@ Table processes {
   attempts Int
   message String
   keep_until DateTime
+  archived_at DateTime
   configuration Json [not null]
   payload Json [not null]
   created_at DateTime [default: `now()`, not null]

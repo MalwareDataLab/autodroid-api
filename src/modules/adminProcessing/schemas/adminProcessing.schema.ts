@@ -1,5 +1,12 @@
 import { ArgsType, Field, InputType } from "type-graphql";
-import { IsDate, IsEnum, IsUUID, MaxDate, MinDate } from "class-validator";
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsUUID,
+  MaxDate,
+  MinDate,
+} from "class-validator";
 import { Type } from "class-transformer";
 
 // Helper import
@@ -61,6 +68,11 @@ class AdminProcessingIndexSchema extends ProcessingIndexSchema {
   @Type(() => Date)
   @Field(() => Date, { nullable: true })
   created_at_end_date?: Date;
+
+  @IsNullable({ nullable: "allowUndefined" })
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  include_archived?: boolean;
 }
 
 @InputType()

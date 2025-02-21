@@ -240,6 +240,7 @@ model Processing {
   message     String?
 
   keep_until DateTime?
+  archived_at DateTime?
 
   configuration Json
   payload       Json

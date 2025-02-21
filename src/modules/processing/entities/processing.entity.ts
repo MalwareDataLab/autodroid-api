@@ -47,6 +47,9 @@ class Processing implements ProcessingEntityType {
   @Field(() => Date, { nullable: true })
   keep_until: Date | null;
 
+  @Field(() => Boolean, { nullable: true })
+  archived_at: Date | null;
+
   @Field(() => Date, { nullable: true })
   verified_at: Date | null;
 
