@@ -17,6 +17,10 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  checks: read
+  statuses: read
+  actions: read
+  repository-projects: read
 
 jobs:
 
