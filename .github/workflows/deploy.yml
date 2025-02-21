@@ -65,6 +65,8 @@ jobs:
 
       - name: Request review from CODEOWNERS
         if: ${{ steps.check-pr.outputs.has_pr }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           codeowners=$(
             grep -o '@[[:alnum:]_-]\+' .github/CODEOWNERS \
