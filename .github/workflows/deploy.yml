@@ -70,7 +70,7 @@ jobs:
           ${{ steps.check-pr.outputs.pr_details }}
           EOF
           )"
-          echo "${{ steps.check-pr.outputs.pr_details }}" | jq -r '.[] | .number' | xargs -I {} gh pr request-reviewers {} --reviewer @github/codeowners
+          echo "$pr_details" | jq -r '.[] | .number' | xargs -I {} gh pr request-reviewers {} --reviewer @github/codeowners
 
   deploy:
     name: Build and Deploy
