@@ -66,6 +66,10 @@ jobs:
       - name: Request review from CODEOWNERS
         if: ${{ steps.check-pr.outputs.has_pr }}
         run: |
+          pr_details="$(cat <<EOF
+          ${{ steps.check-pr.outputs.pr_details }}
+          EOF
+          )"
           echo "${{ steps.check-pr.outputs.pr_details }}" | jq -r '.[] | .number' | xargs -I {} gh pr request-reviewers {} --reviewer @github/codeowners
 
   deploy:
