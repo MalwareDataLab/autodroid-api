@@ -6,8 +6,11 @@ import { ProcessingSortingOptions } from "@modules/processing/constants/processi
 
 // Decorator import
 import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
+import { ArgUUID } from "@shared/decorators/argUUID.decorator";
 
 // Entity import
+import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
+import { ProcessingFinishTimeEstimation } from "@modules/processing/entities/processingFinishTimeEstimation.entity";
 import {
   Processing,
   PaginatedProcessing,
@@ -23,6 +26,10 @@ import { ProcessingIndexSchema } from "@modules/processing/schemas/processingInd
 import { RequestDatasetProcessingSchema } from "@modules/processing/schemas/requestDatasetProcessing.schema";
 import { ProcessingUpdateVisibilitySchema } from "@modules/processing/schemas/processingUpdateVisibility.schema";
 import { UserProcessingExtendKeepUntilSchema } from "@modules/processing/schemas/processingExtendKeepUntil.schema";
+import {
+  ProcessingGetEstimatedExecutionTimeSchema,
+  ProcessingGetEstimatedFinishTimeSchema,
+} from "@modules/processing/schemas/processingTimeEstimation.schema";
 
 // Service import
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";
@@ -31,6 +38,8 @@ import { UserProcessingDeleteService } from "@modules/processing/services/userPr
 import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
 import { UserProcessingExtendKeepUntilService } from "@modules/processing/services/userProcessingExtendKeepUntil.service";
 import { UserProcessingUpdateVisibilityService } from "@modules/processing/services/userProcessingUpdateVisibility.service";
+import { UserProcessingGetEstimatedFinishDateService } from "@modules/processing/services/userProcessingGetEstimatedFinishDate.service";
+import { UserProcessingGetEstimatedExecutionTimeService } from "@modules/processing/services/userProcessingGetEstimatedExecutionTime.service";
 
 class UserProcessingResolver {
   @Authorized()
@@ -65,7 +74,7 @@ class UserProcessingResolver {
   @Authorized()
   @Query(() => Processing)
   async userProcessing(
-    @Arg("processing_id") processing_id: string,
+    @ArgUUID("processing_id") processing_id: string,
 
     @Ctx() { language, session }: GraphQLContext,
   ): Promise<Processing> {
@@ -108,7 +117,7 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userProcessingUpdateVisibility(
-    @Arg("processing_id") processing_id: string,
+    @ArgUUID("processing_id") processing_id: string,
 
     @Args() params: ProcessingUpdateVisibilitySchema,
 
@@ -132,7 +141,7 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userProcessingExtendKeepUntil(
-    @Arg("processing_id") processing_id: string,
+    @ArgUUID("processing_id") processing_id: string,
 
     @Args() params: UserProcessingExtendKeepUntilSchema,
 
@@ -156,7 +165,7 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userProcessingDelete(
-    @Arg("processing_id") processing_id: string,
+    @ArgUUID("processing_id") processing_id: string,
     @Ctx() { language, session }: GraphQLContext,
   ) {
     const userProcessingDeleteService = container.resolve(
@@ -171,6 +180,54 @@ class UserProcessingResolver {
     });
 
     return processing;
+  }
+
+  @Authorized()
+  @Query(() => ProcessingTimeEstimation)
+  async userProcessingTimeEstimation(
+    @Args()
+    { dataset_id, processor_id }: ProcessingGetEstimatedExecutionTimeSchema,
+
+    @Ctx() { language, session }: GraphQLContext,
+  ) {
+    const userProcessingGetEstimatedExecutionTimeService = container.resolve(
+      UserProcessingGetEstimatedExecutionTimeService,
+    );
+
+    const processingTimeEstimation =
+      await userProcessingGetEstimatedExecutionTimeService.execute({
+        user: session.user,
+
+        dataset_id,
+        processor_id,
+
+        language,
+      });
+
+    return processingTimeEstimation;
+  }
+
+  @Authorized()
+  @Query(() => ProcessingFinishTimeEstimation)
+  async userProcessingEstimatedFinish(
+    @Args() { processing_id }: ProcessingGetEstimatedFinishTimeSchema,
+
+    @Ctx() { language, session }: GraphQLContext,
+  ) {
+    const userProcessingGetEstimatedFinishDateService = container.resolve(
+      UserProcessingGetEstimatedFinishDateService,
+    );
+
+    const processingEstimatedFinish =
+      await userProcessingGetEstimatedFinishDateService.execute({
+        user: session.user,
+
+        processing_id,
+
+        language,
+      });
+
+    return processingEstimatedFinish;
   }
 }
 

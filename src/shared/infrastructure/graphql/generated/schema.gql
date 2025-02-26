@@ -133,9 +133,9 @@ type Mutation {
   userDatasetDelete(dataset_id: String!): Dataset!
   userDatasetRequestPublication(dataset_id: String!): Dataset!
   userDatasetUpdate(data: UserDatasetUpdateSchema!, dataset_id: String!): Dataset!
-  userProcessingDelete(processing_id: String!): Processing!
-  userProcessingExtendKeepUntil(keep_until: DateTimeISO!, processing_id: String!): Processing!
-  userProcessingUpdateVisibility(processing_id: String!, visibility: PROCESSING_VISIBILITY!): Processing!
+  userProcessingDelete(processing_id: String! @constraint(format: "cuid")): Processing!
+  userProcessingExtendKeepUntil(keep_until: DateTimeISO!, processing_id: String! @constraint(format: "cuid")): Processing!
+  userProcessingUpdateVisibility(processing_id: String! @constraint(format: "cuid"), visibility: PROCESSING_VISIBILITY!): Processing!
   userRequestDatasetProcessing(data: RequestDatasetProcessingSchema!): Processing!
   userSessionsClose: UserAuthProviderConn!
   userUpdateData(data: UserUpdateDataSchema!): User!
@@ -184,7 +184,7 @@ type PageInfo {
 }
 
 type Processing {
-  archived_at: Boolean
+  archived_at: DateTimeISO
   attempts: Int
   configuration: [ProcessingParameter!]!
   created_at: DateTimeISO!
@@ -211,6 +211,14 @@ type Processing {
   worker_id: String
 }
 
+type ProcessingFinishTimeEstimation {
+  dataset_id: String!
+  estimated_finish_time: DateTimeISO
+  estimated_start_time: DateTimeISO
+  processing_id: String!
+  processor_id: String!
+}
+
 type ProcessingPaginationConnection {
   edges: [ProcessingPaginationEdge!]!
   pageInfo: PageInfo!
@@ -225,6 +233,19 @@ type ProcessingPaginationEdge {
 type ProcessingParameter {
   key: String!
   value: String!
+}
+
+type ProcessingTimeEstimation {
+  dataset_id: String!
+  """Estimated execution time in seconds after the start of the processing."""
+  estimated_execution_time: Int
+  """Estimated total time in seconds before the end of the processing."""
+  estimated_total_time: Int
+  """
+  Estimated waiting time in seconds before the start of the processing to acquire the available worker.
+  """
+  estimated_waiting_time: Int
+  processor_id: String!
 }
 
 type Processor {
@@ -324,7 +345,9 @@ type Query {
   userDataset(dataset_id: String!): Dataset!
   userDatasets(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): DatasetPaginationConnection!
   userProcesses(after: ConnectionCursor, before: ConnectionCursor, dataset_id: String, finished: Boolean, first: Int, last: Int, processor_id: String, skip: Int, sorting: [SortingFieldSchema!], started: Boolean, status: PROCESSING_STATUS, take: Int, visibility: PROCESSING_VISIBILITY): ProcessingPaginationConnection!
-  userProcessing(processing_id: String!): Processing!
+  userProcessing(processing_id: String! @constraint(format: "cuid")): Processing!
+  userProcessingEstimatedFinish(processing_id: String!): ProcessingFinishTimeEstimation!
+  userProcessingTimeEstimation(dataset_id: String!, processor_id: String!): ProcessingTimeEstimation!
   userProcessor(processor_id: String!): Processor!
   userProcessors(after: ConnectionCursor, before: ConnectionCursor, first: Int, last: Int, skip: Int, sorting: [SortingFieldSchema!], take: Int): ProcessorPaginationConnection!
   worker: Worker!

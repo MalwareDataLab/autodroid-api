@@ -29,24 +29,6 @@ class DatasetFactory extends Factory<Dataset, FactoryParams> {
   static get repository() {
     return container.resolve("DatasetRepository");
   }
-
-  static async createDependencies(item: Dataset) {
-    const userRepository = container.resolve("UserRepository");
-
-    const user =
-      (item.user_id
-        ? await userRepository.findOne({
-            id: item.user_id,
-          })
-        : null) || (await userFactory.create());
-
-    Object.assign(item, {
-      user_id: user.id,
-      user,
-    } as Dataset);
-
-    return item;
-  }
 }
 
 const datasetFactory = DatasetFactory.define(
@@ -74,10 +56,16 @@ const datasetFactory = DatasetFactory.define(
       return DatasetFactory.repository.createOne(
         getBaseFactoryEntityData({
           base,
-          item: await loadEntityRelations(item, [
-            { relation: "user", factory: userFactory, foreignKey: "user_id" },
-            { relation: "file", factory: fileFactory, foreignKey: "file_id" },
-          ]),
+          item: await loadEntityRelations(item, {
+            user: {
+              reference: "user",
+              foreignKey: "user_id",
+            },
+            file: {
+              reference: "file",
+              foreignKey: "file_id",
+            },
+          }),
         }),
       );
     });

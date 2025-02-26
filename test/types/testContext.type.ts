@@ -1,6 +1,8 @@
 import { DependencyContainer } from "tsyringe";
 import type { PrismaClient } from "@prisma/client";
 import type * as Mongoose from "mongoose";
+import TestAgent from "supertest/lib/agent";
+import { Request, Test } from "supertest";
 
 // Provider import
 import type { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
@@ -31,6 +33,12 @@ export type TestContext = {
     [token in RepositoryToken]: Repository<token>;
   };
 
+  request: TestAgent<Test>;
+  gql: Test;
+  userAuthorized: <T extends Request>(arg: T) => T;
+  adminAuthorized: <T extends Request>(arg: T) => T;
+
   app: App;
-  session: IFirebaseSessionDTO;
+  userSession: IFirebaseSessionDTO;
+  adminSession: IFirebaseSessionDTO;
 };

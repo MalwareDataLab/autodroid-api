@@ -18,15 +18,22 @@ import { ProcessingUpdateVisibilitySchema } from "@modules/processing/schemas/pr
 import { UserProcessingExtendKeepUntilSchema } from "@modules/processing/schemas/processingExtendKeepUntil.schema";
 
 // Controller import
+import {
+  ProcessingGetEstimatedExecutionTimeSchema,
+  ProcessingGetEstimatedFinishTimeSchema,
+} from "@modules/processing/schemas/processingTimeEstimation.schema";
 import { UserProcessingController } from "../controllers/userProcessing.controller";
 import { UserProcessingExtendKeepUntilController } from "../controllers/userProcessingExtendKeepUntil.controller";
 import { UserProcessingUpdateVisibilityController } from "../controllers/userProcessingUpdateVisibility.controller";
+import { UserProcessingTimeEstimationController } from "../controllers/userProcessingTimeEstimation.controller";
 
 const userProcessingController = new UserProcessingController();
 const userProcessingExtendKeepUntilController =
   new UserProcessingExtendKeepUntilController();
 const userProcessingUpdateVisibilityController =
   new UserProcessingUpdateVisibilityController();
+const userProcessingTimeEstimationController =
+  new UserProcessingTimeEstimationController();
 
 const userProcessingRouter = Router();
 
@@ -53,6 +60,15 @@ userProcessingRouter.get(
   userProcessingController.index,
 );
 
+userProcessingRouter.get(
+  "/estimated-execution-time",
+  validateRequest({
+    schema: ProcessingGetEstimatedExecutionTimeSchema,
+    segment: "QUERY",
+  }),
+  userProcessingTimeEstimationController.showEstimatedExecution,
+);
+
 userProcessingRouter.get("/:processing_id", userProcessingController.show);
 
 userProcessingRouter.delete("/:processing_id", userProcessingController.delete);
@@ -73,6 +89,15 @@ userProcessingRouter.patch(
     segment: "BODY",
   }),
   userProcessingUpdateVisibilityController.update,
+);
+
+userProcessingRouter.get(
+  "/:processing_id/estimated-finish-time",
+  validateRequest({
+    schema: ProcessingGetEstimatedFinishTimeSchema,
+    segment: "PARAMS",
+  }),
+  userProcessingTimeEstimationController.showEstimatedFinish,
 );
 
 export { userProcessingRouter };

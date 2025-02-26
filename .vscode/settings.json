@@ -2,5 +2,15 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [
     "tsyringe"
+  ],
+  "javascript.preferences.autoImportSpecifierExcludeRegexes": [
+    "node:test",
+    "yargs",
+    "@sentry/node"
+  ],
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+    "node:test",
+    "yargs",
+    "@sentry/node"
   ]
 }

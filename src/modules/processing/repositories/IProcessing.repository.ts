@@ -8,6 +8,8 @@ import {
   ICreateProcessingDTO,
   IFindProcessingDTO,
   IFindProcessingPublicOrUserPrivateDTO,
+  IProcessingEstimatedDatasetProcessingTimeDTO,
+  IProcessingEstimatedDatasetProcessingTimeFilterDTO,
   IUpdateProcessingDTO,
 } from "../types/IProcessing.dto";
 
@@ -40,4 +42,12 @@ export interface IProcessingRepository {
   ): Promise<Processing | null>;
 
   deleteOne(filter: IFindProcessingDTO): Promise<Processing | null>;
+
+  getOneEstimatedExecutionTime(
+    filter: IProcessingEstimatedDatasetProcessingTimeFilterDTO,
+  ): Promise<IProcessingEstimatedDatasetProcessingTimeDTO | null>;
+
+  getManyEstimatedExecutionTimes(): Promise<
+    IProcessingEstimatedDatasetProcessingTimeDTO[]
+  >;
 }
