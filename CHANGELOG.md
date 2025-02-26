@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.0.1...v0.1.0) (2025-02-26)
+
+
+### Features
+
+* add processing estimated time calculation ([8eb3bf6](https://github.com/MalwareDataLab/autodroid-api/commit/8eb3bf6a1e2740360a04c53354e6acba1c3cda95))
+
 ## 0.0.1 (2025-02-21)
 
 
