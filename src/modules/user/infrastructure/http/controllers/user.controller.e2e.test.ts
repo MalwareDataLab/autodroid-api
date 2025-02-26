@@ -1,16 +1,15 @@
 import { describe, expect, it } from "vitest";
-import request from "supertest";
 
 describe("E2E: UserController", () => {
   it("should return user data", async context => {
-    const response = await request(context.app.httpServer)
-      .get("/user")
-      .set("Authorization", `Bearer ${context.session.idToken}`);
+    const response = await context
+      .userAuthorized(context.request.get("/user"))
+      .send();
 
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject({
-      name: context.session.displayName || null,
-      email: context.session.email,
+      name: context.userSession.displayName || null,
+      email: context.userSession.email,
     });
   });
 
@@ -20,9 +19,8 @@ describe("E2E: UserController", () => {
       language: "pt-BR",
     };
 
-    const response = await request(context.app.httpServer)
-      .put("/user")
-      .set("Authorization", `Bearer ${context.session.idToken}`)
+    const response = await context
+      .userAuthorized(context.request.put("/user"))
       .send(data);
 
     expect(response.status).toBe(200);
@@ -35,9 +33,8 @@ describe("E2E: UserController", () => {
       language: "wrong",
     };
 
-    const response = await request(context.app.httpServer)
-      .put("/user")
-      .set("Authorization", `Bearer ${context.session.idToken}`)
+    const response = await context
+      .userAuthorized(context.request.put("/user"))
       .send(data);
 
     expect(response.status).toBe(400);

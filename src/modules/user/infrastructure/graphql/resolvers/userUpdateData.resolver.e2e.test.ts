@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import request from "supertest";
 
 describe("E2E: UserUpdateDataResolver", () => {
   it("should be able to update user data", async context => {
@@ -8,9 +7,8 @@ describe("E2E: UserUpdateDataResolver", () => {
       language: "pt-BR",
     };
 
-    const response = await request(context.app.httpServer)
-      .post("/graphql")
-      .set("Authorization", `Bearer ${context.session.idToken}`)
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
       .send({
         query: `mutation UserUpdateData($data: UserUpdateDataSchema!) {
           userUpdateData(data: $data) {
@@ -27,8 +25,8 @@ describe("E2E: UserUpdateDataResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.userUpdateData).toMatchObject({
-      name: context.session.displayName,
-      email: context.session.email,
+      name: context.userSession.displayName,
+      email: context.userSession.email,
     });
   });
 
@@ -38,9 +36,8 @@ describe("E2E: UserUpdateDataResolver", () => {
       language: "wrong",
     };
 
-    const response = await request(context.app.httpServer)
-      .post("/graphql")
-      .set("Authorization", `Bearer ${context.session.idToken}`)
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
       .send({
         query: `mutation UserUpdateData($data: UserUpdateDataSchema!) {
         userUpdateData(data: $data) {

@@ -66,7 +66,7 @@ const fileFactory = FileFactory.define(
       return FileFactory.repository.createOne(
         getBaseFactoryEntityData({
           base,
-          item: await loadEntityRelations(item, []),
+          item: await loadEntityRelations(item, {}),
         }),
       );
     });

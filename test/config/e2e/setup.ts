@@ -1,8 +1,8 @@
-import { afterEach, beforeEach } from "vitest";
+import { afterEach, beforeEach, inject } from "vitest";
+import request from "supertest";
 
 // Util import
 import { disposeServer, getServer } from "@/test/utils/getServer.util";
-import { startAndGetSessionToken } from "@/test/utils/startAndGetSessionToken.util";
 import {
   initSecondaryProviders,
   initAndWaitPreRequisites,
@@ -12,7 +12,19 @@ beforeEach(async context => {
   initSecondaryProviders(context.container);
   initAndWaitPreRequisites(context.container);
   context.app = await getServer();
-  context.session = await startAndGetSessionToken();
+
+  context.request = request(context.app.express);
+  context.gql = request(context.app.express).post("/graphql");
+
+  const adminSession = inject("adminSession");
+  const userSession = inject("userSession");
+  context.adminSession = adminSession;
+  context.userSession = userSession;
+
+  context.userAuthorized = arg =>
+    arg.set("authorization", `Bearer ${userSession.idToken}`);
+  context.adminAuthorized = arg =>
+    arg.set("authorization", `Bearer ${adminSession.idToken}`);
 }, 60000);
 
 afterEach(async context => {

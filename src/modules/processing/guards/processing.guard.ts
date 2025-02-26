@@ -99,7 +99,7 @@ class ProcessingGuard {
             key: "@processing_guard/PROCESSOR_NOT_PUBLIC",
             message: t(
               "@processing_guard/PROCESSOR_NOT_PUBLIC",
-              "Processor not public.",
+              "Processing not public.",
             ),
           });
       }

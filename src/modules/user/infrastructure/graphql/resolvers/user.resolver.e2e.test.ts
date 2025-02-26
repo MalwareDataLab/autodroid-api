@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
-import request from "supertest";
 
 describe("E2E: UserResolver", () => {
   it("should return user data", async context => {
-    const response = await request(context.app.httpServer)
-      .post("/graphql")
-      .set("Authorization", `Bearer ${context.session.idToken}`)
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .set("Authorization", `Bearer ${context.userSession.idToken}`)
       .send({
         query: `query User {
           user {
@@ -18,15 +17,14 @@ describe("E2E: UserResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.user).toMatchObject({
-      name: context.session.displayName,
-      email: context.session.email,
+      name: context.userSession.displayName,
+      email: context.userSession.email,
     });
   });
 
   it("should return session data", async context => {
-    const response = await request(context.app.httpServer)
-      .post("/graphql")
-      .set("Authorization", `Bearer ${context.session.idToken}`)
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
       .send({
         query: `query Session {
           session {
@@ -41,14 +39,14 @@ describe("E2E: UserResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.session.user).toMatchObject({
-      name: context.session.displayName || null,
-      email: context.session.email,
+      name: context.userSession.displayName || null,
+      email: context.userSession.email,
     });
   });
 
   it("should return an error if unauthorized", async context => {
-    const response = await request(context.app.httpServer)
-      .post("/graphql")
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
       .set("Authorization", `Bearer someToken`)
       .send({
         query: `query User {

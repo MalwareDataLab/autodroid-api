@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import type { TestProject } from "vitest/node";
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
@@ -8,6 +9,7 @@ import {
   StartedMongoDBContainer,
 } from "@testcontainers/mongodb";
 import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
+import { startAndGetSessionToken } from "@/test/utils/startAndGetSessionToken.util";
 
 let teardownStarted = false;
 
@@ -43,10 +45,18 @@ const startRedis = async () => {
 };
 
 // eslint-disable-next-line import/no-default-export
-export default async function setup() {
+export default async function setup(project: TestProject) {
   dotenv.config({
     path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
   });
+
+  const [adminSession, userSession] = await Promise.all([
+    startAndGetSessionToken("ADMIN"),
+    startAndGetSessionToken("USER"),
+  ]);
+
+  project.provide("adminSession", adminSession);
+  project.provide("userSession", userSession);
 
   await Promise.all([startPostgreSql(), startMongoDb(), startRedis()]);
 

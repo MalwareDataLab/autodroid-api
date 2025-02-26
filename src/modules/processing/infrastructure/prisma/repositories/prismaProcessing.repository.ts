@@ -28,11 +28,15 @@ import {
   ICreateProcessingDTO,
   IFindProcessingDTO,
   IFindProcessingPublicOrUserPrivateDTO,
+  IProcessingEstimatedDatasetProcessingTimeDTO,
+  IProcessingEstimatedDatasetProcessingTimeFilterDTO,
   IUpdateProcessingDTO,
 } from "@modules/processing/types/IProcessing.dto";
 
 // Enum import
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
+import { isUUID } from "validator";
+import { Prisma } from "@prisma/client";
 
 @injectable()
 class PrismaProcessingRepository implements IProcessingRepository {
@@ -80,7 +84,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
       include_archived,
     }: IFindProcessingDTO,
     relations_enabled = true,
-  ): DatabaseHelperTypes.ProcessingWhereInput {
+  ) {
     const conditions: DatabaseHelperTypes.ProcessingWhereInput[] = [];
 
     if (include_archived !== true)
@@ -141,24 +145,28 @@ class PrismaProcessingRepository implements IProcessingRepository {
       metrics_file_id,
 
       AND: conditions,
-    };
+    } satisfies DatabaseHelperTypes.ProcessingWhereInput;
   }
 
   private getWhereClausePublicOrUserPrivate({
     user_id,
     ...filter
   }: IFindProcessingPublicOrUserPrivateDTO): DatabaseHelperTypes.ProcessingWhereInput {
+    const whereClause = this.getWhereClause(filter);
     return {
-      ...this.getWhereClause(filter),
-      AND: {
-        OR: [
-          { visibility: PROCESSING_VISIBILITY.PUBLIC },
-          {
-            visibility: PROCESSING_VISIBILITY.PRIVATE,
-            user_id,
-          },
-        ],
-      },
+      ...whereClause,
+      AND: [
+        ...(whereClause.AND || []),
+        {
+          OR: [
+            { visibility: PROCESSING_VISIBILITY.PUBLIC },
+            {
+              visibility: PROCESSING_VISIBILITY.PRIVATE,
+              user_id,
+            },
+          ],
+        },
+      ],
     };
   }
 
@@ -268,6 +276,57 @@ class PrismaProcessingRepository implements IProcessingRepository {
     });
 
     return parse(Processing, processing);
+  }
+
+  public async getOneEstimatedExecutionTime({
+    processor_id,
+    dataset_id,
+  }: IProcessingEstimatedDatasetProcessingTimeFilterDTO): Promise<IProcessingEstimatedDatasetProcessingTimeDTO | null> {
+    if (!isUUID(processor_id) || !isUUID(dataset_id)) return null;
+
+    const result = await this.databaseProvider.client.$queryRaw<
+      IProcessingEstimatedDatasetProcessingTimeDTO[]
+    >`
+      SELECT
+        processor_id,
+        dataset_id,
+        AVG(
+          EXTRACT(EPOCH FROM (finished_at - started_at))
+        ) AS average_execution_time_seconds
+      FROM processes
+      WHERE
+        status = 'SUCCEEDED'
+        AND started_at IS NOT NULL
+        AND finished_at IS NOT NULL
+        ${dataset_id ? `AND dataset_id = ${dataset_id}` : Prisma.empty}
+        ${processor_id ? `AND processor_id = ${processor_id}` : Prisma.empty}
+      GROUP BY processor_id, dataset_id;
+    `;
+
+    return result[0] || null;
+  }
+
+  public async getManyEstimatedExecutionTimes(): Promise<
+    IProcessingEstimatedDatasetProcessingTimeDTO[]
+  > {
+    const result = await this.databaseProvider.client.$queryRaw<
+      IProcessingEstimatedDatasetProcessingTimeDTO[]
+    >`
+      SELECT
+        processor_id,
+        dataset_id,
+        AVG(
+          EXTRACT(EPOCH FROM (finished_at - started_at))
+        ) AS average_execution_time_seconds
+      FROM processes
+      WHERE
+        status = 'SUCCEEDED'
+        AND started_at IS NOT NULL
+        AND finished_at IS NOT NULL
+      GROUP BY processor_id, dataset_id;
+    `;
+
+    return result;
   }
 }
 

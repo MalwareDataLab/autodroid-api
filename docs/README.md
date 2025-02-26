@@ -31,7 +31,7 @@
 - [🔃 Atualizando](#updating)
 - [🔧 Solução de Problemas](#troubleshooting)
 - [🤝🏻 Contribuições](./CONTRIBUTING.md)
-- [💾 Changelog](./CHANGELOG.md)
+- [💾 Changelog](../CHANGELOG.md)
 - [📖 Referências](#bibliography)
 
 ## 📖 Sobre <a name = "about"></a>

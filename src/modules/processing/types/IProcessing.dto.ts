@@ -56,3 +56,13 @@ export type IFindProcessingPublicOrUserPrivateDTO = Pick<
   "user_id"
 > &
   IFindProcessingDTO;
+
+export type IProcessingEstimatedDatasetProcessingTimeFilterDTO = {
+  dataset_id: string;
+  processor_id: string;
+};
+
+export type IProcessingEstimatedDatasetProcessingTimeDTO =
+  IProcessingEstimatedDatasetProcessingTimeFilterDTO & {
+    average_execution_time_seconds: number;
+  };

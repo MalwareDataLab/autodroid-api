@@ -68,9 +68,12 @@ const processorFactory = ProcessorFactory.define(
       return ProcessorFactory.repository.createOne(
         getBaseFactoryEntityData({
           base,
-          item: await loadEntityRelations(item, [
-            { relation: "user", factory: userFactory, foreignKey: "user_id" },
-          ]),
+          item: await loadEntityRelations(item, {
+            user: {
+              reference: "user",
+              foreignKey: "user_id",
+            },
+          }),
         }),
       );
     });
