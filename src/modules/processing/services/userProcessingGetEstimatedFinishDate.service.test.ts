@@ -8,6 +8,7 @@ import { DEFAULT_LANGUAGE } from "@shared/i18n";
 import { DateUtils } from "@shared/utils/dateUtils";
 
 // Enum import
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
@@ -45,6 +46,7 @@ describe("Service: UserProcessingGetEstimatedFinishDateService", () => {
         return processingFactory.create(
           {
             ...genDate(),
+            status: PROCESSING_STATUS.SUCCEEDED,
           },
           {
             associations: {

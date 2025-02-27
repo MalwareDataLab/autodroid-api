@@ -22,6 +22,7 @@ import { Worker } from "@modules/worker/entities/worker.entity";
 import { Processor } from "@modules/processor/entities/processor.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { ProcessingParameter } from "./processingParameter.entity";
+import { ProcessingFinishTimeEstimation } from "./processingFinishTimeEstimation.entity";
 
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
@@ -74,6 +75,12 @@ class Processing implements ProcessingEntityType {
 
   @Field()
   updated_at: Date;
+
+  /* Computed fields */
+
+  // See ProcessingFieldResolver
+  @Exclude()
+  estimated_finish: ProcessingFinishTimeEstimation | null;
 
   /* Relations */
 

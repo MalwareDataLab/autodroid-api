@@ -9,17 +9,21 @@ import {
   AdminProcessingUpdateSchema,
   AdminProcessingFailDanglingSchema,
 } from "@modules/adminProcessing/schemas/adminProcessing.schema";
+import { AdminProcessingGetEstimatedExecutionTimeSchema } from "@modules/adminProcessing/schemas/adminProcessingEstimatedExecutionTime.schema";
 
 // Controller import
 import { AdminProcessingController } from "../controllers/adminProcessing.controller";
 import { AdminProcessingCleanExpiredController } from "../controllers/adminProcessingCleanExpired.controller";
 import { AdminProcessingFailDanglingController } from "../controllers/adminProcessingFailDangling.controller";
+import { AdminProcessingTimeEstimationController } from "../controllers/adminProcessingTimeEstimation.controller";
 
 const adminProcessingController = new AdminProcessingController();
 const adminProcessingCleanExpiredController =
   new AdminProcessingCleanExpiredController();
 const adminProcessingFailDanglingController =
   new AdminProcessingFailDanglingController();
+const adminProcessingTimeEstimationController =
+  new AdminProcessingTimeEstimationController();
 
 const adminProcessingRouter = Router();
 
@@ -59,6 +63,15 @@ adminProcessingRouter.patch(
 adminProcessingRouter.delete(
   "/:processing_id",
   adminProcessingController.delete,
+);
+
+adminProcessingRouter.get(
+  "/estimated-execution-time",
+  validateRequest({
+    schema: AdminProcessingGetEstimatedExecutionTimeSchema,
+    segment: "QUERY",
+  }),
+  adminProcessingTimeEstimationController.showEstimatedExecution,
 );
 
 export { adminProcessingRouter };

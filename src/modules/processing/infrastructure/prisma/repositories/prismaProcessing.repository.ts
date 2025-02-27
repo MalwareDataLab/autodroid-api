@@ -298,15 +298,19 @@ class PrismaProcessingRepository implements IProcessingRepository {
         status = 'SUCCEEDED'
         AND started_at IS NOT NULL
         AND finished_at IS NOT NULL
-        ${dataset_id ? `AND dataset_id = ${dataset_id}` : Prisma.empty}
-        ${processor_id ? `AND processor_id = ${processor_id}` : Prisma.empty}
-      GROUP BY processor_id, dataset_id;
+        ${dataset_id ? Prisma.sql`AND dataset_id = ${dataset_id}` : Prisma.empty}
+        ${processor_id ? Prisma.sql`AND processor_id = ${processor_id}` : Prisma.empty}
+      GROUP BY processor_id, dataset_id
+      LIMIT 1;
     `;
 
     return result[0] || null;
   }
 
-  public async getManyEstimatedExecutionTimes(): Promise<
+  public async getManyEstimatedExecutionTimes({
+    dataset_id,
+    processor_id,
+  }: Partial<IProcessingEstimatedDatasetProcessingTimeFilterDTO> = {}): Promise<
     IProcessingEstimatedDatasetProcessingTimeDTO[]
   > {
     const result = await this.databaseProvider.client.$queryRaw<
@@ -323,6 +327,8 @@ class PrismaProcessingRepository implements IProcessingRepository {
         status = 'SUCCEEDED'
         AND started_at IS NOT NULL
         AND finished_at IS NOT NULL
+        ${dataset_id ? Prisma.sql`AND dataset_id = ${dataset_id}` : Prisma.empty}
+        ${processor_id ? Prisma.sql`AND processor_id = ${processor_id}` : Prisma.empty}
       GROUP BY processor_id, dataset_id;
     `;
 

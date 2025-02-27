@@ -10,6 +10,11 @@ const relationMap = {
   user: "UserRepository",
   dataset: "DatasetRepository",
   file: "FileRepository",
+  processor: "ProcessorRepository",
+  processing: "ProcessingRepository",
+
+  worker: "WorkerRepository",
+  workerRegistrationToken: "WorkerRegistrationTokenRepository",
 } as const satisfies Record<string, RepositoryToken>;
 
 type RelationMap = typeof relationMap;

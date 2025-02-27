@@ -47,7 +47,7 @@ export interface IProcessingRepository {
     filter: IProcessingEstimatedDatasetProcessingTimeFilterDTO,
   ): Promise<IProcessingEstimatedDatasetProcessingTimeDTO | null>;
 
-  getManyEstimatedExecutionTimes(): Promise<
-    IProcessingEstimatedDatasetProcessingTimeDTO[]
-  >;
+  getManyEstimatedExecutionTimes(
+    filter?: Partial<IProcessingEstimatedDatasetProcessingTimeFilterDTO>,
+  ): Promise<IProcessingEstimatedDatasetProcessingTimeDTO[]>;
 }

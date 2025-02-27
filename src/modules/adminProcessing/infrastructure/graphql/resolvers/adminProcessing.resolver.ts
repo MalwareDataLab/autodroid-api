@@ -18,6 +18,7 @@ import {
   Processing,
   PaginatedProcessing,
 } from "@modules/processing/entities/processing.entity";
+import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
@@ -33,6 +34,7 @@ import {
   AdminProcessingUpdateSchema,
   AdminProcessingFailDanglingSchema,
 } from "@modules/adminProcessing/schemas/adminProcessing.schema";
+import { AdminProcessingGetEstimatedExecutionTimeSchema } from "@modules/adminProcessing/schemas/adminProcessingEstimatedExecutionTime.schema";
 
 // Service import
 import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/adminProcessingDelete.service";
@@ -41,6 +43,7 @@ import { AdminProcessingShowService } from "@modules/adminProcessing/services/ad
 import { AdminProcessingUpdateService } from "@modules/adminProcessing/services/adminProcessingUpdate.service";
 import { AdminProcessingCleanExpiredService } from "@modules/adminProcessing/services/adminProcessingCleanExpired.service";
 import { AdminProcessingFailDanglingService } from "@modules/adminProcessing/services/adminProcessingFailDangling.service";
+import { AdminProcessingEstimatedExecutionTimeIndexService } from "@modules/adminProcessing/services/adminProcessingEstimatedExecutionTimeIndex.service";
 
 class AdminProcessingResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -175,6 +178,31 @@ class AdminProcessingResolver {
     });
 
     return count;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Query(() => [ProcessingTimeEstimation])
+  async adminProcessingTimeEstimation(
+    @Args()
+    filter: AdminProcessingGetEstimatedExecutionTimeSchema,
+
+    @Ctx() { language, session }: GraphQLContext,
+  ) {
+    const adminProcessingEstimatedExecutionTimeIndexService = container.resolve(
+      AdminProcessingEstimatedExecutionTimeIndexService,
+    );
+
+    const processingTimeEstimation =
+      await adminProcessingEstimatedExecutionTimeIndexService.execute({
+        user: session.user,
+
+        filter,
+
+        language,
+      });
+
+    return processingTimeEstimation;
   }
 }
 

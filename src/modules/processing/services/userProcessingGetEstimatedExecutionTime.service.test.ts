@@ -1,4 +1,4 @@
-import { beforeEach, describe, it, expect } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { faker } from "@faker-js/faker";
 
 // i18n import
@@ -10,6 +10,7 @@ import { DateUtils } from "@shared/utils/dateUtils";
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
@@ -31,7 +32,15 @@ const genDate = () => {
 describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
   let userProcessingGetEstimatedExecutionTimeService: UserProcessingGetEstimatedExecutionTimeService;
 
-  const seed = async () => {
+  const seed = async (
+    {
+      withProcesses,
+    }: {
+      withProcesses: boolean;
+    } = {
+      withProcesses: true,
+    },
+  ) => {
     const user = await userFactory.create();
     const dataset = await datasetFactory.create({
       visibility: DATASET_VISIBILITY.PUBLIC,
@@ -40,21 +49,23 @@ describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
       visibility: PROCESSOR_VISIBILITY.PUBLIC,
     });
 
-    await Promise.all(
-      Array.from({ length: 10 }).map(() => {
-        return processingFactory.create(
-          {
-            ...genDate(),
-          },
-          {
-            associations: {
-              dataset,
-              processor,
+    if (withProcesses)
+      await Promise.all(
+        Array.from({ length: 10 }).map(() => {
+          return processingFactory.create(
+            {
+              ...genDate(),
+              status: PROCESSING_STATUS.SUCCEEDED,
             },
-          },
-        );
-      }),
-    );
+            {
+              associations: {
+                dataset,
+                processor,
+              },
+            },
+          );
+        }),
+      );
 
     return {
       user,
@@ -93,6 +104,188 @@ describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
     );
   });
 
+  it("should be able to get the estimated dataset execution time without processes", async () => {
+    const { user, dataset, processor } = await seed({ withProcesses: false });
+
+    const result = await userProcessingGetEstimatedExecutionTimeService.execute(
+      {
+        user,
+
+        dataset_id: dataset.id,
+        processor_id: processor.id,
+
+        language: DEFAULT_LANGUAGE,
+      },
+    );
+
+    expect(result).toBeDefined();
+    expect(result.dataset_id).toBe(dataset.id);
+    expect(result.processor_id).toBe(processor.id);
+    expect(result.estimated_execution_time).toBe(null);
+    expect(result.estimated_waiting_time).toBe(null);
+    expect(result.estimated_total_time).toBe(null);
+  });
+
+  it("should be able to get the estimated dataset execution time with predefined processes", async () => {
+    const { user, dataset, processor } = await seed({ withProcesses: false });
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:00.000Z"),
+        finished_at: new Date("2023-01-01T00:00:10.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:00.000Z"),
+        finished_at: new Date("2023-01-01T00:00:15.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:10.000Z"),
+        finished_at: new Date("2023-01-01T00:00:20.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:15.000Z"),
+        finished_at: new Date("2023-01-01T00:00:30.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    const result = await userProcessingGetEstimatedExecutionTimeService.execute(
+      {
+        user,
+
+        dataset_id: dataset.id,
+        processor_id: processor.id,
+
+        language: DEFAULT_LANGUAGE,
+      },
+    );
+
+    expect(result).toBeDefined();
+    expect(result.dataset_id).toBe(dataset.id);
+    expect(result.processor_id).toBe(processor.id);
+    expect(result.estimated_execution_time).toBe(13);
+    expect(result.estimated_waiting_time).toBe(0);
+    expect(result.estimated_total_time).toBe(13);
+  });
+
+  it("should be able to get the estimated dataset execution time with predefined processes with one running", async () => {
+    const { user, dataset, processor } = await seed({ withProcesses: false });
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:00.000Z"),
+        finished_at: new Date("2023-01-01T00:00:10.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:10.000Z"),
+        finished_at: new Date("2023-01-01T00:00:20.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:20.000Z"),
+        finished_at: new Date("2023-01-01T00:00:30.000Z"),
+        status: PROCESSING_STATUS.SUCCEEDED,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    await processingFactory.create(
+      {
+        started_at: new Date("2023-01-01T00:00:30.000Z"),
+        finished_at: null,
+        status: PROCESSING_STATUS.RUNNING,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    vi.useFakeTimers({ now: new Date("2023-01-01T00:00:30.000Z") });
+
+    const result = await userProcessingGetEstimatedExecutionTimeService.execute(
+      {
+        user,
+
+        dataset_id: dataset.id,
+        processor_id: processor.id,
+
+        language: DEFAULT_LANGUAGE,
+      },
+    );
+
+    vi.useRealTimers();
+
+    expect(result).toBeDefined();
+    expect(result.dataset_id).toBe(dataset.id);
+    expect(result.processor_id).toBe(processor.id);
+    expect(result.estimated_execution_time).toBe(10);
+    expect(result.estimated_waiting_time).toBe(10);
+    expect(result.estimated_total_time).toBe(20);
+  });
+
   it("should be able to get the estimated dataset execution time when some processes are running", async () => {
     const { user, dataset, processor } = await seed();
 
@@ -100,6 +293,7 @@ describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
       {
         started_at: DateUtils.now().subtract(1, "minute").toDate(),
         finished_at: null,
+        status: PROCESSING_STATUS.RUNNING,
       },
       {
         associations: {
