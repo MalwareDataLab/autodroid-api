@@ -137,6 +137,7 @@
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-unicorn": "^56.0.1",
     "fishery": "^2.2.3",
+    "graphql-tag": "^2.12.6",
     "husky": "^9.1.7",
     "i18next-scanner": "^4.6.0",
     "lint-staged": "^15.4.3",

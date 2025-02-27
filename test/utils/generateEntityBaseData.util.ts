@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { faker } from "@faker-js/faker";
 
 const generateEntityBaseData = () => {

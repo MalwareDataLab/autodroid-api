@@ -22,7 +22,10 @@ import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisib
 
 // Type import
 import { FactoryParams } from "@/test/types/factoryParams.type";
-import { IProcessingBase } from "@modules/processing/types/IProcessing.dto";
+import {
+  IProcessingBase,
+  ProcessingRelationFields,
+} from "@modules/processing/types/IProcessing.dto";
 
 class ProcessingFactory extends Factory<Processing, FactoryParams> {
   static get repository() {
@@ -68,7 +71,10 @@ const processingFactory = ProcessingFactory.define(
       return ProcessingFactory.repository.createOne(
         getBaseFactoryEntityData({
           base,
-          item: await loadEntityRelations(item, {
+          item: await loadEntityRelations<
+            ProcessingRelationFields,
+            typeof item
+          >(item, {
             user: {
               reference: "user",
               foreignKey: "user_id",
@@ -76,6 +82,22 @@ const processingFactory = ProcessingFactory.define(
             dataset: {
               reference: "dataset",
               foreignKey: "dataset_id",
+            },
+            processor: {
+              reference: "processor",
+              foreignKey: "processor_id",
+            },
+            metrics_file: {
+              reference: "file",
+              foreignKey: "metrics_file_id",
+            },
+            result_file: {
+              reference: "file",
+              foreignKey: "result_file_id",
+            },
+            worker: {
+              reference: "worker",
+              foreignKey: "worker_id",
             },
           }),
         }),

@@ -5,6 +5,8 @@ import { BuildSchemaOptions } from "type-graphql";
  */
 import { HealthCheckResolver } from "@modules/healthCheck/infrastructure/graphql/resolvers/healthCheck.resolver";
 import { FileFieldResolver } from "@modules/file/infrastructure/graphql/resolvers/fileField.resolver";
+import { ProcessingFieldResolver } from "@modules/processing/infrastructure/graphql/resolvers/processingField.resolver";
+
 /**
  * Admin
  */
@@ -42,6 +44,7 @@ const { resolvers }: Pick<BuildSchemaOptions, "resolvers"> = {
      */
     HealthCheckResolver,
     FileFieldResolver,
+    ProcessingFieldResolver,
 
     /**
      * Admin

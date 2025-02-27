@@ -36,7 +36,7 @@ class UserProcessingTimeEstimationController {
       await userProcessingGetEstimatedFinishDateService.execute({
         user: req.session.user,
 
-        processing_id: String(req.query.processing_id),
+        processing_id: String(req.params.processing_id),
 
         language: req.language,
       });

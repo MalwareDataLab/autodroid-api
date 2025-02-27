@@ -4,6 +4,11 @@ import { BaseEntityFields } from "@shared/types/baseEntityFields.type";
 // Entity import
 import { Processing } from "../entities/processing.entity";
 
+export type ProcessingComputedFields = keyof Pick<
+  Processing,
+  "estimated_finish"
+>;
+
 export type ProcessingRelationFields = keyof Pick<
   Processing,
   "user" | "processor" | "dataset" | "worker" | "result_file" | "metrics_file"
@@ -19,12 +24,17 @@ export type ProcessingForeignKeys = keyof Pick<
   | "metrics_file_id"
 >;
 
-export type IProcessingBase = Omit<Processing, ProcessingRelationFields>;
+export type IProcessingBase = Omit<
+  Processing,
+  ProcessingComputedFields | ProcessingRelationFields
+>;
 
 export type ICreateProcessingDTO = Omit<
   Processing,
   // Base
   | BaseEntityFields
+  // Computed fields (calculated at entity level)
+  | ProcessingComputedFields
   // Relations
   | ProcessingRelationFields
 >;
