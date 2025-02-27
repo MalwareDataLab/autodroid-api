@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.1.0...v0.2.0) (2025-02-27)
+
+
+### Features
+
+* add processing estimated field resolver ([c986f79](https://github.com/MalwareDataLab/autodroid-api/commit/c986f79bda7d480c9f9e01a2bc9de58481ef6805))
+
 ## [0.1.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.0.1...v0.1.0) (2025-02-26)
 
 
