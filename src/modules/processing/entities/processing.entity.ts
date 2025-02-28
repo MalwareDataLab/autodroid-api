@@ -10,6 +10,7 @@ import { Exclude, Type } from "class-transformer";
 
 // Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Type import
 import { ProcessingEntityType } from "@shared/types/models";
@@ -32,6 +33,9 @@ import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 class Processing implements ProcessingEntityType {
   @Field(() => ID)
   id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
 
   @Field(() => PROCESSING_STATUS)
   status: PROCESSING_STATUS;

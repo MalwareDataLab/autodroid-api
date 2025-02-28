@@ -99,6 +99,7 @@ class HandleUserSessionService {
                 phone_number: userData.phone_number || null,
                 learning_data: {},
                 language,
+                notifications_enabled: true,
               },
               language,
             });

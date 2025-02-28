@@ -14,6 +14,7 @@ import { FileEntityType } from "@shared/types/models";
 
 // Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Util import
 import { ClassConstructor } from "@shared/utils/instanceParser";
@@ -36,6 +37,9 @@ import { ProcessFilePublicAccessService } from "../services/processFilePublicAcc
 class File implements FileEntityType {
   @Field(() => ID)
   id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
 
   @Field(() => STORAGE_PROVIDER)
   storage_provider: STORAGE_PROVIDER;

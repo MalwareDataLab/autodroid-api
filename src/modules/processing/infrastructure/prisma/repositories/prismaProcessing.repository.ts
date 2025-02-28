@@ -1,4 +1,6 @@
 import { inject, injectable } from "tsyringe";
+import { isUUID } from "validator";
+import { Prisma } from "@prisma/client";
 
 // Constant import
 import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
@@ -35,8 +37,6 @@ import {
 
 // Enum import
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-import { isUUID } from "validator";
-import { Prisma } from "@prisma/client";
 
 @injectable()
 class PrismaProcessingRepository implements IProcessingRepository {

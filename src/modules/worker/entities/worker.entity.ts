@@ -1,6 +1,9 @@
 import { Exclude, Type } from "class-transformer";
 import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
+
+// Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Type import
 import { WorkerEntityType } from "@shared/types/models";
@@ -15,6 +18,9 @@ import { WorkerRegistrationToken } from "./workerRegistrationToken.entity";
 class Worker implements WorkerEntityType {
   @Field(() => ID)
   id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
 
   @Field()
   refresh_token: string;

@@ -41,6 +41,7 @@ describe("Service: UserDatasetRequestPublicationService", () => {
       language: "en",
       phone_number: null,
       learning_data: {},
+      notifications_enabled: true,
     });
 
     userDatasetRequestPublicationService =

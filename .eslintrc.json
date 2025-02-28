@@ -76,14 +76,14 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "**/*.spec.ts",
-          "**/*.test.ts",
-          "**/mocks/*.ts",
-          "**/factories/*.ts",
-          "**/inMemory/*.ts",
-          "test/**"
-        ]
+      "devDependencies": [
+        "**/*.spec.ts",
+        "**/*.test.ts",
+        "**/mocks/*.ts",
+        "**/factories/*.ts",
+        "**/inMemory/*.ts",
+        "test/**"
+      ]
       }
     ]
   },

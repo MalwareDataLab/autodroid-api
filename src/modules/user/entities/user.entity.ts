@@ -6,6 +6,7 @@ import { getAdminConfig } from "@config/admin";
 
 // Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Type import
 import { UserEntityType } from "@shared/types/models";
@@ -24,6 +25,9 @@ class User implements UserEntityType {
   @Field(() => ID)
   id: string;
 
+  @Field(() => BigIntScalar)
+  seq: bigint;
+
   @Field()
   email: string;
 
@@ -38,6 +42,9 @@ class User implements UserEntityType {
 
   @Field(() => String, { nullable: true })
   language: string | null;
+
+  @Field(() => Boolean, { nullable: true })
+  notifications_enabled: boolean | null;
 
   @Field()
   created_at: Date;

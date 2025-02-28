@@ -24,6 +24,9 @@ import { AuthenticationProvider } from "./providers/AuthenticationProvider";
 import { IWebsocketProvider } from "./providers/WebsocketProvider/models/IWebsocket.provider";
 import { WebsocketProvider } from "./providers/WebsocketProvider";
 
+import { IEmailNotificationProvider } from "./providers/EmailNotificationProvider/models/IEmailNotification.provider";
+import { EmailNotificationProvider } from "./providers/EmailNotificationProvider";
+
 import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 import { DatasetProcessorProvider } from "./providers/DatasetProcessorProvider";
 
@@ -46,6 +49,7 @@ const secondaryProviders = {
   AuthenticationProvider: AuthenticationProvider as ClassType<IAuthenticationProvider>,
   WebsocketProvider: WebsocketProvider as ClassType<IWebsocketProvider>,
 
+  EmailNotificationProvider: EmailNotificationProvider as ClassType<IEmailNotificationProvider>,
   DatasetProcessorProvider: DatasetProcessorProvider as ClassType<IDatasetProcessorProvider>,
 
   JobProvider: JobProvider as ClassType<IJobProvider>,
@@ -94,6 +98,7 @@ const standardPreRequisites = [
   "AuthenticationProvider",
 
   // Tertiary
+  "EmailNotificationProvider",
 
   // Quaternary
   "JobProvider",

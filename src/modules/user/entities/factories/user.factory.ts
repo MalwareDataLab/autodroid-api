@@ -31,6 +31,7 @@ const userFactory = UserFactory.define(({ onCreate, associations }) => {
     phone_number: faker.phone.number(),
     learning_data: {},
     language: "en",
+    notifications_enabled: true,
 
     /** Simulated */
 

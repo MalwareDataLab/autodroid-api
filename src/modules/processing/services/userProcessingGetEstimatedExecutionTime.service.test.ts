@@ -6,6 +6,7 @@ import { DEFAULT_LANGUAGE } from "@shared/i18n";
 
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
+import { getProcessingConfig } from "@config/processing";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
@@ -200,8 +201,14 @@ describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
     expect(result.dataset_id).toBe(dataset.id);
     expect(result.processor_id).toBe(processor.id);
     expect(result.estimated_execution_time).toBe(13);
-    expect(result.estimated_waiting_time).toBe(0);
-    expect(result.estimated_total_time).toBe(13);
+    expect(result.estimated_waiting_time).toBe(
+      0 +
+        getProcessingConfig().ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS,
+    );
+    expect(result.estimated_total_time).toBe(
+      13 +
+        getProcessingConfig().ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS,
+    );
   });
 
   it("should be able to get the estimated dataset execution time with predefined processes with one running", async () => {
@@ -282,8 +289,14 @@ describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
     expect(result.dataset_id).toBe(dataset.id);
     expect(result.processor_id).toBe(processor.id);
     expect(result.estimated_execution_time).toBe(10);
-    expect(result.estimated_waiting_time).toBe(10);
-    expect(result.estimated_total_time).toBe(20);
+    expect(result.estimated_waiting_time).toBe(
+      10 +
+        getProcessingConfig().ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS,
+    );
+    expect(result.estimated_total_time).toBe(
+      20 +
+        getProcessingConfig().ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS,
+    );
   });
 
   it("should be able to get the estimated dataset execution time when some processes are running", async () => {

@@ -1,6 +1,9 @@
 import { Exclude, Type } from "class-transformer";
 import { Field, ID, ObjectType } from "type-graphql";
 
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+
 // Type import
 import { DatasetEntityType } from "@shared/types/models";
 
@@ -17,6 +20,9 @@ import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 class Dataset implements DatasetEntityType {
   @Field(() => ID)
   id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
 
   @Field(() => String, { nullable: true })
   description: string | null;

@@ -6,6 +6,7 @@ import { UserAuthProviderConnEntityType } from "@shared/types/models";
 
 // Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
@@ -18,6 +19,9 @@ import { User } from "./user.entity";
 class UserAuthProviderConn implements UserAuthProviderConnEntityType {
   @Field(() => ID)
   id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
 
   @Field(() => AUTH_PROVIDER)
   auth_provider: AUTH_PROVIDER;

@@ -6,6 +6,7 @@ import { ProcessorEntityType } from "@shared/types/models";
 
 // Scalar import
 import { JSONScalar } from "@shared/types/json.scalar";
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
@@ -20,6 +21,9 @@ import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
 class Processor implements ProcessorEntityType {
   @Field(() => ID)
   id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
 
   @Field()
   name: string;

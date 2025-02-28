@@ -41,6 +41,7 @@ describe("Service: UserDatasetShowService", () => {
       language: "en",
       phone_number: null,
       learning_data: {},
+      notifications_enabled: true,
     });
 
     userDatasetShowService = new UserDatasetShowService(datasetRepository);
