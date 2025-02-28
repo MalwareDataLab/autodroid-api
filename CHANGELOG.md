@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.1...v0.3.2) (2025-02-28)
+
+
+### Bug Fixes
+
+* avoid report loop ([1d5e60d](https://github.com/MalwareDataLab/autodroid-api/commit/1d5e60d4d433064224027b64aad2bcb42943f958))
+
 ## [0.3.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.0...v0.3.1) (2025-02-28)
 
 
