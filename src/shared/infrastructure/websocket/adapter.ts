@@ -19,6 +19,13 @@ class WebsocketAdapterClass {
 
   private websocketServer: WebsocketServer;
 
+  constructor() {
+    this.bus = new EventEmitter();
+    this.initialization = new Promise(resolve => {
+      this.bus.on("initialized", resolve);
+    });
+  }
+
   public async getServer(): Promise<WebsocketServer> {
     await this.initialization;
     return this.websocketServer;
@@ -27,13 +34,6 @@ class WebsocketAdapterClass {
   public async getBus(): Promise<WebsocketAdapterBus> {
     await this.initialization;
     return this.bus;
-  }
-
-  constructor() {
-    this.bus = new EventEmitter();
-    this.initialization = new Promise(resolve => {
-      this.bus.on("initialized", resolve);
-    });
   }
 
   public initialize(server: WebsocketServer): WebsocketAdapterBus {

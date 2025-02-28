@@ -47,6 +47,7 @@ class WorkerRegisterService {
     const registrationToken =
       await this.workerRegistrationTokenRepository.findOne({
         token: registration_token,
+        archived: false,
       });
 
     if (!registrationToken)
@@ -60,6 +61,7 @@ class WorkerRegisterService {
 
     const existingSignature = await this.workerRepository.findOne({
       signature,
+      archived: false,
     });
 
     if (existingSignature)

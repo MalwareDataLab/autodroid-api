@@ -1,8 +1,5 @@
 // Container import
-import {
-  initContainer,
-  initAndWaitPreRequisites,
-} from "@shared/container/index";
+import { initContainer, initAndWaitRequisites } from "@shared/container/index";
 
 // Util import
 import { logger } from "@shared/utils/logger";
@@ -13,7 +10,7 @@ const Bootstrap = (async () => {
 
     initContainer();
 
-    await initAndWaitPreRequisites();
+    await initAndWaitRequisites();
 
     // Sequence of bootstrapping
     // await condition;

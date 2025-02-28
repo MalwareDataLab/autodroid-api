@@ -13,6 +13,12 @@ import { IAuthenticationProvider } from "@shared/container/providers/Authenticat
 // Util import
 import { logger } from "@shared/utils/logger";
 
+// Container import
+import {
+  afterInitBootstrapList,
+  initAndWaitRequisites,
+} from "@shared/container";
+
 // Server import
 import { app } from "./app";
 
@@ -21,6 +27,10 @@ const { httpServer: server } = app;
 const init = async () => {
   await app.graphqlServer.initialization;
   await app.websocketServer.initialization;
+
+  await initAndWaitRequisites({
+    requisites: afterInitBootstrapList,
+  });
 
   app.httpServer.listen(getEnvConfig().APP_PORT, () => {
     logger.info(

@@ -58,12 +58,38 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
     await this.websocketProvider.initialization;
     await this.inMemoryDatabaseProvider.initialization;
 
-    this.websocketProvider.on("worker:status", ({ worker_id, ...data }) =>
+    this.websocketProvider.on("worker:status", ({ worker_id, ...data }) => {
       this.handleWorkerStatus({
         worker_id,
         data,
-      }),
-    );
+      });
+
+      /*
+      TODO: Store telemetry
+
+      const selectedData = {
+        time: data.telemetry.time,
+        cpuCurrentSpeed: data.telemetry.cpuCurrentSpeed,
+        currentLoad: data.telemetry.currentLoad,
+        mem: data.telemetry.mem,
+
+        ...(data.processing_ids.length && {
+          disksIO: data.telemetry.disksIO,
+          fsSize: data.telemetry.fsSize,
+          fsStats: data.telemetry.fsStats,
+          networkStats: data.telemetry.networkStats,
+          temp: (data.telemetry as any).temp!,
+          inetLatency: data.telemetry.inetLatency,
+        }),
+      };
+
+      // Calculate the size of the telemetry data in KB
+      const jsonString = JSON.stringify(selectedData);
+      const sizeInBytes = Buffer.byteLength(jsonString, "utf8");
+      const sizeInKB = sizeInBytes / 1024;
+      console.log(`Telemetry data size: ${sizeInKB.toFixed(2)}KB`);
+      */
+    });
   }
 
   private async handleWorkerStatus({

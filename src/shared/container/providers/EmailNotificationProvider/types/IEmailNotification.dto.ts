@@ -21,6 +21,7 @@ type IEmailNotificationTemplateDTO = {
     processing_id: string;
     processing_seq: bigint;
     button_url: string;
+    result: string;
   };
 };
 
