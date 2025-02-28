@@ -42,6 +42,7 @@ class ProcessingReportStatusService {
         debug: { processing_id },
       });
 
+    if (processing.reported_at) return;
     if (!processing.user.notifications_enabled) return;
 
     const t = await i18n(processing.user.language || "pt-BR");

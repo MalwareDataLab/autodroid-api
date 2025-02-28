@@ -249,6 +249,8 @@ model Processing {
   attempts    Int?
   message     String?
 
+  reported_at DateTime?
+
   keep_until  DateTime?
   archived_at DateTime?
 

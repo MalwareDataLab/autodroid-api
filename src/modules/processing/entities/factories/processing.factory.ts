@@ -55,6 +55,7 @@ const processingFactory = ProcessingFactory.define(
       verified_at: null,
       attempts: 0,
       message: null,
+      reported_at: null,
       configuration: {},
       payload: {},
 
