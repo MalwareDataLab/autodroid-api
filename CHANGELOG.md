@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.3.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.1...v0.3.2) (2025-02-28)
+
+
+### Bug Fixes
+
+* avoid report loop ([1d5e60d](https://github.com/MalwareDataLab/autodroid-api/commit/1d5e60d4d433064224027b64aad2bcb42943f958))
+
+## [0.3.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.0...v0.3.1) (2025-02-28)
+
+
+### Bug Fixes
+
+* worker workflow ([dd503b5](https://github.com/MalwareDataLab/autodroid-api/commit/dd503b565ea9abc9bdf52c13d7d1b741c8c55d91))
+
+## [0.3.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.2.0...v0.3.0) (2025-02-28)
+
+
+### Features
+
+* add seq and user notifications enabled flag ([c5bbb65](https://github.com/MalwareDataLab/autodroid-api/commit/c5bbb654d3df2026b595b7f83f7277f3cad3e1b8))
+
+## [0.2.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.1.0...v0.2.0) (2025-02-27)
+
+
+### Features
+
+* add processing estimated field resolver ([c986f79](https://github.com/MalwareDataLab/autodroid-api/commit/c986f79bda7d480c9f9e01a2bc9de58481ef6805))
+
+## [0.1.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.0.1...v0.1.0) (2025-02-26)
+
+
+### Features
+
+* add processing estimated time calculation ([8eb3bf6](https://github.com/MalwareDataLab/autodroid-api/commit/8eb3bf6a1e2740360a04c53354e6acba1c3cda95))
+
 ## 0.0.1 (2025-02-21)
 
 
