@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.2.0...v0.3.0) (2025-02-28)
+
+
+### Features
+
+* add seq and user notifications enabled flag ([c5bbb65](https://github.com/MalwareDataLab/autodroid-api/commit/c5bbb654d3df2026b595b7f83f7277f3cad3e1b8))
+
 ## [0.2.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.1.0...v0.2.0) (2025-02-27)
 
 
