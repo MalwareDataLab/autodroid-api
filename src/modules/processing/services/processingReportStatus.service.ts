@@ -67,7 +67,7 @@ class ProcessingReportStatusService {
       ],
       subject: t(
         "@processing_report_status_service/PROCESSING_REPORT_STATUS_EMAIL_SUBJECT",
-        "[Malware DataLab] Experimento {{seq}} finalizado com {{result}}",
+        "[Malware DataLab] Experimento #{{seq}} finalizado com {{result}}",
         {
           seq: processing.seq,
           result,
