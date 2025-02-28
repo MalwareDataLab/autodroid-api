@@ -207,6 +207,7 @@ type Processing {
   payload: JSON! @auth(requires: "ADMIN")
   processor: Processor!
   processor_id: String!
+  reported_at: DateTimeISO
   result_file: File
   result_file_id: String
   seq: BigInt!
