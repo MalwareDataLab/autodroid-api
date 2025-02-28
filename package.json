@@ -34,7 +34,7 @@
     "test:e2e:watch": "vitest --config test/config/vitest.config.mts --project e2e",
     "test:e2e:debug": "node --inspect ./node_modules/.bin/vitest run --config test/config/vitest.config.mts --project e2e --no-file-parallelism",
     "i18n": "i18next-scanner --config src/shared/i18n/extraction.js --output src/shared/i18n/extraction 'src/**/*.{ts,tsx,js,jsx}'",
-    "build": "babel src --extensions \".js,.ts\" --out-dir dist",
+    "build": "babel src --extensions \".js,.ts\" --out-dir dist --delete-dir-on-start --copy-files --no-copy-ignored",
     "changelog": "commit-and-tag-version --skip.bump --skip.commit --skip.tag -i ./docs/CHANGELOG.md",
     "prepare": "husky"
   },
