@@ -191,7 +191,7 @@ model Worker {
   refresh_token_expires_at DateTime
 
   internal_id String
-  signature   String @unique
+  signature   String
 
   missing Boolean @default(false)
 

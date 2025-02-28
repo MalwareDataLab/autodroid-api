@@ -5,12 +5,12 @@ import request from "supertest";
 import { disposeServer, getServer } from "@/test/utils/getServer.util";
 import {
   initSecondaryProviders,
-  initAndWaitPreRequisites,
+  initAndWaitRequisites,
 } from "@shared/container";
 
 beforeEach(async context => {
   initSecondaryProviders(context.container);
-  initAndWaitPreRequisites(context.container);
+  initAndWaitRequisites({ selectedContainer: context.container });
   context.app = await getServer();
 
   context.request = request(context.app.express);

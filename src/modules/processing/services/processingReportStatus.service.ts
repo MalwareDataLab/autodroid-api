@@ -46,6 +46,17 @@ class ProcessingReportStatusService {
 
     const t = await i18n(processing.user.language || "pt-BR");
 
+    const result =
+      processing.status === PROCESSING_STATUS.SUCCEEDED
+        ? t(
+            "@processing_report_status_service/PROCESSING_REPORT_STATUS_EMAIL_SUBJECT_SUCCESS",
+            "sucesso",
+          )
+        : t(
+            "@processing_report_status_service/PROCESSING_REPORT_STATUS_EMAIL_SUBJECT_FAILURE",
+            "falha",
+          );
+
     this.jobProvider.add("SendEmailNotificationJob", {
       to: [
         {
@@ -55,19 +66,10 @@ class ProcessingReportStatusService {
       ],
       subject: t(
         "@processing_report_status_service/PROCESSING_REPORT_STATUS_EMAIL_SUBJECT",
-        "[Malware DataLab] Experimento {{seq}} finalizado com {{result}}.",
+        "[Malware DataLab] Experimento {{seq}} finalizado com {{result}}",
         {
           seq: processing.seq,
-          result:
-            processing.status === PROCESSING_STATUS.SUCCEEDED
-              ? t(
-                  "@processing_report_status_service/PROCESSING_REPORT_STATUS_EMAIL_SUBJECT_SUCCESS",
-                  "sucesso",
-                )
-              : t(
-                  "@processing_report_status_service/PROCESSING_REPORT_STATUS_EMAIL_SUBJECT_FAILURE",
-                  "falha",
-                ),
+          result,
         },
       ),
       template: {
@@ -80,6 +82,7 @@ class ProcessingReportStatusService {
               processing.id
             }`,
           ),
+          result,
         },
       },
     });

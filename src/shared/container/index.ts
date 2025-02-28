@@ -102,9 +102,18 @@ const standardPreRequisites = [
 
   // Quaternary
   "JobProvider",
-] satisfies ReadonlyArray<ProviderKeys>;
-const initAndWaitPreRequisites = async (selectedContainer: DependencyContainer = mainContainer, prerequisites = standardPreRequisites) => {
-  await prerequisites.reduce<Promise<any>>((promise, prerequisite) => {
+] as const satisfies ReadonlyArray<ProviderKeys>;
+
+const afterInitBootstrapList = ["WebsocketProvider", "DatasetProcessorProvider"] as const satisfies ReadonlyArray<ProviderKeys>;
+
+const initAndWaitRequisites = async ({
+  selectedContainer = mainContainer,
+  requisites = standardPreRequisites,
+}: {
+  selectedContainer?: DependencyContainer;
+  requisites?: ReadonlyArray<ProviderKeys>;
+} = {}) => {
+  await requisites.reduce<Promise<any>>((promise, prerequisite) => {
     return promise.then(async () => {
       const dependency: any = selectedContainer.resolve(prerequisite);
       await dependency.initialization;
@@ -118,4 +127,4 @@ type Providers = typeof providers;
 export type ProviderToken = keyof Providers;
 export type Provider<T extends ProviderToken> = InstanceType<Providers[T]>;
 
-export { primaryProviderKeys, secondaryProviderKeys, initPrimaryProviders, initSecondaryProviders, initContainer, initAndWaitPreRequisites };
+export { primaryProviderKeys, secondaryProviderKeys, initPrimaryProviders, initSecondaryProviders, initContainer, initAndWaitRequisites, afterInitBootstrapList };
