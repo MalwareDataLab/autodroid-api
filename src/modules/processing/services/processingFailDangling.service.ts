@@ -3,9 +3,15 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Provider import
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+
 // Util import
 import { logger } from "@shared/utils/logger";
 import { DateUtils } from "@shared/utils/dateUtils";
+
+// Service import
+import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
 
 // Repository import
 import { IProcessingRepository } from "../repositories/IProcessing.repository";
@@ -20,10 +26,20 @@ interface IRequest {
 
 @injectable()
 class ProcessingFailDanglingService {
+  private processingReportStatusService: ProcessingReportStatusService;
+
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
-  ) {}
+
+    @inject("JobProvider")
+    private jobProvider: IJobProvider,
+  ) {
+    this.processingReportStatusService = new ProcessingReportStatusService(
+      this.processingRepository,
+      this.jobProvider,
+    );
+  }
 
   public async execute({
     created_at_end_date,
@@ -64,6 +80,12 @@ class ProcessingFailDanglingService {
               message: "No worker was available to process this request.",
             },
           );
+
+          await this.processingReportStatusService
+            .execute({
+              processing_id: processing.id,
+            })
+            .catch(() => null);
 
           count += 1;
         } catch (error) {

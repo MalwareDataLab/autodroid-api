@@ -4,11 +4,13 @@
 
 Table users {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   email String [unique, not null]
   name String
   phone_number String
   learning_data Json [not null, default: '{}']
   language String
+  notifications_enabled Boolean [default: true]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   auth_provider_conns user_auth_provider_conns [not null]
@@ -21,6 +23,7 @@ Table users {
 
 Table user_auth_provider_conns {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   auth_provider String [not null]
   user_id String [not null]
   user users [not null]
@@ -33,6 +36,7 @@ Table user_auth_provider_conns {
 
 Table files {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   storage_provider String [not null]
   provider_path String [not null]
   provider_status String [not null]
@@ -57,6 +61,7 @@ Table files {
 
 Table datasets {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   user_id String [not null]
   user users [not null]
   file_id String [unique, not null]
@@ -71,6 +76,7 @@ Table datasets {
 
 Table processors {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   user_id String [not null]
   user users [not null]
   name String [not null]
@@ -89,6 +95,7 @@ Table processors {
 
 Table worker_registration_tokens {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   user_id String [not null]
   user users [not null]
   token String [unique, not null]
@@ -103,6 +110,7 @@ Table worker_registration_tokens {
 
 Table workers {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   user_id String [not null]
   user users [not null]
   registration_token_id String [not null]
@@ -127,6 +135,7 @@ Table workers {
 
 Table processes {
   id String [pk]
+  seq BigInt [increment, unique, not null]
   user_id String [not null]
   user users [not null]
   processor_id String [not null]

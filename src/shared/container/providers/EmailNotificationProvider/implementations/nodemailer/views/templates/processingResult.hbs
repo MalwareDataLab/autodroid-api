@@ -1,0 +1,32 @@
+{{> header }}
+
+<!-- START MAIN CONTENT AREA -->
+<tr>
+  <td class="wrapper">
+    <p>{{t language "@processing_result_email" "HELLO" "Olá,"}}</p>
+    <p>{{t language "@processing_result_email" "TEXT" (concat "Informamos que o experimento #" processing_seq " foi finalizado.")}}</p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+      <tbody>
+      <tr>
+        <td align="left">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+          <tr>
+              <td> <a href="{{button_url}}" target="_blank">{{t language "@processing_result_email" "OPEN_PROCESSING" "Abrir experimento"}}</a> </td>
+          </tr>
+          </tbody>
+        </table>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    {{#if footer_text}}
+      {{#each footer_text}}
+        <p>{{this}}</p>
+      {{/each}}
+    {{/if}}
+  </td>
+</tr>
+<!-- END MAIN CONTENT AREA -->
+
+{{> footer }}

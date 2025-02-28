@@ -10,7 +10,7 @@ import { User } from "@modules/user/entities/user.entity";
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 // Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
 // Service import
 import { ProcessingFailDanglingService } from "@modules/processing/services/processingFailDangling.service";
@@ -32,11 +32,12 @@ class AdminProcessingFailDanglingService {
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
 
-    @inject("StorageProvider")
-    private storageProvider: IStorageProvider,
+    @inject("JobProvider")
+    private jobProvider: IJobProvider,
   ) {
     this.processingFailDanglingService = new ProcessingFailDanglingService(
       this.processingRepository,
+      this.jobProvider,
     );
   }
 

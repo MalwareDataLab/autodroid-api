@@ -1,5 +1,8 @@
 import { inject, injectable } from "tsyringe";
 
+// Config import
+import { getProcessingConfig } from "@config/processing";
+
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
@@ -35,6 +38,9 @@ class AdminProcessingEstimatedExecutionTimeIndexService {
   public async execute({
     filter,
   }: IRequest): Promise<ProcessingTimeEstimation[]> {
+    const { ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS } =
+      getProcessingConfig();
+
     const estimations =
       await this.processingRepository.getManyEstimatedExecutionTimes(filter);
 
@@ -87,10 +93,13 @@ class AdminProcessingEstimatedExecutionTimeIndexService {
         estimated_execution_time: Math.round(
           estimation.average_execution_time_seconds,
         ),
-        estimated_waiting_time:
-          estimated_waiting_times[
-            `${estimation.dataset_id}-${estimation.processor_id}`
-          ] || null,
+        estimated_waiting_time: estimated_waiting_times[
+          `${estimation.dataset_id}-${estimation.processor_id}`
+        ]
+          ? estimated_waiting_times[
+              `${estimation.dataset_id}-${estimation.processor_id}`
+            ] + ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS
+          : null,
       }),
     );
   }

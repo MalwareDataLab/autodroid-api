@@ -3,8 +3,14 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Provider import
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
+// Service import
+import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
 
 // Entity import
 import { Processing } from "../entities/processing.entity";
@@ -19,10 +25,20 @@ interface IRequest {
 
 @injectable()
 class ProcessingHandleFailureService {
+  private processingReportStatusService: ProcessingReportStatusService;
+
   constructor(
     @inject("ProcessingRepository")
     private processingRepository: IProcessingRepository,
-  ) {}
+
+    @inject("JobProvider")
+    private jobProvider: IJobProvider,
+  ) {
+    this.processingReportStatusService = new ProcessingReportStatusService(
+      this.processingRepository,
+      this.jobProvider,
+    );
+  }
 
   public async execute({
     processing_id,
@@ -55,6 +71,10 @@ class ProcessingHandleFailureService {
         key: "@processing_handle_failure_service/PROCESSING_UPDATE_FAILED",
         message: "Fail to update processing.",
       });
+
+    await this.processingReportStatusService.execute({
+      processing_id: updatedProcessing.id,
+    });
 
     return updatedProcessing;
   }

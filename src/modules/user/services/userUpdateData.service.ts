@@ -91,6 +91,7 @@ class UserUpdateDataService {
         name: data.name,
         phone_number: data.phone_number,
         language: data.language,
+        notifications_enabled: data.notifications_enabled,
       },
     );
 

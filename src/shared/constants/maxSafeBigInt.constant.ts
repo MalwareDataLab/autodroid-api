@@ -1,0 +1,2 @@
+export const MIN_SAFE_BIGINT = -9223372036854775808n as const;
+export const MAX_SAFE_BIGINT = 9223372036854775807n as const;

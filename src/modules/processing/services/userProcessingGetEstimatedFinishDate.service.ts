@@ -1,5 +1,8 @@
 import { inject, injectable } from "tsyringe";
 
+// Config import
+import { getProcessingConfig } from "@config/processing";
+
 // Repository import
 import {
   IDatasetRepository,
@@ -47,6 +50,9 @@ class UserProcessingGetEstimatedFinishDateService {
   public async execute(
     params: IRequest,
   ): Promise<ProcessingFinishTimeEstimation> {
+    const { ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS } =
+      getProcessingConfig();
+
     const { dataset, processor, processing } =
       await this.processingGuard.execute(params);
 
@@ -101,8 +107,8 @@ class UserProcessingGetEstimatedFinishDateService {
             .diff(DateUtils.now(), "seconds", false);
 
           return acc + Math.max(remainingSeconds, 0);
-        }, 0)
-      : 0;
+        }, ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS)
+      : ESTIMATED_MINIMUM_WORKER_ACQUISITION_TIME_SECONDS;
 
     return ProcessingFinishTimeEstimation.make({
       dataset_id: dataset.id,

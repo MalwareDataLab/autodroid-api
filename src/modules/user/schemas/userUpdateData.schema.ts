@@ -1,8 +1,9 @@
 import { ArgsType, Field, InputType } from "type-graphql";
-import { IsLocale, IsObject, IsPhoneNumber } from "class-validator";
+import { IsBoolean, IsLocale, IsObject, IsPhoneNumber } from "class-validator";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
+import { IsNullable } from "@shared/decorators/isNullable.decorator";
 import { NameString } from "@shared/decorators/nameString.decorator";
 
 // DTO import
@@ -24,6 +25,11 @@ class UserUpdateDataSchema implements IUpdateUserDTO {
   @IsLocale()
   @Field(() => String, { nullable: true })
   language?: string | null;
+
+  @IsNullable()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  notifications_enabled?: boolean | null | undefined;
 }
 
 @ArgsType()

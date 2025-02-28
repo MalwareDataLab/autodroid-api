@@ -13,7 +13,8 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   email        String  @unique
   name         String?
@@ -22,6 +23,8 @@ model User {
   learning_data Json @default("{}")
 
   language String?
+
+  notifications_enabled Boolean? @default(true)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -39,7 +42,8 @@ model User {
 }
 
 model UserAuthProviderConn {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   auth_provider String
 
@@ -60,7 +64,8 @@ model UserAuthProviderConn {
 }
 
 model File {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   storage_provider     String
   provider_path        String
@@ -96,7 +101,8 @@ model File {
 }
 
 model Dataset {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   user_id String
   user    User   @relation(name: "Dataset_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -118,7 +124,8 @@ model Dataset {
 }
 
 model Processor {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   user_id String
   user    User   @relation(name: "Processor_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -147,7 +154,8 @@ model Processor {
 }
 
 model WorkerRegistrationToken {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   user_id String
   user    User   @relation(name: "WorkerRegistrationToken_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -170,7 +178,8 @@ model WorkerRegistrationToken {
 }
 
 model Worker {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   user_id String
   user    User   @relation(name: "Worker_User", fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
@@ -208,7 +217,8 @@ model Worker {
 }
 
 model Processing {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
 
   user_id String
   user    User   @relation(name: "Processing_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -239,7 +249,7 @@ model Processing {
   attempts    Int?
   message     String?
 
-  keep_until DateTime?
+  keep_until  DateTime?
   archived_at DateTime?
 
   configuration Json
