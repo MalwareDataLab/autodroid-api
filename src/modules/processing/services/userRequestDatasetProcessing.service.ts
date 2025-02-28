@@ -129,6 +129,8 @@ class UserRequestDatasetProcessingService {
       attempts: 0,
       message: null,
 
+      reported_at: null,
+
       worker_id: null,
       result_file_id: null,
       metrics_file_id: null,

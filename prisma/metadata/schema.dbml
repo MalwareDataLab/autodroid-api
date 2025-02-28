@@ -155,6 +155,7 @@ Table processes {
   verified_at DateTime
   attempts Int
   message String
+  reported_at DateTime
   keep_until DateTime
   archived_at DateTime
   configuration Json [not null]

@@ -64,6 +64,9 @@ class Processing implements ProcessingEntityType {
   @Field(() => String, { nullable: true })
   message: string | null;
 
+  @Field(() => Date, { nullable: true })
+  reported_at: Date | null;
+
   @Field(() => [ProcessingParameter])
   @Type(() => ProcessingParameter)
   configuration: Record<string, any>;
