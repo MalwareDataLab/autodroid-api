@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.2...v0.3.3) (2025-02-28)
+
+
+### Bug Fixes
+
+* processing report email subject ([c146cfb](https://github.com/MalwareDataLab/autodroid-api/commit/c146cfbf4306037ee7dceaf043a88297b1527ef7))
+
 ## [0.3.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.1...v0.3.2) (2025-02-28)
 
 
