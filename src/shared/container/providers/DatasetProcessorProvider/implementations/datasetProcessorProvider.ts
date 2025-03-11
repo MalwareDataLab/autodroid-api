@@ -308,7 +308,6 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
             new AppError({
               key: "@dataset_processor_provider_dispatch_process/PROCESSING_NOT_ACQUIRED",
               message: "Worker has not responded with processing acquired.",
-              debug: { processing_id, worker_id: worker.id },
             }),
           );
         }, 10000);
