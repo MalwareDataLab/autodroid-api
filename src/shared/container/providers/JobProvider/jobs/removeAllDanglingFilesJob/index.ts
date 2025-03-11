@@ -45,6 +45,7 @@ class RemoveAllDanglingFilesJob implements IJob {
         new AppError({
           key: "@remove_all_dangling_files_job/ERROR",
           message: `Fail to remove all dandling files. ${error.message}`,
+          debug: { error, data: job.data },
         }),
       );
     }

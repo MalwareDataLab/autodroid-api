@@ -45,6 +45,7 @@ class WorkerCleanMissingJob implements IJob {
         new AppError({
           key: "@worker_clean_missing_job/ERROR",
           message: `Fail to cleanup workers. ${error.message}`,
+          debug: { error, data: job.data },
         }),
       );
     }

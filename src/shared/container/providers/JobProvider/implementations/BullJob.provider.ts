@@ -201,7 +201,7 @@ class BullJobProvider implements IJobProvider {
                       ...bullRedisOptions,
                       redisOptions,
                     }),
-                  ).provider;
+                  ).provider as any;
               }
             },
           }),

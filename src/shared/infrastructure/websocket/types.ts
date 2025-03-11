@@ -8,6 +8,7 @@ import { Session } from "@modules/user/types/IUserSession.dto";
 
 // Type import
 import {
+  ISocketWorkerProcessingAcquiredMessage,
   ISocketWorkerProcessingJobMessage,
   ISocketWorkerStatusMessage,
 } from "./socket.types";
@@ -23,6 +24,9 @@ export interface ClientToServerEvents {
   ping: () => void;
 
   "worker:status": (data: ISocketWorkerStatusMessage) => void;
+  "worker:processing-acquired": (
+    data: ISocketWorkerProcessingAcquiredMessage,
+  ) => void;
 }
 
 export interface InterServerEvents {

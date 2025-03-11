@@ -53,7 +53,8 @@ class ProcessingFailDanglingJob implements IJob {
       done(
         new AppError({
           key: "@processing_fail_dangling_job/ERROR",
-          message: `Fail to cleanup processes. ${error.message}`,
+          message: `Fail to fail dangling processes. ${error.message}`,
+          debug: { error, data: job.data },
         }),
       );
     }
