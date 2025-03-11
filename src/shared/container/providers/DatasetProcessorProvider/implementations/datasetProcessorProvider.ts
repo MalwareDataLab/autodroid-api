@@ -3,6 +3,9 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Config import
+import { getWorkerConfig } from "@config/worker";
+
 // Repository import
 import {
   IProcessingRepository,
@@ -18,7 +21,6 @@ import { Worker } from "@modules/worker/entities/worker.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Enum import
-import { WORKER_STATUS } from "@modules/worker/utils/workerStatus.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
 // Provider import
@@ -36,7 +38,8 @@ import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider"
 class DatasetProcessorProvider implements IDatasetProcessorProvider {
   public readonly initialization: Promise<void>;
 
-  private readonly inMemoryIdleKey = "worker:IDLE";
+  private readonly workerJobsKey = "worker:JOBS";
+  private readonly maxConcurrentJobs: number;
 
   constructor(
     @inject("WorkerRepository")
@@ -51,6 +54,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
     @inject("WebsocketProvider")
     public websocketProvider: IWebsocketProvider,
   ) {
+    this.maxConcurrentJobs = getWorkerConfig().worker_max_concurrent_jobs;
     this.initialization = this.init();
   }
 
@@ -66,6 +70,45 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
       /*
       TODO: Store telemetry
+
+      console.log("RAM", JSON.stringify(data.telemetry.mem, null, 2));
+      console.log(
+        "CPU",
+        JSON.stringify(data.telemetry.cpuCurrentSpeed, null, 2),
+      );
+      console.log("LOAD", JSON.stringify(data.telemetry.currentLoad, null, 2));
+      console.log("DISK IO", JSON.stringify(data.telemetry.disksIO, null, 2));
+      console.log("FS SIZE", JSON.stringify(data.telemetry.fsSize, null, 2));
+      console.log("FS STATS", JSON.stringify(data.telemetry.fsStats, null, 2));
+
+      // Extract critical system metrics for research analysis
+      const telemetryVersion = "v1";
+      const criticalMetrics = [
+        `version:${telemetryVersion}`,
+        `timestamp:${data.telemetry.time.current}`,
+        `cpu_usage:${data.telemetry.currentLoad?.currentLoad?.toFixed(2) || "N/A"}`,
+        `cpu_speed:${data.telemetry.cpuCurrentSpeed?.avg?.toFixed(2) || "N/A"}`,
+        `ram_used_percent:${data.telemetry.mem?.used && data.telemetry.mem?.total ? ((data.telemetry.mem.used / data.telemetry.mem.total) * 100).toFixed(2) : "N/A"}`,
+        `ram_free:${data.telemetry.mem?.free ? (data.telemetry.mem.free / (1024 * 1024 * 1024)).toFixed(2) : "N/A"}`,
+      ].join(",");
+
+      // Additional metrics when processing is active
+      if (data.processing_ids.length > 0) {
+        const diskMetrics = [
+          `disk_io_read:${data.telemetry.disksIO?.rIO || "N/A"}`,
+          `disk_io_write:${data.telemetry.disksIO?.wIO || "N/A"}`,
+          `disk_usage:${Array.isArray(data.telemetry.fsSize) ? data.telemetry.fsSize[0]?.use : "N/A"}`,
+          `network_rx_bytes:${data.telemetry.networkStats?.[0]?.rx_bytes || "N/A"}`,
+          `network_tx_bytes:${data.telemetry.networkStats?.[0]?.tx_bytes || "N/A"}`,
+          `cpu_temp:${(data.telemetry as any)?.temp?.main || "N/A"}`,
+          `latency:${data.telemetry.inetLatency || "N/A"}`,
+        ].join(",");
+
+        console.log(`Worker telemetry data: ${criticalMetrics},${diskMetrics}`);
+      } else {
+        console.log(`Worker telemetry data: ${criticalMetrics}`);
+      }
+
 
       const selectedData = {
         time: data.telemetry.time,
@@ -107,18 +150,11 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         message: "Worker not found.",
       });
 
-    if (data.status === WORKER_STATUS.IDLE) {
-      await this.inMemoryDatabaseProvider.connection.set(
-        `${this.inMemoryIdleKey}:${worker_id}`,
-        "1",
-        "EX",
-        60,
-      );
-    } else {
-      await this.inMemoryDatabaseProvider.connection.del(
-        `${this.inMemoryIdleKey}:${worker_id}`,
-      );
-    }
+    await this.inMemoryDatabaseProvider.connection.hset(
+      this.workerJobsKey,
+      worker_id,
+      data.processing_ids.length.toString(),
+    );
 
     await this.workerRepository.updateOne(
       { id: worker.id },
@@ -145,7 +181,15 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       );
 
       await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
+        let timeout: NodeJS.Timeout;
+
+        const listener = async (data: any) => {
+          clearTimeout(timeout);
+          resolve(data);
+        };
+
+        timeout = setTimeout(() => {
+          this.websocketProvider.off(`worker:${worker.id}:status`, listener);
           reject(
             new AppError({
               key: "@dataset_processor_provider_get_worker_by_id/WORKER_TIMEOUT",
@@ -154,23 +198,14 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           );
         }, 5000);
 
-        this.websocketProvider.once(
-          `worker:${worker.id}:status`,
-          async data => {
-            clearTimeout(timeout);
-            if (data.status === "IDLE" && data.processing_ids.length === 0) {
-              resolve(data);
-            } else {
-              reject(new Error("Worker not idle."));
-            }
-          },
-        );
+        this.websocketProvider.once(`worker:${worker.id}:status`, listener);
       });
 
       return worker;
     } catch (error) {
-      await this.inMemoryDatabaseProvider.connection.del(
-        `${this.inMemoryIdleKey}:${worker.id}`,
+      await this.inMemoryDatabaseProvider.connection.hdel(
+        this.workerJobsKey,
+        worker.id,
       );
 
       if (AppError.isInstance(error)) throw error;
@@ -182,14 +217,19 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
     }
   }
 
-  private async getAvailableWorkerIds(): Promise<string[]> {
-    const workers = await this.inMemoryDatabaseProvider.connection.keys(
-      `${this.inMemoryIdleKey}:*`,
-    );
+  private async getWorkerJobCounts(): Promise<Record<string, number>> {
+    const workersJobs =
+      (await this.inMemoryDatabaseProvider.connection.hgetall(
+        this.workerJobsKey,
+      )) || {};
 
-    return (workers || []).map(worker =>
-      worker.replace(`${this.inMemoryIdleKey}:`, ""),
-    );
+    const result: Record<string, number> = {};
+
+    Object.keys(workersJobs).forEach(workerId => {
+      result[workerId] = parseInt(workersJobs[workerId], 10) || 0;
+    });
+
+    return result;
   }
 
   private async dispatchProcessToWorker(
@@ -245,14 +285,47 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Fail to update processing.",
         });
 
-      await this.inMemoryDatabaseProvider.connection.del(
-        `${this.inMemoryIdleKey}:${worker.id}`,
+      await this.inMemoryDatabaseProvider.connection.hincrby(
+        this.workerJobsKey,
+        worker.id,
+        1,
       );
+
+      const acquisition = new Promise((resolve, reject) => {
+        let timeout: NodeJS.Timeout;
+
+        const listener = async (data: any) => {
+          clearTimeout(timeout);
+          resolve(data);
+        };
+
+        timeout = setTimeout(() => {
+          this.websocketProvider.off(
+            `worker:${worker.id}:processing:${processing_id}:acquired`,
+            listener,
+          );
+          reject(
+            new AppError({
+              key: "@dataset_processor_provider_dispatch_process/PROCESSING_NOT_ACQUIRED",
+              message: "Worker has not responded with processing acquired.",
+              debug: { processing_id, worker_id: worker.id },
+            }),
+          );
+        }, 10000);
+
+        this.websocketProvider.once(
+          `worker:${worker.id}:processing:${processing_id}:acquired`,
+          listener,
+        );
+      });
+
       await this.websocketProvider.sendMessageToRoom(
         `worker:${worker.id}`,
         "worker:work",
         { processing_id },
       );
+
+      await acquisition;
 
       return updatedProcessing;
     } catch (error) {
@@ -279,7 +352,8 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
   public async dispatchProcess(
     params: IDispatchProcessDTO,
   ): Promise<Processing> {
-    const workerIds = await this.getAvailableWorkerIds();
+    const workerJobCounts = await this.getWorkerJobCounts();
+    const workerIds = Object.keys(workerJobCounts);
 
     if (workerIds.length === 0)
       throw new AppError({
@@ -287,9 +361,35 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         message: "No worker available.",
       });
 
-    const worker_id = workerIds[0];
+    const availableWorkerIds = workerIds.filter(
+      workerId => workerJobCounts[workerId] < this.maxConcurrentJobs,
+    );
 
-    const worker = await this.getWorkerById(worker_id);
+    if (availableWorkerIds.length === 0)
+      throw new AppError({
+        key: "@dataset_processor_provider_dispatch_process/ALL_WORKERS_BUSY",
+        message: "All workers are busy.",
+      });
+
+    const availableWorkerWithNoJobs = availableWorkerIds.find(
+      workerId => workerJobCounts[workerId] === 0,
+    );
+
+    let selectedWorkerId: string;
+
+    if (availableWorkerWithNoJobs) {
+      selectedWorkerId = availableWorkerWithNoJobs;
+    } else {
+      selectedWorkerId = availableWorkerIds.reduce(
+        (minWorker, workerId) =>
+          workerJobCounts[workerId] < workerJobCounts[minWorker]
+            ? workerId
+            : minWorker,
+        availableWorkerIds[0],
+      );
+    }
+
+    const worker = await this.getWorkerById(selectedWorkerId);
 
     return this.dispatchProcessToWorker({ ...params, worker_id: worker.id });
   }

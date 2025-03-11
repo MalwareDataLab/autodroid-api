@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 // Configuration import
-import { getAuthConfig } from "@config/auth";
+import { getWorkerConfig } from "@config/worker";
 import { getEnvConfig } from "@config/env";
 
 // Error import
@@ -16,7 +16,7 @@ import { Worker } from "../entities/worker.entity";
 
 const generateWorkerToken = (worker: Worker, type: "REFRESH" | "ACCESS") => {
   const envConfig = getEnvConfig();
-  const authConfig = getAuthConfig();
+  const authConfig = getWorkerConfig();
 
   const config = {
     REFRESH: {

@@ -8,7 +8,7 @@ import { t } from "@shared/i18n";
 import { AppError } from "@shared/errors/AppError";
 
 // Configuration import
-import { getAuthConfig } from "@config/auth";
+import { getWorkerConfig } from "@config/worker";
 
 // Type import
 import {
@@ -27,7 +27,7 @@ const processAndValidateWorkerToken = <T>({
   action: "VERIFY" | "DECODE";
   kind: "ACCESS" | "REFRESH";
 }): PayloadWithWorkerId<T> => {
-  const authConfig = getAuthConfig();
+  const authConfig = getWorkerConfig();
 
   try {
     const secret =

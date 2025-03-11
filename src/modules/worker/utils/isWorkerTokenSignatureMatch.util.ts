@@ -1,7 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 
 // Config import
-import { getAuthConfig } from "@config/auth";
+import { getWorkerConfig } from "@config/worker";
 
 // Util import
 import { generateWorkerTokenPayload } from "./generateWorkerTokenPayload.util";
@@ -19,7 +19,7 @@ const isWorkerTokenSignatureMatch = ({
   worker: Worker;
   jwtPayload: JwtPayload;
 }): boolean => {
-  const authConfig = getAuthConfig();
+  const authConfig = getWorkerConfig();
 
   const tokenPayload = {
     registration_token: jwtPayload.registration_token,

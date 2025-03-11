@@ -45,6 +45,7 @@ class ProcessingCleanExpiredJob implements IJob {
         new AppError({
           key: "@processing_clean_expired_job/ERROR",
           message: `Fail to cleanup processes. ${error.message}`,
+          debug: { error, data: job.data },
         }),
       );
     }

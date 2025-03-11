@@ -55,6 +55,12 @@ class WebsocketApp {
         });
         bus.emit(`worker:${socket.data.worker_session.worker.id}:status`, data);
       });
+
+      socket.on(`worker:processing-acquired`, data => {
+        bus.emit(
+          `worker:${socket.data.worker_session.worker.id}:processing:${data.processing_id}:acquired`,
+        );
+      });
     });
   }
 

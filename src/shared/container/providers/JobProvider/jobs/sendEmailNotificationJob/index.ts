@@ -53,6 +53,7 @@ class SendEmailNotificationJob implements IJob {
         new AppError({
           key: "@send_email_notification_job/ERROR",
           message: `Fail to send email with subject "${job.data.subject}" sent to ${job.data.to.map(({ email }) => email).join(", ")}.. ${error.message}`,
+          debug: { error, data: job.data },
         }),
       );
     }

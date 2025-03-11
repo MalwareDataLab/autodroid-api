@@ -9,6 +9,7 @@ interface WebsocketAdapterEvents {
 
   "worker:status": [{ worker_id: string } & ISocketWorkerStatusMessage];
   [key: `worker:${string}:status`]: [ISocketWorkerStatusMessage];
+  [key: `worker:${string}:processing:${string}:acquired`]: [void];
 }
 
 type WebsocketAdapterBus = EventEmitter<WebsocketAdapterEvents>;
