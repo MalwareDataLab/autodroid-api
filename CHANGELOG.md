@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.3...v0.4.0) (2025-03-11)
+
+
+### Features
+
+* add worker acquisition process ([a9823d0](https://github.com/MalwareDataLab/autodroid-api/commit/a9823d04996040e9c95bb1140f25c383dd1492ef))
+
+
+### Bug Fixes
+
+* remove debug from acquired error ([81a54e6](https://github.com/MalwareDataLab/autodroid-api/commit/81a54e638545256f84fbdb97ebb05b832e1e58db))
+
 ## [0.3.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.3.2...v0.3.3) (2025-02-28)
 
 
