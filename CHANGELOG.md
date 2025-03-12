@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.4.1...v0.4.2) (2025-03-12)
+
+
+### Bug Fixes
+
+* remove queue restrictions ([bf15831](https://github.com/MalwareDataLab/autodroid-api/commit/bf15831d397255d33be843d3f16c7f1d4a5249dd))
+* remove queue restrictions ([507eba1](https://github.com/MalwareDataLab/autodroid-api/commit/507eba1eb8d899950d77be7a442fb11b17616e03))
+
 ## [0.4.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.4.0...v0.4.1) (2025-03-12)
 
 
