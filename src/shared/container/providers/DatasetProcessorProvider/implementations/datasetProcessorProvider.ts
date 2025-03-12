@@ -310,7 +310,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
               message: "Worker has not responded with processing acquired.",
             }),
           );
-        }, 10000);
+        }, 30000);
 
         this.websocketProvider.once(
           `worker:${worker.id}:processing:${processing_id}:acquired`,

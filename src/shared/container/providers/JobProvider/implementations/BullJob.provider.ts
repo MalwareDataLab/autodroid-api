@@ -55,7 +55,23 @@ class BullJobProvider implements IJobProvider {
     removeOnFail: true,
   };
 
-  private queueOptions: IQueueOptionsDTO = {};
+  private queueOptions: IQueueOptionsDTO = {
+    /*
+    lockDuration: 30 * 1000,
+    lockRenewTime: 15 * 1000,
+
+    stalledInterval: 30 * 1000,
+    maxStalledCount: 0,
+
+    guardInterval: 5 * 1000,
+
+    retryProcessDelay: 5 * 1000,
+
+    backoffStrategies: {},
+
+    drainDelay: 5 * 1000,
+    */
+  };
 
   constructor(
     @inject("InMemoryDatabaseProvider")
