@@ -35,7 +35,10 @@ class DispatchDatasetProcessingJob implements IJob {
       delay: 60 * 1000,
     },
   } satisfies IJobOptionsDTO;
-  public readonly queueOptions: IQueueOptionsDTO = {};
+  public readonly queueOptions: IQueueOptionsDTO = {
+    guardInterval: 1000,
+    retryProcessDelay: 1000,
+  };
 
   constructor() {}
 
