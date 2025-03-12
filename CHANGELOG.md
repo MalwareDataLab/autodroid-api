@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.4.2...v0.5.0) (2025-03-12)
+
+
+### Features
+
+* raise job acquisition lock interval ([b52a8ae](https://github.com/MalwareDataLab/autodroid-api/commit/b52a8aebb3c5c7be9b16a935c833c9139e18276b))
+
 ## [0.4.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.4.1...v0.4.2) (2025-03-12)
 
 
