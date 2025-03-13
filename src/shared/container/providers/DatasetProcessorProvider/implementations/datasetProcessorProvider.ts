@@ -285,12 +285,6 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Fail to update processing.",
         });
 
-      await this.inMemoryDatabaseProvider.connection.hincrby(
-        this.workerJobsKey,
-        worker.id,
-        1,
-      );
-
       const acquisition = new Promise((resolve, reject) => {
         let timeout: NodeJS.Timeout;
 
@@ -325,6 +319,12 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       );
 
       await acquisition;
+
+      await this.inMemoryDatabaseProvider.connection.hincrby(
+        this.workerJobsKey,
+        worker.id,
+        1,
+      );
 
       return updatedProcessing;
     } catch (error) {
