@@ -154,9 +154,9 @@ type Mutation {
   workerProcessingRegisterFailure(processing_id: String!): Processing!
   workerProcessingRegisterProgress(processing_id: String!): Processing!
   workerProcessingRegisterSuccess(processing_id: String!): Processing!
-  workerRegister(internal_id: String!, registration_token: String!, signature: String!, system_info: JSON!): Worker!
-  workerUpdateAccessToken(internal_id: String!, refresh_token: String!, registration_token: String!, signature: String!, system_info: JSON!, worker_id: String!): WorkerAccessToken!
-  workerUpdateRefreshToken(internal_id: String!, refresh_token: String!, registration_token: String!, signature: String!, system_info: JSON!, worker_id: String!): Worker!
+  workerRegister(internal_id: String!, name: String!, registration_token: String!, signature: String!, system_info: JSON!): Worker!
+  workerUpdateAccessToken(internal_id: String!, name: String!, refresh_token: String!, registration_token: String!, signature: String!, system_info: JSON!, worker_id: String!): WorkerAccessToken!
+  workerUpdateRefreshToken(internal_id: String!, name: String!, refresh_token: String!, registration_token: String!, signature: String!, system_info: JSON!, worker_id: String!): Worker!
 }
 
 enum PROCESSING_STATUS {
@@ -470,6 +470,7 @@ type Worker {
   internal_id: String!
   last_seen_at: DateTimeISO
   missing: Boolean!
+  name: String
   payload: JSON! @auth(requires: "ADMIN")
   refresh_token: String!
   refresh_token_expires_at: DateTimeISO!

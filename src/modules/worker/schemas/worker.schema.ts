@@ -31,6 +31,10 @@ class WorkerRegisterSchema {
   @IsHash("sha256")
   @Field()
   signature: string;
+
+  @ValidString()
+  @Field()
+  name: string;
 }
 
 @ArgsType()

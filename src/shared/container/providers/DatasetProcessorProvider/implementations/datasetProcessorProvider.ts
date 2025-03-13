@@ -158,7 +158,12 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
     await this.workerRepository.updateOne(
       { id: worker.id },
-      { version: data.version, last_seen_at: new Date(), missing: false },
+      {
+        name: data.name,
+        version: data.version,
+        last_seen_at: new Date(),
+        missing: false,
+      },
     );
   }
 

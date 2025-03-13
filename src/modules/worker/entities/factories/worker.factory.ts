@@ -38,6 +38,7 @@ const workerFactory = WorkerFactory.define(({ onCreate, associations }) => {
     ...generateEntityBaseData(),
 
     /** Entity */
+    name: faker.word.words(1),
     refresh_token: faker.internet.jwt(),
     refresh_token_expires_at: faker.date.future(),
     internal_id: faker.string.alphanumeric(10),

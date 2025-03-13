@@ -190,6 +190,7 @@ model Worker {
   refresh_token            String
   refresh_token_expires_at DateTime
 
+  name        String?
   internal_id String
   signature   String
 

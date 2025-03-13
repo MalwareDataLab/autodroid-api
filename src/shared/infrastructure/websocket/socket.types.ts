@@ -8,6 +8,7 @@ export type ISocketWorkerProcessingJobMessage = {
 };
 
 export type ISocketWorkerStatusMessage = {
+  name: string;
   status: WORKER_STATUS;
   version: string;
   processing_ids: string[];

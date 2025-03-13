@@ -37,6 +37,8 @@ class WorkerUpdateRefreshTokenService {
 
   public async execute({ data, agent_info }: IRequest): Promise<Worker> {
     const {
+      name,
+
       registration_token,
       internal_id,
       signature,
@@ -101,6 +103,7 @@ class WorkerUpdateRefreshTokenService {
       const updatedWorker = await this.workerRepository.updateOne(
         { id: worker.id },
         {
+          name,
           refresh_token: token,
           refresh_token_expires_at: expires_at,
           agent_info: {

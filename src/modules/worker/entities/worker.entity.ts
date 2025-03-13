@@ -28,6 +28,9 @@ class Worker implements WorkerEntityType {
   @Field()
   refresh_token_expires_at: Date;
 
+  @Field(() => String, { nullable: true })
+  name: string | null;
+
   @Field()
   internal_id: string;
 
