@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.5.0...v0.5.1) (2025-03-13)
+
+
+### Bug Fixes
+
+* worker acquisition lock ([d3d7dbf](https://github.com/MalwareDataLab/autodroid-api/commit/d3d7dbffe76c9f3e4b3068e91ae272741ab03d2a))
+
 ## [0.5.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.4.2...v0.5.0) (2025-03-12)
 
 
