@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.5.1...v0.6.0) (2025-03-14)
+
+
+### Features
+
+* add worker name ([dfe137d](https://github.com/MalwareDataLab/autodroid-api/commit/dfe137d229c9a2ca79f3b45a6abe1e2dd98708be))
+* processing parallel round robin ([c118a60](https://github.com/MalwareDataLab/autodroid-api/commit/c118a60ba78f49776b751f36a0dca6ac00c7f41a))
+
 ## [0.5.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.5.0...v0.5.1) (2025-03-13)
 
 
