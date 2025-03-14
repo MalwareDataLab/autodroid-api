@@ -23,12 +23,13 @@ interface IAppError {
 }
 
 class AppError extends Error {
+  public readonly handler = "AppError";
+
   public readonly name: string;
   public readonly message: string;
 
   public readonly key: string;
 
-  public readonly handler: string;
   public readonly errorCode: string;
   public readonly statusCode: number;
 
@@ -59,7 +60,6 @@ class AppError extends Error {
 
       this.key = params.key;
 
-      this.handler = this.constructor.name;
       this.errorCode = randomUUID();
       this.statusCode = params.statusCode
         ? params.statusCode
@@ -110,7 +110,8 @@ class AppError extends Error {
     if (!error) return false;
     return (
       error instanceof AppError ||
-      (error as any).handler === AppError.prototype.name
+      (error as any).handler === AppError.prototype.name ||
+      (error as any).handler === "AppError"
     );
   }
 }

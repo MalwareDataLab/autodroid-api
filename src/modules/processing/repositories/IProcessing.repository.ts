@@ -39,9 +39,9 @@ export interface IProcessingRepository {
   updateOne(
     filter: IFindProcessingDTO,
     data: IUpdateProcessingDTO,
-  ): Promise<Processing | null>;
+  ): Promise<Processing>;
 
-  deleteOne(filter: IFindProcessingDTO): Promise<Processing | null>;
+  deleteOne(filter: IFindProcessingDTO): Promise<Processing>;
 
   getOneEstimatedExecutionTime(
     filter: IProcessingEstimatedDatasetProcessingTimeFilterDTO,

@@ -250,9 +250,9 @@ class PrismaProcessingRepository implements IProcessingRepository {
   public async updateOne(
     filter: IFindProcessingDTO,
     data: IUpdateProcessingDTO,
-  ): Promise<Processing | null> {
+  ): Promise<Processing> {
     const record = await this.findOne(filter);
-    if (!record) return null;
+    if (!record) throw Error("No such record.");
 
     const processing = await this.databaseProvider.client.processing.update({
       where: { id: record.id },
@@ -263,11 +263,9 @@ class PrismaProcessingRepository implements IProcessingRepository {
     return parse(Processing, processing);
   }
 
-  public async deleteOne(
-    filter: IFindProcessingDTO,
-  ): Promise<Processing | null> {
+  public async deleteOne(filter: IFindProcessingDTO): Promise<Processing> {
     const record = await this.findOne(filter);
-    if (!record) return null;
+    if (!record) throw Error("No such record.");
 
     const processing = await this.databaseProvider.client.processing.update({
       where: { id: record.id },
