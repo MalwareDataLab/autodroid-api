@@ -40,6 +40,8 @@ class WorkerGenerateAccessTokenService {
     agent_info,
   }: IRequest): Promise<WorkerAccessToken> {
     const {
+      name,
+
       registration_token,
       internal_id,
       signature,
@@ -103,6 +105,7 @@ class WorkerGenerateAccessTokenService {
       const updatedWorker = await this.workerRepository.updateOne(
         { id: worker.id },
         {
+          name,
           agent_info: {
             ...worker.agent_info,
             ...agent_info,

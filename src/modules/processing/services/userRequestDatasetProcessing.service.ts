@@ -137,7 +137,7 @@ class UserRequestDatasetProcessingService {
     });
 
     this.jobProvider.add("DispatchDatasetProcessingJob", {
-      processing_id: processing.id,
+      processing_ids: [processing.id],
     });
 
     return processing;

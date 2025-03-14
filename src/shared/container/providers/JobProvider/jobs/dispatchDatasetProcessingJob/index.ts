@@ -20,7 +20,7 @@ import {
 } from "../../types/IAddJobOptions.dto";
 
 type IDispatchDatasetProcessingJob = {
-  processing_id: string;
+  processing_ids: string[];
 };
 
 @injectable()
@@ -46,38 +46,41 @@ class DispatchDatasetProcessingJob implements IJob {
     job: Job<IDispatchDatasetProcessingJob>,
     done: DoneCallback,
   ): Promise<void> {
-    const { processing_id } = job.data;
+    const { processing_ids } = job.data;
     try {
       const datasetProcessorProvider =
         container.resolve<IDatasetProcessorProvider>(
           "DatasetProcessorProvider",
         );
-      const processing = await datasetProcessorProvider.dispatchProcess({
-        processing_id,
-      });
+      const processing =
+        await datasetProcessorProvider.dispatchNotStartedProcesses({
+          processing_ids,
+        });
 
       done(
         null,
-        `Processing ${processing.id} dispatched successfully to worker ${processing.worker_id}.`,
+        `Dispatched ${processing.dispatched.length} processes, ${processing.failed.length} failed, and ${processing.skipped.length} skipped.`,
       );
     } catch (error: any) {
       done(
         new AppError({
           key: "@dispatch_dataset_processing_job/ERROR",
-          message: `Fail to dispatch processing ${processing_id}. ${error.message}`,
+          message: `Unable to dispatch processes originated from ${processing_ids[0]}${processing_ids.length > 1 ? ` and ${processing_ids.length - 1}` : ""}. ${error.message}`,
         }),
       );
     }
   }
 
   public async onFailed(job: Job, err: Error): Promise<void> {
+    const { processing_ids } = job.data;
+
     if (job.attemptsMade >= this.jobOptions.attempts) {
       const processingHandleFailureService = container.resolve(
         ProcessingHandleFailureService,
       );
 
       await processingHandleFailureService.execute({
-        processing_id: job.data.processing_id,
+        processing_ids,
         message: `Fail to dispatch processing ${job.data.processing_id} after ${job.attemptsMade} attempts. ${err.message}`,
       });
     }

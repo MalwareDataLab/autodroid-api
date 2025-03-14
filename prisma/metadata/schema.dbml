@@ -117,6 +117,7 @@ Table workers {
   registration_token worker_registration_tokens [not null]
   refresh_token String [not null]
   refresh_token_expires_at DateTime [not null]
+  name String
   internal_id String [not null]
   signature String [not null]
   missing Boolean [not null, default: false]

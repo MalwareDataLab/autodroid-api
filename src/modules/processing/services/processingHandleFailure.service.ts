@@ -1,8 +1,5 @@
 import { inject, injectable } from "tsyringe";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
@@ -19,7 +16,7 @@ import { Processing } from "../entities/processing.entity";
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 
 interface IRequest {
-  processing_id: string;
+  processing_ids: string[];
   message: string;
 }
 
@@ -41,42 +38,44 @@ class ProcessingHandleFailureService {
   }
 
   public async execute({
-    processing_id,
+    processing_ids,
     message,
-  }: IRequest): Promise<Processing> {
-    const processing = await this.processingRepository.findOne({
-      id: processing_id,
-    });
-
-    if (!processing)
-      throw new AppError({
-        key: "@processing_handle_failure_service/PROCESSING_NOT_FOUND",
-        message: "Processing not found.",
-      });
-
-    const updatedProcessing = await this.processingRepository.updateOne(
-      { id: processing_id },
-      {
-        verified_at: new Date(),
-        started_at: processing.started_at || new Date(),
-        finished_at: new Date(),
-
-        status: PROCESSING_STATUS.FAILED,
-        message,
-      },
+  }: IRequest): Promise<Processing[]> {
+    const processes = await Promise.all(
+      processing_ids.map(async processing_id => {
+        return this.processingRepository.findOne({
+          id: processing_id,
+        });
+      }),
     );
 
-    if (!updatedProcessing)
-      throw new AppError({
-        key: "@processing_handle_failure_service/PROCESSING_UPDATE_FAILED",
-        message: "Fail to update processing.",
-      });
+    const notStartedProcesses = processes.filter(
+      processing => !!processing && !processing.started_at,
+    );
 
-    await this.processingReportStatusService.execute({
-      processing_id: updatedProcessing.id,
-    });
+    const failedProcesses = await Promise.all(
+      notStartedProcesses.map(async processing => {
+        const updatedProcessing = await this.processingRepository.updateOne(
+          { id: processing!.id },
+          {
+            verified_at: new Date(),
+            started_at: new Date(),
+            finished_at: new Date(),
 
-    return updatedProcessing;
+            status: PROCESSING_STATUS.FAILED,
+            message,
+          },
+        );
+
+        await this.processingReportStatusService.execute({
+          processing_id: updatedProcessing.id,
+        });
+
+        return updatedProcessing;
+      }),
+    );
+
+    return failedProcesses;
   }
 }
 

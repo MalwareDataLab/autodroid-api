@@ -42,7 +42,8 @@ class WorkerRegisterService {
   }
 
   public async execute({ data, agent_info }: IRequest): Promise<Worker> {
-    const { registration_token, internal_id, signature, system_info } = data;
+    const { name, registration_token, internal_id, signature, system_info } =
+      data;
 
     const registrationToken =
       await this.workerRegistrationTokenRepository.findOne({
@@ -75,6 +76,7 @@ class WorkerRegisterService {
 
     try {
       const worker = await this.workerRepository.createOne({
+        name,
         registration_token_id: registrationToken.id,
         internal_id,
         signature,
@@ -101,6 +103,7 @@ class WorkerRegisterService {
       const workerWithRefreshToken =
         await this.workerUpdateRefreshTokenService.execute({
           data: {
+            name,
             internal_id,
             registration_token,
             signature,

@@ -13,6 +13,7 @@ import {
 } from "@shared/container/repositories";
 
 // Util import
+import { logger } from "@shared/utils/logger";
 import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
 
 // Entity import
@@ -21,6 +22,7 @@ import { Worker } from "@modules/worker/entities/worker.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Enum import
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
 // Provider import
@@ -29,7 +31,10 @@ import { IWebsocketProvider } from "@shared/container/providers/WebsocketProvide
 
 // Type import
 import { ISocketWorkerStatusMessage } from "@shared/infrastructure/websocket/socket.types";
-import { IDispatchProcessDTO } from "../types/IDatasetProcessor.dto";
+import {
+  IDispatchProcessesDTO,
+  IDispatchedProcessesDTO,
+} from "../types/IDatasetProcessor.dto";
 
 // Interface import
 import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider";
@@ -158,7 +163,12 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
     await this.workerRepository.updateOne(
       { id: worker.id },
-      { version: data.version, last_seen_at: new Date(), missing: false },
+      {
+        name: data.name,
+        version: data.version,
+        last_seen_at: new Date(),
+        missing: false,
+      },
     );
   }
 
@@ -232,9 +242,10 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
     return result;
   }
 
-  private async dispatchProcessToWorker(
-    params: IDispatchProcessDTO & { worker_id: string },
-  ): Promise<Processing> {
+  private async dispatchProcessToWorker(params: {
+    worker_id: string;
+    processing_id: string;
+  }): Promise<Processing> {
     const { processing_id } = params;
     const processing = await this.processingRepository.findOne({
       id: processing_id,
@@ -274,17 +285,6 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
           message: "Dataset not available.",
         });
 
-      const updatedProcessing = await this.processingRepository.updateOne(
-        { id: processing.id },
-        { worker_id: worker.id },
-      );
-
-      if (!updatedProcessing)
-        throw new AppError({
-          key: "@dataset_processor_provider_dispatch_process/PROCESSING_UPDATE_ERROR",
-          message: "Fail to update processing.",
-        });
-
       const acquisition = new Promise((resolve, reject) => {
         let timeout: NodeJS.Timeout;
 
@@ -320,14 +320,23 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
 
       await acquisition;
 
-      await this.inMemoryDatabaseProvider.connection.hincrby(
+      const load = await this.inMemoryDatabaseProvider.connection.hincrby(
         this.workerJobsKey,
         worker.id,
         1,
       );
 
+      const updatedProcessing = await this.processingRepository.updateOne(
+        { id: processing.id },
+        { worker_id: worker.id },
+      );
+
+      logger.info(
+        `💥 Dispatched processing ID ${processing.id} to worker ${worker.name || worker.id}. Current worker load: ${load}.`,
+      );
+
       return updatedProcessing;
-    } catch (error) {
+    } catch (error: any) {
       const isAppError = AppError.isInstance(error);
       await this.processingRepository
         .updateOne(
@@ -339,18 +348,31 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         )
         .catch(() => null);
 
-      if (!isAppError) throw error;
+      if (isAppError) throw error;
       throw new AppError({
-        key: "@dataset_processor_provider_dispatch_process/PROCESSING_FILE_ERROR",
+        key: "@dataset_processor_provider_dispatch_process/PROCESSING_DISPATCH_ERROR",
         message: error.message,
         debug: { error },
       });
     }
   }
 
-  public async dispatchProcess(
-    params: IDispatchProcessDTO,
-  ): Promise<Processing> {
+  public async dispatchNotStartedProcesses(
+    _: IDispatchProcessesDTO,
+  ): Promise<IDispatchedProcessesDTO> {
+    const processes = await this.processingRepository.findMany(
+      {
+        worker_id: null,
+      },
+      { skip: 0 },
+      [{ field: "created_at", order: SORT_ORDER.ASC }],
+    );
+
+    if (processes.length === 0) {
+      logger.info("🆗 No processes to dispatch.");
+      return { dispatched: [], failed: [], skipped: [] };
+    }
+
     const workerJobCounts = await this.getWorkerJobCounts();
     const workerIds = Object.keys(workerJobCounts);
 
@@ -360,37 +382,71 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         message: "No worker available.",
       });
 
-    const availableWorkerIds = workerIds.filter(
-      workerId => workerJobCounts[workerId] < this.maxConcurrentJobs,
+    const availableWorkerCounts = workerIds.reduce<Record<string, number>>(
+      (acc, workerId) => {
+        if (workerJobCounts[workerId] < this.maxConcurrentJobs) {
+          acc[workerId] = workerJobCounts[workerId];
+        }
+        return acc;
+      },
+      {},
     );
 
-    if (availableWorkerIds.length === 0)
+    const totalAvailableSlots = Object.values(availableWorkerCounts).reduce(
+      (acc, count) => acc + (this.maxConcurrentJobs - count),
+      0,
+    );
+
+    if (totalAvailableSlots === 0)
       throw new AppError({
         key: "@dataset_processor_provider_dispatch_process/ALL_WORKERS_BUSY",
         message: "All workers are busy.",
       });
 
-    const availableWorkerWithNoJobs = availableWorkerIds.find(
-      workerId => workerJobCounts[workerId] === 0,
+    const successfullyDispatched: Processing[] = [];
+    const failedToDispatch: Processing[] = [];
+
+    await Promise.all(
+      Array.from({ length: totalAvailableSlots }, async () => {
+        const processing = processes.shift();
+        if (!processing) return;
+
+        const selectedWorkerId = Object.keys(availableWorkerCounts)
+          .sort((a, b) => availableWorkerCounts[a] - availableWorkerCounts[b])
+          .find(
+            workerId =>
+              availableWorkerCounts[workerId] < this.maxConcurrentJobs,
+          );
+        if (!selectedWorkerId) return;
+
+        availableWorkerCounts[selectedWorkerId] =
+          (availableWorkerCounts[selectedWorkerId] || 0) + 1;
+
+        try {
+          await this.dispatchProcessToWorker({
+            processing_id: processing.id,
+            worker_id: selectedWorkerId,
+          });
+
+          successfullyDispatched.push(processing);
+        } catch (error) {
+          if (AppError.isInstance(error)) {
+            logger.error(
+              `❎ Cannot dispatch processing ID ${processes[0]?.id} to worker ${selectedWorkerId}. ${error.message}`,
+            );
+            failedToDispatch.push(processes[0]);
+          } else {
+            throw error;
+          }
+        }
+      }),
     );
 
-    let selectedWorkerId: string;
-
-    if (availableWorkerWithNoJobs) {
-      selectedWorkerId = availableWorkerWithNoJobs;
-    } else {
-      selectedWorkerId = availableWorkerIds.reduce(
-        (minWorker, workerId) =>
-          workerJobCounts[workerId] < workerJobCounts[minWorker]
-            ? workerId
-            : minWorker,
-        availableWorkerIds[0],
-      );
-    }
-
-    const worker = await this.getWorkerById(selectedWorkerId);
-
-    return this.dispatchProcessToWorker({ ...params, worker_id: worker.id });
+    return {
+      dispatched: successfullyDispatched,
+      failed: failedToDispatch,
+      skipped: processes,
+    };
   }
 }
 
