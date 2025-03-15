@@ -185,8 +185,8 @@ Ref: processes.processor_id > processors.id [delete: Cascade]
 
 Ref: processes.dataset_id > datasets.id [delete: Cascade]
 
-Ref: processes.worker_id > workers.id [delete: Cascade]
+Ref: processes.worker_id > workers.id [delete: Set Null]
 
-Ref: processes.result_file_id > files.id [delete: Cascade]
+Ref: processes.result_file_id > files.id [delete: Set Null]
 
-Ref: processes.metrics_file_id > files.id [delete: Cascade]
+Ref: processes.metrics_file_id > files.id [delete: Set Null]
