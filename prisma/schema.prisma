@@ -231,13 +231,13 @@ model Processing {
   dataset    Dataset @relation(name: "Processing_Dataset", fields: [dataset_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   worker_id String?
-  worker    Worker? @relation(name: "Processing_Worker", fields: [worker_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  worker    Worker? @relation(name: "Processing_Worker", fields: [worker_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   result_file_id String?
-  result_file    File?   @relation(name: "Processing_ResultFile", fields: [result_file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  result_file    File?   @relation(name: "Processing_ResultFile", fields: [result_file_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   metrics_file_id String?
-  metrics_file    File?   @relation(name: "Processing_MetricsFile", fields: [metrics_file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  metrics_file    File?   @relation(name: "Processing_MetricsFile", fields: [metrics_file_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   status String
 
