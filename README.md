@@ -30,8 +30,8 @@
 - [🚀 Deployment](#deployment)
 - [🔃 Atualizando](#updating)
 - [🔧 Solução de Problemas](#troubleshooting)
-- [🤝🏻 Contribuições](./CONTRIBUTING.md)
-- [💾 Changelog](../CHANGELOG.md)
+- [🤝🏻 Contribuições](docs/CONTRIBUTING.md)
+- [💾 Changelog](CHANGELOG.md)
 - [📖 Referências](#bibliography)
 
 ## 📖 Sobre <a name = "about"></a>
