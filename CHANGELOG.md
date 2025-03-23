@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.0...v0.6.1) (2025-03-15)
+
+
+### Bug Fixes
+
+* processing relation cascade ([e1ccb0b](https://github.com/MalwareDataLab/autodroid-api/commit/e1ccb0bac7d816af8611d16b8d48f46ce69ad6d4))
+
 ## [0.6.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.5.1...v0.6.0) (2025-03-14)
 
 
