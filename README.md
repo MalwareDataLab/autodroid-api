@@ -40,9 +40,9 @@ Este repositório contém o código da API AutoDroid.
 
 ### Motivação
 
-Os Hackers do Mal estão utilizando técnicas de IA (Inteligência Artificial) para realizar “mutações” em malware, dificultando sua detecção, que afeta os usuários de computadores e dispositivos móveis, dentre outras tecnologias que possam estar sujeitas a ataque de malware, gerando um aumento do nível de proliferação de malware: um dos maiores desafios da segurança da informação.
+Os Hackers do Mal estão utilizando técnicas de IA (Inteligência Artificial) para realizar "mutações" em malware, dificultando sua detecção, que afeta os usuários de computadores e dispositivos móveis, dentre outras tecnologias que possam estar sujeitas a ataque de malware, gerando um aumento do nível de proliferação de malware: um dos maiores desafios da segurança da informação.
 
-Os Hackers do Bem podem enfrentar esta proliferação de malwares utilizando ferramentas de IA como o DroidAugmentor para que a detecção dos malwares “mutantes” seja amplamente aprimorada.
+Os Hackers do Bem podem enfrentar esta proliferação de malwares utilizando ferramentas de IA como o DroidAugmentor para que a detecção dos malwares "mutantes" seja amplamente aprimorada.
 
 Todavia ferramentas tais como a DroidAugmentor manualmente pode ser uma tarefa muito complexa e nada escalável, criando uma grande barreira de aprendizagem e utilização da ferramenta.
 
@@ -157,6 +157,8 @@ O requisito "Google Cloud Storage" pode ser provido pela mesma conta do requisit
 - Crie a aplicação web e armazene os dados de configuração a serem usados pelo frontend posteriormente.
 - Crie uma [conta de serviço (service account) para SDK Admin do Firebase](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk).
 - Crie uma chave de acesso JSON para a conta de serviço e salve o arquivo em um local seguro.
+
+> **Nota sobre o Firebase Storage**: O Firebase pode solicitar um cartão de crédito para habilitar o Storage, mesmo que você não ultrapasse o limite gratuito. No momento da escrita desta documentação, o Firebase oferece 5GB de armazenamento gratuito, o que é mais que suficiente para executar esta aplicação. Para mais detalhes sobre preços e limites, consulte a [documentação oficial do Firebase](https://firebase.google.com/pricing).
 
 - Coletado o ```nome``` do bucket e a chave de acesso JSON, [prossiga para a configuração das variáveis de ambiente](#env_variables).
 
