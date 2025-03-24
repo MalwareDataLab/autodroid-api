@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.1...v0.6.2) (2025-03-24)
+
+
+### Bug Fixes
+
+* update script ([9574788](https://github.com/MalwareDataLab/autodroid-api/commit/957478876bb78e4f0e09d76490297b3d65669132))
+
 ## [0.6.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.0...v0.6.1) (2025-03-15)
 
 
