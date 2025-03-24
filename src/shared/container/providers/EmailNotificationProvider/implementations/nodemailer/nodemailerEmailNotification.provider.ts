@@ -34,6 +34,16 @@ export class NodemailerEmailNotificationProvider
       gmail: { user, app_password },
     } = getEmailConfig();
 
+    if (!user || !app_password) {
+      logger.warn(
+        "⚠️ Email notification provider credentials not set. Email notifications will be disabled.",
+      );
+      this.initialization = Promise.resolve();
+      this.client = null as any;
+      this.templates = {};
+      return;
+    }
+
     this.client = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -46,7 +56,7 @@ export class NodemailerEmailNotificationProvider
     this.initialization = executeAction({
       action: () => this.init(),
       actionName: "Email notification provider init",
-      retryDelay: 30 * 1000,
+      retryDelay: 2 * 1000,
       logging: true,
     }).catch(error => {
       logger.error(
@@ -56,6 +66,8 @@ export class NodemailerEmailNotificationProvider
   }
 
   private async init() {
+    if (!this.client) return;
+
     await this.client.verify();
 
     const viewPath = path.resolve(__dirname, "./views");
@@ -82,6 +94,14 @@ export class NodemailerEmailNotificationProvider
   }
 
   public async send(params: ISendEmailNotificationDTO): Promise<void> {
+    if (!this.client)
+      throw new AppError({
+        key: "@nodemailer_email_notification_provider/CLIENT_NOT_INITIALIZED",
+        message:
+          "Email notification provider not initialized. Skipping email send.",
+        debug: {},
+      });
+
     const { to_override, default_bcc_emails } = getEmailConfig();
 
     await this.initialization;

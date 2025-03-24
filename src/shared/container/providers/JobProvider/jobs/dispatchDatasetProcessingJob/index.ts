@@ -71,7 +71,10 @@ class DispatchDatasetProcessingJob implements IJob {
     }
   }
 
-  public async onFailed(job: Job, err: Error): Promise<void> {
+  public async onFailed(
+    job: Job<IDispatchDatasetProcessingJob>,
+    err: Error,
+  ): Promise<void> {
     const { processing_ids } = job.data;
 
     if (job.attemptsMade >= this.jobOptions.attempts) {
@@ -81,7 +84,7 @@ class DispatchDatasetProcessingJob implements IJob {
 
       await processingHandleFailureService.execute({
         processing_ids,
-        message: `Fail to dispatch processing ${job.data.processing_id} after ${job.attemptsMade} attempts. ${err.message}`,
+        message: `Fail to dispatch processing ${processing_ids[0]}${processing_ids.length > 1 ? ` and ${processing_ids.length - 1} more` : ""} after ${job.attemptsMade} attempts. ${err.message}`,
       });
     }
   }
