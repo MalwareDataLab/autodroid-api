@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img width="200px" height="200px" src="../.github/docs/0-logo.png" alt="Project logo" style="fill:#000000">
+    <img width="200px" height="200px" src=".github/docs/0-logo.png" alt="Project logo" style="fill:#000000">
   </a>
 </p>
 
@@ -30,8 +30,8 @@
 - [🚀 Deployment](#deployment)
 - [🔃 Atualizando](#updating)
 - [🔧 Solução de Problemas](#troubleshooting)
-- [🤝🏻 Contribuições](./CONTRIBUTING.md)
-- [💾 Changelog](../CHANGELOG.md)
+- [🤝🏻 Contribuições](docs/CONTRIBUTING.md)
+- [💾 Changelog](CHANGELOG.md)
 - [📖 Referências](#bibliography)
 
 ## 📖 Sobre <a name = "about"></a>
@@ -40,9 +40,9 @@ Este repositório contém o código da API AutoDroid.
 
 ### Motivação
 
-Os Hackers do Mal estão utilizando técnicas de IA (Inteligência Artificial) para realizar “mutações” em malware, dificultando sua detecção, que afeta os usuários de computadores e dispositivos móveis, dentre outras tecnologias que possam estar sujeitas a ataque de malware, gerando um aumento do nível de proliferação de malware: um dos maiores desafios da segurança da informação.
+Os Hackers do Mal estão utilizando técnicas de IA (Inteligência Artificial) para realizar "mutações" em malware, dificultando sua detecção, que afeta os usuários de computadores e dispositivos móveis, dentre outras tecnologias que possam estar sujeitas a ataque de malware, gerando um aumento do nível de proliferação de malware: um dos maiores desafios da segurança da informação.
 
-Os Hackers do Bem podem enfrentar esta proliferação de malwares utilizando ferramentas de IA como o DroidAugmentor para que a detecção dos malwares “mutantes” seja amplamente aprimorada.
+Os Hackers do Bem podem enfrentar esta proliferação de malwares utilizando ferramentas de IA como o DroidAugmentor para que a detecção dos malwares "mutantes" seja amplamente aprimorada.
 
 Todavia ferramentas tais como a DroidAugmentor manualmente pode ser uma tarefa muito complexa e nada escalável, criando uma grande barreira de aprendizagem e utilização da ferramenta.
 
@@ -58,11 +58,11 @@ A AutoDroid é uma aplicação que visa oferecer aplicações como a DroidAugmen
 
 O serviço proposto se trata da etapa de expansão de Dataset na pipeline de AutoML, conforme apresentado em [DroidAugmentor](https://sol.sbc.org.br/index.php/sbseg_estendido/article/view/27273).
 
-<img src="../.github/docs/2-proposal.jpg" alt="Overview" style="fill:#000000">
+<img src=".github/docs/2-proposal.jpg" alt="Overview" style="fill:#000000">
 
 O projeto é composto por diversas partes, com o objetivo final de oferecer uma ferramenta escalável para executar instâncias da DroidAugmentor.
 
-<img src="../.github/docs/1-overview.jpg" alt="Overview" style="fill:#000000">
+<img src=".github/docs/1-overview.jpg" alt="Overview" style="fill:#000000">
 
 ## 🏦 Arquitetura <a name="architecture"></a>
 
@@ -71,13 +71,13 @@ Esta aplicação é uma API REST/GraphQL construída usando Typescript com Node.
 Seguindo o [modelo C4](https://c4model.com/), a arquitetura do back-end é apresentada a seguir:
 
 Visão de sistema:
-<img src="../.github/docs/backend-01-system.jpg" alt="be-system" style="fill:#000000">
+<img src=".github/docs/backend-01-system.jpg" alt="be-system" style="fill:#000000">
 
 Visão de contêiner:
-<img src="../.github/docs/backend-02-container.jpg" alt="be-container" style="fill:#000000">
+<img src=".github/docs/backend-02-container.jpg" alt="be-container" style="fill:#000000">
 
 Visão de componente:
-<img src="../.github/docs/backend-03-component.jpg" alt="be-component" style="fill:#000000">
+<img src=".github/docs/backend-03-component.jpg" alt="be-component" style="fill:#000000">
 
 ### Entidades
 
@@ -90,7 +90,7 @@ Visão de componente:
 
 ### Estrutura do código
 
-A estrutura interna é apresentada em [estrutura do código](./CODEBASE_STRUCTURE.md) e guiada pelo documento de [Guidelines de Código](./CODE_GUIDELINES.md).
+A estrutura interna é apresentada em [estrutura do código](./docs/CODEBASE_STRUCTURE.md) e guiada pelo documento de [Guidelines de Código](./docs/CODE_GUIDELINES.md).
 
 A proposta de arquitetura do back-end é baseada em [DDD](https://en.wikipedia.org/wiki/Domain-driven_design) e [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html). É guiada por princípios de SOLID e visa a separação de responsabilidades, facilitando a manutenção e evolução do código. Além disso, é proposto o método de desenvolvimento [TDD](https://en.wikipedia.org/wiki/Test-driven_development) para garantir a qualidade do código guiado por testes.
 
@@ -158,9 +158,11 @@ O requisito "Google Cloud Storage" pode ser provido pela mesma conta do requisit
 - Crie uma [conta de serviço (service account) para SDK Admin do Firebase](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk).
 - Crie uma chave de acesso JSON para a conta de serviço e salve o arquivo em um local seguro.
 
+> **Nota sobre o Firebase Storage**: O Firebase pode solicitar um cartão de crédito para habilitar o Storage, mesmo que você não ultrapasse o limite gratuito. No momento da escrita desta documentação, o Firebase oferece 5GB de armazenamento gratuito, o que é mais que suficiente para executar esta aplicação. Para mais detalhes sobre preços e limites, consulte a [documentação oficial do Firebase](https://firebase.google.com/pricing).
+
 - Coletado o ```nome``` do bucket e a chave de acesso JSON, [prossiga para a configuração das variáveis de ambiente](#env_variables).
 
-Para mais detalhes, foi desenvolvido o [tutorial detalhado sobre como configurar o Firebase (Authentication + Storage) para a AutoDroid](./FIREBASE_SETUP_EXAMPLE.md).
+Para mais detalhes, foi desenvolvido o [tutorial detalhado sobre como configurar o Firebase (Authentication + Storage) para a AutoDroid](./docs/FIREBASE_SETUP_EXAMPLE.md).
 
 ### Google Cloud Storage
 
@@ -257,7 +259,7 @@ Uma pasta `./runtime` será criada na raiz deste repositório para armazenar os 
 
 ### Instalação Manual <a name="manual_setup"></a>
 
-Um guia para configurar o projeto manualmente está disponível no guia de [configuração manual](./MANUAL_SETUP.md).
+Um guia para configurar o projeto manualmente está disponível no guia de [configuração manual](./docs/MANUAL_SETUP.md).
 
 ## 📱 Utilização <a name="usage"></a>
 
@@ -269,7 +271,7 @@ Por padrão, estará disponível em sua máquina local nos seguintes URLs:
 
 Esta URL estará disponível até que a aplicação seja interrompida.
 
-Para usar a API diretamente, você pode seguir as instruções na [documentação da API](./API.md) ou pode usar ferramentas de cliente HTTP como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/).
+Para usar a API diretamente, você pode seguir as instruções na [documentação da API](./docs/API.md) ou pode usar ferramentas de cliente HTTP como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/).
 
 Todas as rotas, queries e mutations da API estão disponíveis [nesta coleção do Postman](https://www.postman.com/luizfelipelaviola/workspace/autodroid/collection/17242387-d69ee1f8-a603-4ac8-89aa-787cfacffaee?action=share&creator=17242387&active-environment=17242387-9dcb7b8e-4eb1-4a10-b607-74725449575f).
 
@@ -285,7 +287,7 @@ O processador é uma aplicação (imagem Docker) a ser registrada pelo adminsitr
 
 O arquivo de conjunto de dados pode ser enviado pelo usuário usando a API. O arquivo de conjunto de dados deve ser um arquivo válido com um tipo MIME válido, de acordo com a configuração do processador.
 
-Há um [dataset de exemplo](./samples/dataset_example.csv) na pasta ```./docs/samples``` deste repositório que você pode usar para testar a aplicação.
+Há um [dataset de exemplo](./docs/samples/dataset_example.csv) na pasta ```./docs/samples``` deste repositório que você pode usar para testar a aplicação.
 
 O envio é feito por URL assinada, a funcionalidade de `Create dataset` irá fornecer uma `upload_url`, para onde o arquivo de fato deverá ser enviado. [Exemplo de requisições](https://www.postman.com/luizfelipelaviola/workspace/autodroid/folder/17242387-303cd191-1127-448c-920c-18bc5f9d0e46?action=share&source=copy-link&creator=17242387&ctx=documentation).
 
@@ -308,12 +310,12 @@ Siga as instruções em [worker](https://github.com/MalwareDataLab/autodroid-wor
 O fluxograma a seguir descreve o fluxo comum da aplicação:
 
 <p align="center">
-  <img src="../.github/docs/3-common-flowchart.jpg" alt="Fluxo comum">
+  <img src=".github/docs/3-common-flowchart.jpg" alt="Fluxo comum">
 </p>
 
 ## ✅ Testes <a name = "tests"></a>
 
-Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando:
+Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando (após realizar a configuração solicitada em [antes de começar](#before_start)):
 
 ```bash
 ./demo.sh
@@ -428,6 +430,10 @@ Persistindo o erro, entre em contato com o mantenedor do projeto.
 
 ## 📖 Referências <a name="bibliography"></a>
 
+LAVIOLA, Luiz Felipe; PAIM, Kayuã Oleques; KREUTZ, Diego; MANSILHA, Rodrigo Brandão. AutoDroid: disponibilizando a ferramenta DroidAugmentor como serviço. In: ESCOLA REGIONAL DE REDES DE COMPUTADORES (ERRC), 20. , 2023, Porto Alegre/RS. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2023 . p. 145-150. DOI: https://doi.org/10.5753/errc.2023.929.
+
+LAVIOLA, Luiz Felipe; GASPAR DINIZ NOGUEIRA, Angelo; KREUTZ, Diego; BRANDÃO MANSILHA, Rodrigo. Cloud AutoDroid: uma Arquitetura de Backend para Executar Serviços de IA Generativa na Nuvem. In: ESCOLA REGIONAL DE ENGENHARIA DE SOFTWARE (ERES), 8. , 2024, Santiago/RS. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2024 . p. 258-267. DOI: https://doi.org/10.5753/eres.2024.4302.
+
 CASOLA, Karina; PAIM, Kayuã Oleques; MANSILHA, Rodrigo Brandão; KREUTZ, Diego. DroidAugmentor: uma ferramenta de treinamento e avaliação de cGANs para geração de dados sintéticos. In: SALÃO DE FERRAMENTAS - SIMPÓSIO BRASILEIRO DE SEGURANÇA DA INFORMAÇÃO E DE SISTEMAS COMPUTACIONAIS (SBSEG), 23. , 2023, Juiz de Fora/MG. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2023 . p. 57-64. DOI: https://doi.org/10.5753/sbseg_estendido.2023.235793.
 
-LAVIOLA, Luiz Felipe; PAIM, Kayuã Oleques; KREUTZ, Diego; MANSILHA, Rodrigo Brandão. AutoDroid: disponibilizando a ferramenta DroidAugmentor como serviço. In: ESCOLA REGIONAL DE REDES DE COMPUTADORES (ERRC), 20. , 2023, Porto Alegre/RS. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2023 . p. 145-150. DOI: https://doi.org/10.5753/errc.2023.929.
+NOGUEIRA, Angelo Gaspar Diniz; PAIM, Kayua Oleques; BRAGANÇA, Hendrio; MANSILHA, Rodrigo; KREUTZ, Diego. MalSynGen: redes neurais artificiais na geração de dados tabulares sintéticos para detecção de malware. In: SALÃO DE FERRAMENTAS - SIMPÓSIO BRASILEIRO DE SEGURANÇA DA INFORMAÇÃO E DE SISTEMAS COMPUTACIONAIS (SBSEG), 24. , 2024, São José dos Campos/SP. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2024 . p. 129-136. DOI: https://doi.org/10.5753/sbseg_estendido.2024.243359.

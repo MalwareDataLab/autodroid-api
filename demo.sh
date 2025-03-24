@@ -5,20 +5,22 @@ PORT=3333
 
 API_IMAGE_NAME="malwaredatalab/autodroid-api"
 WORKER_IMAGE_NAME="malwaredatalab/autodroid-worker"
-CONTAINER_NAME="autodroid_worker"
+CONTAINER_NAME_PREFIX="autodroid_worker"
 VOLUME_NAME="autodroid_worker_data"
+DEFAULT_NUM_WORKERS=1
 
 DATASET_FILE_PATH="./docs/samples/dataset_example.csv"
 
 clear
 
 show_help() {
-  echo "Usage: $0 [-k FIREBASEKEY] [-u USERNAME] [-p PASSWORD]"
+  echo "Usage: $0 [-k FIREBASEKEY] [-u USERNAME] [-p PASSWORD] [-n NUM_WORKERS]"
   echo
   echo "Options:"
   echo "  -k, --firebasekey FIREBASEKEY   Firebase API key"
   echo "  -u, --username USERNAME         Firebase username (email)"
   echo "  -p, --password PASSWORD         Firebase password"
+  echo "  -n, --num-workers NUM_WORKERS   Number of worker containers (default: 1)"
   echo "  -h, --help                      Show this help message"
 }
 
@@ -65,6 +67,10 @@ while [ $# -gt 0 ]; do
       PASSWORD="$2"
       shift 2
       ;;
+    -n|--num-workers)
+      NUM_WORKERS="$2"
+      shift 2
+      ;;
     -h|--help)
       show_help
       exit 0
@@ -77,6 +83,14 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+if [ -z "$NUM_WORKERS" ]; then
+  NUM_WORKERS=$DEFAULT_NUM_WORKERS
+fi
+
+if ! echo "$NUM_WORKERS" | grep -qE '^[0-9]+$' || [ "$NUM_WORKERS" -lt 1 ]; then
+  exit_on_error "Number of workers must be a positive integer"
+fi
+
 dropVolumeData() {
   if [ -d "./.runtime" ]; then
     echo "[INFO] Removing ./.runtime directory..." >&2
@@ -87,10 +101,10 @@ dropVolumeData() {
 cleanup() {
   docker-compose down -v
 
-  if [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
-    echo "[INFO] Removing existing $CONTAINER_NAME container..." >&2
-    docker rm -f $CONTAINER_NAME
-  fi
+  docker ps -aq -f name="$CONTAINER_NAME_PREFIX" | while read -r container_id; do
+    echo "[INFO] Removing container $container_id..." >&2
+    docker rm -f "$container_id"
+  done
 
   if [ "$(docker volume ls -q -f name=$VOLUME_NAME)" ]; then
     echo "[INFO] Removing existing $VOLUME_NAME volume..." >&2
@@ -366,6 +380,19 @@ call_backend() {
   fi
 }
 
+check_workers_available() {
+  local WORKERS_RESPONSE=$(call_backend "GET" "/admin/worker")
+  local WORKERS_WITH_LAST_SEEN=$(echo "$WORKERS_RESPONSE" | jq -r '.edges[] | select(.node.last_seen_at != null) | .node.id' | wc -l)
+  
+  if [ "$WORKERS_WITH_LAST_SEEN" -lt "$NUM_WORKERS" ]; then
+    echo "[INFO] Waiting for workers to be active... (Active workers: $WORKERS_WITH_LAST_SEEN/$NUM_WORKERS)"
+    return 1
+  fi
+
+  echo "[INFO] All workers are available and active."
+  return 0
+}
+
 #
 # STEP 1
 #
@@ -489,9 +516,20 @@ echo "Worker Registration Token: $WORKER_REGISTRATION_TOKEN"
 #
 # STEP 3
 #
-step "Step 3" "Start a worker container."
-docker run --name $CONTAINER_NAME --rm --network host -v /var/run/docker.sock:/var/run/docker.sock -v $VOLUME_NAME:/usr/app/temp:rw --pull always $WORKER_IMAGE_NAME -u http://host.docker.internal:$PORT -t $WORKER_REGISTRATION_TOKEN &
-echo "Worker container started."
+step "Step 3" "Start $NUM_WORKERS worker container(s)."
+for i in $(seq 1 "$NUM_WORKERS"); do
+  CONTAINER_NAME="${CONTAINER_NAME_PREFIX}_${i}"
+  
+  docker run --name "$CONTAINER_NAME" --rm --network host \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$VOLUME_NAME":/usr/app/temp:rw \
+    --pull always "$WORKER_IMAGE_NAME" \
+    -u "http://host.docker.internal:$PORT" \
+    -n "$CONTAINER_NAME" \
+    -t "$WORKER_REGISTRATION_TOKEN" &
+  
+  echo "Worker container $CONTAINER_NAME started."
+done
 
 #
 # STEP 4
@@ -535,12 +573,22 @@ elif [ "$UPLOAD_HTTP_STATUS" -ne 200 ]; then
   exit_on_error "Failed to upload dataset. HTTP status $UPLOAD_HTTP_STATUS."
 else
   echo "[INFO] Dataset uploaded successfully."
+  
+  DATASET_URL_RESPONSE=$(call_backend "GET" "/dataset/$DATASET_ID")
+  DATASET_PUBLIC_URL=$(echo "$DATASET_URL_RESPONSE" | jq -r .file.public_url)
+  if [ -z "$DATASET_PUBLIC_URL" ] || [ "$DATASET_PUBLIC_URL" = "null" ]; then
+    echo "[WARNING] Could not get dataset public URL."
+  fi
 fi
 
 #
 # STEP 6
 #
 step "Step 6" "Request processing for the dataset."
+while ! check_workers_available; do
+  sleep 5
+done
+
 PROCESSING_REQUEST_RESPONSE=$(call_backend "POST" "/processing" "{
   \"dataset_id\": \"$DATASET_ID\",
   \"processor_id\": \"$PROCESSOR_ID\",
@@ -556,10 +604,18 @@ echo "Processing Request ID: $PROCESSING_REQUEST_ID"
 # STEP 7
 #
 step "Step 7" "Check the processing status. - Waiting for the processing to finish."
+check_worker_container() {
+  local running_workers=$(docker ps -q -f name="$CONTAINER_NAME_PREFIX" | wc -l)
+  if [ "$running_workers" -lt "$NUM_WORKERS" ]; then
+    exit_on_error "Not all worker containers are running. Expected $NUM_WORKERS, found $running_workers. Please restart the demo."
+  fi
+}
+
 while true; do
+  check_worker_container
+  
   PROCESSING_STATUS_RESPONSE=$(call_backend "GET" "/processing/$PROCESSING_REQUEST_ID")
   PROCESSING_STATUS=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .status)
-
 
   if [ "$PROCESSING_STATUS" = "SUCCEEDED" ]; then
     echo "Processing SUCCEEDED."
@@ -580,4 +636,4 @@ while true; do
   fi
 done
 
-stop "Project demonstration finished.\n" "Result File URL: $PROCESSING_RESULT_URL\n" "Metrics File URL: $PROCESSING_METRICS_URL\n" "Homepage: https://malwaredatalab.github.io/" "Developer: luiz@laviola.dev\n" "Enjoy!"
+stop "Project demonstration finished.\n" "Result File URL: $PROCESSING_RESULT_URL\n" "Metrics File URL: $PROCESSING_METRICS_URL\n" "Original Dataset URL: $DATASET_PUBLIC_URL\n" "Homepage: https://malwaredatalab.github.io/" "Developer: luiz@laviola.dev\n" "Enjoy!"
