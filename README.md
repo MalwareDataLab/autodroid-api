@@ -145,7 +145,7 @@ Este projeto requer credenciais e chaves de acesso para a integração com servi
 
 O requisito "Google Cloud Storage" pode ser provido pela mesma conta do requisito "Firebase", tanto como pode ser uma conta/projeto Google distinto.
 
-### Firebase
+### Firebase <a name = "firebase"></a>
 
 - Entre na conta Google que será utilizada para gerenciar o projeto.
 - Acesse o [Firebase Console](https://console.firebase.google.com/).
