@@ -27,6 +27,7 @@
 - [🏁 Primeiros Passos](#getting_started)
 - [📱 Utilização](#usage)
 - [✅ Testes](#tests)
+- [🎯 Demonstração](#demo)
 - [🚀 Deployment](#deployment)
 - [🔃 Atualizando](#updating)
 - [🔧 Solução de Problemas](#troubleshooting)
@@ -315,18 +316,20 @@ O fluxograma a seguir descreve o fluxo comum da aplicação:
 
 ## ✅ Testes <a name = "tests"></a>
 
-Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando (após realizar a configuração solicitada em [antes de começar](#before_start)):
-
-```bash
-./demo.sh
-```
-
 Para executar os testes, por favor execute o comando abaixo:
 ```bash
 yarn test
 ```
 
 A cobertura de código e outros relatórios serão gerados na pasta `./test/outputs`.
+
+## 🎯 Demonstração <a name = "demo"></a>
+
+Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando (após realizar a configuração solicitada em [antes de começar](#before_start)):
+
+```bash
+./demo.sh
+```
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
