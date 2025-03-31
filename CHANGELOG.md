@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.2...v0.6.3) (2025-03-31)
+
+
+### Bug Fixes
+
+* idle worker cleanup on dispatch job ([4723997](https://github.com/MalwareDataLab/autodroid-api/commit/47239972ee2e7e293718620c92536583e0c21038))
+
 ## [0.6.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.1...v0.6.2) (2025-03-24)
 
 
