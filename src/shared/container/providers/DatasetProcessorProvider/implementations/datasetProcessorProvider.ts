@@ -149,11 +149,17 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
   }): Promise<void> {
     const worker = await this.workerRepository.findOne({ id: worker_id });
 
-    if (!worker)
+    if (!worker) {
+      await this.inMemoryDatabaseProvider.connection.hdel(
+        this.workerJobsKey,
+        worker_id,
+      );
+
       throw new AppError({
         key: "@dataset_processor_provider_handle_worker_status/WORKER_NOT_FOUND",
         message: "Worker not found.",
       });
+    }
 
     await this.inMemoryDatabaseProvider.connection.hset(
       this.workerJobsKey,
@@ -178,11 +184,17 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       missing: false,
     });
 
-    if (!worker)
+    if (!worker) {
+      await this.inMemoryDatabaseProvider.connection.hdel(
+        this.workerJobsKey,
+        worker_id,
+      );
+
       throw new AppError({
         key: "@dataset_processor_provider_get_worker_by_id/WORKER_NOT_FOUND",
         message: "Worker not found.",
       });
+    }
 
     try {
       await this.websocketProvider.sendMessageToRoom(
@@ -432,7 +444,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
         } catch (error) {
           if (AppError.isInstance(error)) {
             logger.error(
-              `❎ Cannot dispatch processing ID ${processes[0]?.id} to worker ${selectedWorkerId}. ${error.message}`,
+              `❎ Cannot dispatch processing ID ${processing?.id} to worker ${selectedWorkerId}. ${error.message}`,
             );
             failedToDispatch.push(processes[0]);
           } else {
