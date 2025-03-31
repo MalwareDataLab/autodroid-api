@@ -8,19 +8,21 @@ WORKER_IMAGE_NAME="malwaredatalab/autodroid-worker"
 CONTAINER_NAME_PREFIX="autodroid_worker"
 VOLUME_NAME="autodroid_worker_data"
 DEFAULT_NUM_WORKERS=1
+DEFAULT_NUM_PROCESSING_REQUESTS=1
 
 DATASET_FILE_PATH="./docs/samples/dataset_example.csv"
 
 clear
 
 show_help() {
-  echo "Usage: $0 [-k FIREBASEKEY] [-u USERNAME] [-p PASSWORD] [-n NUM_WORKERS]"
+  echo "Usage: $0 [-k FIREBASEKEY] [-u USERNAME] [-p PASSWORD] [-n NUM_WORKERS] [-r NUM_PROCESSING_REQUESTS]"
   echo
   echo "Options:"
   echo "  -k, --firebasekey FIREBASEKEY   Firebase API key"
   echo "  -u, --username USERNAME         Firebase username (email)"
   echo "  -p, --password PASSWORD         Firebase password"
   echo "  -n, --num-workers NUM_WORKERS   Number of worker containers (default: 1)"
+  echo "  -r, --num-requests NUM_REQUESTS Number of processing requests (default: 1)"
   echo "  -h, --help                      Show this help message"
 }
 
@@ -71,6 +73,10 @@ while [ $# -gt 0 ]; do
       NUM_WORKERS="$2"
       shift 2
       ;;
+    -r|--num-requests)
+      NUM_PROCESSING_REQUESTS="$2"
+      shift 2
+      ;;
     -h|--help)
       show_help
       exit 0
@@ -87,8 +93,16 @@ if [ -z "$NUM_WORKERS" ]; then
   NUM_WORKERS=$DEFAULT_NUM_WORKERS
 fi
 
-if ! echo "$NUM_WORKERS" | grep -qE '^[0-9]+$' || [ "$NUM_WORKERS" -lt 1 ]; then
-  exit_on_error "Number of workers must be a positive integer"
+if [ -z "$NUM_PROCESSING_REQUESTS" ]; then
+  NUM_PROCESSING_REQUESTS=$DEFAULT_NUM_PROCESSING_REQUESTS
+fi
+
+if ! echo "$NUM_WORKERS" | grep -qE '^[0-9]+$' || [ "$NUM_WORKERS" -lt 0 ]; then
+  exit_on_error "Number of workers must be a non-negative integer"
+fi
+
+if ! echo "$NUM_PROCESSING_REQUESTS" | grep -qE '^[0-9]+$' || [ "$NUM_PROCESSING_REQUESTS" -lt 1 ]; then
+  exit_on_error "Number of processing requests must be a positive integer"
 fi
 
 dropVolumeData() {
@@ -384,6 +398,11 @@ check_workers_available() {
   local WORKERS_RESPONSE=$(call_backend "GET" "/admin/worker")
   local WORKERS_WITH_LAST_SEEN=$(echo "$WORKERS_RESPONSE" | jq -r '.edges[] | select(.node.last_seen_at != null) | .node.id' | wc -l)
   
+  if [ "$WORKERS_WITH_LAST_SEEN" -eq 0 ]; then
+    echo "[INFO] No workers detected yet..."
+    return 1
+  fi
+  
   if [ "$WORKERS_WITH_LAST_SEEN" -lt "$NUM_WORKERS" ]; then
     echo "[INFO] Waiting for workers to be active... (Active workers: $WORKERS_WITH_LAST_SEEN/$NUM_WORKERS)"
     return 1
@@ -511,25 +530,54 @@ if [ -z "$WORKER_REGISTRATION_TOKEN" ] || [ "$WORKER_REGISTRATION_TOKEN" = "null
   exit_on_error "Failed to create worker registration token."
 fi
 echo "Worker Registration Token: $WORKER_REGISTRATION_TOKEN"
+echo
+echo "[INFO] To start a worker on a remote server, run this command:"
+echo "docker run --rm --network host \\"
+echo "  -v /var/run/docker.sock:/var/run/docker.sock \\"
+echo "  -v autodroid_worker_data:/usr/app/temp:rw \\"
+echo "  --pull always $WORKER_IMAGE_NAME \\"
+echo "  -u \"http://<<THIS_BACKEND_MACHINE_NETWORK_IP>>:$PORT\" \\"
+echo "  -n \"remote_worker_X\" \\"
+echo "  -t \"$WORKER_REGISTRATION_TOKEN\""
+echo
+echo "Remember to replace <<THIS_BACKEND_MACHINE_NETWORK_IP>> with the IP address of the target machine in the network."
+echo "Replace X with the worker number, for example, if you want to start 2 workers, you should run the command 2 times, with remote_worker_1 and remote_worker_2 as the worker names."
+echo "Also create the folder /usr/app/temp in the target machine before running the command."
+echo
+echo "[INFO] The script will start $NUM_WORKERS local worker(s)."
+echo "[INFO] Press Enter to continue after starting all workers (local and remote)..."
+read dummy
 
 
 #
 # STEP 3
 #
 step "Step 3" "Start $NUM_WORKERS worker container(s)."
-for i in $(seq 1 "$NUM_WORKERS"); do
-  CONTAINER_NAME="${CONTAINER_NAME_PREFIX}_${i}"
-  
-  docker run --name "$CONTAINER_NAME" --rm --network host \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v "$VOLUME_NAME":/usr/app/temp:rw \
-    --pull always "$WORKER_IMAGE_NAME" \
-    -u "http://host.docker.internal:$PORT" \
-    -n "$CONTAINER_NAME" \
-    -t "$WORKER_REGISTRATION_TOKEN" &
-  
-  echo "Worker container $CONTAINER_NAME started."
-done
+if [ "$NUM_WORKERS" -gt 0 ]; then
+  for i in $(seq 1 "$NUM_WORKERS"); do
+    CONTAINER_NAME="${CONTAINER_NAME_PREFIX}_${i}"
+    
+    docker run --name "$CONTAINER_NAME" --rm --network host \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v "$VOLUME_NAME":/usr/app/temp:rw \
+      --pull always "$WORKER_IMAGE_NAME" \
+      -u "http://host.docker.internal:$PORT" \
+      -n "$CONTAINER_NAME" \
+      -t "$WORKER_REGISTRATION_TOKEN" &
+    
+    echo "Worker container $CONTAINER_NAME started."
+  done
+
+  while ! check_workers_available; do
+    sleep 5
+  done
+else
+  echo "[INFO] No local workers will be started."
+  echo "[INFO] Waiting for at least one remote worker to be available..."
+  while ! check_workers_available; do
+    sleep 5
+  done
+fi
 
 #
 # STEP 4
@@ -584,26 +632,28 @@ fi
 #
 # STEP 6
 #
-step "Step 6" "Request processing for the dataset."
-while ! check_workers_available; do
-  sleep 5
-done
+step "Step 6" "Request processing for the dataset(s)."
+PROCESSING_REQUEST_IDS=""
 
-PROCESSING_REQUEST_RESPONSE=$(call_backend "POST" "/processing" "{
-  \"dataset_id\": \"$DATASET_ID\",
-  \"processor_id\": \"$PROCESSOR_ID\",
-  \"parameters\": []
-}")
-PROCESSING_REQUEST_ID=$(echo "$PROCESSING_REQUEST_RESPONSE" | jq -r .id)
-if [ -z "$PROCESSING_REQUEST_ID" ] || [ "$PROCESSING_REQUEST_ID" = "null" ]; then
-  exit_on_error "Failed to request processing. Processing Request ID is missing."
-fi
-echo "Processing Request ID: $PROCESSING_REQUEST_ID"
+for i in $(seq 1 "$NUM_PROCESSING_REQUESTS"); do
+  echo "[INFO] Requesting processing job $i of $NUM_PROCESSING_REQUESTS"
+  PROCESSING_REQUEST_RESPONSE=$(call_backend "POST" "/processing" "{
+    \"dataset_id\": \"$DATASET_ID\",
+    \"processor_id\": \"$PROCESSOR_ID\",
+    \"parameters\": []
+  }")
+  PROCESSING_REQUEST_ID=$(echo "$PROCESSING_REQUEST_RESPONSE" | jq -r .id)
+  if [ -z "$PROCESSING_REQUEST_ID" ] || [ "$PROCESSOR_ID" = "null" ]; then
+    exit_on_error "Failed to request processing. Processing Request ID is missing."
+  fi
+  PROCESSING_REQUEST_IDS="$PROCESSING_REQUEST_IDS $PROCESSING_REQUEST_ID"
+  echo "Processing Request ID $i: $PROCESSING_REQUEST_ID"
+done
 
 #
 # STEP 7
 #
-step "Step 7" "Check the processing status. - Waiting for the processing to finish."
+step "Step 7" "Check the processing status for all requests - Waiting for all processing to finish."
 check_worker_container() {
   local running_workers=$(docker ps -q -f name="$CONTAINER_NAME_PREFIX" | wc -l)
   if [ "$running_workers" -lt "$NUM_WORKERS" ]; then
@@ -611,29 +661,78 @@ check_worker_container() {
   fi
 }
 
+check_all_processing_complete() {
+  local all_complete=true
+  local all_succeeded=true
+  local result_urls=""
+  local metric_urls=""
+  local first=true
+
+  for request_id in $PROCESSING_REQUEST_IDS; do
+    PROCESSING_STATUS_RESPONSE=$(call_backend "GET" "/processing/$request_id")
+    PROCESSING_STATUS=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .status)
+
+    if [ "$PROCESSING_STATUS" = "SUCCEEDED" ]; then
+      local result_url=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .result_file.public_url)
+      local metrics_url=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .metrics_file.public_url)
+      
+      if [ -n "$result_url" ] && [ -n "$metrics_url" ]; then
+        if [ "$first" = true ]; then
+          result_urls="$result_url"
+          metric_urls="$metrics_url"
+          first=false
+        else
+          result_urls="$result_urls|$result_url"
+          metric_urls="$metric_urls|$metrics_url"
+        fi
+      else
+        all_complete=false
+        echo "[WARNING] Processing request $request_id is missing result or metrics URL"
+      fi
+    elif [ "$PROCESSING_STATUS" = "FAILED" ]; then
+      all_succeeded=false
+      echo "[ERROR] Processing request $request_id FAILED."
+    else
+      all_complete=false
+      echo "[INFO] Processing request $request_id status: $PROCESSING_STATUS"
+    fi
+  done
+
+  if [ "$all_complete" = true ]; then
+    if [ "$all_succeeded" = true ]; then
+      echo "All processing requests completed successfully."
+      PROCESSING_RESULT_URLS="$result_urls"
+      PROCESSING_METRICS_URLS="$metric_urls"
+      return 0
+    else
+      exit_on_error "One or more processing requests failed."
+    fi
+  fi
+  return 1
+}
+
 while true; do
   check_worker_container
   
-  PROCESSING_STATUS_RESPONSE=$(call_backend "GET" "/processing/$PROCESSING_REQUEST_ID")
-  PROCESSING_STATUS=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .status)
-
-  if [ "$PROCESSING_STATUS" = "SUCCEEDED" ]; then
-    echo "Processing SUCCEEDED."
-
-    PROCESSING_RESULT_URL=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .result_file.public_url)
-    PROCESSING_METRICS_URL=$(echo "$PROCESSING_STATUS_RESPONSE" | jq -r .metrics_file.public_url)
-    if [ -n "$PROCESSING_RESULT_URL" ] && [ -n "$PROCESSING_METRICS_URL" ]; then
-      echo "Process completed."
-      break
-    else
-      echo "Waiting for the files to be available..."
-    fi
-  elif [ "$PROCESSING_STATUS" = "FAILED" ]; then
-    exit_on_error "Processing FAILED."
-  else
-    echo "[INFO] Processing status: $PROCESSING_STATUS"
-    sleep 5
+  if check_all_processing_complete; then
+    break
   fi
+  
+  sleep 5
 done
 
-stop "Project demonstration finished.\n" "Result File URL: $PROCESSING_RESULT_URL\n" "Metrics File URL: $PROCESSING_METRICS_URL\n" "Original Dataset URL: $DATASET_PUBLIC_URL\n" "Homepage: https://malwaredatalab.github.io/" "Developer: luiz@laviola.dev\n" "Enjoy!"
+RESULTS_MESSAGE="Project demonstration finished.\n"
+i=1
+for result_url in $(echo "$PROCESSING_RESULT_URLS" | tr '|' ' '); do
+  metrics_url=$(echo "$PROCESSING_METRICS_URLS" | tr '|' ' ' | cut -d' ' -f$i)
+  RESULTS_MESSAGE="$RESULTS_MESSAGE\nProcessing Request $i Results:\n"
+  RESULTS_MESSAGE="$RESULTS_MESSAGE Result File URL: $result_url\n"
+  RESULTS_MESSAGE="$RESULTS_MESSAGE Metrics File URL: $metrics_url\n"
+  i=$((i + 1))
+done
+RESULTS_MESSAGE="$RESULTS_MESSAGE\nOriginal Dataset URL: $DATASET_PUBLIC_URL\n"
+RESULTS_MESSAGE="$RESULTS_MESSAGE Homepage: https://malwaredatalab.github.io/\n"
+RESULTS_MESSAGE="$RESULTS_MESSAGE Engineer: Luiz Felipe Laviola <luiz@laviola.dev>\n"
+RESULTS_MESSAGE="$RESULTS_MESSAGE Enjoy!"
+
+stop "$RESULTS_MESSAGE"

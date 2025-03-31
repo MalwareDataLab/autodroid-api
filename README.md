@@ -27,6 +27,7 @@
 - [🏁 Primeiros Passos](#getting_started)
 - [📱 Utilização](#usage)
 - [✅ Testes](#tests)
+- [🎯 Demonstração](#demo)
 - [🚀 Deployment](#deployment)
 - [🔃 Atualizando](#updating)
 - [🔧 Solução de Problemas](#troubleshooting)
@@ -144,7 +145,7 @@ Este projeto requer credenciais e chaves de acesso para a integração com servi
 
 O requisito "Google Cloud Storage" pode ser provido pela mesma conta do requisito "Firebase", tanto como pode ser uma conta/projeto Google distinto.
 
-### Firebase
+### Firebase <a name = "firebase"></a>
 
 - Entre na conta Google que será utilizada para gerenciar o projeto.
 - Acesse o [Firebase Console](https://console.firebase.google.com/).
@@ -315,18 +316,20 @@ O fluxograma a seguir descreve o fluxo comum da aplicação:
 
 ## ✅ Testes <a name = "tests"></a>
 
-Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando (após realizar a configuração solicitada em [antes de começar](#before_start)):
-
-```bash
-./demo.sh
-```
-
 Para executar os testes, por favor execute o comando abaixo:
 ```bash
 yarn test
 ```
 
 A cobertura de código e outros relatórios serão gerados na pasta `./test/outputs`.
+
+## 🎯 Demonstração <a name = "demo"></a>
+
+Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando (após realizar a configuração solicitada em [antes de começar](#before_start)):
+
+```bash
+./demo.sh
+```
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
