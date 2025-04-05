@@ -4,12 +4,14 @@ import { BaseEntityFields } from "@shared/types/baseEntityFields.type";
 // Entity import
 import { File } from "../entities/file.entity";
 
+export type FileComputedFields = keyof Pick<File, "__type">;
+
 export type FileRelationFields = keyof Pick<
   File,
   "dataset" | "processing_results" | "processing_metrics"
 >;
 
-export type IFileBase = Omit<File, FileRelationFields>;
+export type IFileBase = Omit<File, FileRelationFields | FileComputedFields>;
 
 export type ICreateFileDTO = Omit<
   File,
@@ -17,6 +19,8 @@ export type ICreateFileDTO = Omit<
   | BaseEntityFields
   // Relations
   | FileRelationFields
+  // Computed
+  | FileComputedFields
 >;
 
 export type IFindFileDTO = AtLeastOneProperty<
