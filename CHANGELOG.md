@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.4](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.3...v0.6.4) (2025-04-05)
+
+
+### Bug Fixes
+
+* better file instance lookup ([7066abb](https://github.com/MalwareDataLab/autodroid-api/commit/7066abba416d48964df015508560ec3fd4e7920d))
+
 ## [0.6.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.2...v0.6.3) (2025-03-31)
 
 
