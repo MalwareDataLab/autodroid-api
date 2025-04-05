@@ -109,6 +109,11 @@ class File implements FileEntityType {
   @Type(() => Processing)
   processing_metrics: Processing[];
 
+  __type = "File";
+  static isFile(data: any): data is File {
+    return data instanceof File || data.__type === "File";
+  }
+
   static async process(params: File): Promise<File> {
     const processFilePublicAccessService = container.resolve(
       ProcessFilePublicAccessService,

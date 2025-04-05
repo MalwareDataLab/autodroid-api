@@ -96,7 +96,7 @@ class ProcessFilePublicAccessService {
           resolve(
             Promise.all(data.map(item => (!item ? item : process(item)))),
           );
-        else if (data instanceof File) {
+        else if (File.isFile(data)) {
           this.process(data, language)
             .then(file => resolve(file))
             .catch(error => reject(error));
