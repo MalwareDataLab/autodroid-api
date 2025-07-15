@@ -64,6 +64,9 @@ declare global {
 
       PROCESSING_DEFAULT_KEEP_UNTIL: string;
       PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND: string;
+
+      SAML_PUBLIC_KEY: string;
+      SAML_PRIVATE_KEY: string;
     }
   }
 }

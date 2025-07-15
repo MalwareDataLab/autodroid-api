@@ -27,6 +27,7 @@ const { httpServer: server } = app;
 const init = async () => {
   await app.graphqlServer.initialization;
   await app.websocketServer.initialization;
+  await app.samlManager.initialization;
 
   await initAndWaitRequisites({
     requisites: afterInitBootstrapList,

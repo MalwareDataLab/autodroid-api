@@ -27,22 +27,26 @@ import { errorMiddleware } from "./middlewares/error.middleware";
 
 // Route import
 import { router } from "./routes";
+import { samlRouter } from "../saml/routes";
 
 // App import
 import { GraphQLApp } from "../graphql";
 import { WebsocketApp } from "../websocket";
+import { federationManager } from "../saml/strategy";
 
 class App {
   public readonly express: Express;
   public readonly httpServer: Server;
   public readonly graphqlServer: GraphQLApp;
   public readonly websocketServer: WebsocketApp;
+  public readonly samlManager: typeof federationManager;
 
   constructor() {
     this.express = express();
     this.httpServer = http.createServer(this.express);
     this.graphqlServer = new GraphQLApp(this.httpServer);
     this.websocketServer = new WebsocketApp(this.httpServer);
+    this.samlManager = federationManager;
     this.express.set("trust proxy", 1);
 
     this.middlewares();
@@ -57,6 +61,7 @@ class App {
     this.express.use(cors(getCorsConfig()));
     this.express.use(cookieParser());
     this.express.use(express.json());
+    this.express.use(express.urlencoded({ extended: true }));
 
     this.express.use(lightRateLimiterMiddleware);
 
@@ -64,6 +69,7 @@ class App {
     this.express.use(useragent.express());
 
     this.express.use(userAgentMiddleware);
+    this.express.use(samlRouter);
     this.express.use(authenticationMiddleware);
   }
 
