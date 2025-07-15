@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.4...v0.7.0) (2025-07-15)
+
+
+### Features
+
+* add rnp cafe saml integration ([5fe044b](https://github.com/MalwareDataLab/autodroid-api/commit/5fe044be1dfe0fa76ed746a6697a15eae9fd9e79))
+
 ## [0.6.4](https://github.com/MalwareDataLab/autodroid-api/compare/v0.6.3...v0.6.4) (2025-04-05)
 
 
