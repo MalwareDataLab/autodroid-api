@@ -423,11 +423,12 @@ class SamlFederationManager {
       ),
     );
 
+    // Disable session serialization since we're not using sessions
     passport.serializeUser((user: any, done: (err: any, id?: any) => void) =>
-      done(null, user),
+      done(null, null),
     );
     passport.deserializeUser((obj: any, done: (err: any, user?: any) => void) =>
-      done(null, obj),
+      done(null, null),
     );
   }
 
