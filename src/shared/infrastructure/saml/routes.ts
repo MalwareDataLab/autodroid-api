@@ -16,7 +16,7 @@ samlRouter.get(
     }
 
     const returnURL = encodeURIComponent(
-      `${federationManager.BASE_URL}/rnp-cafe-saml/discovery`,
+      federationManager.LOCAL_DISCOVERY_RESPONSE_URL,
     );
     const spEntityID = encodeURIComponent(federationManager.SAML_ISSUER);
 

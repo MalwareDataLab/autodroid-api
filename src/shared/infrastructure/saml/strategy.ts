@@ -48,6 +48,8 @@ class SamlFederationManager {
   public readonly BASE_SAML_PATH = "/rnp-cafe-saml";
   public readonly SAML_ISSUER = `${this.BASE_URL}${this.BASE_SAML_PATH}/metadata`;
 
+  public readonly LOCAL_DISCOVERY_RESPONSE_URL = `${this.BASE_URL}${this.BASE_SAML_PATH}/discovery`;
+
   private readonly SAML_ATTRIBUTE_MAP: Record<string, string> = {
     "urn:oid:0.9.2342.19200300.100.1.1": "uid",
     "urn:oid:0.9.2342.19200300.100.1.3": "mail",
@@ -248,7 +250,7 @@ class SamlFederationManager {
                 "urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol",
               "@_Binding":
                 "urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol",
-              "@_Location": this.DISCOVERY_SERVICE_URL,
+              "@_Location": this.LOCAL_DISCOVERY_RESPONSE_URL,
               "@_isDefault": true,
               "@_index": "0",
             },
