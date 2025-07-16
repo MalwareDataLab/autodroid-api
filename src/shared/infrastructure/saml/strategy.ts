@@ -356,11 +356,48 @@ class SamlFederationManager {
             done: (err: any, config?: any) => void,
           ) => {
             try {
-              const entityID =
-                (req.query.idp as string) || req.session?.idpEntityID;
+              let entityID = req.query.idp as string;
+
               if (!entityID) {
-                return done(new Error("No IdP entityID provided"));
+                if (req.body?.SAMLResponse) {
+                  try {
+                    const samlResponse = Buffer.from(
+                      req.body.SAMLResponse,
+                      "base64",
+                    ).toString();
+                    const doc = new DOMParser().parseFromString(
+                      samlResponse,
+                      "text/xml",
+                    );
+                    const select = xpath.useNamespaces({
+                      saml2: "urn:oasis:names:tc:SAML:2.0:assertion",
+                      samlp: "urn:oasis:names:tc:SAML:2.0:protocol",
+                    });
+
+                    const issuerNodes = select("//saml2:Issuer", doc as any);
+                    if (
+                      issuerNodes &&
+                      Array.isArray(issuerNodes) &&
+                      issuerNodes.length > 0
+                    ) {
+                      const issuerText = issuerNodes[0].textContent;
+                      if (issuerText) {
+                        entityID = issuerText;
+                      }
+                    }
+                  } catch (parseError) {
+                    logger.warn(
+                      "Failed to parse SAML response for entityID:",
+                      parseError,
+                    );
+                  }
+                }
               }
+
+              if (!entityID) {
+                return done(new Error("IdP not supported"));
+              }
+
               const config = this.getConfig(entityID);
               return done(null, config);
             } catch (err) {
