@@ -8,9 +8,6 @@ samlRouter.get(
   `${federationManager.BASE_SAML_PATH}/discovery`,
   (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (req.query.idp) {
-      if (req.session) {
-        req.session.idpEntityID = req.query.idp as string;
-      }
       federationManager.getPassport().authenticate("saml")(req, res, next);
       return;
     }
