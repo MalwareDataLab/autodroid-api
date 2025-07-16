@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.1...v0.7.2) (2025-07-16)
+
+
+### Bug Fixes
+
+* saml discovery metadata ([27df0ef](https://github.com/MalwareDataLab/autodroid-api/commit/27df0ef1642e852a1883a42167744aa3cee5045e))
+
 ## [0.7.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.0...v0.7.1) (2025-07-16)
 
 
