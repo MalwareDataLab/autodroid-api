@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.3...v0.7.4) (2025-07-16)
+
+
+### Bug Fixes
+
+* disable saml session ([98a4500](https://github.com/MalwareDataLab/autodroid-api/commit/98a45004d7186ef5b5d0ae60549fc74def706fe9))
+
 ## [0.7.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.2...v0.7.3) (2025-07-16)
 
 
