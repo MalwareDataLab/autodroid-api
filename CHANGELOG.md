@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.2...v0.7.3) (2025-07-16)
+
+
+### Bug Fixes
+
+* saml idp lookup ([a10174a](https://github.com/MalwareDataLab/autodroid-api/commit/a10174aa49bf525a4fdc1f276e576188569a2346))
+
 ## [0.7.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.1...v0.7.2) (2025-07-16)
 
 
