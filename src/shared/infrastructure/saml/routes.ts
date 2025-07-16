@@ -2,12 +2,10 @@ import { Request, Response, NextFunction, Router } from "express";
 import { AuthenticatedRequest } from "./types";
 import { federationManager } from "./strategy";
 
-const BASE_SAML_URL = "/rnp-cafe-saml";
-
 const samlRouter = Router();
 
 samlRouter.get(
-  `${BASE_SAML_URL}/discovery`,
+  `${federationManager.BASE_SAML_PATH}/discovery`,
   (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (req.query.idp) {
       if (req.session) {
@@ -30,7 +28,7 @@ samlRouter.get(
 );
 
 samlRouter.post(
-  `${BASE_SAML_URL}/callback`,
+  `${federationManager.BASE_SAML_PATH}/callback`,
   (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     federationManager
       .getPassport()
@@ -55,30 +53,30 @@ samlRouter.post(
 );
 
 samlRouter.get(
-  `${BASE_SAML_URL}/logout`,
+  `${federationManager.BASE_SAML_PATH}/logout`,
   (req: AuthenticatedRequest, res: Response) => {
-    req.logout((err: any) => {
-      if (err) {
-        res.status(500).json({ error: "Logout failed" });
-        return;
-      }
-      res.json({ message: "Logged out successfully" });
+    res.redirect(`${process.env.FRONTEND_URL}/logout`);
+  },
+);
+
+samlRouter.get(
+  `${federationManager.BASE_SAML_PATH}/idps`,
+  (req: Request, res: Response) => {
+    res.json({
+      availableIdPs: federationManager.listIdps(),
+      count: federationManager.listIdps().length,
     });
   },
 );
 
-samlRouter.get(`${BASE_SAML_URL}/idps`, (req: Request, res: Response) => {
-  res.json({
-    availableIdPs: federationManager.listIdps(),
-    count: federationManager.listIdps().length,
-  });
-});
+samlRouter.get(
+  `${federationManager.BASE_SAML_PATH}/metadata`,
+  (req: Request, res: Response) => {
+    const metadata = federationManager.generateMetadata();
 
-samlRouter.get(`${BASE_SAML_URL}/metadata`, (req: Request, res: Response) => {
-  const metadata = federationManager.generateMetadata();
-
-  res.set("Content-Type", "application/xml");
-  res.send(metadata);
-});
+    res.set("Content-Type", "application/xml");
+    res.send(metadata);
+  },
+);
 
 export { samlRouter };

@@ -45,7 +45,8 @@ class SamlFederationManager {
     "https://ds.cafeexpresso.rnp.br/WAYF.php";
   private readonly APP_URL = process.env.APP_URL || "http://localhost:3000";
   public readonly BASE_URL = this.APP_URL;
-  public readonly SAML_ISSUER = `${this.BASE_URL}/saml2/metadata/`;
+  public readonly BASE_SAML_PATH = "/rnp-cafe-saml";
+  public readonly SAML_ISSUER = `${this.BASE_URL}${this.BASE_SAML_PATH}/metadata`;
 
   private readonly SAML_ATTRIBUTE_MAP: Record<string, string> = {
     "urn:oid:0.9.2342.19200300.100.1.1": "uid",
