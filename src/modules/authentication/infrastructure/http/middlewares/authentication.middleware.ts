@@ -28,16 +28,16 @@ const authenticationMiddleware = async (
           agent_info: req.agent_info,
         });
 
-        req.session = session;
+        req.user_session = session;
 
         return next();
       } catch (err) {
-        req.session = undefined as any;
+        req.user_session = undefined as any;
       }
     }
   }
 
-  req.session = undefined as any;
+  req.user_session = undefined as any;
   return next();
 };
 

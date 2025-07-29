@@ -11,7 +11,7 @@ class AdminRemoveAllDanglingFilesController {
     );
 
     await adminRemoveAllDanglingFilesService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
 

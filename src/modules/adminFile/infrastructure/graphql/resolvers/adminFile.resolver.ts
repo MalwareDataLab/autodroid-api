@@ -12,14 +12,14 @@ class AdminFileResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Int)
   async adminFileRemoveAllDangling(
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<number> {
     const adminFileRemoveAllDanglingService = container.resolve(
       AdminFileRemoveAllDanglingService,
     );
 
     const count = await adminFileRemoveAllDanglingService.execute({
-      user: session.user,
+      user: user_session.user,
       language,
     });
 

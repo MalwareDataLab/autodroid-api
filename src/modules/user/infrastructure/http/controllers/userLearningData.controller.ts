@@ -14,7 +14,7 @@ class UserLearningDataController {
     );
 
     const user = await userUpdateLearningDataService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
       params: req.body,
       language: req.language,
     });

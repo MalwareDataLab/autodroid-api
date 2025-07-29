@@ -35,7 +35,7 @@ const generateWorkerToken = (worker: Worker, type: "REFRESH" | "ACCESS") => {
 
   const token = jwt.sign(payload, config.secret, {
     algorithm: "HS256",
-    expiresIn: config.expiration,
+    expiresIn: config.expiration as any,
     subject: worker.id,
     issuer: envConfig.APP_INFO.name,
     audience: config.audience,

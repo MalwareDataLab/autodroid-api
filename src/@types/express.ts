@@ -23,7 +23,7 @@ declare global {
       agent_info?: IParsedUserAgentInfoDTO;
 
       // User
-      session: Session;
+      user_session: Session;
 
       // Helpers
       pagination?: PaginationSchema;

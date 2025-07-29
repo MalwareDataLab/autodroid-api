@@ -11,7 +11,7 @@ class AdminProcessingFailDanglingController {
     );
 
     await adminProcessingFailDanglingService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
       params: req.body,
       language: req.language,
     });

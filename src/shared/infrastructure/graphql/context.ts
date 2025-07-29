@@ -1,5 +1,4 @@
 import { i18n, TFunction } from "i18next";
-import { Request, Response } from "express";
 import { ExpressContextFunctionArgument } from "@apollo/server/express4";
 
 // DTO import
@@ -9,8 +8,8 @@ import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
 
 export type GraphQLContext = {
   // HTTP context
-  req: Request;
-  res: Response;
+  req: any;
+  res: any;
 
   // i18n context
   t: TFunction;
@@ -22,7 +21,7 @@ export type GraphQLContext = {
   agent_info?: IParsedUserAgentInfoDTO;
 
   // Session context
-  session: Session;
+  user_session: Session;
   worker_session: WorkerSession;
 };
 
@@ -45,7 +44,7 @@ export async function contextHandler({
     agent_info: req.agent_info,
 
     // Session context
-    session: req.session,
+    user_session: req.user_session,
     worker_session: req.worker_session,
   };
 }

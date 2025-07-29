@@ -14,7 +14,7 @@ import { logger } from "@shared/utils/logger";
 import { HandleSamlToFirebaseAuthenticationService } from "@modules/authentication/services/handleSamlToFirebaseAuthentication.service";
 
 // Type import
-import { AuthenticatedRequest, ParsedSamlUser } from "./types";
+import { ParsedSamlUser } from "./types";
 
 interface IdPConfig {
   entryPoint: string;
@@ -352,52 +352,15 @@ class SamlFederationManager {
         {
           passReqToCallback: true,
           getSamlOptions: (
-            req: AuthenticatedRequest,
+            req: any,
             done: (err: any, config?: any) => void,
           ) => {
             try {
-              let entityID = req.query.idp as string;
-
+              const entityID =
+                (req.query.idp as string) || (req.session as any).idpEntityID;
               if (!entityID) {
-                if (req.body?.SAMLResponse) {
-                  try {
-                    const samlResponse = Buffer.from(
-                      req.body.SAMLResponse,
-                      "base64",
-                    ).toString();
-                    const doc = new DOMParser().parseFromString(
-                      samlResponse,
-                      "text/xml",
-                    );
-                    const select = xpath.useNamespaces({
-                      saml2: "urn:oasis:names:tc:SAML:2.0:assertion",
-                      samlp: "urn:oasis:names:tc:SAML:2.0:protocol",
-                    });
-
-                    const issuerNodes = select("//saml2:Issuer", doc as any);
-                    if (
-                      issuerNodes &&
-                      Array.isArray(issuerNodes) &&
-                      issuerNodes.length > 0
-                    ) {
-                      const issuerText = issuerNodes[0].textContent;
-                      if (issuerText) {
-                        entityID = issuerText;
-                      }
-                    }
-                  } catch (parseError) {
-                    logger.warn(
-                      "Failed to parse SAML response for entityID:",
-                      parseError,
-                    );
-                  }
-                }
+                return done(new Error("No IdP entityID provided"));
               }
-
-              if (!entityID) {
-                return done(new Error("IdP not supported"));
-              }
-
               const config = this.getConfig(entityID);
               return done(null, config);
             } catch (err) {
@@ -405,30 +368,21 @@ class SamlFederationManager {
             }
           },
         },
-        (
-          req: AuthenticatedRequest,
-          profile: any,
-          done: (err: any, user?: any) => void,
-        ) => {
+        (req: any, profile: any, done: (err: any, user?: any) => void) => {
           const parsedUser = this.parseUserProfile(profile);
           done(null, parsedUser);
         },
-        (
-          req: AuthenticatedRequest,
-          profile: any,
-          done: (err: any, user?: any) => void,
-        ) => {
+        (req: any, profile: any, done: (err: any, user?: any) => void) => {
           done(null, { nameID: profile.nameID });
         },
-      ),
+      ) as any,
     );
 
-    // Disable session serialization since we're not using sessions
     passport.serializeUser((user: any, done: (err: any, id?: any) => void) =>
-      done(null, null),
+      done(null, user),
     );
     passport.deserializeUser((obj: any, done: (err: any, user?: any) => void) =>
-      done(null, null),
+      done(null, obj),
     );
   }
 

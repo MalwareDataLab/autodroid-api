@@ -47,14 +47,14 @@ class UserProcessorFieldResolver {
     @SortingArg<Processing>(ProcessingSortingOptions)
     sorting: SortingFieldSchema<typeof ProcessingSortingOptions>[],
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<PaginatedProcessing> {
     const userProcessingIndexService = container.resolve(
       UserProcessingIndexService,
     );
 
     const paginatedProcesses = await userProcessingIndexService.execute({
-      user: session.user,
+      user: user_session.user,
 
       params: {
         ...params,

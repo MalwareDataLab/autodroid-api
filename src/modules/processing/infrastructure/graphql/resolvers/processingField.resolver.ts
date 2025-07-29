@@ -25,7 +25,7 @@ class ProcessingFieldResolver implements ResolverInterface<Processing> {
   async estimated_finish(
     @Root() processing: Processing,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<ProcessingFinishTimeEstimation | null> {
     try {
       const userProcessingGetEstimatedFinishDateService = container.resolve(
@@ -34,7 +34,7 @@ class ProcessingFieldResolver implements ResolverInterface<Processing> {
 
       const processingEstimatedFinish =
         await userProcessingGetEstimatedFinishDateService.execute({
-          user: session.user,
+          user: user_session.user,
 
           processing_id: processing.id,
 

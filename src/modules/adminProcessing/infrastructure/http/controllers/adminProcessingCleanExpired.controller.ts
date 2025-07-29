@@ -11,7 +11,7 @@ class AdminProcessingCleanExpiredController {
     );
 
     await adminProcessingCleanExpiredService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
 

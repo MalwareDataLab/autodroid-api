@@ -15,7 +15,7 @@ class UserDatasetPublicationController {
     const dataset = await userDatasetRequestPublicationService.execute({
       dataset_id: req.params.dataset_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));

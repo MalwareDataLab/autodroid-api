@@ -17,7 +17,7 @@ class AdminDatasetController {
     );
     const dataset = await adminDatasetIndexService.execute({
       filter: req.query,
-      user: req.session.user,
+      user: req.user_session.user,
     });
     return res.json(process(dataset));
   }
@@ -27,7 +27,7 @@ class AdminDatasetController {
     const dataset = await adminDatasetShowService.execute({
       dataset_id: req.params.dataset_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));
@@ -44,7 +44,7 @@ class AdminDatasetController {
         tags: req.body.tags,
       },
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));
@@ -57,7 +57,7 @@ class AdminDatasetController {
     const dataset = await adminDatasetDeleteService.execute({
       dataset_id: req.params.dataset_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));

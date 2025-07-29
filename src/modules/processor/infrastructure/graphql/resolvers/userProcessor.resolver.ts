@@ -32,14 +32,14 @@ class UserProcessorResolver {
     @SortingArg<Processor>(ProcessorSortingOptions)
     sorting: SortingFieldSchema<typeof ProcessorSortingOptions>[],
 
-    @Ctx() { session }: GraphQLContext,
+    @Ctx() { user_session }: GraphQLContext,
   ): Promise<PaginatedProcessor> {
     const userProcessorIndexService = container.resolve(
       UserProcessorIndexService,
     );
 
     const paginatedProcessors = await userProcessorIndexService.execute({
-      user: session.user,
+      user: user_session.user,
       pagination,
       sorting,
     });
@@ -52,14 +52,14 @@ class UserProcessorResolver {
   async userProcessor(
     @Arg("processor_id") processor_id: string,
 
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<Processor> {
     const userProcessorShowService = container.resolve(
       UserProcessorShowService,
     );
 
     const processor = await userProcessorShowService.execute({
-      user: session.user,
+      user: user_session.user,
       processor_id,
       language,
     });
