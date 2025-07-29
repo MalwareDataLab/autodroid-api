@@ -8,7 +8,6 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { ApolloServerPluginLandingPageDisabled } from "@apollo/server/plugin/disabled";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
-import { RequestHandler } from "express";
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
 
 // Configuration import
@@ -29,7 +28,7 @@ class GraphQLApp {
 
   public readonly schema: GraphQLSchema;
   public readonly server: ApolloServer<GraphQLContext>;
-  public middleware: RequestHandler;
+  public middleware: any;
 
   public readonly graphqlSchemaPath = path.resolve(
     __dirname,

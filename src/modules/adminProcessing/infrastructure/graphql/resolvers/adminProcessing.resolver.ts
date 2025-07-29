@@ -56,14 +56,14 @@ class AdminProcessingResolver {
     @SortingArg<Processing>(ProcessingSortingOptions)
     sorting: SortingFieldSchema<typeof ProcessingSortingOptions>[],
 
-    @Ctx() { session }: GraphQLContext,
+    @Ctx() { user_session }: GraphQLContext,
   ): Promise<PaginatedProcessing> {
     const adminProcessingIndexService = container.resolve(
       AdminProcessingIndexService,
     );
 
     const paginatedProcesses = await adminProcessingIndexService.execute({
-      user: session.user,
+      user: user_session.user,
 
       filter,
 
@@ -80,7 +80,7 @@ class AdminProcessingResolver {
   async adminProcessing(
     @Arg("processing_id") processing_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
     const adminProcessingShowService = container.resolve(
       AdminProcessingShowService,
@@ -89,7 +89,7 @@ class AdminProcessingResolver {
     const processing = await adminProcessingShowService.execute({
       processing_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -103,7 +103,7 @@ class AdminProcessingResolver {
     @Arg("processing_id") processing_id: string,
     @Arg("data") data: AdminProcessingUpdateSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
     const adminProcessingUpdateService = container.resolve(
       AdminProcessingUpdateService,
@@ -113,7 +113,7 @@ class AdminProcessingResolver {
       processing_id,
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -126,7 +126,7 @@ class AdminProcessingResolver {
   async adminProcessingDelete(
     @Arg("processing_id") processing_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
     const adminProcessingDeleteService = container.resolve(
       AdminProcessingDeleteService,
@@ -135,7 +135,7 @@ class AdminProcessingResolver {
     const processing = await adminProcessingDeleteService.execute({
       processing_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -146,14 +146,14 @@ class AdminProcessingResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Int)
   async adminProcessingCleanExpired(
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<number> {
     const adminProcessingCleanExpiredService = container.resolve(
       AdminProcessingCleanExpiredService,
     );
 
     const count = await adminProcessingCleanExpiredService.execute({
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -164,7 +164,7 @@ class AdminProcessingResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Int)
   async adminProcessingFailDangling(
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
     @Args() params: AdminProcessingFailDanglingSchema,
   ): Promise<number> {
     const adminProcessingFailDanglingService = container.resolve(
@@ -172,7 +172,7 @@ class AdminProcessingResolver {
     );
 
     const count = await adminProcessingFailDanglingService.execute({
-      user: session.user,
+      user: user_session.user,
       params,
       language,
     });
@@ -187,7 +187,7 @@ class AdminProcessingResolver {
     @Args()
     filter: AdminProcessingGetEstimatedExecutionTimeSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const adminProcessingEstimatedExecutionTimeIndexService = container.resolve(
       AdminProcessingEstimatedExecutionTimeIndexService,
@@ -195,7 +195,7 @@ class AdminProcessingResolver {
 
     const processingTimeEstimation =
       await adminProcessingEstimatedExecutionTimeIndexService.execute({
-        user: session.user,
+        user: user_session.user,
 
         filter,
 

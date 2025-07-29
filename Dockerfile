@@ -1,5 +1,5 @@
 # Build environment
-FROM node:20.16.0-alpine AS build
+FROM node:22.17.1-alpine AS build
 WORKDIR /usr/app
 
 COPY package.json yarn.lock ./
@@ -8,7 +8,7 @@ COPY . .
 RUN yarn build
 
 # Production environment
-FROM node:20.16.0-alpine AS production
+FROM node:22.17.1-alpine AS production
 WORKDIR /usr/app
 RUN addgroup -g 1001 -S nodegrp
 RUN adduser -S nodejs -u 1001

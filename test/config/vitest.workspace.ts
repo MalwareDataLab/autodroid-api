@@ -1,6 +1,6 @@
 import { defaultExclude, defineWorkspace } from "vitest/config";
 
-// eslint-disable-next-line import/no-default-export
+// eslint-disable-next-line import/no-default-export, deprecation/deprecation
 export default defineWorkspace([
   {
     extends: "./vitest.config.mts",

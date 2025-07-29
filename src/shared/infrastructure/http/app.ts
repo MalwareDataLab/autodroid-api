@@ -11,6 +11,7 @@ import helmet from "helmet";
 import http, { Server } from "node:http";
 import * as i18nextMiddleware from "i18next-http-middleware";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 // i18n import
 import { i18next } from "@shared/i18n";
@@ -18,6 +19,7 @@ import { i18next } from "@shared/i18n";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 import { getCorsConfig } from "@config/cors";
+import { getSessionConfig } from "@config/session";
 
 // Middleware import
 import { authenticationMiddleware } from "@modules/authentication/infrastructure/http/middlewares/authentication.middleware";
@@ -65,11 +67,17 @@ class App {
 
     this.express.use(lightRateLimiterMiddleware);
 
-    this.express.use(i18nextMiddleware.handle(i18next));
+    this.express.use(i18nextMiddleware.handle(i18next) as any);
     this.express.use(useragent.express());
 
     this.express.use(userAgentMiddleware);
+
+    const samlPassport = this.samlManager.getPassport();
+    this.express.use(session(getSessionConfig()));
+    this.express.use(samlPassport.initialize());
+    this.express.use(samlPassport.session());
     this.express.use(samlRouter);
+
     this.express.use(authenticationMiddleware);
   }
 

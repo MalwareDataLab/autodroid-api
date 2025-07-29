@@ -49,7 +49,7 @@ class AdminWorkerRegistrationTokenResolver {
     @SortingArg<WorkerRegistrationToken>(WorkerRegistrationTokenSortingOptions)
     sorting: SortingFieldSchema<typeof WorkerRegistrationTokenSortingOptions>[],
 
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<PaginatedWorkerRegistrationToken> {
     const adminWorkerRegistrationTokenIndexService = container.resolve(
       AdminWorkerRegistrationTokenIndexService,
@@ -62,7 +62,7 @@ class AdminWorkerRegistrationTokenResolver {
         pagination,
         sorting,
 
-        user: session.user,
+        user: user_session.user,
         language,
       });
 
@@ -75,7 +75,7 @@ class AdminWorkerRegistrationTokenResolver {
   async adminWorkerRegistrationToken(
     @Arg("worker_registration_token_id") worker_registration_token_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<WorkerRegistrationToken> {
     const adminWorkerRegistrationTokenShowService = container.resolve(
       AdminWorkerRegistrationTokenShowService,
@@ -85,7 +85,7 @@ class AdminWorkerRegistrationTokenResolver {
       await adminWorkerRegistrationTokenShowService.execute({
         worker_registration_token_id,
 
-        user: session.user,
+        user: user_session.user,
         language,
       });
 
@@ -98,7 +98,7 @@ class AdminWorkerRegistrationTokenResolver {
   async adminWorkerRegistrationTokenCreate(
     @Arg("data") data: WorkerRegistrationTokenCreateSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<WorkerRegistrationToken> {
     const adminWorkerRegistrationTokenCreateService = container.resolve(
       AdminWorkerRegistrationTokenCreateService,
@@ -108,7 +108,7 @@ class AdminWorkerRegistrationTokenResolver {
       await adminWorkerRegistrationTokenCreateService.execute({
         data,
 
-        user: session.user,
+        user: user_session.user,
         language,
       });
 
@@ -121,7 +121,7 @@ class AdminWorkerRegistrationTokenResolver {
   async adminWorkerRegistrationTokenDelete(
     @Arg("worker_registration_token_id") worker_registration_token_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<WorkerRegistrationToken> {
     const adminWorkerRegistrationTokenDeleteService = container.resolve(
       AdminWorkerRegistrationTokenDeleteService,
@@ -131,7 +131,7 @@ class AdminWorkerRegistrationTokenResolver {
       await adminWorkerRegistrationTokenDeleteService.execute({
         worker_registration_token_id,
 
-        user: session.user,
+        user: user_session.user,
         language,
       });
 

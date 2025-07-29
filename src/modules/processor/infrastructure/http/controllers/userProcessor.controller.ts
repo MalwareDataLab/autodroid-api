@@ -21,7 +21,7 @@ class UserProcessorController {
     );
 
     const processor = await userProcessorIndexService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
       pagination: req.pagination,
       sorting: req.sorting as SortingFieldSchema<
         typeof ProcessorSortingOptions
@@ -36,7 +36,7 @@ class UserProcessorController {
       UserProcessorShowService,
     );
     const processor = await userProcessorShowService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
       processor_id: req.params.processor_id,
       language: req.language,
     });

@@ -17,7 +17,7 @@ class UserProcessingUpdateVisibilityController {
       processing_id: req.params.processing_id,
       visibility: req.body.visibility,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
 

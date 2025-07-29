@@ -14,13 +14,13 @@ class UserResolver {
   @Authorized()
   @Query(() => User)
   async user(@Ctx() ctx: GraphQLContext): Promise<User> {
-    return ctx.session?.user;
+    return ctx.user_session?.user;
   }
 
   @Authorized()
   @Query(() => Session)
   async session(@Ctx() ctx: GraphQLContext): Promise<Session> {
-    return ctx.session;
+    return ctx.user_session;
   }
 }
 

@@ -17,7 +17,7 @@ class UserProcessingExtendKeepUntilController {
       processing_id: req.params.processing_id,
       keep_until: req.body.keep_until,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
 

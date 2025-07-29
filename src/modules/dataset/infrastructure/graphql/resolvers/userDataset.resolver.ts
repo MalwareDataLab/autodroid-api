@@ -45,7 +45,7 @@ class UserDatasetResolver {
     const userDatasetIndexService = container.resolve(UserDatasetIndexService);
 
     const paginatedDatasets = await userDatasetIndexService.execute({
-      user: ctx.session.user,
+      user: ctx.user_session.user,
 
       pagination,
       sorting,
@@ -59,14 +59,14 @@ class UserDatasetResolver {
   async userDataset(
     @Arg("dataset_id") dataset_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const userDatasetShowService = container.resolve(UserDatasetShowService);
 
     const dataset = await userDatasetShowService.execute({
       dataset_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -78,7 +78,7 @@ class UserDatasetResolver {
   async userDatasetCreate(
     @Arg("data") data: UserDatasetCreateSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const userDatasetCreateService = container.resolve(
       UserDatasetCreateService,
@@ -87,7 +87,7 @@ class UserDatasetResolver {
     const dataset = await userDatasetCreateService.execute({
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -100,7 +100,7 @@ class UserDatasetResolver {
     @Arg("dataset_id") dataset_id: string,
     @Arg("data") data: UserDatasetUpdateSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const userDatasetUpdateService = container.resolve(
       UserDatasetUpdateService,
@@ -110,7 +110,7 @@ class UserDatasetResolver {
       dataset_id,
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -122,7 +122,7 @@ class UserDatasetResolver {
   async userDatasetDelete(
     @Arg("dataset_id") dataset_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const userDatasetDeleteService = container.resolve(
       UserDatasetDeleteService,
@@ -131,7 +131,7 @@ class UserDatasetResolver {
     const dataset = await userDatasetDeleteService.execute({
       dataset_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -143,7 +143,7 @@ class UserDatasetResolver {
   async userDatasetRequestPublication(
     @Arg("dataset_id") dataset_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userDatasetRequestPublicationService = container.resolve(
       UserDatasetRequestPublicationService,
@@ -152,7 +152,7 @@ class UserDatasetResolver {
     const dataset = await userDatasetRequestPublicationService.execute({
       dataset_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 

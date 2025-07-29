@@ -15,7 +15,7 @@ class AdminProcessingTimeEstimationController {
 
     const processingTimeEstimation =
       await adminProcessingGetEstimatedExecutionTimeService.execute({
-        user: req.session.user,
+        user: req.user_session.user,
 
         filter: {
           dataset_id: String(req.query.dataset_id),

@@ -29,7 +29,7 @@ class AdminWorkerRegistrationTokenController {
           expires_at: req.body.expires_at,
         },
 
-        user: req.session.user,
+        user: req.user_session.user,
         language: req.language,
       });
     return res.status(201).json(process(workerRegistrationToken));
@@ -59,7 +59,7 @@ class AdminWorkerRegistrationTokenController {
         >[],
         pagination: req.pagination,
 
-        user: req.session.user,
+        user: req.user_session.user,
         language: req.language,
       });
     return res.json(process(workerRegistrationToken));
@@ -73,7 +73,7 @@ class AdminWorkerRegistrationTokenController {
       await userWorkerRegistrationTokenShowService.execute({
         worker_registration_token_id: req.params.worker_registration_token_id,
 
-        user: req.session.user,
+        user: req.user_session.user,
         language: req.language,
       });
     return res.json(process(workerRegistrationToken));
@@ -87,7 +87,7 @@ class AdminWorkerRegistrationTokenController {
       await userWorkerRegistrationTokenDeleteService.execute({
         worker_registration_token_id: req.params.worker_registration_token_id,
 
-        user: req.session.user,
+        user: req.user_session.user,
         language: req.language,
       });
     return res.json(process(workerRegistrationToken));

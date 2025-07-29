@@ -51,14 +51,14 @@ class AdminDatasetResolver {
     @SortingArg<Dataset>(DatasetSortingOptions)
     sorting: SortingFieldSchema<typeof DatasetSortingOptions>[],
 
-    @Ctx() { session }: GraphQLContext,
+    @Ctx() { user_session }: GraphQLContext,
   ): Promise<PaginatedDataset> {
     const adminDatasetIndexService = container.resolve(
       AdminDatasetIndexService,
     );
 
     const paginatedDatasets = await adminDatasetIndexService.execute({
-      user: session.user,
+      user: user_session.user,
 
       filter,
 
@@ -75,14 +75,14 @@ class AdminDatasetResolver {
   async adminDataset(
     @Arg("dataset_id") dataset_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const adminDatasetShowService = container.resolve(AdminDatasetShowService);
 
     const dataset = await adminDatasetShowService.execute({
       dataset_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -96,7 +96,7 @@ class AdminDatasetResolver {
     @Arg("dataset_id") dataset_id: string,
     @Arg("data") data: AdminDatasetUpdateSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const adminDatasetUpdateService = container.resolve(
       AdminDatasetUpdateService,
@@ -106,7 +106,7 @@ class AdminDatasetResolver {
       dataset_id,
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -119,7 +119,7 @@ class AdminDatasetResolver {
   async adminDatasetDelete(
     @Arg("dataset_id") dataset_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
     const adminDatasetDeleteService = container.resolve(
       AdminDatasetDeleteService,
@@ -128,7 +128,7 @@ class AdminDatasetResolver {
     const dataset = await adminDatasetDeleteService.execute({
       dataset_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -142,7 +142,7 @@ class AdminDatasetResolver {
     @Arg("dataset_id") dataset_id: string,
     @Arg("data") data: AdminDatasetUpdateVisibilitySchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const adminDatasetUpdateVisibilityService = container.resolve(
       AdminDatasetUpdateVisibilityService,
@@ -152,7 +152,7 @@ class AdminDatasetResolver {
       dataset_id,
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 

@@ -24,9 +24,12 @@ export const startAndGetSessionToken = async (
     process.env.TEST_VARIABLES || "{}",
   );
 
-  if (testVariables.sessions?.[email]?.data?.idToken) {
-    if (testVariables.sessions[email].createdAt + 3600 * 1000 > Date.now()) {
-      return testVariables.sessions[email].data;
+  if (testVariables.user_sessions?.[email]?.data?.idToken) {
+    if (
+      testVariables.user_sessions[email].createdAt + 3600 * 1000 >
+      Date.now()
+    ) {
+      return testVariables.user_sessions[email].data;
     }
   }
 
@@ -51,7 +54,7 @@ export const startAndGetSessionToken = async (
   const updatedTestVariables = {
     ...testVariables,
     sessions: {
-      ...testVariables.sessions,
+      ...testVariables.user_sessions,
       [email]: {
         createdAt: Date.now(),
         data,

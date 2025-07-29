@@ -49,7 +49,7 @@ class AdminWorkerResolver {
     @SortingArg<Worker>(WorkerSortingOptions)
     sorting: SortingFieldSchema<typeof WorkerSortingOptions>[],
 
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<PaginatedWorker> {
     const adminWorkerIndexService = container.resolve(AdminWorkerIndexService);
 
@@ -59,7 +59,7 @@ class AdminWorkerResolver {
       pagination,
       sorting,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -72,14 +72,14 @@ class AdminWorkerResolver {
   async adminWorker(
     @Arg("worker_id") worker_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Worker> {
     const adminWorkerShowService = container.resolve(AdminWorkerShowService);
 
     const worker = await adminWorkerShowService.execute({
       worker_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -94,7 +94,7 @@ class AdminWorkerResolver {
 
     @Arg("data") data: AdminWorkerUpdateSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Worker> {
     const adminWorkerUpdateService = container.resolve(
       AdminWorkerUpdateService,
@@ -104,7 +104,7 @@ class AdminWorkerResolver {
       worker_id,
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -117,7 +117,7 @@ class AdminWorkerResolver {
   async adminWorkerDelete(
     @Arg("worker_id") worker_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Worker> {
     const adminWorkerDeleteService = container.resolve(
       AdminWorkerDeleteService,
@@ -126,7 +126,7 @@ class AdminWorkerResolver {
     const worker = await adminWorkerDeleteService.execute({
       worker_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -137,14 +137,14 @@ class AdminWorkerResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Int)
   async adminWorkerCleanMissing(
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<number> {
     const adminWorkerCleanMissingService = container.resolve(
       AdminWorkerCleanMissingService,
     );
 
     const count = await adminWorkerCleanMissingService.execute({
-      user: session.user,
+      user: user_session.user,
       language,
     });
 

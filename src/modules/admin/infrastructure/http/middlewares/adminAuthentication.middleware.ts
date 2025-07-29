@@ -8,9 +8,9 @@ const adminAuthenticationMiddleware = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const { t, session } = req;
+  const { t, user_session } = req;
 
-  if (!session?.user)
+  if (!user_session?.user)
     throw new AppError({
       key: "@admin_auth_middleware/NOT_AUTHENTICATED",
       message: t(
@@ -20,7 +20,7 @@ const adminAuthenticationMiddleware = async (
       statusCode: 401,
     });
 
-  if (!session.is_admin)
+  if (!user_session.is_admin)
     throw new AppError({
       key: "@admin_auth_middleware/NOT_AN_ADMIN",
       message: t("@admin_auth_middleware/NOT_AN_ADMIN", "You're not an admin."),

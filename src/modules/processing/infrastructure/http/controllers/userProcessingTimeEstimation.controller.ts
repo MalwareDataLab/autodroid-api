@@ -16,7 +16,7 @@ class UserProcessingTimeEstimationController {
 
     const processingTimeEstimation =
       await userProcessingGetEstimatedExecutionTimeService.execute({
-        user: req.session.user,
+        user: req.user_session.user,
 
         dataset_id: String(req.query.dataset_id),
         processor_id: String(req.query.processor_id),
@@ -34,7 +34,7 @@ class UserProcessingTimeEstimationController {
 
     const processingEstimatedFinish =
       await userProcessingGetEstimatedFinishDateService.execute({
-        user: req.session.user,
+        user: req.user_session.user,
 
         processing_id: String(req.params.processing_id),
 

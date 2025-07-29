@@ -24,12 +24,12 @@ class UserUpdateDataResolver {
   async userUpdateData(
     @Arg("data")
     data: UserUpdateDataSchema,
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<User> {
     const userUpdateDataService = container.resolve(UserUpdateDataService);
 
     const user = await userUpdateDataService.execute({
-      user: session.user,
+      user: user_session.user,
       data,
       language,
     });
@@ -43,14 +43,14 @@ class UserUpdateDataResolver {
     @Args()
     params: UserUpdateLearningDataSchema,
 
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<User> {
     const userUpdateLearningDataService = container.resolve(
       UserUpdateLearningDataService,
     );
 
     const user = await userUpdateLearningDataService.execute({
-      user: session.user,
+      user: user_session.user,
       params,
       language,
     });

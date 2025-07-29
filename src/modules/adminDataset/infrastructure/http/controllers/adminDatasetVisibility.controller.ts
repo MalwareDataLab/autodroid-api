@@ -16,7 +16,7 @@ class AdminDatasetVisibilityController {
       dataset_id: req.params.dataset_id,
       data: req.body,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));

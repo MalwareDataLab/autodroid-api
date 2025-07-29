@@ -45,14 +45,14 @@ class AdminProcessorResolver {
     @SortingArg<Processor>(ProcessorSortingOptions)
     sorting: SortingFieldSchema<typeof ProcessorSortingOptions>[],
 
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<PaginatedProcessor> {
     const adminProcessorIndexService = container.resolve(
       AdminProcessorIndexService,
     );
 
     const paginatedProcessors = await adminProcessorIndexService.execute({
-      user: session.user,
+      user: user_session.user,
 
       pagination,
       sorting,
@@ -69,7 +69,7 @@ class AdminProcessorResolver {
   async adminProcessor(
     @Arg("processor_id") processor_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
     const adminProcessorShowService = container.resolve(
       AdminProcessorShowService,
@@ -78,7 +78,7 @@ class AdminProcessorResolver {
     const processor = await adminProcessorShowService.execute({
       processor_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -91,7 +91,7 @@ class AdminProcessorResolver {
   async adminProcessorCreate(
     @Arg("data") data: ProcessorSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
     const adminProcessorCreateService = container.resolve(
       AdminProcessorCreateService,
@@ -100,7 +100,7 @@ class AdminProcessorResolver {
     const processor = await adminProcessorCreateService.execute({
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -114,7 +114,7 @@ class AdminProcessorResolver {
     @Arg("processor_id") processor_id: string,
     @Arg("data") data: ProcessorSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
     const adminProcessorUpdateService = container.resolve(
       AdminProcessorUpdateService,
@@ -124,7 +124,7 @@ class AdminProcessorResolver {
       processor_id,
       data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -137,7 +137,7 @@ class AdminProcessorResolver {
   async adminProcessorDelete(
     @Arg("processor_id") processor_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
     const adminProcessorDeleteService = container.resolve(
       AdminProcessorDeleteService,
@@ -146,7 +146,7 @@ class AdminProcessorResolver {
     const processor = await adminProcessorDeleteService.execute({
       processor_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 

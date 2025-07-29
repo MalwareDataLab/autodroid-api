@@ -15,18 +15,18 @@ class UserSessionResolver {
   @Authorized()
   @Mutation(() => UserAuthProviderConn)
   async userSessionsClose(
-    @Ctx() { session, language }: GraphQLContext,
+    @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<UserAuthProviderConn> {
     const userSessionsCloseService = container.resolve(
       UserSessionsCloseService,
     );
 
     await userSessionsCloseService.execute({
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
-    return session.user_auth_provider_conn;
+    return user_session.user_auth_provider_conn;
   }
 }
 

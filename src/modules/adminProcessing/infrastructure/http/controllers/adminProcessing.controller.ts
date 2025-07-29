@@ -17,7 +17,7 @@ class AdminProcessingController {
     );
     const processing = await adminProcessingIndexService.execute({
       filter: req.query,
-      user: req.session.user,
+      user: req.user_session.user,
     });
     return res.json(process(processing));
   }
@@ -29,7 +29,7 @@ class AdminProcessingController {
     const processing = await adminProcessingShowService.execute({
       processing_id: req.params.processing_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processing));
@@ -43,7 +43,7 @@ class AdminProcessingController {
       processing_id: req.params.processing_id,
       data: req.body,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processing));
@@ -56,7 +56,7 @@ class AdminProcessingController {
     const processing = await adminProcessingDeleteService.execute({
       processing_id: req.params.processing_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processing));

@@ -27,7 +27,7 @@ class UserDatasetController {
         tags: req.body.tags,
       },
 
-      user: req.session.user,
+      user: req.user_session.user,
       agent_info: req.agent_info,
       language: req.language,
     });
@@ -37,7 +37,7 @@ class UserDatasetController {
   public async index(req: Request, res: Response) {
     const userDatasetIndexService = container.resolve(UserDatasetIndexService);
     const dataset = await userDatasetIndexService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
     });
     return res.json(process(dataset));
   }
@@ -47,7 +47,7 @@ class UserDatasetController {
     const dataset = await userDatasetShowService.execute({
       dataset_id: req.params.dataset_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));
@@ -64,7 +64,7 @@ class UserDatasetController {
         tags: req.body.tags,
       },
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));
@@ -77,7 +77,7 @@ class UserDatasetController {
     const dataset = await userDatasetDeleteService.execute({
       dataset_id: req.params.dataset_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(dataset));

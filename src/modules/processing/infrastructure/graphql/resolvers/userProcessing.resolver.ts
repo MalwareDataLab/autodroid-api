@@ -51,14 +51,14 @@ class UserProcessingResolver {
     @SortingArg<Processing>(ProcessingSortingOptions)
     sorting: SortingFieldSchema<typeof ProcessingSortingOptions>[],
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<PaginatedProcessing> {
     const userProcessingIndexService = container.resolve(
       UserProcessingIndexService,
     );
 
     const paginatedProcesses = await userProcessingIndexService.execute({
-      user: session.user,
+      user: user_session.user,
 
       params,
 
@@ -76,14 +76,14 @@ class UserProcessingResolver {
   async userProcessing(
     @ArgUUID("processing_id") processing_id: string,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
     const userProcessingShowService = container.resolve(
       UserProcessingShowService,
     );
 
     const processing = await userProcessingShowService.execute({
-      user: session.user,
+      user: user_session.user,
 
       processing_id,
 
@@ -98,7 +98,7 @@ class UserProcessingResolver {
   async userRequestDatasetProcessing(
     @Arg("data") data: RequestDatasetProcessingSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userRequestDatasetProcessingService = container.resolve(
       UserRequestDatasetProcessingService,
@@ -107,7 +107,7 @@ class UserProcessingResolver {
     const processing = await userRequestDatasetProcessingService.execute({
       params: data,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -121,7 +121,7 @@ class UserProcessingResolver {
 
     @Args() params: ProcessingUpdateVisibilitySchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userProcessingUpdateVisibilityService = container.resolve(
       UserProcessingUpdateVisibilityService,
@@ -131,7 +131,7 @@ class UserProcessingResolver {
       processing_id,
       visibility: params.visibility,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -145,7 +145,7 @@ class UserProcessingResolver {
 
     @Args() params: UserProcessingExtendKeepUntilSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userProcessingExtendKeepUntilService = container.resolve(
       UserProcessingExtendKeepUntilService,
@@ -155,7 +155,7 @@ class UserProcessingResolver {
       processing_id,
       keep_until: params.keep_until,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -166,7 +166,7 @@ class UserProcessingResolver {
   @Mutation(() => Processing)
   async userProcessingDelete(
     @ArgUUID("processing_id") processing_id: string,
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userProcessingDeleteService = container.resolve(
       UserProcessingDeleteService,
@@ -175,7 +175,7 @@ class UserProcessingResolver {
     const processing = await userProcessingDeleteService.execute({
       processing_id,
 
-      user: session.user,
+      user: user_session.user,
       language,
     });
 
@@ -188,7 +188,7 @@ class UserProcessingResolver {
     @Args()
     { dataset_id, processor_id }: ProcessingGetEstimatedExecutionTimeSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userProcessingGetEstimatedExecutionTimeService = container.resolve(
       UserProcessingGetEstimatedExecutionTimeService,
@@ -196,7 +196,7 @@ class UserProcessingResolver {
 
     const processingTimeEstimation =
       await userProcessingGetEstimatedExecutionTimeService.execute({
-        user: session.user,
+        user: user_session.user,
 
         dataset_id,
         processor_id,
@@ -212,7 +212,7 @@ class UserProcessingResolver {
   async userProcessingEstimatedFinish(
     @Args() { processing_id }: ProcessingGetEstimatedFinishTimeSchema,
 
-    @Ctx() { language, session }: GraphQLContext,
+    @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userProcessingGetEstimatedFinishDateService = container.resolve(
       UserProcessingGetEstimatedFinishDateService,
@@ -220,7 +220,7 @@ class UserProcessingResolver {
 
     const processingEstimatedFinish =
       await userProcessingGetEstimatedFinishDateService.execute({
-        user: session.user,
+        user: user_session.user,
 
         processing_id,
 

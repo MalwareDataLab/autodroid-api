@@ -30,7 +30,7 @@ class AdminWorkerController {
       sorting: req.sorting as SortingFieldSchema<typeof WorkerSortingOptions>[],
       pagination: req.pagination,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(worker));
@@ -41,7 +41,7 @@ class AdminWorkerController {
     const worker = await userWorkerShowService.execute({
       worker_id: req.params.worker_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(worker));
@@ -53,7 +53,7 @@ class AdminWorkerController {
       worker_id: req.params.worker_id,
       data: req.body,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(worker));
@@ -64,7 +64,7 @@ class AdminWorkerController {
     const worker = await userWorkerDeleteService.execute({
       worker_id: req.params.worker_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(worker));

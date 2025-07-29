@@ -25,7 +25,7 @@ class UserProcessingController {
     const processing = await userRequestDatasetProcessingService.execute({
       params: req.body,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
 
@@ -38,7 +38,7 @@ class UserProcessingController {
     );
 
     const processing = await userProcessingIndexService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
 
       params: req.query,
 
@@ -58,7 +58,7 @@ class UserProcessingController {
       UserProcessingShowService,
     );
     const processing = await userProcessingShowService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
 
       processing_id: req.params.processing_id,
 
@@ -72,7 +72,7 @@ class UserProcessingController {
       UserProcessingDeleteService,
     );
     const processing = await userProcessingDeleteService.execute({
-      user: req.session.user,
+      user: req.user_session.user,
 
       processing_id: req.params.processing_id,
 

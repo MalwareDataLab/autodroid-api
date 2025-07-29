@@ -29,7 +29,7 @@ class AdminProcessorController {
         typeof ProcessorSortingOptions
       >[],
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
 
@@ -43,7 +43,7 @@ class AdminProcessorController {
     const processor = await adminProcessorShowService.execute({
       processor_id: req.params.processor_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processor));
@@ -56,7 +56,7 @@ class AdminProcessorController {
     const processor = await adminProcessorCreateService.execute({
       data: req.body,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processor));
@@ -70,7 +70,7 @@ class AdminProcessorController {
       processor_id: req.params.processor_id,
       data: req.body,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processor));
@@ -83,7 +83,7 @@ class AdminProcessorController {
     const processor = await adminProcessorDeleteService.execute({
       processor_id: req.params.processor_id,
 
-      user: req.session.user,
+      user: req.user_session.user,
       language: req.language,
     });
     return res.json(process(processor));

@@ -8,9 +8,9 @@ const userAuthenticationMiddleware = async (
   _: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const { t, session } = req;
+  const { t, user_session } = req;
 
-  if (!session?.user)
+  if (!user_session?.user)
     throw new AppError({
       key: "@user_auth_middleware/NOT_AUTHENTICATED",
       message: t(
