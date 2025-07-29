@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.5](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.4...v0.7.5) (2025-07-29)
+
+
+### Bug Fixes
+
+* saml session ([449210a](https://github.com/MalwareDataLab/autodroid-api/commit/449210a945404d6bb3484a345dd1e514992d0cf1))
+
 ## [0.7.4](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.3...v0.7.4) (2025-07-16)
 
 
