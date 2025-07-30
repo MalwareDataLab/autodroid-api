@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.9](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.8...v0.7.9) (2025-07-30)
+
+
+### Bug Fixes
+
+* remove same site setting from saml cookie ([702c46e](https://github.com/MalwareDataLab/autodroid-api/commit/702c46ebfeb0cbae214d558614f07263c99eab16))
+
 ## [0.7.8](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.7...v0.7.8) (2025-07-30)
 
 
