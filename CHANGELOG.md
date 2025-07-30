@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.11](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.10...v0.7.11) (2025-07-30)
+
+
+### Bug Fixes
+
+* cors settings ([428f4be](https://github.com/MalwareDataLab/autodroid-api/commit/428f4beb3598c49037b4bf18376aafac705d4ffa))
+
 ## [0.7.10](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.9...v0.7.10) (2025-07-30)
 
 
