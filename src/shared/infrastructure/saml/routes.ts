@@ -1,4 +1,8 @@
 import { Request, Response, NextFunction, Router } from "express";
+import cors from "cors";
+
+// Config import
+import { getSamlCorsConfig } from "@config/cors";
 
 // Util import
 import { logger } from "@shared/utils/logger";
@@ -10,6 +14,8 @@ import { AuthenticatedRequest } from "./types";
 import { federationManager } from "./strategy";
 
 const samlRouter = Router();
+
+samlRouter.use(cors(getSamlCorsConfig()));
 
 samlRouter.get(
   `${federationManager.BASE_SAML_PATH}/discovery`,
@@ -63,7 +69,7 @@ samlRouter.get(
       const customToken = federationManager.getCustomTokenFromSession(req);
 
       if (!customToken) {
-        return res.status(404).json({
+        return res.status(400).json({
           success: false,
           error: "Token not found",
           message: "No valid custom token available",
