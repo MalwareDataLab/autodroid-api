@@ -26,6 +26,7 @@ import { authenticationMiddleware } from "@modules/authentication/infrastructure
 import { userAgentMiddleware } from "./middlewares/userAgent.middleware";
 import { lightRateLimiterMiddleware } from "./middlewares/lightRateLimiter.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import { sessionFixMiddleware } from "./middlewares/sessionFix.middleware";
 
 // Route import
 import { router } from "./routes";
@@ -74,6 +75,7 @@ class App {
 
     const samlPassport = this.samlManager.getPassport();
     this.express.use(session(getSessionConfig()));
+    this.express.use(sessionFixMiddleware);
     this.express.use(samlPassport.initialize());
     this.express.use(samlPassport.session());
     this.express.use(samlRouter);

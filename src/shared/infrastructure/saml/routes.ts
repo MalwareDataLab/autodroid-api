@@ -34,11 +34,9 @@ samlRouter.get(
 
 samlRouter.post(
   `${federationManager.BASE_SAML_PATH}/callback`,
-  (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    federationManager
-      .getPassport()
-      .authenticate("saml", { failureRedirect: "/" })(req, res, next);
-  },
+  federationManager
+    .getPassport()
+    .authenticate("saml", { failureRedirect: "/" }),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const user = req.user as any;
