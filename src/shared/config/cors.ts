@@ -14,4 +14,11 @@ const getCorsConfig = (): CorsOptions => {
   };
 };
 
-export { getCorsConfig };
+const getSamlCorsConfig = (): CorsOptions => {
+  return {
+    ...getCorsConfig(),
+    credentials: true,
+  };
+};
+
+export { getCorsConfig, getSamlCorsConfig };
