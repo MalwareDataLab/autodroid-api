@@ -7,6 +7,9 @@ import { MetadataReader, toPassportConfig } from "passport-saml-metadata";
 import { XMLBuilder } from "fast-xml-parser";
 import { container } from "tsyringe";
 
+// Error import
+import { AppError } from "@shared/errors/AppError";
+
 // Util import
 import { logger } from "@shared/utils/logger";
 
@@ -359,7 +362,13 @@ class SamlFederationManager {
               const entityID =
                 (req.query.idp as string) || (req.session as any)?.idpEntityID;
               if (!entityID) {
-                return done(new Error("No IdP entityID provided"));
+                return done(
+                  new AppError({
+                    key: "@saml/NO_IDP_PROVIDED",
+                    message:
+                      "Não foi possível concluir sua autenticação. Por favor, tente novamente.",
+                  }),
+                );
               }
               const config = this.getConfig(entityID);
               return done(null, config);
@@ -428,7 +437,7 @@ class SamlFederationManager {
 
       return result.customToken;
     } catch (error) {
-      logger.error("Error creating Firebase custom token:", error);
+      logger.error(`Error creating Firebase custom token: ${error}`);
       throw error;
     }
   }
@@ -443,8 +452,6 @@ class SamlFederationManager {
     req: any,
     user: ParsedSamlUser,
   ): Promise<void> {
-    req.session = null;
-
     const customToken = await this.createFirebaseCustomToken(user);
     (req.session as any).customToken = customToken;
     (req.session as any).tokenExpiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
@@ -467,7 +474,7 @@ class SamlFederationManager {
       return null;
     }
 
-    req.session = null;
+    req.session = {};
 
     return token;
   }
