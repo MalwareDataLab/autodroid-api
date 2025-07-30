@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.8](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.7...v0.7.8) (2025-07-30)
+
+
+### Bug Fixes
+
+* cookie session ([790ef4c](https://github.com/MalwareDataLab/autodroid-api/commit/790ef4c432c37fb638d4c6b9c4f8496ff218f366))
+
 ## [0.7.7](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.6...v0.7.7) (2025-07-30)
 
 
