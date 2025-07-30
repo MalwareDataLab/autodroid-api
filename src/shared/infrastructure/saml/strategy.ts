@@ -462,7 +462,7 @@ class SamlFederationManager {
     const expiresAt = (req.session as any)?.tokenExpiresAt;
     const userId = (req.session as any)?.userId;
 
-    if (!token || !expiresAt || Date.now() > expiresAt) {
+    if (!token || !expiresAt || Date.now() > expiresAt * 1000) {
       return null;
     }
 

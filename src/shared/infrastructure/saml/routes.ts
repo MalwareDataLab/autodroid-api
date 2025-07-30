@@ -4,6 +4,7 @@ import { Request, Response, NextFunction, Router } from "express";
 import { logger } from "@shared/utils/logger";
 
 // Type import
+import { AppError } from "@shared/errors/AppError";
 import { AuthenticatedRequest } from "./types";
 
 // Strategy import
@@ -47,10 +48,10 @@ samlRouter.post(
       res.redirect(redirectUrl);
     } catch (error) {
       logger.error(`Error in SAML callback: ${error}`);
-      res.status(500).json({
-        success: false,
-        error: "Authentication failed",
-        message: "Failed to create authentication token",
+      throw new AppError({
+        key: "@saml/callback_failed",
+        message: "Erro ao criar token de autenticação",
+        statusCode: 500,
       });
     }
   },
@@ -61,24 +62,27 @@ samlRouter.get("/token", (req: AuthenticatedRequest, res: Response) => {
     const customToken = federationManager.getCustomTokenFromSession(req);
 
     if (!customToken) {
-      return res.status(400).json({
-        success: false,
-        error: "Token not found",
-        message: "No valid custom token available",
+      throw new AppError({
+        key: "@saml/token_not_found",
+        message: "Nenhum token disponível.",
+        statusCode: 400,
       });
     }
 
     return res.json({
-      success: true,
       customToken,
       provider: "saml",
     });
   } catch (error) {
+    if (AppError.isInstance(error)) {
+      throw error;
+    }
+
     logger.error(`Error retrieving custom token: ${error}`);
-    return res.status(500).json({
-      success: false,
-      error: "Token retrieval failed",
-      message: "Failed to retrieve authentication token",
+    throw new AppError({
+      key: "@saml/token_retrieval_failed",
+      message: "Erro ao recuperar token de autenticação",
+      statusCode: 500,
     });
   }
 });
