@@ -42,7 +42,7 @@ samlRouter.post(
       const user = req.user as any;
 
       await federationManager.storeCustomTokenInSession(req, user);
-      const redirectUrl = await federationManager.getFrontendRedirectUrl(user);
+      const redirectUrl = await federationManager.getFrontendRedirectUrl();
 
       res.redirect(redirectUrl);
     } catch (error) {
