@@ -357,7 +357,7 @@ class SamlFederationManager {
           ) => {
             try {
               const entityID =
-                (req.query.idp as string) || (req.session as any).idpEntityID;
+                (req.query.idp as string) || (req.session as any)?.idpEntityID;
               if (!entityID) {
                 return done(new Error("No IdP entityID provided"));
               }
@@ -423,7 +423,7 @@ class SamlFederationManager {
 
       const result = await handleSamlToFirebaseAuthenticationService.execute({
         user,
-        language: "en", // Default language, can be made configurable
+        language: "en",
       });
 
       return result.customToken;
@@ -433,18 +433,43 @@ class SamlFederationManager {
     }
   }
 
-  async getFrontendRedirectUrl(user: ParsedSamlUser): Promise<string> {
-    const customToken = await this.createFirebaseCustomToken(user);
+  async getFrontendRedirectUrl(_user: ParsedSamlUser): Promise<string> {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
-    // Use URLSearchParams for safe URL construction
-    const params = new URLSearchParams({
-      customToken,
-      provider: "saml",
-      timestamp: Date.now().toString(),
-    });
+    return `${frontendUrl}/auth/callback`;
+  }
 
-    return `${frontendUrl}/auth/callback?${params.toString()}`;
+  async storeCustomTokenInSession(
+    req: any,
+    user: ParsedSamlUser,
+  ): Promise<void> {
+    req.session = null;
+
+    const customToken = await this.createFirebaseCustomToken(user);
+    (req.session as any).customToken = customToken;
+    (req.session as any).tokenExpiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+    (req.session as any).userId = user.uid; // Store user ID for verification
+  }
+
+  getCustomTokenFromSession(req: any, expectedUserId?: string): string | null {
+    const token = (req.session as any)?.customToken;
+    const expiresAt = (req.session as any)?.tokenExpiresAt;
+    const userId = (req.session as any)?.userId;
+
+    if (!token || !expiresAt || Date.now() > expiresAt) {
+      return null;
+    }
+
+    if (expectedUserId && userId !== expectedUserId) {
+      logger.warn(
+        `Session token mismatch: expected ${expectedUserId}, got ${userId}`,
+      );
+      return null;
+    }
+
+    req.session = null;
+
+    return token;
   }
 }
 
