@@ -442,9 +442,8 @@ class SamlFederationManager {
     }
   }
 
-  async getFrontendRedirectUrl(_user: ParsedSamlUser): Promise<string> {
+  async getFrontendRedirectUrl(): Promise<string> {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-
     return `${frontendUrl}/auth/callback`;
   }
 
@@ -474,7 +473,9 @@ class SamlFederationManager {
       return null;
     }
 
-    req.session = {};
+    (req.session as any).customToken = null;
+    (req.session as any).tokenExpiresAt = null;
+    (req.session as any).userId = null;
 
     return token;
   }
