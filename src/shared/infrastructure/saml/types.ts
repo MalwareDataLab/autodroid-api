@@ -2,6 +2,7 @@ import { Request } from "express";
 
 export interface AuthenticatedRequest extends Request {
   user?: any;
+  session?: any;
 }
 
 export interface SamlUserProfile {

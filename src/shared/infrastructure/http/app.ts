@@ -11,7 +11,7 @@ import helmet from "helmet";
 import http, { Server } from "node:http";
 import * as i18nextMiddleware from "i18next-http-middleware";
 import cookieParser from "cookie-parser";
-import session from "express-session";
+import session from "cookie-session";
 
 // i18n import
 import { i18next } from "@shared/i18n";
