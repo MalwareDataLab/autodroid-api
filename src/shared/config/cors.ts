@@ -11,14 +11,8 @@ const getCorsConfig = (): CorsOptions => {
       envConfig.NODE_ENV === "production"
         ? envConfig.CORS_ALLOWED_FROM.split(",")
         : "*",
-  };
-};
-
-const getSamlCorsConfig = (): CorsOptions => {
-  return {
-    ...getCorsConfig(),
     credentials: true,
   };
 };
 
-export { getCorsConfig, getSamlCorsConfig };
+export { getCorsConfig };

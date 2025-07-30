@@ -78,7 +78,7 @@ class App {
     this.express.use(sessionFixMiddleware);
     this.express.use(samlPassport.initialize());
     this.express.use(samlPassport.session());
-    this.express.use(samlRouter);
+    this.express.use(this.samlManager.BASE_SAML_PATH, samlRouter);
 
     this.express.use(authenticationMiddleware);
   }

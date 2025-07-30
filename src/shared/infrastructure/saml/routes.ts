@@ -1,8 +1,4 @@
 import { Request, Response, NextFunction, Router } from "express";
-import cors from "cors";
-
-// Config import
-import { getSamlCorsConfig } from "@config/cors";
 
 // Util import
 import { logger } from "@shared/utils/logger";
@@ -15,10 +11,8 @@ import { federationManager } from "./strategy";
 
 const samlRouter = Router();
 
-samlRouter.use(cors(getSamlCorsConfig()));
-
 samlRouter.get(
-  `${federationManager.BASE_SAML_PATH}/discovery`,
+  "/discovery",
   (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (req.query.idp) {
       (req.session as any).idpEntityID = req.query.idp;
@@ -39,7 +33,7 @@ samlRouter.get(
 );
 
 samlRouter.post(
-  `${federationManager.BASE_SAML_PATH}/callback`,
+  "/callback",
   federationManager
     .getPassport()
     .authenticate("saml", { failureRedirect: "/" }),
@@ -62,61 +56,49 @@ samlRouter.post(
   },
 );
 
-samlRouter.get(
-  `${federationManager.BASE_SAML_PATH}/token`,
-  (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const customToken = federationManager.getCustomTokenFromSession(req);
+samlRouter.get("/token", (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const customToken = federationManager.getCustomTokenFromSession(req);
 
-      if (!customToken) {
-        return res.status(400).json({
-          success: false,
-          error: "Token not found",
-          message: "No valid custom token available",
-        });
-      }
-
-      return res.json({
-        success: true,
-        customToken,
-        provider: "saml",
-      });
-    } catch (error) {
-      logger.error(`Error retrieving custom token: ${error}`);
-      return res.status(500).json({
+    if (!customToken) {
+      return res.status(400).json({
         success: false,
-        error: "Token retrieval failed",
-        message: "Failed to retrieve authentication token",
+        error: "Token not found",
+        message: "No valid custom token available",
       });
     }
-  },
-);
 
-samlRouter.get(
-  `${federationManager.BASE_SAML_PATH}/logout`,
-  (req: AuthenticatedRequest, res: Response) => {
-    res.redirect(`${process.env.FRONTEND_URL}/logout`);
-  },
-);
-
-samlRouter.get(
-  `${federationManager.BASE_SAML_PATH}/idps`,
-  (req: Request, res: Response) => {
-    res.json({
-      availableIdPs: federationManager.listIdps(),
-      count: federationManager.listIdps().length,
+    return res.json({
+      success: true,
+      customToken,
+      provider: "saml",
     });
-  },
-);
+  } catch (error) {
+    logger.error(`Error retrieving custom token: ${error}`);
+    return res.status(500).json({
+      success: false,
+      error: "Token retrieval failed",
+      message: "Failed to retrieve authentication token",
+    });
+  }
+});
 
-samlRouter.get(
-  `${federationManager.BASE_SAML_PATH}/metadata`,
-  (req: Request, res: Response) => {
-    const metadata = federationManager.generateMetadata();
+samlRouter.get("/logout", (req: AuthenticatedRequest, res: Response) => {
+  res.redirect(`${process.env.FRONTEND_URL}/logout`);
+});
 
-    res.set("Content-Type", "application/xml");
-    res.send(metadata);
-  },
-);
+samlRouter.get("/idps", (req: Request, res: Response) => {
+  res.json({
+    availableIdPs: federationManager.listIdps(),
+    count: federationManager.listIdps().length,
+  });
+});
+
+samlRouter.get("/metadata", (req: Request, res: Response) => {
+  const metadata = federationManager.generateMetadata();
+
+  res.set("Content-Type", "application/xml");
+  res.send(metadata);
+});
 
 export { samlRouter };
