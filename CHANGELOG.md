@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.13](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.12...v0.7.13) (2025-07-31)
+
+
+### Bug Fixes
+
+* express saml session cookie ([9ba637f](https://github.com/MalwareDataLab/autodroid-api/commit/9ba637f73186c308e1b66c807670758a109ed08e))
+
 ## [0.7.12](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.11...v0.7.12) (2025-07-31)
 
 
