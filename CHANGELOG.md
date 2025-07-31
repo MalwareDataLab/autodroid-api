@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.14](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.13...v0.7.14) (2025-07-31)
+
+
+### Bug Fixes
+
+* change session store ([9565ecc](https://github.com/MalwareDataLab/autodroid-api/commit/9565ecc1735b1f74d5f2df4ca08d3c0c5eb9c5fe))
+
 ## [0.7.13](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.12...v0.7.13) (2025-07-31)
 
 
