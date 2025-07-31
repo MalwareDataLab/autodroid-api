@@ -382,8 +382,15 @@ class SamlFederationManager {
               }
               const config = this.getConfig(entityID);
               return done(null, config);
-            } catch (err) {
-              return done(err);
+            } catch (error) {
+              return done(
+                new AppError({
+                  key: "@saml/ERROR_PROCESSING_IDP",
+                  message:
+                    "Não foi possível concluir sua autenticação. Por favor, tente novamente.",
+                  debug: { error },
+                }),
+              );
             }
           },
         },

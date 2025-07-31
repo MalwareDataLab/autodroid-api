@@ -1,13 +1,15 @@
+import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { logger } from "@shared/utils/logger";
+import { RedisStore } from "connect-redis";
+import session from "express-session";
+import { container } from "tsyringe";
 
-const getSessionConfig = (): CookieSessionInterfaces.CookieSessionOptions => {
+const getSessionConfig = (): session.SessionOptions => {
   const sessionSecret = process.env.SESSION_SECRET;
 
   if (!sessionSecret) {
     throw new Error("SESSION_SECRET environment variable is required");
   }
-
-  const keys = [sessionSecret];
 
   const getMainDomain = (): string | undefined => {
     if (process.env.NODE_ENV !== "production") {
@@ -34,15 +36,26 @@ const getSessionConfig = (): CookieSessionInterfaces.CookieSessionOptions => {
     }
   };
 
+  const redisStore = new RedisStore({
+    client: container.resolve<IInMemoryDatabaseProvider>(
+      "InMemoryDatabaseProvider",
+    ).connection,
+    prefix: "session:",
+  });
+
   return {
     name: "session",
-    keys,
-    maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    signed: true,
-    domain: getMainDomain(),
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none" as const,
+      domain: getMainDomain(),
+    },
+    store: redisStore,
   };
 };
 

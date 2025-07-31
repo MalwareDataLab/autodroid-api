@@ -11,7 +11,7 @@ import helmet from "helmet";
 import http, { Server } from "node:http";
 import * as i18nextMiddleware from "i18next-http-middleware";
 import cookieParser from "cookie-parser";
-import session from "cookie-session";
+import session from "express-session";
 
 // i18n import
 import { i18next } from "@shared/i18n";
@@ -26,7 +26,6 @@ import { authenticationMiddleware } from "@modules/authentication/infrastructure
 import { userAgentMiddleware } from "./middlewares/userAgent.middleware";
 import { lightRateLimiterMiddleware } from "./middlewares/lightRateLimiter.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
-import { sessionFixMiddleware } from "./middlewares/sessionFix.middleware";
 
 // Route import
 import { router } from "./routes";
@@ -75,7 +74,6 @@ class App {
 
     const samlPassport = this.samlManager.getPassport();
     this.express.use(session(getSessionConfig()));
-    this.express.use(sessionFixMiddleware);
     this.express.use(samlPassport.initialize());
     this.express.use(samlPassport.session());
     this.express.use(this.samlManager.BASE_SAML_PATH, samlRouter);
