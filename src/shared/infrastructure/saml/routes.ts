@@ -61,6 +61,17 @@ samlRouter.get("/token", (req: AuthenticatedRequest, res: Response) => {
   try {
     const customToken = federationManager.getCustomTokenFromSession(req);
 
+    logger.info(
+      `Token not found. ${JSON.stringify(
+        {
+          reqSession: req.session,
+          cookies: req.cookies,
+        },
+        null,
+        2,
+      )}`,
+    );
+
     if (!customToken) {
       throw new AppError({
         key: "@saml/token_not_found",
