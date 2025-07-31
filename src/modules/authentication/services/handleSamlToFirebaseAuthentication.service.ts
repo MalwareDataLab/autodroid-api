@@ -15,9 +15,6 @@ import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvide
 // Type import
 import { ParsedSamlUser } from "@shared/infrastructure/saml/types";
 
-// Util import
-import { logger } from "@shared/utils/logger";
-
 interface IRequest {
   user: ParsedSamlUser;
   language: string;
@@ -83,7 +80,6 @@ class HandleSamlToFirebaseAuthenticationService {
           user.email,
           language,
         );
-        logger.info(`Firebase user found: ${firebaseUser.code}`);
       } catch (error: any) {
         firebaseUser = await firebaseProvider.createUser(
           {
@@ -93,7 +89,6 @@ class HandleSamlToFirebaseAuthenticationService {
           },
           language,
         );
-        logger.info(`Created new Firebase user: ${firebaseUser.code}`);
       }
 
       const customToken = await firebaseProvider.createUserTokenByCode({
@@ -102,8 +97,6 @@ class HandleSamlToFirebaseAuthenticationService {
         language,
       });
 
-      logger.info(`Created Firebase custom token for user: ${firebaseUid}`);
-
       return {
         customToken,
         firebaseUid: firebaseUser.code,
@@ -111,7 +104,6 @@ class HandleSamlToFirebaseAuthenticationService {
     } catch (error) {
       if (error instanceof AppError) throw error;
 
-      logger.error("Error creating Firebase custom token:", error);
       throw new AppError({
         key: "@handle_saml_to_firebase_authentication_service/FAILED_TO_CREATE_TOKEN",
         message: t(

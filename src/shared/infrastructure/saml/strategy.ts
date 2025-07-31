@@ -74,7 +74,11 @@ class SamlFederationManager {
   private scheduleRefresh(): void {
     schedule.scheduleJob(this.refreshInterval, () => {
       this.refreshMetadata().catch(err => {
-        logger.error("❌ Scheduled metadata refresh failed:", err);
+        AppError.make({
+          key: "@saml/SCHEDULED_METADATA_REFRESH_FAILED",
+          message: "Scheduled metadata refresh failed",
+          debug: { error: err },
+        });
       });
     });
   }
@@ -358,16 +362,6 @@ class SamlFederationManager {
             req: any,
             done: (err: any, config?: any) => void,
           ) => {
-            logger.info(
-              `Process IDP. ${JSON.stringify(
-                {
-                  reqSession: req.session,
-                  cookies: req.cookies,
-                },
-                null,
-                2,
-              )}`,
-            );
             try {
               const entityID =
                 (req.query.idp as string) || (req.session as any)?.idpEntityID;
@@ -454,8 +448,12 @@ class SamlFederationManager {
 
       return result.customToken;
     } catch (error) {
-      logger.error(`Error creating Firebase custom token: ${error}`);
-      throw error;
+      throw new AppError({
+        key: "@saml/ERROR_CREATING_FIREBASE_CUSTOM_TOKEN",
+        message:
+          "Não foi possível concluir sua autenticação. Por favor, tente novamente.",
+        debug: { error },
+      });
     }
   }
 
@@ -475,17 +473,6 @@ class SamlFederationManager {
   }
 
   getCustomTokenFromSession(req: any, expectedUserId?: string): string | null {
-    logger.info(
-      `Get custom token from session. ${JSON.stringify(
-        {
-          reqSession: req.session,
-          cookies: req.cookies,
-        },
-        null,
-        2,
-      )}`,
-    );
-
     const token = (req.session as any)?.customToken;
     const expiresAt = (req.session as any)?.tokenExpiresAt;
     const userId = (req.session as any)?.userId;
@@ -495,9 +482,11 @@ class SamlFederationManager {
     }
 
     if (expectedUserId && userId !== expectedUserId) {
-      logger.warn(
-        `Session token mismatch: expected ${expectedUserId}, got ${userId}`,
-      );
+      AppError.make({
+        key: "@saml/SESSION_TOKEN_MISMATCH",
+        message: `Session token mismatch: expected ${expectedUserId}, got ${userId}`,
+        debug: { expectedUserId, userId },
+      });
       return null;
     }
 
