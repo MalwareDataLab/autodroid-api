@@ -1,8 +1,21 @@
-import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { logger } from "@shared/utils/logger";
 import { RedisStore } from "connect-redis";
 import session from "express-session";
-import { container } from "tsyringe";
+import { createClient } from "redis";
+import { getRedisConfig } from "./redis";
+
+const { host, port, username, password, db } = getRedisConfig();
+const redisClient = createClient({
+  url: `redis://${host}:${port}`,
+  password,
+  username,
+  database: db,
+});
+redisClient.connect().catch(err => logger.error(err));
+
+const store = new RedisStore({
+  client: redisClient,
+});
 
 const getSessionConfig = (): session.SessionOptions => {
   const sessionSecret = process.env.SESSION_SECRET;
@@ -36,13 +49,6 @@ const getSessionConfig = (): session.SessionOptions => {
     }
   };
 
-  const redisStore = new RedisStore({
-    client: container.resolve<IInMemoryDatabaseProvider>(
-      "InMemoryDatabaseProvider",
-    ).connection,
-    prefix: "session:",
-  });
-
   return {
     name: "session",
     secret: sessionSecret,
@@ -55,7 +61,7 @@ const getSessionConfig = (): session.SessionOptions => {
       sameSite: "none" as const,
       domain: getMainDomain(),
     },
-    store: redisStore,
+    store,
   };
 };
 
