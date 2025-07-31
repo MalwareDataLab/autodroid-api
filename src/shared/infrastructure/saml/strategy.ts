@@ -358,6 +358,16 @@ class SamlFederationManager {
             req: any,
             done: (err: any, config?: any) => void,
           ) => {
+            logger.info(
+              `Process IDP. ${JSON.stringify(
+                {
+                  reqSession: req.session,
+                  cookies: req.cookies,
+                },
+                null,
+                2,
+              )}`,
+            );
             try {
               const entityID =
                 (req.query.idp as string) || (req.session as any)?.idpEntityID;
@@ -458,6 +468,17 @@ class SamlFederationManager {
   }
 
   getCustomTokenFromSession(req: any, expectedUserId?: string): string | null {
+    logger.info(
+      `Get custom token from session. ${JSON.stringify(
+        {
+          reqSession: req.session,
+          cookies: req.cookies,
+        },
+        null,
+        2,
+      )}`,
+    );
+
     const token = (req.session as any)?.customToken;
     const expiresAt = (req.session as any)?.tokenExpiresAt;
     const userId = (req.session as any)?.userId;
