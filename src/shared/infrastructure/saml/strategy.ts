@@ -42,10 +42,15 @@ class SamlFederationManager {
 
   private readonly SP_CERT = process.env.SAML_PUBLIC_KEY?.replace(/\\n/g, "\n");
   private readonly SP_KEY = process.env.SAML_PRIVATE_KEY?.replace(/\\n/g, "\n");
+
   private readonly FEDERATION_URL =
+    process.env.SAML_FEDERATION_URL ||
     "https://ds.cafeexpresso.rnp.br/metadata/ds-metadata.xml";
+
   public readonly DISCOVERY_SERVICE_URL =
+    process.env.SAML_DISCOVERY_SERVICE_URL ||
     "https://ds.cafeexpresso.rnp.br/WAYF.php";
+
   private readonly APP_URL = process.env.APP_URL || "http://localhost:3000";
   public readonly BASE_URL = this.APP_URL;
   public readonly BASE_SAML_PATH = "/rnp-cafe-saml";

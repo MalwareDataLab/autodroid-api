@@ -101,8 +101,11 @@ services:
       - PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND=30d
 
       - SESSION_SECRET=
+
       - SAML_PUBLIC_KEY=
       - SAML_PRIVATE_KEY=
+      - SAML_FEDERATION_URL=
+      - SAML_DISCOVERY_SERVICE_URL=
     ports:
       - 3333:3333
     command: ./wait-for.sh autodroid_api_postgres_prod:5432 -q -- ./wait-for.sh autodroid_api_mongo_prod:27017 -q -- ./wait-for.sh autodroid_api_redis_prod:6379 -q -- sh -c "yarn run-s prisma:generate prisma:prod start:prod"
