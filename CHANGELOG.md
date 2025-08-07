@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.14...v0.8.0) (2025-08-07)
+
+
+### Features
+
+* migrate to cafe federation ([bb43a12](https://github.com/MalwareDataLab/autodroid-api/commit/bb43a1260d98cca3165cd24efa7959197ca86bec))
+
 ## [0.7.14](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.13...v0.7.14) (2025-07-31)
 
 
