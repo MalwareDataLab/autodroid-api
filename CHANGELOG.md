@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.1...v0.8.2) (2025-08-08)
+
+
+### Bug Fixes
+
+* saml user attribute ([c011102](https://github.com/MalwareDataLab/autodroid-api/commit/c011102a404b1baaac92e69b201f660bf022e460))
+
 ## [0.8.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.0...v0.8.1) (2025-08-08)
 
 
