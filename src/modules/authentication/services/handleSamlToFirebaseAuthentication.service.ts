@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { isEmail } from "validator";
 
 // i18n import
 import { i18n } from "@shared/i18n";
@@ -36,7 +37,7 @@ class HandleSamlToFirebaseAuthenticationService {
     const t = await i18n(language);
 
     try {
-      if (!user.email) {
+      if (!user.email || !isEmail(user.email)) {
         throw new AppError({
           key: "@handle_saml_to_firebase_authentication_service/EMAIL_REQUIRED",
           message: t(
