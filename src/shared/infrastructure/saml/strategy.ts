@@ -44,7 +44,7 @@ class SamlFederationManager {
   private readonly SP_KEY = process.env.SAML_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
   private readonly FEDERATION_URL =
-    process.env.SAML_FEDERATION_URL ||
+    process.env.SAML_FEDERATION_METADATA_URL ||
     "https://ds.cafeexpresso.rnp.br/metadata/ds-metadata.xml";
 
   public readonly DISCOVERY_SERVICE_URL =
