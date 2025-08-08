@@ -69,7 +69,7 @@ declare global {
 
       SAML_PUBLIC_KEY: string;
       SAML_PRIVATE_KEY: string;
-      SAML_FEDERATION_URL: string;
+      SAML_FEDERATION_METADATA_URL: string;
       SAML_DISCOVERY_SERVICE_URL: string;
     }
   }
