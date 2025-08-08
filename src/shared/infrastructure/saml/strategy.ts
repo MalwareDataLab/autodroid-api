@@ -6,13 +6,13 @@ import schedule from "node-schedule";
 import { MetadataReader, toPassportConfig } from "passport-saml-metadata";
 import { XMLBuilder } from "fast-xml-parser";
 import { container } from "tsyringe";
-import { isEmail } from "validator";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
 // Util import
 import { logger } from "@shared/utils/logger";
+import { isValidEmail } from "@shared/utils/isValidEmail";
 
 // Service import
 import { HandleSamlToFirebaseAuthenticationService } from "@modules/authentication/services/handleSamlToFirebaseAuthentication.service";
@@ -65,7 +65,7 @@ class SamlFederationManager {
     "urn:oid:2.5.4.42": "givenName",
     "urn:oid:2.5.4.4": "sn",
     "urn:oid:1.3.6.1.4.1.5923.1.1.1.6": "eduPersonPrincipalName",
-    "urn:oid:1.3.6.1.4.1.1466.115.121.1.26": "inetOrgPerson",
+    "urn:oid:1.3.6.1.4.1.1466.115.121.1.26": "e-mail",
   };
 
   constructor() {
@@ -427,10 +427,15 @@ class SamlFederationManager {
       }
     });
 
+    console.log({
+      friendly,
+      rawClaims,
+    });
+
     return {
       uid: friendly.uid,
-      email: isEmail(friendly.inetOrgPerson)
-        ? friendly.inetOrgPerson
+      email: isValidEmail(friendly["e-mail"])
+        ? friendly["e-mail"]
         : friendly.mail,
       firstName: friendly.givenName,
       lastName: friendly.sn,
