@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.0...v0.8.1) (2025-08-08)
+
+
+### Bug Fixes
+
+* federation metadata url variable ([fa5b8c0](https://github.com/MalwareDataLab/autodroid-api/commit/fa5b8c01d69409aac8cf541ea4d995e1ad18115d))
+
 ## [0.8.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.7.14...v0.8.0) (2025-08-07)
 
 
