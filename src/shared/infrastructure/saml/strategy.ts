@@ -427,11 +427,6 @@ class SamlFederationManager {
       }
     });
 
-    console.log({
-      friendly,
-      rawClaims,
-    });
-
     return {
       uid: friendly.uid,
       email: isValidEmail(friendly["e-mail"])
