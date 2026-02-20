@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.4](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.3...v0.8.4) (2026-02-20)
+
+
+### Bug Fixes
+
+* allow success without metrics file ([83fc21e](https://github.com/MalwareDataLab/autodroid-api/commit/83fc21eecddb69cbe59afd232515dc34831a358b))
+* allow success without metrics file ([92ca4af](https://github.com/MalwareDataLab/autodroid-api/commit/92ca4afde529fa1f3e106a7fd174eb295765be35))
+
 ## [0.8.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.2...v0.8.3) (2025-08-08)
 
 
