@@ -57,22 +57,23 @@ class WorkerHandleProcessingSuccessService {
         message: "Processing not found.",
       });
 
-    if (!processing.result_file?.id)
+    const hasResultFile = !!processing.result_file?.id;
+    const hasMetricsFile = !!processing.metrics_file?.id;
+
+    if (!hasResultFile && !hasMetricsFile)
       throw new AppError({
-        key: "@worker_handle_processing_success_service/RESULT_FILE_NOT_FOUND",
-        message: "Result file not found.",
+        key: "@worker_handle_processing_success_service/NO_OUTPUT_FILES_FOUND",
+        message: "No output files found.",
       });
 
-    if (!processing.metrics_file?.id)
-      throw new AppError({
-        key: "@worker_handle_processing_success_service/METRICS_FILE_NOT_FOUND",
-        message: "Metrics file not found.",
-      });
+    const filesToValidate = [
+      ...(processing.result_file ? [processing.result_file] : []),
+      ...(processing.metrics_file ? [processing.metrics_file] : []),
+    ];
 
-    const files = await Promise.all([
-      File.process(processing.result_file),
-      File.process(processing.metrics_file),
-    ]);
+    const files = await Promise.all(
+      filesToValidate.map(file => File.process(file)),
+    );
 
     files.forEach(file => {
       if (
