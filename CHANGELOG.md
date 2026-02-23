@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.4...v0.8.5) (2026-02-23)
+
+
+### Bug Fixes
+
+* update processing argument parser to not inject default params ([ceaee67](https://github.com/MalwareDataLab/autodroid-api/commit/ceaee67be22a784fa434e82bcc0fc960d0a12d8e))
+
 ## [0.8.4](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.3...v0.8.4) (2026-02-20)
 
 
