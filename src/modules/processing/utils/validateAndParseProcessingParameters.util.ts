@@ -103,25 +103,6 @@ const validateAndParseProcessingParameters = (
           value: String(parser(String(providedParameter.value).trim())),
         };
       }
-      if (
-        parameter.default_value !== null &&
-        parameter.default_value !== undefined
-      ) {
-        if (!isValid(parameter.default_value))
-          throw new AppError({
-            key: "@validate_processor_configuration_parameters/INVALID_DEFAULT_PARAMETER",
-            message: t(
-              "@validate_processor_configuration_parameters/INVALID_DEFAULT_PARAMETER",
-              "Invalid default value for parameter {{ parameter }}.",
-              { parameter: parameter.name },
-            ),
-          });
-
-        return {
-          key: parameter.name,
-          value: String(parser(String(parameter.default_value).trim())),
-        };
-      }
 
       return {
         key: parameter.name,
