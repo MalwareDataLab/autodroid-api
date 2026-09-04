@@ -25,7 +25,8 @@ describe("E2E: UserUpdateDataResolver", () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.userUpdateData).toMatchObject({
-      name: context.userSession.displayName,
+      name: data.name,
+      language: data.language,
       email: context.userSession.email,
     });
   });
@@ -58,6 +59,59 @@ describe("E2E: UserUpdateDataResolver", () => {
           message: "Invalid language.",
           extensions: {
             code: "@user_update_data_service/INVALID_LANGUAGE",
+          },
+        }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+  });
+
+  it("should be able to update user learning data", async context => {
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: `mutation UserUpdateLearningData($data: JSON!) {
+          userUpdateLearningData(data: $data) {
+            id
+            learning_data
+          }
+        }`,
+        variables: {
+          data: { onboarding: true, step: 2 },
+        },
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.userUpdateLearningData.learning_data,
+    ).toMatchObject({
+      onboarding: true,
+      step: 2,
+    });
+  });
+
+  it("should return an error updating learning data when unauthorized", async context => {
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .set("Authorization", `Bearer someToken`)
+      .send({
+        query: `mutation UserUpdateLearningData($data: JSON!) {
+          userUpdateLearningData(data: $data) {
+            id
+          }
+        }`,
+        variables: {
+          data: { onboarding: true },
+        },
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: {
+            code: "UNAUTHORIZED",
           },
         }),
       ]),

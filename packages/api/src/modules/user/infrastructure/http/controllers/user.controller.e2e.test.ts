@@ -13,6 +13,15 @@ describe("E2E: UserController", () => {
     });
   });
 
+  it("should fail returning user data when unauthenticated", async context => {
+    const response = await context.request.get("/user").send();
+
+    expect(response.status).toBe(401);
+    expect(response.body).toMatchObject({
+      code: "@user_auth_middleware/NOT_AUTHENTICATED",
+    });
+  });
+
   it("should be able to update user data", async context => {
     const data = {
       name: "Updated",

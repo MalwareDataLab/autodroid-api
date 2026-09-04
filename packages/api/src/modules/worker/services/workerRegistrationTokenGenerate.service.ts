@@ -12,7 +12,7 @@ import { IWorkerRegistrationTokenRepository } from "../repositories/IWorkerRegis
 @injectable()
 class WorkerRegistrationTokenGenerateService {
   constructor(
-    @inject("workerRegistrationTokenRepository")
+    @inject("WorkerRegistrationTokenRepository")
     private workerRegistrationTokenRepository: IWorkerRegistrationTokenRepository,
   ) {}
 

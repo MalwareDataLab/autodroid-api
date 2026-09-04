@@ -13,7 +13,8 @@
       "@/*": ["./*"]
     },
     "typeRoots": [
-      "./src/@types"
+      "./src/@types",
+      "./node_modules/@types"
     ],
     "resolveJsonModule": true,
     "allowJs": true,
@@ -23,5 +24,6 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "skipLibCheck": true
-  }
+  },
+  "exclude": ["node_modules", "dist", "test/config/vitest.config.mts"]
 }

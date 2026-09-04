@@ -16,6 +16,7 @@ import util from "node:util";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
+import { ValidationError } from "@shared/errors/ValidationError";
 
 // Util import
 import { logger } from "@shared/utils/logger";
@@ -64,6 +65,22 @@ export function errorHandler(
         extensions: {
           code: appError.key || ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
           ...(!!appError.debug && { fatal: true }),
+        },
+      };
+
+    const validationError =
+      originalError instanceof ValidationError
+        ? originalError
+        : error instanceof ValidationError
+          ? error
+          : null;
+
+    if (validationError)
+      return {
+        ...formattedError,
+        message: validationError.message,
+        extensions: {
+          code: ApolloServerErrorCode.BAD_USER_INPUT,
         },
       };
 

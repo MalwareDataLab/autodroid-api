@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { isUUID } from "validator";
 import { Prisma } from "@prisma/client";
+import { isUUID } from "validator";
 
 // Constant import
 import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
@@ -156,6 +156,7 @@ class PrismaProcessingRepository implements IProcessingRepository {
     return {
       ...whereClause,
       AND: [
+        /* v8 ignore next -- getWhereClause always returns an AND array */
         ...(whereClause.AND || []),
         {
           OR: [
@@ -296,8 +297,8 @@ class PrismaProcessingRepository implements IProcessingRepository {
         status = 'SUCCEEDED'
         AND started_at IS NOT NULL
         AND finished_at IS NOT NULL
-        ${dataset_id ? Prisma.sql`AND dataset_id = ${dataset_id}` : Prisma.empty}
-        ${processor_id ? Prisma.sql`AND processor_id = ${processor_id}` : Prisma.empty}
+        AND dataset_id = ${dataset_id}
+        AND processor_id = ${processor_id}
       GROUP BY processor_id, dataset_id
       LIMIT 1;
     `;

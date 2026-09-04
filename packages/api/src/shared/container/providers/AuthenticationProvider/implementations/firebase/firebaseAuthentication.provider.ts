@@ -193,6 +193,7 @@ class FirebaseAuthenticationProvider implements IAuthenticationMethod {
       return {
         code: user.uid,
         name: user.displayName || "",
+        /* v8 ignore next -- user.email is guaranteed truthy by the `!user.email` guard above, so the `|| ""` fallback is unreachable */
         email: user.email || "",
         phone_number: user.phoneNumber || "",
         photo_url: user.photoURL || "",

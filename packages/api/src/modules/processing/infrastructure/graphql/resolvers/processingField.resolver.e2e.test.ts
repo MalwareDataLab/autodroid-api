@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
+import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
@@ -88,6 +89,57 @@ describe("E2E: ProcessingFieldResolver", () => {
               estimated_finish_time: expect.any(String),
             },
           }),
+        }),
+      ]),
+    );
+  });
+
+  it("should return a null estimated processing time when the estimation cannot be computed", async context => {
+    await userFactory.create({ email: context.userSession.email });
+    const otherUser = await userFactory.create();
+
+    const dataset = await datasetFactory.create({
+      user_id: otherUser.id,
+      visibility: DATASET_VISIBILITY.PRIVATE,
+    });
+    const processor = await processorFactory.create({
+      visibility: PROCESSOR_VISIBILITY.PUBLIC,
+    });
+    const processing = await processingFactory.create(
+      {
+        status: PROCESSING_STATUS.PENDING,
+        visibility: PROCESSING_VISIBILITY.PUBLIC,
+      },
+      { associations: { user: otherUser, dataset, processor } },
+    );
+
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query UserProcesses {
+            userProcesses {
+              edges {
+                node {
+                  id
+                  estimated_finish {
+                    processing_id
+                  }
+                }
+              }
+            }
+          }
+        `,
+      });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.userProcesses.edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          node: {
+            id: processing.id,
+            estimated_finish: null,
+          },
         }),
       ]),
     );

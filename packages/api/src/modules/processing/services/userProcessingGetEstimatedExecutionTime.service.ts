@@ -78,8 +78,8 @@ class UserProcessingGetEstimatedExecutionTimeService {
     const estimated_waiting_time = processes.reduce((acc, process) => {
       const currentEstimation = estimations.find(
         estimation =>
-          estimation.processor_id === processor.id &&
-          estimation.dataset_id === dataset.id,
+          estimation.processor_id === process.processor_id &&
+          estimation.dataset_id === process.dataset_id,
       );
       if (!currentEstimation) return acc;
 

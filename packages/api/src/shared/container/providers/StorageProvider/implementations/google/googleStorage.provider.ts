@@ -103,40 +103,38 @@ class GoogleStorageProvider implements IStorageProvider {
         },
       });
 
-      if (!this.bucket) {
-        try {
-          const bucket = this.provider.bucket(this.configuration.bucket_name);
-          const exists = await bucket.exists();
-          if (!exists[0]) throw new Error();
-          const [metadata] = await bucket.getMetadata();
-          if (
-            !metadata.cors ||
-            metadata.cors.length === 0 ||
-            !metadata.cors.some(cors => cors.origin?.includes("*"))
-          ) {
-            await bucket.setCorsConfiguration([
-              {
-                maxAgeSeconds: 3600,
-                method: ["GET", "HEAD", "PUT", "POST", "DELETE"],
-                origin: ["*"],
-                responseHeader: ["*"],
-              },
-            ]);
-          }
-        } catch (error) {
-          throw new AppError({
-            key: "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",
-            message: t(
-              "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",
-              "Bucket not found.",
-            ),
-            statusCode: 500,
-            debug: {
-              code: this.provider_code,
-              configuration: this.configuration,
+      try {
+        const bucket = this.provider.bucket(this.configuration.bucket_name);
+        const exists = await bucket.exists();
+        if (!exists[0]) throw new Error();
+        const [metadata] = await bucket.getMetadata();
+        if (
+          !metadata.cors ||
+          metadata.cors.length === 0 ||
+          !metadata.cors.some(cors => cors.origin?.includes("*"))
+        ) {
+          await bucket.setCorsConfiguration([
+            {
+              maxAgeSeconds: 3600,
+              method: ["GET", "HEAD", "PUT", "POST", "DELETE"],
+              origin: ["*"],
+              responseHeader: ["*"],
             },
-          });
+          ]);
         }
+      } catch (error) {
+        throw new AppError({
+          key: "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",
+          message: t(
+            "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",
+            "Bucket not found.",
+          ),
+          statusCode: 500,
+          debug: {
+            code: this.provider_code,
+            configuration: this.configuration,
+          },
+        });
       }
 
       this.bucket = this.provider.bucket(this.configuration.bucket_name);

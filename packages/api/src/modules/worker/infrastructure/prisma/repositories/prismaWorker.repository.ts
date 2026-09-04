@@ -90,6 +90,7 @@ class PrismaWorkerRepository implements IWorkerRepository {
         archived_at: archived ? { not: null } : null,
       }),
 
+      /* v8 ignore next 3 -- getWhereClause is only ever called with the default relations_enabled=true, so the false arm is unreachable */
       registration_token: relations_enabled
         ? { token: registration_token }
         : undefined,

@@ -429,6 +429,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
             workerId =>
               availableWorkerCounts[workerId] < this.maxConcurrentJobs,
           );
+        /* v8 ignore next -- totalAvailableSlots equals the summed remaining worker capacity, so every iteration holding a processing always finds an available worker */
         if (!selectedWorkerId) return;
 
         availableWorkerCounts[selectedWorkerId] =
