@@ -19,8 +19,6 @@ class GeoLookupUserAgentInfoProvider implements IUserAgentInfoProvider {
   ): Promise<IParsedUserAgentInfoDTO | undefined> {
     const localhost = requester.ip === "127.0.0.1" || requester.ip === "::1";
 
-    if (!requester) return undefined;
-
     const data = {
       desktop: requester.isDesktop,
       mobile: requester.isMobile,

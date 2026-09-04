@@ -316,12 +316,17 @@ O fluxograma a seguir descreve o fluxo comum da aplicação:
 
 ## ✅ Testes <a name = "tests"></a>
 
-Para executar os testes, por favor execute o comando abaixo:
+Para executar os testes, por favor execute o comando abaixo (roda `packages/api`, `packages/cli` e `packages/mcp`):
 ```bash
 yarn test
 ```
 
-A cobertura de código e outros relatórios serão gerados na pasta `./test/outputs`.
+A cobertura de código e outros relatórios serão gerados na pasta `./test/outputs` de cada pacote.
+
+Existe também uma camada opcional `test:external` (dentro de `packages/api`), que depende de serviços de terceiros reais (Google Cloud Storage, Firebase) e não roda por padrão:
+```bash
+yarn workspace autodroid-api run test:external
+```
 
 ## 🎯 Demonstração <a name = "demo"></a>
 

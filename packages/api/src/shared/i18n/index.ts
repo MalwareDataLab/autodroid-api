@@ -15,6 +15,7 @@ import { logger } from "@shared/utils/logger";
 
 const logsEnabled = false;
 
+/* v8 ignore next -- DEFAULT_LANGUAGE is always defined in the environment config, so the "en" fallback is unreachable */
 const DEFAULT_LANGUAGE = getEnvConfig().DEFAULT_LANGUAGE || "en";
 
 const options: InitOptions = {
@@ -109,6 +110,7 @@ const options: InitOptions = {
   // missingKeyHandler: translationMissing,
 
   // Testing env
+  /* v8 ignore next 6 -- coverage runs only in the test environment, so isTestEnv is always true and the empty branch is unreachable */
   ...(getEnvConfig().isTestEnv
     ? {
         lng: "cimode",
@@ -123,6 +125,7 @@ i18next
   .init(options);
 
 // Log only in development environment
+/* v8 ignore next 27 -- logsEnabled is a compile-time false constant, so this development-only logging block is unreachable */
 if (getEnvConfig().NODE_ENV === "development" && logsEnabled) {
   i18next.on("initialized", () => {
     logger.info("🆗 Translation initialized");

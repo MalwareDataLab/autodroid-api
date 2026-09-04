@@ -338,6 +338,38 @@ describe("Service: UserProcessingGetEstimatedExecutionTimeService", () => {
     );
   });
 
+  it("should be able to get the estimated dataset execution time when a queued process has not started", async () => {
+    const { user, dataset, processor } = await seed();
+
+    await processingFactory.create(
+      {
+        started_at: null,
+        finished_at: null,
+        status: PROCESSING_STATUS.PENDING,
+      },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    const result = await userProcessingGetEstimatedExecutionTimeService.execute(
+      {
+        user,
+
+        dataset_id: dataset.id,
+        processor_id: processor.id,
+
+        language: DEFAULT_LANGUAGE,
+      },
+    );
+
+    expect(result.estimated_waiting_time).toEqual(expect.any(Number));
+    expect(result.estimated_waiting_time).toBeGreaterThan(0);
+  });
+
   it("should return null when dataset or processor was not found", async () => {
     const { user } = await seed();
 

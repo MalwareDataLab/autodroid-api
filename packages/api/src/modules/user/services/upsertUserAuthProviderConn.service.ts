@@ -49,6 +49,7 @@ class UpsertUserAuthProviderConnService {
         await this.userAuthProviderConnRepository.updateOne(
           {
             id: userAuthProviderConn.id,
+            include_disconnected: true,
           },
           {
             code,

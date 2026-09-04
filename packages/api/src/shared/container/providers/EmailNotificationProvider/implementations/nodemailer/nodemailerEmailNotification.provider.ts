@@ -66,6 +66,7 @@ export class NodemailerEmailNotificationProvider
   }
 
   private async init() {
+    /* v8 ignore next -- init only runs via executeAction in the branch where the client was created, so it is never null here */
     if (!this.client) return;
 
     await this.client.verify();

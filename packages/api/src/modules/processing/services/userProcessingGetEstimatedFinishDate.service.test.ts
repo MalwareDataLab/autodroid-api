@@ -212,6 +212,78 @@ describe("Service: UserProcessingGetEstimatedFinishDateService", () => {
     );
   });
 
+  it("should return an empty estimation when there is no execution history", async () => {
+    const user = await userFactory.create();
+    const dataset = await datasetFactory.create({
+      visibility: DATASET_VISIBILITY.PUBLIC,
+    });
+    const processor = await processorFactory.create({
+      visibility: PROCESSOR_VISIBILITY.PUBLIC,
+    });
+
+    const processing = await processingFactory.create(
+      { started_at: null, finished_at: null },
+      {
+        associations: {
+          dataset,
+          processor,
+          user,
+        },
+      },
+    );
+
+    const result = await userProcessingGetEstimatedFinishDateService.execute({
+      user,
+
+      processing_id: processing.id,
+
+      language: DEFAULT_LANGUAGE,
+    });
+
+    expect(result.dataset_id).toBe(dataset.id);
+    expect(result.processor_id).toBe(processor.id);
+    expect(result.estimated_start_time).toBeNull();
+    expect(result.estimated_finish_time).toBeNull();
+  });
+
+  it("should be able to get the estimated dataset time when started and a queued process has not started", async () => {
+    const { user, dataset, processor } = await seed();
+
+    await processingFactory.create(
+      { started_at: null, finished_at: null },
+      {
+        associations: {
+          dataset,
+          processor,
+        },
+      },
+    );
+
+    const processing = await processingFactory.create(
+      { started_at: faker.date.past(), finished_at: null },
+      {
+        associations: {
+          dataset,
+          processor,
+          user,
+        },
+      },
+    );
+
+    const result = await userProcessingGetEstimatedFinishDateService.execute({
+      user,
+
+      processing_id: processing.id,
+
+      language: DEFAULT_LANGUAGE,
+    });
+
+    expect(result.estimated_start_time).toEqual(processing.started_at);
+    expect(result.estimated_finish_time!.getTime()).toBeGreaterThan(
+      result.estimated_start_time!.getTime(),
+    );
+  });
+
   it("should return null when processing was not found", async () => {
     const { user } = await seed();
 

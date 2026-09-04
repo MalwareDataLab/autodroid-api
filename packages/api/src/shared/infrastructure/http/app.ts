@@ -23,6 +23,7 @@ import { getSessionConfig } from "@config/session";
 
 // Middleware import
 import { authenticationMiddleware } from "@modules/authentication/infrastructure/http/middlewares/authentication.middleware";
+import { workerAuthenticationMiddleware } from "@modules/worker/infrastructure/http/middlewares/workerAuthentication.middleware";
 import { userAgentMiddleware } from "./middlewares/userAgent.middleware";
 import { lightRateLimiterMiddleware } from "./middlewares/lightRateLimiter.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
@@ -79,6 +80,7 @@ class App {
     this.express.use(this.samlManager.BASE_SAML_PATH, samlRouter);
 
     this.express.use(authenticationMiddleware);
+    this.express.use("/graphql", workerAuthenticationMiddleware);
   }
 
   private routes() {

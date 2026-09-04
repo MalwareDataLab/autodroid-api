@@ -67,6 +67,7 @@ class HandleSamlToFirebaseAuthenticationService {
 
       const firebaseUid = user.email;
 
+      /* v8 ignore next 9 -- unreachable: user.email is already validated as truthy above */
       if (!firebaseUid) {
         throw new AppError({
           key: "@handle_saml_to_firebase_authentication_service/INVALID_UID",

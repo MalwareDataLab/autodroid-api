@@ -35,6 +35,15 @@ adminProcessingRouter.get(
   }),
   adminProcessingController.index,
 );
+adminProcessingRouter.get(
+  "/estimated-execution-time",
+  validateRequest({
+    schema: AdminProcessingGetEstimatedExecutionTimeSchema,
+    segment: "QUERY",
+  }),
+  adminProcessingTimeEstimationController.showEstimatedExecution,
+);
+
 adminProcessingRouter.get("/:processing_id", adminProcessingController.show);
 
 adminProcessingRouter.put(
@@ -63,15 +72,6 @@ adminProcessingRouter.patch(
 adminProcessingRouter.delete(
   "/:processing_id",
   adminProcessingController.delete,
-);
-
-adminProcessingRouter.get(
-  "/estimated-execution-time",
-  validateRequest({
-    schema: AdminProcessingGetEstimatedExecutionTimeSchema,
-    segment: "QUERY",
-  }),
-  adminProcessingTimeEstimationController.showEstimatedExecution,
 );
 
 export { adminProcessingRouter };

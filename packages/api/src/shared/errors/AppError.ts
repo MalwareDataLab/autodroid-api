@@ -52,6 +52,7 @@ class AppError extends Error {
     super(params?.message);
     Object.setPrototypeOf(this, AppError.prototype);
 
+    /* v8 ignore next -- Error.captureStackTrace is always defined on V8 */
     if (Error.captureStackTrace) Error.captureStackTrace(this, AppError);
 
     if (params) {
@@ -69,6 +70,7 @@ class AppError extends Error {
 
       this.debug = params.debug
         ? {
+            /* v8 ignore next -- params.debug is truthy in this branch, so the {} fallback is unreachable */
             ...(params.debug || {}),
             error_code: this.errorCode,
           }

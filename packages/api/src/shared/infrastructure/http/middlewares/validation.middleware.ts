@@ -85,6 +85,7 @@ function validationMiddleware<T extends object>(params: {
         error.key === "@general/VALIDATION_FAIL" &&
         error.payload?.errors
       ) {
+        /* v8 ignore next -- the @general/VALIDATION_FAIL AppError is always constructed with statusCode 400, so the || 400 fallback is unreachable */
         return res.status(error.statusCode || 400).json({
           key: error.key,
           message: error.message,

@@ -42,7 +42,9 @@ class BullJobProvider implements IJobProvider {
   private inMemoryDatabaseClient: InMemoryDatabaseProviderAdapter;
   private inMemoryDatabaseSubscriber: InMemoryDatabaseProviderAdapter;
 
-  private modules: Queue[];
+  private queueClients: InMemoryDatabaseProviderAdapter[] = [];
+
+  private modules: Queue[] = [];
 
   private defaultJobOptions: IJobOptionsDTO = {
     attempts: 10,
@@ -192,15 +194,18 @@ class BullJobProvider implements IJobProvider {
                   return this.inMemoryDatabaseClient.provider;
                 case "subscriber":
                   return this.inMemoryDatabaseSubscriber.provider;
-                default:
-                  return new this.inMemoryDatabaseProvider.Adapter(
+                default: {
+                  const queueClient = new this.inMemoryDatabaseProvider.Adapter(
                     `jobs_bclient_${jobModule.name}`,
                     defaultOptions => ({
                       ...defaultOptions,
                       ...bullRedisOptions,
                       redisOptions,
                     }),
-                  ).provider as any;
+                  );
+                  this.queueClients.push(queueClient);
+                  return queueClient.provider as any;
+                }
               }
             },
           }),
@@ -325,6 +330,9 @@ class BullJobProvider implements IJobProvider {
         await queue.queue.pause(true);
         await queue.queue.close();
       }),
+    );
+    await Promise.all(
+      this.queueClients.map(queueClient => queueClient.provider.quit()),
     );
     await this.inMemoryDatabaseSubscriber.provider.quit();
     await this.inMemoryDatabaseClient.provider.quit();
