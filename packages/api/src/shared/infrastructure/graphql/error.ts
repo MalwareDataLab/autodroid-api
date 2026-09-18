@@ -107,9 +107,7 @@ export function errorHandler(
       TypeGraphQLNoExplicitTypeError,
       TypeGraphQLWrongNullableListOptionError,
     ];
-    if (
-      validationErrors.some(validationError => error instanceof validationError)
-    ) {
+    if (validationErrors.some(errorClass => error instanceof errorClass)) {
       return {
         ...formattedError,
         message: formattedError.message,

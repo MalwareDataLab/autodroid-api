@@ -7,7 +7,6 @@ import { IStorageProvider } from "@shared/container/providers/StorageProvider/mo
 
 // Repository import
 import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
-import { IDatasetRepository } from "../repositories/IDataset.repository";
 
 // Enum import
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
@@ -17,6 +16,7 @@ import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { IDatasetRepository } from "../repositories/IDataset.repository";
 
 // Schema import
 import { UserDatasetCreateSchema } from "../schemas/userDataset.schema";

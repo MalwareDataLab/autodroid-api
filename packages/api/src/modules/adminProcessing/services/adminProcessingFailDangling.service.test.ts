@@ -10,11 +10,11 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 // Schema import
-import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
 
 // Service import
 import { AdminProcessingFailDanglingService } from "./adminProcessingFailDangling.service";

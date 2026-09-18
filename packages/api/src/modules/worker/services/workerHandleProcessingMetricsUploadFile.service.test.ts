@@ -9,10 +9,13 @@ import { IProcessingRepository } from "@shared/container/repositories";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
+// Entity import
+import { Processing } from "@modules/processing/entities/processing.entity";
+
 // Factory import
-import { workerFactory } from "../entities/factories/worker.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { workerFactory } from "../entities/factories/worker.factory";
 
 // Service import
 import { WorkerHandleProcessingMetricsUploadFileService } from "./workerHandleProcessingMetricsUploadFile.service";
@@ -46,8 +49,9 @@ describe("Service: WorkerHandleProcessingMetricsUploadFileService", () => {
 
     expect(response.id).toBe(metrics_file.id);
 
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
     const updated = await processingRepository.findOne({ id: processing.id });
     expect(updated?.status).toBe(PROCESSING_STATUS.RUNNING);
     expect(updated?.worker_id).toBe(worker.id);
@@ -77,8 +81,9 @@ describe("Service: WorkerHandleProcessingMetricsUploadFileService", () => {
     // processingFactory.create() auto-populates optional file/worker relations
     // it isn't given explicitly (see loadEntityRelations) — force this one back
     // to genuinely null so the "no metrics file" branch is actually exercised.
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
     await processingRepository.updateOne(
       { id: processing.id },
       { metrics_file_id: null },
@@ -164,9 +169,12 @@ describe("Service: WorkerHandleProcessingMetricsUploadFileService", () => {
       metrics_file_id: metrics_file.id,
     });
 
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
-    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(null);
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
+    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(
+      null as unknown as Processing,
+    );
 
     await expect(() =>
       buildService().execute({

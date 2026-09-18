@@ -47,9 +47,9 @@ const REGISTERED_TOOLS = [
   "autodroid_whoami",
 ];
 
-const parseToolText = (result: {
-  content: unknown;
-}): { isError: boolean; text: string; json?: unknown } => {
+const parseToolText = (
+  result: Record<string, unknown>,
+): { isError: boolean; text: string; json?: unknown } => {
   const [{ text }] = result.content as Array<{ text: string }>;
   let json: unknown;
   try {
@@ -131,8 +131,8 @@ describe("External: MCP and CLI authenticated against a real backend and real Fi
   const runCli = (args: string[]) =>
     execFileAsync("node", [CLI_BIN_PATH, ...args], {
       env: {
+        ...process.env,
         HOME: isolatedHome,
-        PATH: process.env.PATH ?? "",
         AUTODROID_CLI_API_URL: apiUrl,
         AUTODROID_CLI_FIREBASE_WEB_API_KEY: apiKey,
       },

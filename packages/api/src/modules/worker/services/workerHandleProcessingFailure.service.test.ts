@@ -11,10 +11,13 @@ import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJo
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
+// Entity import
+import { Processing } from "@modules/processing/entities/processing.entity";
+
 // Factory import
-import { workerFactory } from "../entities/factories/worker.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { workerFactory } from "../entities/factories/worker.factory";
 
 // Service import
 import { WorkerHandleProcessingFailureService } from "./workerHandleProcessingFailure.service";
@@ -121,9 +124,12 @@ describe("Service: WorkerHandleProcessingFailureService", () => {
       started_at: null,
     });
 
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
-    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(null);
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
+    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(
+      null as unknown as Processing,
+    );
 
     await expect(() =>
       buildService().execute({

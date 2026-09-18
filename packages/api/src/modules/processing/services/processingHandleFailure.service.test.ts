@@ -5,10 +5,10 @@ import { faker } from "@faker-js/faker";
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
 // Enum import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import

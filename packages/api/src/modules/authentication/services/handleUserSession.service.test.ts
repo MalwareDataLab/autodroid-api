@@ -2,9 +2,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 

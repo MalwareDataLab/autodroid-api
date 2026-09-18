@@ -23,7 +23,8 @@ describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
     const admin = await userFactory.create({
       email: getAdminConfig().emails[0],
     });
-    const workerRegistrationToken = await workerRegistrationTokenFactory.create();
+    const workerRegistrationToken =
+      await workerRegistrationTokenFactory.create();
 
     const response = await adminWorkerRegistrationTokenIndexService.execute({
       filter: {},

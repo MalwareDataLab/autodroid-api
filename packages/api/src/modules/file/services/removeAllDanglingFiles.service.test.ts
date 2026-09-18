@@ -75,12 +75,13 @@ describe("Service: RemoveAllDanglingFilesService", () => {
     vi.spyOn(storageProvider, "refreshFile")
       .mockResolvedValueOnce(expiredOk)
       .mockRejectedValueOnce(new Error("refresh failed"));
-    vi.spyOn(storageProvider, "removeFileByPath")
-      .mockImplementation(async ({ path }) => {
+    vi.spyOn(storageProvider, "removeFileByPath").mockImplementation(
+      async ({ path }) => {
         if (path === removableFail.provider_path)
           throw new Error("remove failed");
         return path;
-      });
+      },
+    );
 
     const count = await removeAllDanglingFilesService.execute();
 
@@ -88,6 +89,7 @@ describe("Service: RemoveAllDanglingFilesService", () => {
     expect(storageProvider.refreshFile).toHaveBeenCalledTimes(2);
     expect(storageProvider.removeFileByPath).toHaveBeenCalledTimes(2);
     expect(expiredOk).toBeDefined();
+    expect(expiredFail).toBeDefined();
     expect(removableOk).toBeDefined();
   });
 

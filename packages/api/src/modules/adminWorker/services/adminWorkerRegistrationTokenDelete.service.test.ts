@@ -31,7 +31,8 @@ describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
     const admin = await userFactory.create({
       email: getAdminConfig().emails[0],
     });
-    const workerRegistrationToken = await workerRegistrationTokenFactory.create();
+    const workerRegistrationToken =
+      await workerRegistrationTokenFactory.create();
 
     const response = await adminWorkerRegistrationTokenDeleteService.execute({
       worker_registration_token_id: workerRegistrationToken.id,

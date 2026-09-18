@@ -7,6 +7,7 @@ import { IStorageProvider } from "@shared/container/providers/StorageProvider/mo
 
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
+import { ClassConstructor } from "@shared/utils/instanceParser";
 
 // Enum import
 import { FILE_TYPE } from "../types/fileType.enum";
@@ -19,6 +20,10 @@ import { fileFactory } from "../entities/factories/file.factory";
 
 // Service import
 import { ProcessFilePublicAccessService } from "./processFilePublicAccess.service";
+
+// The service only hands `cls` to `parse`, which instantiates it with
+// class-transformer, so a bare class typed as the expected shape is enough.
+const plainClass = <T>() => class {} as unknown as ClassConstructor<T>;
 
 describe("Service: ProcessFilePublicAccessService", () => {
   let storageProvider: IStorageProvider;
@@ -68,7 +73,7 @@ describe("Service: ProcessFilePublicAccessService", () => {
       { public_url: string | null },
       typeof file
     >({
-      cls: class Test {},
+      cls: plainClass(),
       obj: file,
       language: "en",
     });
@@ -94,7 +99,7 @@ describe("Service: ProcessFilePublicAccessService", () => {
       { upload_url: string | null },
       typeof file
     >({
-      cls: class Test {},
+      cls: plainClass(),
       obj: file,
       language: "en",
     });
@@ -118,7 +123,7 @@ describe("Service: ProcessFilePublicAccessService", () => {
       { public_url: string | null },
       typeof file
     >({
-      cls: class Test {},
+      cls: plainClass(),
       obj: file,
       language: "en",
     });
@@ -145,7 +150,7 @@ describe("Service: ProcessFilePublicAccessService", () => {
       { public_url: string | null; allow_public_access: boolean },
       typeof stale
     >({
-      cls: class Test {},
+      cls: plainClass(),
       obj: stale,
       language: "en",
     });
@@ -172,7 +177,7 @@ describe("Service: ProcessFilePublicAccessService", () => {
       typeof file,
       typeof file
     >({
-      cls: class Test {},
+      cls: plainClass(),
       obj: file,
       language: "en",
     });
@@ -190,7 +195,9 @@ describe("Service: ProcessFilePublicAccessService", () => {
 
     vi.spyOn(storageProvider, "refreshFile").mockImplementationOnce(
       async ({ file: toRefresh }) =>
-        Object.assign(toRefresh, { public_url: "https://nested-refreshed.example" }),
+        Object.assign(toRefresh, {
+          public_url: "https://nested-refreshed.example",
+        }),
     );
 
     const wrapper = {
@@ -203,7 +210,7 @@ describe("Service: ProcessFilePublicAccessService", () => {
       typeof wrapper,
       typeof wrapper
     >({
-      cls: class Test {},
+      cls: plainClass(),
       obj: wrapper,
       language: "en",
     });

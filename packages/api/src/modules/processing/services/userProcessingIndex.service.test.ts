@@ -4,12 +4,12 @@ import { faker } from "@faker-js/faker";
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Schema import

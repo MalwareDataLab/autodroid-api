@@ -5,7 +5,6 @@ import { faker } from "@faker-js/faker";
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
 // Repository import
-import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
@@ -18,6 +17,7 @@ import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Schema import
 import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
@@ -100,9 +100,12 @@ describe("Service: UserRequestDatasetProcessingService", () => {
     expect(response.dataset_id).toBe(dataset.id);
     expect(response.processor_id).toBe(processor.id);
     expect(response.user_id).toBe(user.id);
-    expect(jobProviderAdd).toHaveBeenCalledWith("DispatchDatasetProcessingJob", {
-      processing_ids: [response.id],
-    });
+    expect(jobProviderAdd).toHaveBeenCalledWith(
+      "DispatchDatasetProcessingJob",
+      {
+        processing_ids: [response.id],
+      },
+    );
 
     await expect(
       processingRepository.findOne({ id: response.id }),

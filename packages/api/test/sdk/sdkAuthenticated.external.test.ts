@@ -1,22 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 import type { AddressInfo } from "node:net";
 
 // Server util import
+import {
+  initAndWaitRequisites,
+  initSecondaryProviders,
+} from "@shared/container";
 import { disposeServer, getServer } from "@/test/utils/getServer.util";
 import { getFirebaseTestCredentials } from "@/test/utils/getFirebaseTestCredentials.util";
 import { startAndGetSessionToken } from "@/test/utils/startAndGetSessionToken.util";
 
 // Container import
-import {
-  initAndWaitRequisites,
-  initSecondaryProviders,
-} from "@shared/container";
 
-const SDK_CJS_PATH = fileURLToPath(
-  new URL("../../../../../autodroid-sdk/dist/index.cjs", import.meta.url),
+const SDK_CJS_PATH = path.join(
+  __dirname,
+  "../../../../../autodroid-sdk/dist/index.cjs",
 );
 
 type Page = { edges: unknown[]; totalCount: number };
@@ -53,7 +53,8 @@ const loadSdk = (): AutoDroidSdkCtor => {
     );
   }
 
-  return createRequire(import.meta.url)(SDK_CJS_PATH).AutoDroidSdk;
+  // eslint-disable-next-line import/no-dynamic-require, global-require, @typescript-eslint/no-require-imports -- path is only known at runtime, the built sibling package has no static import target
+  return require(SDK_CJS_PATH).AutoDroidSdk;
 };
 
 describe("External: autodroid SDK against a real backend and real Firebase", () => {

@@ -11,17 +11,19 @@ import { IStorageProvider } from "@shared/container/providers/StorageProvider/mo
 // Enum import
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Schema import
 import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestFileUploadSignedUrl.schema";
 
+// Entity import
+import { Processing } from "@modules/processing/entities/processing.entity";
+
 // Factory import
-import { workerFactory } from "../entities/factories/worker.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { workerFactory } from "../entities/factories/worker.factory";
 
 // Service import
 import { WorkerGenerateProcessingMetricsUploadFileService } from "./workerGenerateProcessingMetricsUploadFile.service";
@@ -75,8 +77,9 @@ describe("Service: WorkerGenerateProcessingMetricsUploadFileService", () => {
       language: expect.any(String),
     });
 
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
     const updated = await processingRepository.findOne({ id: processing.id });
     expect(updated?.status).toBe(PROCESSING_STATUS.RUNNING);
     expect(updated?.worker_id).toBe(worker.id);
@@ -92,8 +95,9 @@ describe("Service: WorkerGenerateProcessingMetricsUploadFileService", () => {
     // processingFactory.create() auto-populates optional file/worker relations
     // it isn't given explicitly (see loadEntityRelations) — force this one back
     // to genuinely null so the "no previous file" branch is actually exercised.
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
     await processingRepository.updateOne(
       { id: processing.id },
       { metrics_file_id: null },
@@ -180,9 +184,12 @@ describe("Service: WorkerGenerateProcessingMetricsUploadFileService", () => {
       generatedFile,
     );
 
-    const processingRepository =
-      container.resolve<IProcessingRepository>("ProcessingRepository");
-    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(null);
+    const processingRepository = container.resolve<IProcessingRepository>(
+      "ProcessingRepository",
+    );
+    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(
+      null as unknown as Processing,
+    );
 
     await expect(() =>
       buildService().execute({

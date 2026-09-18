@@ -4,17 +4,20 @@ import { beforeEach, describe, it, expect, vi } from "vitest";
 import { DateUtils } from "@shared/utils/dateUtils";
 
 // Repository import
-import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+
+// Entity import
+import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+import { IProcessingRepository } from "../repositories/IProcessing.repository";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import
@@ -119,7 +122,9 @@ describe("Service: UserProcessingExtendKeepUntilService", () => {
   it("should throw when the processing was not found after update", async () => {
     const { user, processing } = await seed();
 
-    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(null);
+    vi.spyOn(processingRepository, "updateOne").mockResolvedValueOnce(
+      null as unknown as Processing,
+    );
 
     await expect(() =>
       userProcessingExtendKeepUntilService.execute({

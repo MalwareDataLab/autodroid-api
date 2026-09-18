@@ -5,18 +5,18 @@ import { faker } from "@faker-js/faker";
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Repository import
-import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+import { IProcessingRepository } from "../repositories/IProcessing.repository";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import

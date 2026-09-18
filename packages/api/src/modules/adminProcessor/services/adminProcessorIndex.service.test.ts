@@ -18,9 +18,7 @@ describe("Service: AdminProcessorIndexService", () => {
 
   beforeEach(async () => {
     adminUser = await userFactory.create({ email: "luiz@laviola.dev" });
-    adminProcessorIndexService = container.resolve(
-      AdminProcessorIndexService,
-    );
+    adminProcessorIndexService = container.resolve(AdminProcessorIndexService);
   });
 
   it("should list every processor regardless of visibility", async () => {

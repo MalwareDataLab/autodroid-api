@@ -20,7 +20,9 @@ import {
   UpsertUserAuthProviderConnService,
 } from "./upsertUserAuthProviderConn.service";
 
-const t = vi.fn((_key: string, message: string) => message) as unknown as TFunction;
+const t = vi.fn(
+  (_key: string, message: string) => message,
+) as unknown as TFunction;
 
 describe("Service: UpsertUserAuthProviderConnService", () => {
   let userAuthProviderConnRepository: IUserAuthProviderConnRepository;

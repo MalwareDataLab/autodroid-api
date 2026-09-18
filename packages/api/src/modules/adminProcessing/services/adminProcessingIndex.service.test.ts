@@ -4,11 +4,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { getAdminConfig } from "@config/admin";
 
 // Schema import
-import { AdminProcessingIndexSchema } from "../schemas/adminProcessing.schema";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { AdminProcessingIndexSchema } from "../schemas/adminProcessing.schema";
 
 // Service import
 import { AdminProcessingIndexService } from "./adminProcessingIndex.service";
