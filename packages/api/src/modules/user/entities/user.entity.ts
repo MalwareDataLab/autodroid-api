@@ -1,24 +1,25 @@
-import { Field, ID, ObjectType } from "type-graphql";
 import { Exclude, Expose, Type } from "class-transformer";
+import { Field, ID, ObjectType } from "type-graphql";
 
 // Configuration import
 import { getAdminConfig } from "@config/admin";
-
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Type import
 import { UserEntityType } from "@shared/types/models";
 
 // Entity import
-import { Worker } from "@modules/worker/entities/worker.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
-import { Processor } from "@modules/processor/entities/processor.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+import { McpAuthorizationGrant } from "@modules/mcpAuthorization/entities/mcpAuthorizationGrant.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { Processor } from "@modules/processor/entities/processor.entity";
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+import { Worker } from "@modules/worker/entities/worker.entity";
 import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class User implements UserEntityType {
@@ -88,6 +89,10 @@ class User implements UserEntityType {
   @Exclude()
   @Type(() => Processing)
   processes: Processing[];
+
+  @Exclude()
+  @Type(() => McpAuthorizationGrant)
+  mcp_authorization_grants: McpAuthorizationGrant[];
 }
 
 const PaginatedUser = PaginationConnection(User);

@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
 import { AuthCheckerFn } from "type-graphql";
+import { describe, expect, it } from "vitest";
 
-// Type import
+// Context import
 import { GraphQLContext } from "./context";
 
-// Handler import
+// Target import
 import { authenticationHandler } from "./authentication";
 
 const authChecker = authenticationHandler as AuthCheckerFn<GraphQLContext>;

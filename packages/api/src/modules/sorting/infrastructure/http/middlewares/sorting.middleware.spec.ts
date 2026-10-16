@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextFunction, Request, Response } from "express";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";

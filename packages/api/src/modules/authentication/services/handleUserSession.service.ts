@@ -10,15 +10,15 @@ import { AppError } from "@shared/errors/AppError";
 import { IAuthenticationMethod } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
 // DTO import
-import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 import { IAuthenticationProviderSessionDTO } from "@shared/container/providers/AuthenticationProvider/types/IVerifyToken.dto";
+import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 
 // Entity import
 import { UserSession } from "@modules/user/entities/userSession.entity";
 
 // Repository import
-import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 import { IUserRepository } from "@modules/user/repositories/IUser.repository";
+import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 
 // Service import
 import { CreateUserService } from "@modules/user/services/createUser.service";

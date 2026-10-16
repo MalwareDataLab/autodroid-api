@@ -1,11 +1,11 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import jwt from "jsonwebtoken";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Factory import
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Test target import
+// Target import
 import {
   generateWorkerAccessToken,
   generateWorkerRefreshToken,

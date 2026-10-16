@@ -1,28 +1,28 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
 
+// Enum import
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+
 // Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 import {
   IDatasetRepository,
   IProcessorRepository,
 } from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
-// Enum import
-import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Service import
+// Target import
 import { UserProcessingExtendKeepUntilService } from "./userProcessingExtendKeepUntil.service";
 
 describe("Service: UserProcessingExtendKeepUntilService", () => {

@@ -10,14 +10,14 @@ import { AppError } from "@shared/errors/AppError";
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
-
-// Repository import
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+import { User } from "@modules/user/entities/user.entity";
 
 // Schema import
 import { AdminDatasetUpdateVisibilitySchema } from "../schemas/adminDataset.schema";
+
+// Repository import
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
 interface IRequest {
   dataset_id: string;

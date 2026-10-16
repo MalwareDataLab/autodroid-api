@@ -1,13 +1,19 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
-// DTO import
-import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
+// Constant import
+import {
+  TAKE_DEFAULT,
+  TAKE_LIMIT,
+} from "@modules/pagination/constants/paginationLimit.constant";
 
 // Type import
 import { Cursor } from "@modules/pagination/types/IPagination.type";
 
-// Test target import
+// DTO import
+import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
+
+// Target import
 import { makePaginationObj } from ".";
 
 const makeCursor = (): Cursor => ({
@@ -16,7 +22,7 @@ const makeCursor = (): Cursor => ({
 });
 
 describe("Utils: makePaginationObj", () => {
-  it("should return the default pagination when no schema is provided", () => {
+  it("should return an unbounded pagination when no schema is provided", () => {
     expect(makePaginationObj()).toEqual({
       cursor: undefined,
       skip: 0,
@@ -24,13 +30,66 @@ describe("Utils: makePaginationObj", () => {
     });
   });
 
-  it("should return the default pagination when every strategy field is empty", () => {
+  it("should return the first default-sized page when every strategy field is empty", () => {
     expect(makePaginationObj({})).toEqual({
       cursor: undefined,
       skip: 0,
-      take: undefined,
+      take: TAKE_DEFAULT,
     });
   });
+
+  it("should return the first default-sized page when every strategy field is null", () => {
+    expect(
+      makePaginationObj({
+        before: null,
+        last: null,
+        after: null,
+        first: null,
+        skip: null,
+        take: null,
+      }),
+    ).toEqual({
+      cursor: undefined,
+      skip: 0,
+      take: TAKE_DEFAULT,
+    });
+  });
+
+  it.each([
+    [
+      "mixed strategies",
+      {
+        before: makeCursor(),
+        last: 5,
+        after: makeCursor(),
+        first: 5,
+        skip: 0,
+        take: 5,
+      },
+    ],
+    ["a cursor that is not one", { after: { id: "x" } as never, first: 5 }],
+    ["a negative skip", { skip: -1, take: 5 }],
+    ["a cursor without its size", { before: makeCursor() }],
+    ["a cursor without its size going forward", { after: makeCursor() }],
+    ["a before cursor that is not one", { before: {} as never, last: 5 }],
+    ["a take that is not a number", { skip: 0, take: "10" as never }],
+    ["no resolvable strategy", { take: 10 }],
+  ])(
+    "should refuse %s as a bad request, not a server failure",
+    (_label, request) => {
+      let failure: unknown;
+      try {
+        makePaginationObj(request as IPaginationDTO);
+      } catch (error) {
+        failure = error;
+      }
+
+      expect(failure).toMatchObject({
+        key: "@pagination/INVALID_PAGINATION",
+        statusCode: 400,
+      });
+    },
+  );
 
   it("should throw when pagination strategies are mixed", () => {
     expect(() =>
@@ -177,11 +236,43 @@ describe("Utils: makePaginationObj", () => {
     });
   });
 
-  it("should return the skip pagination when take is undefined", () => {
+  it("should return a default-sized page from skip when take is undefined", () => {
     expect(makePaginationObj({ skip: 5 })).toEqual({
       cursor: undefined,
       skip: 5,
-      take: undefined,
+      take: TAKE_DEFAULT,
+    });
+  });
+
+  it("should return a default-sized page from skip when take is null", () => {
+    expect(makePaginationObj({ skip: 5, take: null })).toEqual({
+      cursor: undefined,
+      skip: 5,
+      take: TAKE_DEFAULT,
+    });
+  });
+
+  it("should give a bounded first page to a request that only says it starts at zero", () => {
+    expect(makePaginationObj({ skip: 0 })).toEqual({
+      cursor: undefined,
+      skip: 0,
+      take: TAKE_DEFAULT,
+    });
+  });
+
+  it("should pass the largest size a request may ask for through untouched", () => {
+    expect(makePaginationObj({ skip: 0, take: TAKE_LIMIT })).toEqual({
+      cursor: undefined,
+      skip: 0,
+      take: TAKE_LIMIT,
+    });
+  });
+
+  it("should read past the first page from any offset, even beyond the data", () => {
+    expect(makePaginationObj({ skip: 5000, take: 1 })).toEqual({
+      cursor: undefined,
+      skip: 5000,
+      take: 1,
     });
   });
 

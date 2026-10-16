@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+// Schema import
+import { AdminProcessingIndexSchema } from "../schemas/adminProcessing.schema";
 
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
-// Schema import
-import { AdminProcessingIndexSchema } from "../schemas/adminProcessing.schema";
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { AdminProcessingIndexService } from "./adminProcessingIndex.service";
 
 describe("Service: AdminProcessingIndexService", () => {

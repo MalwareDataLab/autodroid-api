@@ -1,12 +1,8 @@
-import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 import { Exclude, Type } from "class-transformer";
+import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 
 // Type import
 import { UserAuthProviderConnEntityType } from "@shared/types/models";
-
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
@@ -14,6 +10,10 @@ import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvide
 // Entity import
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { User } from "./user.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class UserAuthProviderConn implements UserAuthProviderConnEntityType {

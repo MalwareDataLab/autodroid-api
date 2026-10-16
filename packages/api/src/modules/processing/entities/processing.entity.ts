@@ -1,3 +1,4 @@
+import { Exclude, Type } from "class-transformer";
 import {
   Authorized,
   Directive,
@@ -6,28 +7,27 @@ import {
   Int,
   ObjectType,
 } from "type-graphql";
-import { Exclude, Type } from "class-transformer";
-
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Type import
 import { ProcessingEntityType } from "@shared/types/models";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { File } from "@modules/file/entities/file.entity";
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-import { Worker } from "@modules/worker/entities/worker.entity";
-import { Processor } from "@modules/processor/entities/processor.entity";
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
-import { ProcessingParameter } from "./processingParameter.entity";
-import { ProcessingFinishTimeEstimation } from "./processingFinishTimeEstimation.entity";
-
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { File } from "@modules/file/entities/file.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Processor } from "@modules/processor/entities/processor.entity";
+import { User } from "@modules/user/entities/user.entity";
+import { Worker } from "@modules/worker/entities/worker.entity";
+import { ProcessingFinishTimeEstimation } from "./processingFinishTimeEstimation.entity";
+import { ProcessingParameter } from "./processingParameter.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class Processing implements ProcessingEntityType {
@@ -94,8 +94,9 @@ class Processing implements ProcessingEntityType {
   @Field()
   user_id: string;
 
+  // See ProcessingFieldResolver
   @Type(() => User)
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   user: User;
 
   @Field()

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Error import
+// Target import
 import { WebsocketUnauthorizedError } from "./WebsocketUnauthorized.error";
 
 describe("Websocket: WebsocketUnauthorizedError", () => {

@@ -1,26 +1,28 @@
-import { plainToInstance } from "class-transformer";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { plainToInstance } from "class-transformer";
 import { Factory } from "fishery";
+import { container } from "tsyringe";
 
 // Util import
-import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
 import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
-
-// Entity import
-import { Worker } from "@modules/worker/entities/worker.entity";
+import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 
 // Type import
 import { FactoryParams } from "@/test/types/factoryParams.type";
+
+// DTO import
 import {
   IWorkerBase,
   WorkerRelationFields,
 } from "@modules/worker/types/IWorker.dto";
+
+// Entity import
+import { Worker } from "@modules/worker/entities/worker.entity";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
 class WorkerFactory extends Factory<Worker, FactoryParams> {
   static get repository() {

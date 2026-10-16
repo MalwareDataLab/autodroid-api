@@ -1,3 +1,10 @@
+import util from "node:util";
+import { ApolloServerPlugin } from "@apollo/server";
+import {
+  ApolloServerErrorCode,
+  unwrapResolverError,
+} from "@apollo/server/errors";
+import * as Sentry from "@sentry/node";
 import { GraphQLFormattedError, GraphQLError } from "graphql";
 import {
   AuthorizationError as TypeGraphQLAuthorizationError,
@@ -6,13 +13,6 @@ import {
   NoExplicitTypeError as TypeGraphQLNoExplicitTypeError,
   WrongNullableListOptionError as TypeGraphQLWrongNullableListOptionError,
 } from "type-graphql";
-import {
-  ApolloServerErrorCode,
-  unwrapResolverError,
-} from "@apollo/server/errors";
-import { ApolloServerPlugin } from "@apollo/server";
-import * as Sentry from "@sentry/node";
-import util from "node:util";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";

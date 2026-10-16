@@ -1,7 +1,8 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 // Util import
+import { withVisibleProcessingOwners } from "@modules/processing/utils/withVisibleProcessingOwners.util";
 import { process } from "@shared/utils/instanceParser";
 
 // Service import
@@ -21,7 +22,9 @@ class UserProcessingExtendKeepUntilController {
       language: req.language,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, req.user_session)),
+    );
   }
 }
 

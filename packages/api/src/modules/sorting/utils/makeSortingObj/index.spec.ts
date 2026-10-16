@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-// Enum import
-import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
-
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Test target import
+// Enum import
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// Target import
 import { makeSortingObj } from ".";
 
 const options = ["name", "created_at", "id"] as const;
@@ -18,11 +18,23 @@ describe("Utils: makeSortingObj", () => {
       sorting: [{ field: "name", order: SORT_ORDER.ASC }],
     });
 
-    expect(result).toEqual({
-      name: "asc",
-      created_at: "desc",
-      id: "desc",
+    expect(Object.entries(result)).toEqual([
+      ["name", "asc"],
+      ["created_at", "desc"],
+      ["id", "desc"],
+    ]);
+  });
+
+  it("should keep the requested order of a field the default common also sorts by", () => {
+    const result = makeSortingObj({
+      options,
+      sorting: [{ field: "created_at", order: SORT_ORDER.ASC }],
     });
+
+    expect(Object.entries(result)).toEqual([
+      ["created_at", "asc"],
+      ["id", "desc"],
+    ]);
   });
 
   it("should use the fallback when sorting is not provided", () => {

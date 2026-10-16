@@ -1,13 +1,13 @@
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-
 // Enum import
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 
 // DTO import
+import { IRefreshFileDTO } from "../types/IRefreshFile.dto";
 import { IRemoveFileByNameDTO } from "../types/IRemoveFile.dto";
 import { IGenerateUploadSignedUrlRequestParamsDTO } from "../types/IUploadFile.dto";
-import { IRefreshFileDTO } from "../types/IRefreshFile.dto";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
 
 export interface IStorageProvider {
   readonly provider_code: STORAGE_PROVIDER;

@@ -1,31 +1,29 @@
 import { inject, injectable } from "tsyringe";
 
+// Guard import
+import { ProcessingGuard } from "../guards/processing.guard";
+
 // Constant import
 import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
-
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { IFindProcessingDTO } from "../types/IProcessing.dto";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { PaginatedProcessing } from "../entities/processing.entity";
 
-// Guard import
-import { ProcessingGuard } from "../guards/processing.guard";
-
-// DTO import
-import { IFindProcessingDTO } from "../types/IProcessing.dto";
-
 // Schema import
 import { ProcessingIndexSchema } from "../schemas/processingIndex.schema";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 interface IRequest {
   user: User;
@@ -75,6 +73,7 @@ class UserProcessingIndexService {
       processor_id: params.processor_id,
 
       status: params.status,
+      visibility: params.visibility,
 
       started: params.started,
       finished: params.finished,

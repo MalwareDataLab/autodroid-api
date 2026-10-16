@@ -1,20 +1,20 @@
-import { injectable, container } from "tsyringe";
 import { DoneCallback, Job } from "bull";
+import { injectable, container } from "tsyringe";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Interface import
+// Type import
 import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
-
-// Service import
-import { ProcessingCleanExpiredService } from "@modules/processing/services/processingCleanExpired.service";
 
 // DTO import
 import {
   IJobOptionsDTO,
   IQueueOptionsDTO,
 } from "../../types/IAddJobOptions.dto";
+
+// Service import
+import { ProcessingCleanExpiredService } from "@modules/processing/services/processingCleanExpired.service";
 
 type IProcessingCleanExpiredJob = never;
 

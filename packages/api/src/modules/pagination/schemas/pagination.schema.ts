@@ -1,20 +1,22 @@
+import { Type } from "class-transformer";
 import { IsInt, IsOptional, Max, Min } from "class-validator";
 import { ArgsType, Field, Int } from "type-graphql";
-import { Type } from "class-transformer";
+
+// Decorator import
+import { CannotWith } from "@shared/decorators/cannotWith.decorator";
+import { OnlyWith } from "@shared/decorators/onlyWith.decorator";
 
 // Constant import
 import { TAKE_LIMIT } from "@modules/pagination/constants/paginationLimit.constant";
 
+// Type import
+import { Cursor } from "../types/IPagination.type";
+
+// DTO import
+import { IPaginationDTO } from "../types/IPagination.dto";
+
 // Scalar import
 import { ConnectionCursor } from "@modules/pagination/types/paginationConnectionCursor.scalar";
-
-// Decorator import
-import { OnlyWith } from "@shared/decorators/onlyWith.decorator";
-import { CannotWith } from "@shared/decorators/cannotWith.decorator";
-
-// Interface import
-import { Cursor } from "../types/IPagination.type";
-import { IPaginationDTO } from "../types/IPagination.dto";
 
 @ArgsType()
 export class SimplePaginationSchema implements IPaginationDTO {
@@ -27,7 +29,10 @@ export class SimplePaginationSchema implements IPaginationDTO {
   @IsOptional()
   @OnlyWith(["take"])
   @CannotWith(["before", "last", "after", "first"])
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {
+    nullable: true,
+    description: "How many items to skip, to read past the first page.",
+  })
   @Type(() => Number)
   skip?: number | null;
 
@@ -37,7 +42,10 @@ export class SimplePaginationSchema implements IPaginationDTO {
   @IsOptional()
   @OnlyWith(["skip"])
   @CannotWith(["before", "last", "after", "first"])
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, {
+    nullable: true,
+    description: "How many items to return.",
+  })
   @Type(() => Number)
   take?: number | null;
 }
@@ -55,7 +63,6 @@ export class PaginationSchema
   @OnlyWith(["last"])
   @CannotWith(["after", "first"])
   @Field(() => ConnectionCursor, { nullable: true })
-  @Type(() => Number)
   before?: Cursor | null;
 
   @IsInt()
@@ -76,7 +83,6 @@ export class PaginationSchema
   @OnlyWith(["first"])
   @CannotWith(["before", "last"])
   @Field(() => ConnectionCursor, { nullable: true })
-  @Type(() => Number)
   after?: Cursor | null;
 
   @IsInt()

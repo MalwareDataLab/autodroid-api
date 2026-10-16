@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
 import util from "node:util";
-import Youch from "youch";
 import * as Sentry from "@sentry/node";
+import { NextFunction, Request, Response } from "express";
+import Youch from "youch";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -38,6 +38,16 @@ const errorMiddleware = async (
       code: "@general/JSON_ERROR",
       message: "Your request has problems on the JSON structure.",
     });
+
+  const { status, expose } = err as { status?: number; expose?: boolean };
+  if (expose && status && status >= 400 && status < 500) {
+    logger.warn(`Request refused with ${status}: ${err.message}`);
+
+    return res.status(status).json({
+      code: "@general/INVALID_REQUEST",
+      message: err.message,
+    });
+  }
 
   logger.error(
     `❌ Application failure: ${util.inspect(errors, false, null, true)}`,

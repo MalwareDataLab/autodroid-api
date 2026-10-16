@@ -9,7 +9,7 @@ import { IWorkerRepository } from "@modules/worker/repositories/IWorker.reposito
 // Factory import
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerCleanMissingService } from "./workerCleanMissing.service";
 
 vi.mock("@shared/utils/logger", () => ({

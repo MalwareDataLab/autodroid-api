@@ -1,12 +1,12 @@
+// Enum import
+import { FILE_TYPE } from "@modules/file/types/fileType.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
+
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
-
-// Enum import
-import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 
 export type IGenerateUploadSignedUrlRequestParamsDTO = {
   filename: string;

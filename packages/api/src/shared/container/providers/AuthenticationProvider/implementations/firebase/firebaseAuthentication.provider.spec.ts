@@ -9,13 +9,13 @@ import { AppError } from "@shared/errors/AppError";
 // Util import
 import { parse } from "@shared/utils/instanceParser";
 
-// Entity import
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
-
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
-// Provider import
+// Entity import
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+
+// Target import
 import { FirebaseAuthenticationProvider } from "./firebaseAuthentication.provider";
 
 const { authMock, appMock, initializeAppMock, certMock } = vi.hoisted(() => {

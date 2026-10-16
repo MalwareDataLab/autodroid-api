@@ -9,14 +9,14 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
-// Utils import
+// Util import
 import { isValidEmail } from "@shared/utils/isValidEmail";
-
-// Enum import
-import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
 // Type import
 import { ParsedSamlUser } from "@shared/infrastructure/saml/types";
+
+// Enum import
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
 interface IRequest {
   user: ParsedSamlUser;

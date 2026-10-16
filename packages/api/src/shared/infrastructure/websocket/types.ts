@@ -1,17 +1,17 @@
 import { Server } from "socket.io";
 
-// Entity import
-import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
-
-// DTO import
-import { Session } from "@modules/user/types/IUserSession.dto";
-
 // Type import
 import {
   ISocketWorkerProcessingAcquiredMessage,
   ISocketWorkerProcessingJobMessage,
   ISocketWorkerStatusMessage,
 } from "./socket.types";
+
+// DTO import
+import { Session } from "@modules/user/types/IUserSession.dto";
+
+// Entity import
+import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
 
 export interface ServerToClientEvents {
   pong: () => void;

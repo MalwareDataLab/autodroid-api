@@ -3,24 +3,24 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Helper import
+// Guard import
+import { DatasetGuard } from "../guards/dataset.guard";
+
+// Util import
 import { isValidCommaSeparatedString } from "@shared/utils/isValidCommaSeparatedString";
+
+// Enum import
+import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "../entities/dataset.entity";
 
-// Enum import
-import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+// Schema import
+import { UserDatasetUpdateSchema } from "../schemas/userDataset.schema";
 
 // Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";
-
-// Guard import
-import { DatasetGuard } from "../guards/dataset.guard";
-
-// Schema import
-import { UserDatasetUpdateSchema } from "../schemas/userDataset.schema";
 
 interface IRequest {
   dataset_id: string;

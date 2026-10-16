@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Job } from "bull";
+import { container } from "tsyringe";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -11,7 +11,7 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 // Service import
 import { ProcessingFailDanglingService } from "@modules/processing/services/processingFailDangling.service";
 
-// Test target import
+// Target import
 import { IProcessingFailDanglingJob, ProcessingFailDanglingJob } from ".";
 
 describe("Job: ProcessingFailDanglingJob", () => {

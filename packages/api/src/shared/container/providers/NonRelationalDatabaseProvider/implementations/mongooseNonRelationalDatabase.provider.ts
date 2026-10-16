@@ -3,12 +3,12 @@ import * as Mongoose from "mongoose";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
-// Util import
-import { logger } from "@shared/utils/logger";
-import { executeAction } from "@shared/utils/executeAction";
-
-// Interface import
+// Provider import
 import { INonRelationalDatabaseProvider } from "../models/INonRelationalDatabase.provider";
+
+// Util import
+import { executeAction } from "@shared/utils/executeAction";
+import { logger } from "@shared/utils/logger";
 
 const logEnabled =
   getEnvConfig().NON_RELATIONAL_DATABASE_LOGGER_ENABLED === "true";

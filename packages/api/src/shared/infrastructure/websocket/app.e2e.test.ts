@@ -1,6 +1,6 @@
-import { afterEach, describe, expect, it } from "vitest";
 import { AddressInfo } from "node:net";
 import { io, Socket } from "socket.io-client";
+import { afterEach, describe, expect, it } from "vitest";
 
 // Util import
 import { createAuthorizedWorker } from "@/test/utils/workerAuth.util";

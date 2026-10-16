@@ -1,25 +1,27 @@
 import { plainToInstance } from "class-transformer";
-import { container } from "tsyringe";
 import { Factory } from "fishery";
+import { container } from "tsyringe";
 
 // Util import
-import { generateToken } from "@shared/utils/generateToken";
-import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
 import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-
-// Entity import
-import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
+import { generateToken } from "@shared/utils/generateToken";
 
 // Type import
 import { FactoryParams } from "@/test/types/factoryParams.type";
+
+// DTO import
 import {
   IWorkerRegistrationTokenBase,
   WorkerRegistrationTokenRelationFields,
 } from "@modules/worker/types/IWorkerRegistrationToken.dto";
+
+// Entity import
+import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 class WorkerRegistrationTokenFactory extends Factory<
   WorkerRegistrationToken,

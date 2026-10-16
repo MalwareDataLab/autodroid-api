@@ -1,13 +1,12 @@
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
 import geo from "geoip-lite";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 
 // DTO import
 import { IAgentInfoDTO } from "../types/IAgentInfo.dto";
 import { Lookup } from "../types/IParsedUserAgentInfo.dto";
 
-// Provider import
+// Target import
 import { GeoLookupUserAgentInfoProvider } from "./geoLookupUserAgentInfo.provider";
 
 vi.mock("geoip-lite", () => ({ default: { lookup: vi.fn() } }));

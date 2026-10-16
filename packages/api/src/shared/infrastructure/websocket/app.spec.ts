@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Server } from "node:http";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Middleware import
 import { websocketUserAuthenticationMiddleware } from "@modules/user/infrastructure/websocket/middlewares/websocketUserAuthentication.middleware";

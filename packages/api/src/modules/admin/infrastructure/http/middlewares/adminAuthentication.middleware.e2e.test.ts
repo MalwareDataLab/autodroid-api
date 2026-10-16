@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Middleware import
+// Target import
 import { adminAuthenticationMiddleware } from "./adminAuthentication.middleware";
 
 describe("E2E: AdminAuthenticationMiddleware", () => {

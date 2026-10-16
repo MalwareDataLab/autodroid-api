@@ -1,8 +1,5 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
-
 // Provider import
 import {
   DatabaseHelperTypes,
@@ -10,29 +7,32 @@ import {
 } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Util import
-import { parse } from "@shared/utils/instanceParser";
 import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
+import { parse } from "@shared/utils/instanceParser";
 
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-
-// Interface import
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 
 // DTO import
-import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
-import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
   ICreateDatasetDTO,
   IFindDatasetDTO,
   IFindDatasetPublicOrUserPrivateDTO,
   IUpdateDatasetDTO,
 } from "@modules/dataset/types/IDataset.dto";
+import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
+import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { File } from "@modules/file/entities/file.entity";
+
+// Repository import
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
 @injectable()
 class PrismaDatasetRepository implements IDatasetRepository {

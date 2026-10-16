@@ -1,12 +1,12 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
 // Service import
-import { WorkerHandleProcessingMetricsUploadFileService } from "@modules/worker/services/workerHandleProcessingMetricsUploadFile.service";
 import { WorkerGenerateProcessingMetricsUploadFileService } from "@modules/worker/services/workerGenerateProcessingMetricsUploadFile.service";
+import { WorkerHandleProcessingMetricsUploadFileService } from "@modules/worker/services/workerHandleProcessingMetricsUploadFile.service";
 
 class WorkerProcessingMetricsFileController {
   public async create(req: Request, res: Response) {

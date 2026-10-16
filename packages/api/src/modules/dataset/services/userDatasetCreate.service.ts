@@ -9,26 +9,26 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
-// DTO import
-import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-
-// Repository import
-import { IProcessorRepository } from "@shared/container/repositories";
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
-
-// Helper import
+// Util import
 import { isValidCommaSeparatedString } from "@shared/utils/isValidCommaSeparatedString";
 
 // Enum import
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
+// DTO import
+import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { User } from "@modules/user/entities/user.entity";
+
 // Schema import
 import { UserDatasetCreateSchema } from "../schemas/userDataset.schema";
+
+// Repository import
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+import { IProcessorRepository } from "@shared/container/repositories";
 
 interface IRequest {
   data: UserDatasetCreateSchema;

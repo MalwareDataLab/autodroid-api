@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { Job } from "bull";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -7,7 +7,7 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IEmailNotificationProvider } from "@shared/container/providers/EmailNotificationProvider/models/IEmailNotification.provider";
 
-// Test target import
+// Target import
 import { ISendEmailNotificationJob, SendEmailNotificationJob } from ".";
 
 describe("Job: SendEmailNotificationJob", () => {

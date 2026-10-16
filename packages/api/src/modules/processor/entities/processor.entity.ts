@@ -1,21 +1,21 @@
-import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 import { Exclude, Type } from "class-transformer";
+import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 
 // Type import
 import { ProcessorEntityType } from "@shared/types/models";
 
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
-import { ProcessorConfiguration } from "./processorConfiguration.entity";
-
 // Enum import
 import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
+
+// Entity import
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { User } from "@modules/user/entities/user.entity";
+import { ProcessorConfiguration } from "./processorConfiguration.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class Processor implements ProcessorEntityType {

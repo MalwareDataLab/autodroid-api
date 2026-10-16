@@ -1,10 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
@@ -15,11 +11,15 @@ import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 // Schema import
 import { WorkerRegistrationTokenIndexSchema } from "@modules/worker/schemas/workerRegistrationToken.schema";
 
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
+
 // Service import
 import { AdminWorkerRegistrationTokenCreateService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenCreate.service";
+import { AdminWorkerRegistrationTokenDeleteService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenDelete.service";
 import { AdminWorkerRegistrationTokenIndexService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenIndex.service";
 import { AdminWorkerRegistrationTokenShowService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenShow.service";
-import { AdminWorkerRegistrationTokenDeleteService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenDelete.service";
 
 // Target import
 import { AdminWorkerRegistrationTokenController } from "./adminWorkerRegistrationToken.controller";

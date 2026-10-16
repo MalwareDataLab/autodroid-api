@@ -1,8 +1,8 @@
-// Entity import
-import { Processing } from "../entities/processing.entity";
-
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
+
+// Entity import
+import { Processing } from "../entities/processing.entity";
 
 const isProcessingSucceededAndComplete = (processing: Processing) => {
   return (

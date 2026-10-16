@@ -6,17 +6,11 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
-
 // Util import
 import { isProcessingSucceededAndComplete } from "@modules/processing/utils/isProcessingSucceededAndComplete.util";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-
-// Service import
-import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
 
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
@@ -24,6 +18,12 @@ import { Worker } from "../entities/worker.entity";
 
 // Schema import
 import { WorkerHandleProcessFailureSchema } from "../schemas/workerHandleProcessFailure.schema";
+
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
+
+// Service import
+import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
 
 interface IRequest {
   worker: Worker;

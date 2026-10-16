@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Util import
-import { DateUtils } from "@shared/utils/dateUtils";
-
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+
+// Util import
+import { DateUtils } from "@shared/utils/dateUtils";
 
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
@@ -15,7 +15,7 @@ import { IProcessingRepository } from "../repositories/IProcessing.repository";
 // Factory import
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Service import
+// Target import
 import { ProcessingFailDanglingService } from "./processingFailDangling.service";
 
 describe("Service: ProcessingFailDanglingService", () => {

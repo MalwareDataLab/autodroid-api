@@ -1,20 +1,23 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
 // Service import
 import { UserDatasetCreateService } from "@modules/dataset/services/userDatasetCreate.service";
+import { UserDatasetDeleteService } from "@modules/dataset/services/userDatasetDelete.service";
 import { UserDatasetIndexService } from "@modules/dataset/services/userDatasetIndex.service";
 import { UserDatasetShowService } from "@modules/dataset/services/userDatasetShow.service";
 import { UserDatasetUpdateService } from "@modules/dataset/services/userDatasetUpdate.service";
-import { UserDatasetDeleteService } from "@modules/dataset/services/userDatasetDelete.service";
 
 // Target import
 import { UserDatasetController } from "./userDataset.controller";
@@ -122,17 +125,49 @@ describe("Controller: UserDatasetController", () => {
     expect(response.status).not.toHaveBeenCalled();
   });
 
-  it("should index the datasets of the session user only", async () => {
-    const datasets = [dataset];
-    userDatasetIndexService.execute.mockResolvedValueOnce(datasets);
+  it("should index the requested page of datasets for the session user, with the owner only on their own", async () => {
+    const ownDataset = datasetFactory.build({}, { associations: { user } });
+    const otherUserDataset = datasetFactory.build(
+      {},
+      { associations: { user: userFactory.build() } },
+    );
+    const paginatedDataset = {
+      edges: [
+        { cursor: "own-cursor", node: ownDataset },
+        { cursor: "other-cursor", node: otherUserDataset },
+      ],
+      pageInfo: { hasNextPage: false },
+      totalCount: 2,
+    };
+    userDatasetIndexService.execute.mockResolvedValueOnce(paginatedDataset);
+
+    const pagination = { skip: 1, take: 1 };
+    const sorting = [{ field: "created_at", order: "ASC" }];
 
     const result = await userDatasetController.index(
-      buildRequest(),
+      buildRequest({ pagination, sorting }),
       response as unknown as Response,
     );
 
-    expect(userDatasetIndexService.execute).toHaveBeenCalledWith({ user });
-    expect(response.json).toHaveBeenCalledWith(process(datasets));
+    expect(userDatasetIndexService.execute).toHaveBeenCalledWith({
+      user,
+      pagination,
+      sorting,
+    });
+    expect(response.json).toHaveBeenCalledWith(
+      process({
+        ...paginatedDataset,
+        edges: [
+          { cursor: "own-cursor", node: ownDataset },
+          {
+            cursor: "other-cursor",
+            node: Object.assign(new Dataset(), otherUserDataset, {
+              user: null,
+            }),
+          },
+        ],
+      }),
+    );
     expect(result).toBe(response);
   });
 
@@ -148,20 +183,26 @@ describe("Controller: UserDatasetController", () => {
     ).rejects.toThrowError(error);
   });
 
-  it("should show a dataset by the route param", async () => {
-    userDatasetShowService.execute.mockResolvedValueOnce(dataset);
+  it("should show a dataset by the route param without the owner when the session user does not own it", async () => {
+    const otherUserDataset = datasetFactory.build(
+      {},
+      { associations: { user: userFactory.build() } },
+    );
+    userDatasetShowService.execute.mockResolvedValueOnce(otherUserDataset);
 
     const result = await userDatasetController.show(
-      buildRequest({ params: { dataset_id: dataset.id } }),
+      buildRequest({ params: { dataset_id: otherUserDataset.id } }),
       response as unknown as Response,
     );
 
     expect(userDatasetShowService.execute).toHaveBeenCalledWith({
-      dataset_id: dataset.id,
+      dataset_id: otherUserDataset.id,
       user,
       language: "en",
     });
-    expect(response.json).toHaveBeenCalledWith(process(dataset));
+    expect(response.json).toHaveBeenCalledWith(
+      process(Object.assign(new Dataset(), otherUserDataset, { user: null })),
+    );
     expect(result).toBe(response);
   });
 

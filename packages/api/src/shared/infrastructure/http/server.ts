@@ -4,22 +4,22 @@ import { container } from "tsyringe";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
-// Provider import
-import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
-import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
-import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
-
-// Util import
-import { logger } from "@shared/utils/logger";
-
 // Container import
 import {
   afterInitBootstrapList,
   initAndWaitRequisites,
 } from "@shared/container";
 
-// Server import
+// Provider import
+import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+
+// Util import
+import { logger } from "@shared/utils/logger";
+
+// Infrastructure import
 import { app } from "./app";
 
 const { httpServer: server } = app;

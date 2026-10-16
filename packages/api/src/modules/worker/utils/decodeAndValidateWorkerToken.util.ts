@@ -4,11 +4,11 @@ import { isUUID } from "validator";
 // i18n import
 import { t } from "@shared/i18n";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // Configuration import
 import { getWorkerConfig } from "@config/worker";
+
+// Error import
+import { AppError } from "@shared/errors/AppError";
 
 // Type import
 import {

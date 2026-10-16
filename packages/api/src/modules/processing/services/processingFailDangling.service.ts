@@ -7,17 +7,17 @@ import { AppError } from "@shared/errors/AppError";
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
 // Util import
-import { logger } from "@shared/utils/logger";
 import { DateUtils } from "@shared/utils/dateUtils";
+import { logger } from "@shared/utils/logger";
 
-// Service import
-import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
+// Enum import
+import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 
 // Repository import
 import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
-// Enum import
-import { PROCESSING_STATUS } from "../types/processingStatus.enum";
+// Service import
+import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
 
 interface IRequest {
   created_at_end_date?: Date;

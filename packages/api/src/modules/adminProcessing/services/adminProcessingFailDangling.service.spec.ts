@@ -1,18 +1,18 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
 // Schema import
 import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
 
-// Service import
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessingFailDanglingService } from "./adminProcessingFailDangling.service";
 
 describe("Service: AdminProcessingFailDanglingService", () => {

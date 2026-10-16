@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
+
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Repository import
 import { IProcessingRepository } from "@shared/container/repositories";
 
-// Enum import
-import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-
 // Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerHandleProcessingResultUploadFileService } from "./workerHandleProcessingResultUploadFile.service";
 
 describe("Service: WorkerHandleProcessingResultUploadFileService", () => {

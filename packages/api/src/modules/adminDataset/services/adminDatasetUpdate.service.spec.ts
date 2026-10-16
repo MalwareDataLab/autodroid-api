@@ -1,17 +1,17 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-
-// Repository import
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Schema import
 import { AdminDatasetUpdateSchema } from "../schemas/adminDataset.schema";
 
-// Service import
+// Repository import
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminDatasetUpdateService } from "./adminDatasetUpdate.service";
 
 describe("Service: AdminDatasetUpdateService", () => {
@@ -125,7 +125,7 @@ describe("Service: AdminDatasetUpdateService", () => {
       }),
     ).rejects.toThrowError(
       expect.objectContaining({
-        key: "@dataset_create_service/INVALID_DESCRIPTION",
+        key: "@admin_dataset_update_service/INVALID_DESCRIPTION",
       }),
     );
   });
@@ -148,7 +148,7 @@ describe("Service: AdminDatasetUpdateService", () => {
       }),
     ).rejects.toThrowError(
       expect.objectContaining({
-        key: "@dataset_create_service/TAGS_NOT_PROVIDED",
+        key: "@admin_dataset_update_service/TAGS_NOT_PROVIDED",
       }),
     );
   });

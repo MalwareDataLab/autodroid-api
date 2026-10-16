@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import * as Sentry from "@sentry/node";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 
 // Configuration import
 import { getEnvConfig } from "@config/env";
@@ -7,7 +7,7 @@ import { getEnvConfig } from "@config/env";
 // Util import
 import { logger } from "@shared/utils/logger";
 
-// Error import
+// Target import
 import { AppError } from "./AppError";
 
 vi.mock("@sentry/node", () => ({

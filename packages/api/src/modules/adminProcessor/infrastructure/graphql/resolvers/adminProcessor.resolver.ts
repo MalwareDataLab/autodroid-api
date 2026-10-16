@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Arg,
   Args,
@@ -7,7 +8,12 @@ import {
   Mutation,
   Query,
 } from "type-graphql";
-import { container } from "tsyringe";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Constant import
 import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
@@ -18,23 +24,17 @@ import {
   PaginatedProcessor,
 } from "@modules/processor/entities/processor.entity";
 
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
-
-// Decorator import
-import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
-
 // Schema import
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import { ProcessorSchema } from "@modules/processor/schemas/processor.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
+import { AdminProcessorCreateService } from "@modules/adminProcessor/services/adminProcessorCreate.service";
+import { AdminProcessorDeleteService } from "@modules/adminProcessor/services/adminProcessorDelete.service";
 import { AdminProcessorIndexService } from "@modules/adminProcessor/services/adminProcessorIndex.service";
 import { AdminProcessorShowService } from "@modules/adminProcessor/services/adminProcessorShow.service";
-import { AdminProcessorCreateService } from "@modules/adminProcessor/services/adminProcessorCreate.service";
 import { AdminProcessorUpdateService } from "@modules/adminProcessor/services/adminProcessorUpdate.service";
-import { AdminProcessorDeleteService } from "@modules/adminProcessor/services/adminProcessorDelete.service";
 
 class AdminProcessorResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -67,7 +67,8 @@ class AdminProcessorResolver {
   @Authorized(["ADMIN"])
   @Query(() => Processor)
   async adminProcessor(
-    @Arg("processor_id") processor_id: string,
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
@@ -89,7 +90,8 @@ class AdminProcessorResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Processor)
   async adminProcessorCreate(
-    @Arg("data") data: ProcessorSchema,
+    @Arg("data", { description: "The processor's whole definition." })
+    data: ProcessorSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
@@ -111,8 +113,10 @@ class AdminProcessorResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Processor)
   async adminProcessorUpdate(
-    @Arg("processor_id") processor_id: string,
-    @Arg("data") data: ProcessorSchema,
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
+    @Arg("data", { description: "The processor's whole definition." })
+    data: ProcessorSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {
@@ -135,7 +139,8 @@ class AdminProcessorResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Processor)
   async adminProcessorDelete(
-    @Arg("processor_id") processor_id: string,
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processor> {

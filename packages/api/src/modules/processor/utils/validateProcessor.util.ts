@@ -6,14 +6,14 @@ import { t } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Util import
+import { validateProcessorConfigurationParameters } from "./validateProcessorConfigurationParameters.util";
+
 // Entity import
 import { Processor } from "../entities/processor.entity";
 
 // Schema import
 import { ProcessorSchema } from "../schemas/processor.schema";
-
-// Util import
-import { validateProcessorConfigurationParameters } from "./validateProcessorConfigurationParameters.util";
 
 const validateProcessor = async (processor: Processor) => {
   try {

@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 
 // Configuration import
-import { getWorkerConfig } from "@config/worker";
 import { getEnvConfig } from "@config/env";
+import { getWorkerConfig } from "@config/worker";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";

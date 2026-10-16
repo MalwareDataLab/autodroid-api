@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // Util import
 import { logger } from "@shared/utils/logger";
 
-// Strategy import
+// Target import
 import { SamlFederationManager } from "./strategy";
 
 const h = vi.hoisted(() => {
@@ -91,6 +91,32 @@ describe("SAML: SamlFederationManager", () => {
       ok: true,
       status: 200,
       text: async () => "<xml/>",
+    });
+  });
+
+  describe("base url", () => {
+    it("should use the configured application url for the issuer and callbacks", async () => {
+      vi.stubEnv("APP_URL", "https://app.example.test");
+
+      const manager = await createManager();
+      vi.unstubAllEnvs();
+
+      expect(manager.BASE_URL).toBe("https://app.example.test");
+      expect(manager.SAML_ISSUER).toBe(
+        "https://app.example.test/rnp-cafe-saml/metadata",
+      );
+    });
+
+    it("should fall back to localhost when no application url is configured", async () => {
+      vi.stubEnv("APP_URL", "");
+
+      const manager = await createManager();
+      vi.unstubAllEnvs();
+
+      expect(manager.BASE_URL).toBe("http://localhost:3000");
+      expect(manager.SAML_ISSUER).toBe(
+        "http://localhost:3000/rnp-cafe-saml/metadata",
+      );
     });
   });
 

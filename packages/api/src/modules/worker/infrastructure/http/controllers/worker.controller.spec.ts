@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Request, Response } from "express";
-
-// Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
+
+// Factory import
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
 // Target import
 import { WorkerController } from "./worker.controller";

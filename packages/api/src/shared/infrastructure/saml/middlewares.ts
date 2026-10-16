@@ -1,4 +1,6 @@
 import { Response, NextFunction } from "express";
+
+// Type import
 import { AuthenticatedRequest } from "./types";
 
 export function ensureSamlAuthenticated(

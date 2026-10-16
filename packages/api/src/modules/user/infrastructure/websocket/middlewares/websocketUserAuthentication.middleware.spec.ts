@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Error import
 import { WebsocketUnauthorizedError } from "@shared/infrastructure/websocket/errors/WebsocketUnauthorized.error";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Service import
 import { HandleAuthenticationService } from "@modules/authentication/services/handleAuthentication.service";

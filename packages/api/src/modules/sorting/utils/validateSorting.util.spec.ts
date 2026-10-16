@@ -1,11 +1,11 @@
-import { describe, expect, it } from "vitest";
-import { GraphQLError } from "graphql";
 import { ApolloServerErrorCode } from "@apollo/server/errors";
+import { GraphQLError } from "graphql";
+import { describe, expect, it } from "vitest";
 
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
-// Test target import
+// Target import
 import { validateSorting } from "./validateSorting.util";
 
 const allowed = ["name", "created_at", "id"] as const;

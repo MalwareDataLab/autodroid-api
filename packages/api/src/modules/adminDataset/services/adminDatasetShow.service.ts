@@ -10,8 +10,8 @@ import { AppError } from "@shared/errors/AppError";
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { User } from "@modules/user/entities/user.entity";
 
 // Repository import
 import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";

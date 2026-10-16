@@ -10,14 +10,14 @@ import { AppError } from "@shared/errors/AppError";
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Util import
-import { logger } from "@shared/utils/logger";
 import { DateUtils } from "@shared/utils/dateUtils";
-
-// Repository import
-import { IFileRepository } from "../repositories/IFile.repository";
+import { logger } from "@shared/utils/logger";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "../types/fileProviderStatus.enum";
+
+// Repository import
+import { IFileRepository } from "../repositories/IFile.repository";
 
 @injectable()
 class RemoveAllDanglingFilesService {

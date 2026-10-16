@@ -1,19 +1,19 @@
-import { beforeEach, describe, it, expect } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, it, expect } from "vitest";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
-import { processingFactory } from "../entities/factories/processing.factory";
 
 // Schema import
 import { ProcessingIndexSchema } from "../schemas/processingIndex.schema";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import
 import { UserProcessingIndexService } from "./userProcessingIndex.service";
@@ -58,6 +58,38 @@ describe("Service: UserProcessingIndexService", () => {
     expect(response.totalCount).toBe(1);
     expect(response.edges).toHaveLength(1);
     expect(response.edges[0].node.id).toBe(processing.id);
+  });
+
+  it("should return only the processing runs with the requested visibility", async () => {
+    const user = await userFactory.create();
+    const dataset = await datasetFactory.create({
+      visibility: DATASET_VISIBILITY.PUBLIC,
+    });
+    const processor = await processorFactory.create({
+      visibility: PROCESSOR_VISIBILITY.PUBLIC,
+    });
+    const privateProcessing = await processingFactory.create(
+      { visibility: PROCESSING_VISIBILITY.PRIVATE },
+      { associations: { user, dataset, processor } },
+    );
+    await processingFactory.create(
+      { visibility: PROCESSING_VISIBILITY.PUBLIC },
+      { associations: { user, dataset, processor } },
+    );
+
+    const response = await userProcessingIndexService.execute({
+      user,
+      params: {
+        dataset_id: dataset.id,
+        visibility: PROCESSING_VISIBILITY.PRIVATE,
+      } as ProcessingIndexSchema,
+      language: "en",
+    });
+
+    expect(response.totalCount).toBe(1);
+    expect(response.edges.map(edge => edge.node.id)).toEqual([
+      privateProcessing.id,
+    ]);
   });
 
   it("should not return another user's private processing", async () => {

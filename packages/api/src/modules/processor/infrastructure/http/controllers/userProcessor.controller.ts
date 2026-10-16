@@ -1,18 +1,18 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Constant import
-import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
+import { container } from "tsyringe";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
-// Service import
-import { UserProcessorIndexService } from "@modules/processor/services/userProcessorIndex.service";
-import { UserProcessorShowService } from "@modules/processor/services/userProcessorShow.service";
+// Constant import
+import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
 
 // Schema import
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+
+// Service import
+import { UserProcessorIndexService } from "@modules/processor/services/userProcessorIndex.service";
+import { UserProcessorShowService } from "@modules/processor/services/userProcessorShow.service";
 
 class UserProcessorController {
   public async index(req: Request, res: Response) {

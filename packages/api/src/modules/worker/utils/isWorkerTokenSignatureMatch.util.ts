@@ -1,16 +1,16 @@
 import { JwtPayload } from "jsonwebtoken";
 
-// Config import
+// Configuration import
 import { getWorkerConfig } from "@config/worker";
 
 // Util import
 import { generateWorkerTokenPayload } from "./generateWorkerTokenPayload.util";
 
-// Entity import
-import { Worker } from "../entities/worker.entity";
-
 // Type import
 import { WorkerTokenPayloadInternalFields } from "../types/workerTokenPayload.type";
+
+// Entity import
+import { Worker } from "../entities/worker.entity";
 
 const isWorkerTokenSignatureMatch = ({
   worker,

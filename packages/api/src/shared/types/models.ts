@@ -69,3 +69,11 @@ export type ProcessingEntityType = PrismaEntityType<
     };
   }>
 >;
+
+export type McpAuthorizationGrantEntityType = PrismaEntityType<
+  Prisma.McpAuthorizationGrantGetPayload<{
+    include: {
+      [key in keyof Prisma.McpAuthorizationGrantInclude]: true;
+    };
+  }>
+>;

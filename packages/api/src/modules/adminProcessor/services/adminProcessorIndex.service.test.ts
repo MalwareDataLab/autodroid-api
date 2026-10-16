@@ -1,15 +1,17 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { container } from "tsyringe";
-
-// Factory import
-import { User } from "@modules/user/entities/user.entity";
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
-// Service import
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Factory import
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessorIndexService } from "./adminProcessorIndex.service";
 
 describe("Service: AdminProcessorIndexService", () => {

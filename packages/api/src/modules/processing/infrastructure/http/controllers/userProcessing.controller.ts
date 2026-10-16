@@ -1,20 +1,22 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
+
+// Util import
+import { withVisibleProcessingOwners } from "@modules/processing/utils/withVisibleProcessingOwners.util";
+import { parse, process } from "@shared/utils/instanceParser";
 
 // Constant import
 import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
 
-// Util import
-import { process } from "@shared/utils/instanceParser";
+// Schema import
+import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
-import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
+import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";
 import { UserProcessingShowService } from "@modules/processing/services/userProcessingShow.service";
-import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
-
-// Schema import
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
 
 class UserProcessingController {
   public async create(req: Request, res: Response) {
@@ -29,7 +31,9 @@ class UserProcessingController {
       language: req.language,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, req.user_session)),
+    );
   }
 
   public async index(req: Request, res: Response) {
@@ -40,7 +44,7 @@ class UserProcessingController {
     const processing = await userProcessingIndexService.execute({
       user: req.user_session.user,
 
-      params: req.query,
+      params: parse(ProcessingIndexSchema, req.query),
 
       pagination: req.pagination,
       sorting: req.sorting as SortingFieldSchema<
@@ -50,7 +54,15 @@ class UserProcessingController {
       language: req.language,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process({
+        ...processing,
+        edges: processing.edges.map(edge => ({
+          ...edge,
+          node: withVisibleProcessingOwners(edge.node, req.user_session),
+        })),
+      }),
+    );
   }
 
   public async show(req: Request, res: Response) {
@@ -64,7 +76,9 @@ class UserProcessingController {
 
       language: req.language,
     });
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, req.user_session)),
+    );
   }
 
   public async delete(req: Request, res: Response) {
@@ -78,7 +92,9 @@ class UserProcessingController {
 
       language: req.language,
     });
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, req.user_session)),
+    );
   }
 }
 

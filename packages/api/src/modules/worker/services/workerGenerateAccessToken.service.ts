@@ -6,22 +6,22 @@ import { t } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// DTO import
-import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
-
 // Util import
+import { verifyAndGetWorkerRefreshTokenPayload } from "../utils/decodeAndValidateWorkerToken.util";
 import { generateWorkerAccessToken } from "../utils/generateWorkerToken.util";
 import { isWorkerTokenSignatureMatch } from "../utils/isWorkerTokenSignatureMatch.util";
-import { verifyAndGetWorkerRefreshTokenPayload } from "../utils/decodeAndValidateWorkerToken.util";
 
-// Repository import
-import { IWorkerRepository } from "../repositories/IWorker.repository";
+// DTO import
+import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 
 // Entity import
 import { WorkerAccessToken } from "../entities/workerAccessToken.entity";
 
 // Schema import
 import { WorkerRefreshTokenSchema } from "../schemas/worker.schema";
+
+// Repository import
+import { IWorkerRepository } from "../repositories/IWorker.repository";
 
 interface IRequest {
   data: WorkerRefreshTokenSchema;

@@ -1,19 +1,21 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { User } from "@modules/user/entities/user.entity";
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
 
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
 // Schema import
 import { ProcessorSchema } from "@modules/processor/schemas/processor.schema";
 
-// Service import
+// Factory import
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessorUpdateService } from "./adminProcessorUpdate.service";
 
 describe("Service: AdminProcessorUpdateService", () => {

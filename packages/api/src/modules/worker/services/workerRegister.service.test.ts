@@ -1,6 +1,9 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
+
+// Schema import
+import { WorkerRegisterSchema } from "../schemas/worker.schema";
 
 // Repository import
 import { IWorkerRepository } from "../repositories/IWorker.repository";
@@ -10,10 +13,7 @@ import { IWorkerRegistrationTokenRepository } from "../repositories/IWorkerRegis
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Schema import
-import { WorkerRegisterSchema } from "../schemas/worker.schema";
-
-// Service import
+// Target import
 import { WorkerRegisterService } from "./workerRegister.service";
 
 describe("Service: WorkerRegisterService", () => {

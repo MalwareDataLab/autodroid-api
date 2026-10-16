@@ -1,5 +1,5 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";

@@ -4,7 +4,7 @@ import { container } from "tsyringe";
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
-// DTO import
+// Service import
 import { UserSessionsCloseService } from "@modules/user/services/userSessionsClose.service";
 
 class UserSessionController {

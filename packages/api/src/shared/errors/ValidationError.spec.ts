@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Error import
+// Target import
 import { ValidationError } from "./ValidationError";
 
 describe("Error: ValidationError", () => {

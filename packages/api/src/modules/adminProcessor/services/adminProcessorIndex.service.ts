@@ -1,21 +1,21 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
-
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IProcessorRepository } from "@shared/container/repositories";
+// Constant import
+import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { PaginatedProcessor } from "@modules/processor/entities/processor.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IProcessorRepository } from "@shared/container/repositories";
 
 interface IRequest {
   pagination?: IPaginationDTO;

@@ -1,21 +1,21 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-
-// Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
+// Enum import
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
-// Service import
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessingDeleteService } from "./adminProcessingDelete.service";
 
 describe("Service: AdminProcessingDeleteService", () => {

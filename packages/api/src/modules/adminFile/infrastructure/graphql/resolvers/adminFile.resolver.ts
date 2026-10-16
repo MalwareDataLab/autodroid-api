@@ -1,5 +1,5 @@
-import { Authorized, Ctx, Directive, Int, Mutation } from "type-graphql";
 import { container } from "tsyringe";
+import { Authorized, Ctx, Directive, Int, Mutation } from "type-graphql";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";

@@ -1,10 +1,10 @@
 import * as Sentry from "@sentry/node";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // Configuration import
 import { getEnvConfig } from "@config/env";
+
+// Error import
+import { AppError } from "@shared/errors/AppError";
 
 const getSentryConfig: () => Sentry.NodeOptions = () => {
   const envConfig = getEnvConfig();

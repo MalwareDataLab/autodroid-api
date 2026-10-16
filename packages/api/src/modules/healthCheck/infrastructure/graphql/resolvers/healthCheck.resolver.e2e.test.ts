@@ -1,5 +1,7 @@
-import { gql } from "@/test/utils/gql.util";
 import { describe, expect, it } from "vitest";
+
+// Util import
+import { gql } from "@/test/utils/gql.util";
 
 describe("E2E: HealthCheckResolver", () => {
   it("should return the health check date", async context => {

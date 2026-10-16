@@ -1,9 +1,6 @@
 // Constant import
 import { UserAuthProviderConnSortingOptions } from "@modules/user/constants/userSortingOptions.constant";
 
-// Entity import
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
-
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
@@ -12,6 +9,9 @@ import {
   IFindUserAuthProviderConnDTO,
   IUpdateUserAuthProviderConnDTO,
 } from "../types/IUserAuthProviderConn.dto";
+
+// Entity import
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
 
 export interface IUserAuthProviderConnRepository {
   createOne(

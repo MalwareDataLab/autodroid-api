@@ -3,17 +3,17 @@ import { describe, expect, it } from "vitest";
 // i18n import
 import { t } from "@shared/i18n";
 
+// Enum import
+import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
+
 // Entity import
 import { Processor } from "@modules/processor/entities/processor.entity";
 import { ProcessorParameter } from "@modules/processor/entities/processorParameter.entity";
 
-// Enum import
-import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
-
 // Factory import
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 
-// Test target import
+// Target import
 import {
   validateAndParseProcessingParameters,
   processingParameterValidatorMap,

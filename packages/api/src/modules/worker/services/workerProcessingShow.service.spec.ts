@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 // Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerProcessingShowService } from "./workerProcessingShow.service";
 
 describe("Service: WorkerProcessingShowService", () => {

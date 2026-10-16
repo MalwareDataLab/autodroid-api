@@ -1,12 +1,9 @@
-# Diretrizes para Mensagens de Commit
+# Mensagens de commit
 
-Este projeto utiliza o [Commitizen](https://commitizen-tools.github.io/commitizen/) e o Conventional Commitlint para criar mensagens de commit excelentes.
+O projeto usa o [Commitizen](https://github.com/commitizen/cz-cli) para montar a mensagem e o Conventional Commitlint para validá-la. O release-please usa essas mensagens para gerar o changelog e as versões.
 
-Por favor, não desabilite esses recursos sem a aprovação da equipe.
-
-Você pode pular essas interações usando:
+Não desabilite essas ferramentas sem a aprovação da equipe. Para pular os hooks `pre-commit` (lint) e `commit-msg` (validação da mensagem) em um commit:
 
 ```git
 git commit --no-verify
 ```
-

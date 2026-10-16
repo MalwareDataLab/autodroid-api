@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+// Middleware import
+import { workerAuthenticationMiddleware } from "../middlewares/workerAuthentication.middleware";
+import { workerAuthenticationGuardMiddleware } from "../middlewares/workerAuthenticationGuard.middleware";
+
+// Router import
 import { workerProcessingRouter } from "./workerProcessing.routes";
 
 // Target import
@@ -40,15 +45,30 @@ describe("Routes: worker", () => {
     ).toEqual([{ path: "/processing", handle: workerProcessingRouter }]);
   });
 
-  it("should guard the worker processing mount with an authentication middleware sharing its base path", () => {
+  it("should authenticate and then guard the worker processing mount, sharing its base path", () => {
     const { stack } = workerRouter as any;
 
     const mountIndex = stack.findIndex(
       (layer: any) => layer.handle === workerProcessingRouter,
     );
-    const guard = stack[mountIndex - 1];
+    const [authentication, guard] = stack.slice(mountIndex - 2, mountIndex);
 
+    expect(mountPath(authentication)).toBe("/processing");
+    expect(authentication.handle).toBe(workerAuthenticationMiddleware);
     expect(mountPath(guard)).toBe("/processing");
-    expect(guard.route).toBeUndefined();
+    expect(guard.handle).toBe(workerAuthenticationGuardMiddleware);
+  });
+
+  it("should authenticate and then guard the worker show route", () => {
+    const showRoute = (workerRouter as any).stack.find(
+      (layer: any) => layer.route?.path === "/",
+    ).route;
+
+    expect(
+      showRoute.stack.slice(0, 2).map((layer: any) => layer.handle),
+    ).toEqual([
+      workerAuthenticationMiddleware,
+      workerAuthenticationGuardMiddleware,
+    ]);
   });
 });

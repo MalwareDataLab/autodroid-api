@@ -1,8 +1,8 @@
 import { EventEmitter } from "node:stream";
 
 // Type import
-import { WebsocketServer } from "./types";
 import { ISocketWorkerStatusMessage } from "./socket.types";
+import { WebsocketServer } from "./types";
 
 interface WebsocketAdapterEvents {
   initialized: [];

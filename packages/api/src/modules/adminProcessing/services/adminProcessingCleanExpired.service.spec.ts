@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+// Provider import
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Enum import
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
@@ -9,10 +9,10 @@ import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { AdminProcessingCleanExpiredService } from "./adminProcessingCleanExpired.service";
 
 describe("Service: AdminProcessingCleanExpiredService", () => {

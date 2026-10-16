@@ -1,5 +1,6 @@
 import { AuthChecker } from "type-graphql";
 
+// Context import
 import { GraphQLContext } from "./context";
 
 const authenticationHandler: AuthChecker<GraphQLContext> = (

@@ -1,14 +1,14 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
+
+// Enum import
+import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 import { Processing } from "../entities/processing.entity";
 
-// Enum import
-import { PROCESSING_STATUS } from "../types/processingStatus.enum";
-
-// Test target import
+// Target import
 import { isProcessingSucceededAndComplete } from "./isProcessingSucceededAndComplete.util";
 
 const buildFile = (public_url: string | null) => ({ public_url }) as File;

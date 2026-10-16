@@ -8,20 +8,11 @@ import {
   vi,
 } from "vitest";
 
-// Config import
+// Configuration import
 import { getProcessingConfig } from "@config/processing";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 // DTO import
 import { IProcessingEstimatedDatasetProcessingTimeDTO } from "@modules/processing/types/IProcessing.dto";
@@ -29,7 +20,16 @@ import { IProcessingEstimatedDatasetProcessingTimeDTO } from "@modules/processin
 // Schema import
 import { AdminProcessingGetEstimatedExecutionTimeSchema } from "../schemas/adminProcessingEstimatedExecutionTime.schema";
 
-// Service import
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessingEstimatedExecutionTimeIndexService } from "./adminProcessingEstimatedExecutionTimeIndex.service";
 
 describe("Service: AdminProcessingEstimatedExecutionTimeIndexService", () => {

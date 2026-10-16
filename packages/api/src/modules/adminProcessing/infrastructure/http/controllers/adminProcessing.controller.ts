@@ -1,14 +1,21 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 // Util import
-import { process } from "@shared/utils/instanceParser";
+import { parse, process } from "@shared/utils/instanceParser";
+
+// Constant import
+import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
+
+// Schema import
+import { AdminProcessingIndexSchema } from "@modules/adminProcessing/schemas/adminProcessing.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
+import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/adminProcessingDelete.service";
 import { AdminProcessingIndexService } from "@modules/adminProcessing/services/adminProcessingIndex.service";
 import { AdminProcessingShowService } from "@modules/adminProcessing/services/adminProcessingShow.service";
 import { AdminProcessingUpdateService } from "@modules/adminProcessing/services/adminProcessingUpdate.service";
-import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/adminProcessingDelete.service";
 
 class AdminProcessingController {
   public async index(req: Request, res: Response) {
@@ -16,7 +23,11 @@ class AdminProcessingController {
       AdminProcessingIndexService,
     );
     const processing = await adminProcessingIndexService.execute({
-      filter: req.query,
+      filter: parse(AdminProcessingIndexSchema, req.query),
+      pagination: req.pagination,
+      sorting: req.sorting as SortingFieldSchema<
+        typeof ProcessingSortingOptions
+      >[],
       user: req.user_session.user,
     });
     return res.json(process(processing));

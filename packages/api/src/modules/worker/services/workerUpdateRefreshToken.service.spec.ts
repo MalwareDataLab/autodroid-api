@@ -1,19 +1,19 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Repository import
-import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
-
 // Util import
 import { generateWorkerRefreshToken } from "@modules/worker/utils/generateWorkerToken.util";
+
+// Schema import
+import { WorkerRefreshTokenSchema } from "@modules/worker/schemas/worker.schema";
+
+// Repository import
+import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
 
 // Factory import
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Schema import
-import { WorkerRefreshTokenSchema } from "@modules/worker/schemas/worker.schema";
-
-// Service import
+// Target import
 import { WorkerUpdateRefreshTokenService } from "./workerUpdateRefreshToken.service";
 
 describe("Service: WorkerUpdateRefreshTokenService", () => {

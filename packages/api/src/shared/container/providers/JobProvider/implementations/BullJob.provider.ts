@@ -4,21 +4,21 @@ import { container, inject, injectable } from "tsyringe";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
-// Util import
-import { logger } from "@shared/utils/logger";
-
-// Interface import
-import { IJobProvider, JobType } from "../models/IJob.provider";
-import { IJob } from "../types/IJob";
-
-// DTO import
-import { IJobOptionsDTO, IQueueOptionsDTO } from "../types/IAddJobOptions.dto";
-
 // Provider import
 import {
   IInMemoryDatabaseProvider,
   InMemoryDatabaseProviderAdapter,
 } from "../../InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import { IJobProvider, JobType } from "../models/IJob.provider";
+
+// Util import
+import { logger } from "@shared/utils/logger";
+
+// Type import
+import { IJob } from "../types/IJob";
+
+// DTO import
+import { IJobOptionsDTO, IQueueOptionsDTO } from "../types/IAddJobOptions.dto";
 
 // Job import
 import * as Jobs from "../jobs";

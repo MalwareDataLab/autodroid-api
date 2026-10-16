@@ -1,20 +1,20 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Constant import
-import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
+import { container } from "tsyringe";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
-// Service import
-import { AdminWorkerIndexService } from "@modules/adminWorker/services/adminWorkerIndex.service";
-import { AdminWorkerShowService } from "@modules/adminWorker/services/adminWorkerShow.service";
-import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
+// Constant import
+import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
 
 // Schema import
-import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
+
+// Service import
+import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
+import { AdminWorkerIndexService } from "@modules/adminWorker/services/adminWorkerIndex.service";
+import { AdminWorkerShowService } from "@modules/adminWorker/services/adminWorkerShow.service";
 import { AdminWorkerUpdateService } from "@modules/adminWorker/services/adminWorkerUpdate.service";
 
 class AdminWorkerController {
@@ -23,6 +23,7 @@ class AdminWorkerController {
     const worker = await userWorkerIndexService.execute({
       filter: WorkerIndexSchema.make({
         archived: req.query.archived,
+        missing: req.query.missing,
         user_id: req.query.user_id,
         registration_token_id: req.query.registration_token_id,
       } as WorkerIndexSchema),

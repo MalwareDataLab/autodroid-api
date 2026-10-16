@@ -15,27 +15,33 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  checks: read
-  statuses: read
-  actions: read
-  repository-projects: read
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
 
   prepare-release:
     name: Prepare Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     outputs:
       has_pr: ${{ steps.check-pr.outputs.has_pr }}
     steps:
       - name: Checkout to branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Create Release PR
         id: prepare-release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           target-branch: ${{ github.ref_name }}
           skip-github-release: true
@@ -45,135 +51,147 @@ jobs:
       - name: Show release
         env:
           RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.prepare-release.outputs) }}
-        run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
+        run: printf '%s\n' "$RELEASE_PLEASE_OUTPUT" | jq
 
       # Considering "autorelease" as the label to trigger the deployment
       - name: Check open PRs for current branch to release
         id: check-pr
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          BASE_BRANCH: ${{ github.ref_name }}
         run: |
-            prs=$(gh pr list --json number,labels,body --state open --base ${{ github.ref_name }})
-            match=$(echo "$prs" | jq '[.[] | select(.labels[]?.name | test("autorelease"))]')
-            details=$(echo "$match" | jq -c '[.[] | {number: .number, body: .body}]')
+          numbers=$(gh pr list --state open --base "$BASE_BRANCH" --json number,labels \
+            --jq '[.[] | select(.labels[]?.name | test("autorelease")) | .number] | unique | join(" ")')
 
-            if [ "$(echo "$match" | jq length)" -eq 0 ]; then
-              echo "There is no PR with a label containing 'autorelease' for the current branch."
-              echo "pr=false" >> $GITHUB_OUTPUT
-            else
-              echo "Matching PR(s):"
-              echo "$details"
-              echo "has_pr=true" >> $GITHUB_OUTPUT
-              echo "pr_details=$details" >> $GITHUB_OUTPUT
-            fi
+          if [ -z "$numbers" ]; then
+            echo "There is no PR with a label containing 'autorelease' for the current branch."
+            echo "has_pr=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Matching PR(s): $numbers"
+            echo "has_pr=true" >> "$GITHUB_OUTPUT"
+            echo "pr_numbers=$numbers" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Request review from CODEOWNERS
-        if: ${{ steps.check-pr.outputs.has_pr }}
+        if: steps.check-pr.outputs.has_pr == 'true'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBERS: ${{ steps.check-pr.outputs.pr_numbers }}
+          REPOSITORY: ${{ github.repository }}
         run: |
-          codeowners=$(
-            grep -o '@[[:alnum:]_-]\+' .github/CODEOWNERS \
-              | sed 's/@//' \
-              | sort -u \
-              | paste -sd, -
-          )
-          pr_details="$(cat <<EOF
-          ${{ steps.check-pr.outputs.pr_details }}
-          EOF
-          )"
-          echo "$pr_details" | jq -r '.[] | .number' | xargs -I {} gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }}/pulls/{}/requested_reviewers \
-            -f "reviewers[]=$codeowners"
+          mapfile -t owners < <(grep -o '@[[:alnum:]_-]\+' .github/CODEOWNERS | sed 's/@//' | sort -u)
+          reviewers=()
+          for owner in "${owners[@]}"; do
+            reviewers+=(-f "reviewers[]=$owner")
+          done
+          for number in $PR_NUMBERS; do
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/$REPOSITORY/pulls/$number/requested_reviewers" \
+              "${reviewers[@]}"
+          done
 
   deploy:
     name: Build and Deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
     needs: prepare-release
     if: ${{ needs.prepare-release.outputs.has_pr != 'true' }}
-    outputs:
-      branch: ${{ steps.extract-branch.outputs.branch }}
-      name: ${{ steps.package-info.outputs.name }}
+    permissions:
+      contents: read
     steps:
       - name: Checkout to branch
-        uses: actions/checkout@v4
-
-      - name: Extract branch name
-        id: extract-branch
-        shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Get package information
         id: package-info
-        uses: luizfelipelaviola/get-package-info@v2
-
-      - name: Create image base tag
-        shell: bash
-        id: base-tag
         run: |
-          echo "tag=$DOCKERHUB_USERNAME/${{ steps.package-info.outputs.name }}" >> $GITHUB_OUTPUT
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          echo "name=$(jq -r .name package.json)" >> "$GITHUB_OUTPUT"
+          echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
 
       - name: Create image tag list
-        shell: bash
         id: tag
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          PACKAGE_NAME: ${{ steps.package-info.outputs.name }}
+          PACKAGE_VERSION: ${{ steps.package-info.outputs.version }}
+          BRANCH: ${{ github.ref_name }}
         run: |
-          if [ ${{ steps.extract-branch.outputs.branch }} == 'main' ];
-          then
-            echo "tag=\
-              ${{ steps.base-tag.outputs.tag }}:${{ steps.package-info.outputs.version }}-${{ steps.extract-branch.outputs.branch }},\
-              ${{ steps.base-tag.outputs.tag }}:latest,\
-              ${{ steps.base-tag.outputs.tag }}:${{ steps.package-info.outputs.version }}\
-              " | xargs >> $GITHUB_OUTPUT
-          else
-            echo "tag=${{ steps.base-tag.outputs.tag }}:${{ steps.package-info.outputs.version }}-${{ steps.extract-branch.outputs.branch }}" >> $GITHUB_OUTPUT
+          base="$DOCKERHUB_USERNAME/$PACKAGE_NAME"
+          tags="$base:$PACKAGE_VERSION-$BRANCH"
+          if [ "$BRANCH" = "main" ]; then
+            tags="$tags,$base:latest,$base:$PACKAGE_VERSION"
           fi
+          echo "tag=$tags" >> "$GITHUB_OUTPUT"
 
       - name: Show tag list
-        shell: bash
-        run: echo ${{ steps.tag.outputs.tag }}
+        env:
+          TAGS: ${{ steps.tag.outputs.tag }}
+        run: echo "$TAGS"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile
           push: true
           tags: ${{ steps.tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: mode=max
+          sbom: true
+
+  sync-develop:
+    name: Sync develop
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    needs: [prepare-release, deploy]
+    if: ${{ always() && needs.prepare-release.result == 'success' && needs.prepare-release.outputs.has_pr != 'true' }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v7
 
       - name: Push to develop branch
-        if: always()
         continue-on-error: true
+        env:
+          BRANCH: ${{ github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin develop:develop || git checkout -b develop
           git checkout develop
           git pull origin develop
-          git merge ${{ steps.extract-branch.outputs.branch }} --no-ff -X theirs --no-edit
+          git merge "$BRANCH" --no-ff -X theirs --no-edit
           git push origin develop
 
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     needs: deploy
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Release
         id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           target-branch: ${{ github.ref_name }}
           skip-github-pull-request: true
@@ -183,4 +201,4 @@ jobs:
       - name: Show release
         env:
           RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
-        run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
+        run: printf '%s\n' "$RELEASE_PLEASE_OUTPUT" | jq

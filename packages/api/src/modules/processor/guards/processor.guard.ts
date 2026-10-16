@@ -6,15 +6,15 @@ import { i18n, TFunction } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IProcessorRepository } from "@shared/container/repositories";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Processor } from "@modules/processor/entities/processor.entity";
-
 // Enum import
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+
+// Entity import
+import { Processor } from "@modules/processor/entities/processor.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IProcessorRepository } from "@shared/container/repositories";
 
 interface IRequest {
   user: User;

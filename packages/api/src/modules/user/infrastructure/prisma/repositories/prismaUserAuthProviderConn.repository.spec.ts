@@ -1,21 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Constant import
 import { UserAuthProviderConnSortingOptions } from "@modules/user/constants/userSortingOptions.constant";
 
 // Enum import
-import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
 // DTO import
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Target import
 import { PrismaUserAuthProviderConnRepository } from "./prismaUserAuthProviderConn.repository";

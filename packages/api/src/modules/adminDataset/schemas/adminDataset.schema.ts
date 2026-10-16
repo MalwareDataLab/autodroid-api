@@ -1,5 +1,5 @@
-import { ArgsType, Field, InputType } from "type-graphql";
 import { IsEnum, IsUUID } from "class-validator";
+import { ArgsType, Field, InputType } from "type-graphql";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
@@ -14,17 +14,26 @@ import { UserDatasetUpdateSchema } from "@modules/dataset/schemas/userDataset.sc
 class AdminDatasetIndexSchema {
   @ValidString({ nullable: "allowUndefined" })
   @IsUUID()
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Only datasets of this user.",
+  })
   user_id?: string;
 
   @ValidString({ nullable: "allowUndefined" })
   @IsUUID()
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Only the dataset of this file.",
+  })
   file_id?: string;
 
   @ValidString({ nullable: "allowUndefined" })
   @IsEnum(DATASET_VISIBILITY)
-  @Field(() => DATASET_VISIBILITY, { nullable: true })
+  @Field(() => DATASET_VISIBILITY, {
+    nullable: true,
+    description: "Only datasets with this visibility.",
+  })
   visibility?: DATASET_VISIBILITY;
 }
 
@@ -35,7 +44,7 @@ class AdminDatasetUpdateSchema extends UserDatasetUpdateSchema {}
 class AdminDatasetUpdateVisibilitySchema {
   @ValidString()
   @IsEnum(DATASET_VISIBILITY)
-  @Field(() => DATASET_VISIBILITY)
+  @Field(() => DATASET_VISIBILITY, { description: "The new visibility." })
   visibility: DATASET_VISIBILITY;
 }
 

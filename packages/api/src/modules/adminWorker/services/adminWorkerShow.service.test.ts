@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { AdminWorkerShowService } from "./adminWorkerShow.service";
 
 describe("Service: AdminWorkerShowService", () => {

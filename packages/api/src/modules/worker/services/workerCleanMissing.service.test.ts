@@ -1,9 +1,9 @@
-import { describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
+import { describe, expect, it, vi } from "vitest";
 
 // Util import
-import { logger } from "@shared/utils/logger";
 import { DateUtils } from "@shared/utils/dateUtils";
+import { logger } from "@shared/utils/logger";
 
 // Repository import
 import { IWorkerRepository } from "../repositories/IWorker.repository";
@@ -11,7 +11,7 @@ import { IWorkerRepository } from "../repositories/IWorker.repository";
 // Factory import
 import { workerFactory } from "../entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerCleanMissingService } from "./workerCleanMissing.service";
 
 vi.mock("@shared/utils/logger", () => ({

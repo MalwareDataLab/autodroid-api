@@ -6,16 +6,13 @@ import {
   IDatabaseProvider,
 } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
-// Constant import
-import { UserSortingOptions } from "@modules/user/constants/userSortingOptions.constant";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-
 // Util import
-import { parse } from "@shared/utils/instanceParser";
 import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
+import { parse } from "@shared/utils/instanceParser";
+
+// Constant import
+import { UserSortingOptions } from "@modules/user/constants/userSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
@@ -26,7 +23,10 @@ import {
   IUpdateUserDTO,
 } from "@modules/user/types/IUser.dto";
 
-// Interface import
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
 import { IUserRepository } from "@modules/user/repositories/IUser.repository";
 
 @injectable()

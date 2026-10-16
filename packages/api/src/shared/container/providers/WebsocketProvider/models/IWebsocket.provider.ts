@@ -1,6 +1,8 @@
 // Type import
-import type { WebsocketAdapterEvents } from "@shared/infrastructure/websocket/adapter";
 import { ServerToClientEvents } from "@shared/infrastructure/websocket/types";
+
+// Adapter import
+import type { WebsocketAdapterEvents } from "@shared/infrastructure/websocket/adapter";
 
 export interface IWebsocketProvider {
   readonly initialization: Promise<void>;

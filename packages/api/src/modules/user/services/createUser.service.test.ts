@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IUserRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // DTO import
 import { ICreateUserDTO } from "../types/IUser.dto";
 
-// Service import
+// Repository import
+import { IUserRepository } from "@shared/container/repositories";
+
+// Target import
 import { CreateUserService } from "./createUser.service";
 
 describe("Service: CreateUserService", () => {

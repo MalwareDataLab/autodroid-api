@@ -1,5 +1,5 @@
-import { inject, injectable } from "tsyringe";
 import { isBefore } from "date-fns";
+import { inject, injectable } from "tsyringe";
 
 // i18n import
 import { i18n } from "@shared/i18n";
@@ -10,6 +10,9 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
+// Util import
+import { parse } from "@shared/utils/instanceParser";
+
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
@@ -17,12 +20,9 @@ import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvide
 import { Session } from "@modules/user/types/IUserSession.dto";
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 
-// Util import
-import { parse } from "@shared/utils/instanceParser";
-
 // Repository import
-import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 import { IUserRepository } from "@modules/user/repositories/IUser.repository";
+import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 
 // Service import
 import { HandleUserSessionService } from "./handleUserSession.service";

@@ -6,22 +6,22 @@ import { getProcessingConfig } from "@config/processing";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Guard import
+import { ProcessingGuard } from "../guards/processing.guard";
+
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
-
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Processing } from "../entities/processing.entity";
 
-// Guard import
-import { ProcessingGuard } from "../guards/processing.guard";
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 interface IRequest {
   user: User;

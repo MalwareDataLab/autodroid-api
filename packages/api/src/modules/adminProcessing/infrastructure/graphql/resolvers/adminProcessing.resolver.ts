@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Arg,
   Args,
@@ -8,7 +9,12 @@ import {
   Mutation,
   Query,
 } from "type-graphql";
-import { container } from "tsyringe";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Constant import
 import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
@@ -20,30 +26,24 @@ import {
 } from "@modules/processing/entities/processing.entity";
 import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
 
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
-
-// Decorator import
-import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
-
 // Schema import
-import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import {
   AdminProcessingIndexSchema,
   AdminProcessingUpdateSchema,
   AdminProcessingFailDanglingSchema,
 } from "@modules/adminProcessing/schemas/adminProcessing.schema";
 import { AdminProcessingGetEstimatedExecutionTimeSchema } from "@modules/adminProcessing/schemas/adminProcessingEstimatedExecutionTime.schema";
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
+import { AdminProcessingCleanExpiredService } from "@modules/adminProcessing/services/adminProcessingCleanExpired.service";
 import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/adminProcessingDelete.service";
+import { AdminProcessingEstimatedExecutionTimeIndexService } from "@modules/adminProcessing/services/adminProcessingEstimatedExecutionTimeIndex.service";
+import { AdminProcessingFailDanglingService } from "@modules/adminProcessing/services/adminProcessingFailDangling.service";
 import { AdminProcessingIndexService } from "@modules/adminProcessing/services/adminProcessingIndex.service";
 import { AdminProcessingShowService } from "@modules/adminProcessing/services/adminProcessingShow.service";
 import { AdminProcessingUpdateService } from "@modules/adminProcessing/services/adminProcessingUpdate.service";
-import { AdminProcessingCleanExpiredService } from "@modules/adminProcessing/services/adminProcessingCleanExpired.service";
-import { AdminProcessingFailDanglingService } from "@modules/adminProcessing/services/adminProcessingFailDangling.service";
-import { AdminProcessingEstimatedExecutionTimeIndexService } from "@modules/adminProcessing/services/adminProcessingEstimatedExecutionTimeIndex.service";
 
 class AdminProcessingResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -78,7 +78,8 @@ class AdminProcessingResolver {
   @Authorized(["ADMIN"])
   @Query(() => Processing)
   async adminProcessing(
-    @Arg("processing_id") processing_id: string,
+    @Arg("processing_id", { description: "The processing run id." })
+    processing_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
@@ -100,8 +101,10 @@ class AdminProcessingResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Processing)
   async adminProcessingUpdate(
-    @Arg("processing_id") processing_id: string,
-    @Arg("data") data: AdminProcessingUpdateSchema,
+    @Arg("processing_id", { description: "The processing run id." })
+    processing_id: string,
+    @Arg("data", { description: "The new keep-until moment and visibility." })
+    data: AdminProcessingUpdateSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
@@ -124,7 +127,8 @@ class AdminProcessingResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Processing)
   async adminProcessingDelete(
-    @Arg("processing_id") processing_id: string,
+    @Arg("processing_id", { description: "The processing run id." })
+    processing_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {

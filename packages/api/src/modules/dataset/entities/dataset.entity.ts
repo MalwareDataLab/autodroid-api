@@ -1,20 +1,20 @@
 import { Exclude, Type } from "class-transformer";
 import { Field, ID, ObjectType } from "type-graphql";
 
-// Scalar import
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
-
 // Type import
 import { DatasetEntityType } from "@shared/types/models";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { File } from "@modules/file/entities/file.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
-
 // Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 @ObjectType()
 class Dataset implements DatasetEntityType {
@@ -44,8 +44,9 @@ class Dataset implements DatasetEntityType {
   @Field()
   user_id: string;
 
+  // See UserDatasetFieldResolver
   @Type(() => User)
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   user: User;
 
   @Field()

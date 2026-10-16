@@ -3,21 +3,21 @@ import { beforeEach, describe, it, expect, vi } from "vitest";
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
 
-// Repository import
-
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
 
+// Repository import
+import { IProcessingRepository } from "../repositories/IProcessing.repository";
+
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
-import { IProcessingRepository } from "../repositories/IProcessing.repository";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import

@@ -1,16 +1,16 @@
 import { Exclude, Type } from "class-transformer";
 import { Field, ID, ObjectType } from "type-graphql";
 
-// Scalar import
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
-
 // Type import
 import { WorkerRegistrationTokenEntityType } from "@shared/types/models";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { User } from "@modules/user/entities/user.entity";
 import { Worker } from "./worker.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 @ObjectType()
 class WorkerRegistrationToken implements WorkerRegistrationTokenEntityType {
@@ -20,7 +20,7 @@ class WorkerRegistrationToken implements WorkerRegistrationTokenEntityType {
   @Field(() => BigIntScalar)
   seq: bigint;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   token: string;
 
   @Field()

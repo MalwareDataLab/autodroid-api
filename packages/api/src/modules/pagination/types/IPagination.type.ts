@@ -1,3 +1,4 @@
+// DTO import
 import { IPaginationDTO } from "./IPagination.dto";
 
 export interface Cursor {

@@ -1,45 +1,45 @@
-import { Arg, Args, Authorized, Ctx, Mutation, Query } from "type-graphql";
 import { container } from "tsyringe";
+import { Arg, Args, Authorized, Ctx, Mutation, Query } from "type-graphql";
 
-// Constant import
-import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
 // Decorator import
 import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 import { ArgUUID } from "@shared/decorators/argUUID.decorator";
 
+// Constant import
+import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
+
 // Entity import
-import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
-import { ProcessingFinishTimeEstimation } from "@modules/processing/entities/processingFinishTimeEstimation.entity";
 import {
   Processing,
   PaginatedProcessing,
 } from "@modules/processing/entities/processing.entity";
-
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+import { ProcessingFinishTimeEstimation } from "@modules/processing/entities/processingFinishTimeEstimation.entity";
+import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
 
 // Schema import
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
-import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
-import { RequestDatasetProcessingSchema } from "@modules/processing/schemas/requestDatasetProcessing.schema";
-import { ProcessingUpdateVisibilitySchema } from "@modules/processing/schemas/processingUpdateVisibility.schema";
 import { UserProcessingExtendKeepUntilSchema } from "@modules/processing/schemas/processingExtendKeepUntil.schema";
+import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
 import {
   ProcessingGetEstimatedExecutionTimeSchema,
   ProcessingGetEstimatedFinishTimeSchema,
 } from "@modules/processing/schemas/processingTimeEstimation.schema";
+import { ProcessingUpdateVisibilitySchema } from "@modules/processing/schemas/processingUpdateVisibility.schema";
+import { RequestDatasetProcessingSchema } from "@modules/processing/schemas/requestDatasetProcessing.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
+import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
+import { UserProcessingExtendKeepUntilService } from "@modules/processing/services/userProcessingExtendKeepUntil.service";
+import { UserProcessingGetEstimatedExecutionTimeService } from "@modules/processing/services/userProcessingGetEstimatedExecutionTime.service";
+import { UserProcessingGetEstimatedFinishDateService } from "@modules/processing/services/userProcessingGetEstimatedFinishDate.service";
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";
 import { UserProcessingShowService } from "@modules/processing/services/userProcessingShow.service";
-import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
-import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
-import { UserProcessingExtendKeepUntilService } from "@modules/processing/services/userProcessingExtendKeepUntil.service";
 import { UserProcessingUpdateVisibilityService } from "@modules/processing/services/userProcessingUpdateVisibility.service";
-import { UserProcessingGetEstimatedFinishDateService } from "@modules/processing/services/userProcessingGetEstimatedFinishDate.service";
-import { UserProcessingGetEstimatedExecutionTimeService } from "@modules/processing/services/userProcessingGetEstimatedExecutionTime.service";
+import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
 
 class UserProcessingResolver {
   @Authorized()
@@ -74,7 +74,8 @@ class UserProcessingResolver {
   @Authorized()
   @Query(() => Processing)
   async userProcessing(
-    @ArgUUID("processing_id") processing_id: string,
+    @ArgUUID("processing_id", { description: "The processing run id." })
+    processing_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Processing> {
@@ -96,7 +97,10 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userRequestDatasetProcessing(
-    @Arg("data") data: RequestDatasetProcessingSchema,
+    @Arg("data", {
+      description: "The dataset, the processor and the parameters of the run.",
+    })
+    data: RequestDatasetProcessingSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ) {
@@ -117,7 +121,8 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userProcessingUpdateVisibility(
-    @ArgUUID("processing_id") processing_id: string,
+    @ArgUUID("processing_id", { description: "The processing run id." })
+    processing_id: string,
 
     @Args() params: ProcessingUpdateVisibilitySchema,
 
@@ -141,7 +146,8 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userProcessingExtendKeepUntil(
-    @ArgUUID("processing_id") processing_id: string,
+    @ArgUUID("processing_id", { description: "The processing run id." })
+    processing_id: string,
 
     @Args() params: UserProcessingExtendKeepUntilSchema,
 
@@ -165,7 +171,8 @@ class UserProcessingResolver {
   @Authorized()
   @Mutation(() => Processing)
   async userProcessingDelete(
-    @ArgUUID("processing_id") processing_id: string,
+    @ArgUUID("processing_id", { description: "The processing run id." })
+    processing_id: string,
     @Ctx() { language, user_session }: GraphQLContext,
   ) {
     const userProcessingDeleteService = container.resolve(

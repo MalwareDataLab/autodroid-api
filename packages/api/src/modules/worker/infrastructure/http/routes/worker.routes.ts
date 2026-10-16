@@ -1,7 +1,9 @@
 import { Router } from "express";
 
-// Util import
+// Middleware import
 import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
+import { workerAuthenticationMiddleware } from "../middlewares/workerAuthentication.middleware";
+import { workerAuthenticationGuardMiddleware } from "../middlewares/workerAuthenticationGuard.middleware";
 
 // Schema import
 import {
@@ -9,17 +11,14 @@ import {
   WorkerRegisterSchema,
 } from "@modules/worker/schemas/worker.schema";
 
-// Middleware import
-import { workerAuthenticationMiddleware } from "../middlewares/workerAuthentication.middleware";
+// Controller import
+import { WorkerController } from "../controllers/worker.controller";
+import { WorkerGenerateAccessTokenController } from "../controllers/workerGenerateAccessToken.controller";
+import { WorkerRegisterController } from "../controllers/workerRegister.controller";
+import { WorkerUpdateRefreshTokenController } from "../controllers/workerUpdateRefreshToken.controller";
 
 // Router import
 import { workerProcessingRouter } from "./workerProcessing.routes";
-
-// Controller import
-import { WorkerRegisterController } from "../controllers/workerRegister.controller";
-import { WorkerUpdateRefreshTokenController } from "../controllers/workerUpdateRefreshToken.controller";
-import { WorkerGenerateAccessTokenController } from "../controllers/workerGenerateAccessToken.controller";
-import { WorkerController } from "../controllers/worker.controller";
 
 const workerRegisterController = new WorkerRegisterController();
 
@@ -60,11 +59,17 @@ workerRouter.post(
   workerGenerateAccessTokenController.update,
 );
 
-workerRouter.get("/", workerAuthenticationMiddleware, workerController.show);
+workerRouter.get(
+  "/",
+  workerAuthenticationMiddleware,
+  workerAuthenticationGuardMiddleware,
+  workerController.show,
+);
 
 workerRouter.use(
   "/processing",
   workerAuthenticationMiddleware,
+  workerAuthenticationGuardMiddleware,
   workerProcessingRouter,
 );
 

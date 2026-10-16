@@ -1,24 +1,24 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
-
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { PaginatedDataset } from "@modules/dataset/entities/dataset.entity";
-
-// Repository import
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
+// Entity import
+import { PaginatedDataset } from "@modules/dataset/entities/dataset.entity";
+import { User } from "@modules/user/entities/user.entity";
+
 // Schema import
 import { AdminDatasetIndexSchema } from "../schemas/adminDataset.schema";
+
+// Repository import
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
 interface IRequest {
   filter: AdminDatasetIndexSchema;

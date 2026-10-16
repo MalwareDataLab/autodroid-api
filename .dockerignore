@@ -8,6 +8,8 @@
 *docker-compose*
 .dockerignore
 
-node_modules
-dist
+**/node_modules
+**/dist
+**/.env*
+**/test/outputs
 .runtime

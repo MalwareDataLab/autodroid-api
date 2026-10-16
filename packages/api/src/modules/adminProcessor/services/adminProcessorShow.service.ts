@@ -9,12 +9,12 @@ import { AppError } from "@shared/errors/AppError";
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
+// Entity import
+import { Processor } from "@modules/processor/entities/processor.entity";
+import { User } from "@modules/user/entities/user.entity";
+
 // Repository import
 import { IProcessorRepository } from "@shared/container/repositories";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Processor } from "@modules/processor/entities/processor.entity";
 
 interface IRequest {
   processor_id: string;

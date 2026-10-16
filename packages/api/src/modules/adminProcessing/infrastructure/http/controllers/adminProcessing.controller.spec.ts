@@ -1,19 +1,19 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
 // Service import
+import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/adminProcessingDelete.service";
 import { AdminProcessingIndexService } from "@modules/adminProcessing/services/adminProcessingIndex.service";
 import { AdminProcessingShowService } from "@modules/adminProcessing/services/adminProcessingShow.service";
 import { AdminProcessingUpdateService } from "@modules/adminProcessing/services/adminProcessingUpdate.service";
-import { AdminProcessingDeleteService } from "@modules/adminProcessing/services/adminProcessingDelete.service";
 
 // Target import
 import { AdminProcessingController } from "./adminProcessing.controller";
@@ -64,9 +64,20 @@ describe("Controller: AdminProcessingController", () => {
     adminProcessingController = new AdminProcessingController();
   });
 
-  it("should index processings forwarding the raw query as the filter", async () => {
+  it("should index processings forwarding the query as the filter, its boolean strings read as booleans, plus pagination and sorting", async () => {
     const processings = [processing];
-    const request = buildRequest({ query: { status: "SUCCEEDED" } });
+    const pagination = { skip: 1, take: 1 };
+    const sorting = [{ field: "created_at", order: "ASC" }];
+    const request = buildRequest({
+      query: {
+        status: "SUCCEEDED",
+        started: "true",
+        finished: "false",
+        include_archived: "true",
+      },
+      pagination,
+      sorting,
+    });
     adminProcessingIndexService.execute.mockResolvedValueOnce(processings);
 
     const result = await adminProcessingController.index(
@@ -75,7 +86,14 @@ describe("Controller: AdminProcessingController", () => {
     );
 
     expect(adminProcessingIndexService.execute).toHaveBeenCalledWith({
-      filter: { status: "SUCCEEDED" },
+      filter: {
+        status: "SUCCEEDED",
+        started: true,
+        finished: false,
+        include_archived: true,
+      },
+      pagination,
+      sorting,
       user,
     });
     expect(response.json).toHaveBeenCalledWith(process(processings));

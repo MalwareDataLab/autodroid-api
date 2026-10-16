@@ -1,13 +1,15 @@
-import { gql } from "@/test/utils/gql.util";
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
+
+// Util import
+import { gql } from "@/test/utils/gql.util";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 describe("E2E: UserProcessorResolver", () => {
   it("should list user processors", async context => {

@@ -1,17 +1,17 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Enum import
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { AdminProcessingUpdateService } from "./adminProcessingUpdate.service";
 
 describe("Service: AdminProcessingUpdateService", () => {

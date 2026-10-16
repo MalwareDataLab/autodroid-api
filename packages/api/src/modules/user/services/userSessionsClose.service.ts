@@ -8,12 +8,17 @@ import { AppError } from "@shared/errors/AppError";
 
 // Provider import
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
-
-// Repository import
-import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
+import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 
 // Entity import
 import { User } from "../entities/user.entity";
+
+// Repository import
+import { IMcpAuthorizationGrantRepository } from "@modules/mcpAuthorization/repositories/IMcpAuthorizationGrant.repository";
+import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
+
+// Service import
+import { McpAuthorizationSessionsEndService } from "@modules/mcpAuthorization/services/mcpAuthorizationSessionsEnd.service";
 
 interface IRequest {
   user: User;
@@ -22,13 +27,27 @@ interface IRequest {
 
 @injectable()
 class UserSessionsCloseService {
+  private mcpAuthorizationSessionsEndService: McpAuthorizationSessionsEndService;
+
   constructor(
     @inject("AuthenticationProvider")
     private authenticationProvider: IAuthenticationProvider,
 
     @inject("UserAuthProviderConnRepository")
     private userAuthProviderConnRepository: IUserAuthProviderConnRepository,
-  ) {}
+
+    @inject("InMemoryDatabaseProvider")
+    private inMemoryDatabaseProvider: IInMemoryDatabaseProvider,
+
+    @inject("McpAuthorizationGrantRepository")
+    private mcpAuthorizationGrantRepository: IMcpAuthorizationGrantRepository,
+  ) {
+    this.mcpAuthorizationSessionsEndService =
+      new McpAuthorizationSessionsEndService(
+        this.inMemoryDatabaseProvider,
+        this.mcpAuthorizationGrantRepository,
+      );
+  }
 
   public async execute({ user, language }: IRequest): Promise<void> {
     const t = await i18n(language);
@@ -53,7 +72,11 @@ class UserSessionsCloseService {
         ),
       });
 
+    await this.mcpAuthorizationSessionsEndService.execute({ user_id: user.id });
+
     await authenticationProvider.revokeTokens(userAuthProviderConn, language);
+
+    await this.mcpAuthorizationSessionsEndService.execute({ user_id: user.id });
   }
 }
 

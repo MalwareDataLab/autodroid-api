@@ -1,31 +1,33 @@
-import { plainToInstance } from "class-transformer";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { plainToInstance } from "class-transformer";
 import { Factory } from "fishery";
+import { container } from "tsyringe";
 
 // Util import
-import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
 import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
+import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-
-// Entity import
-import { Processing } from "@modules/processing/entities/processing.entity";
+// Type import
+import { FactoryParams } from "@/test/types/factoryParams.type";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 
-// Type import
-import { FactoryParams } from "@/test/types/factoryParams.type";
+// DTO import
 import {
   IProcessingBase,
   ProcessingRelationFields,
 } from "@modules/processing/types/IProcessing.dto";
+
+// Entity import
+import { Processing } from "@modules/processing/entities/processing.entity";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 class ProcessingFactory extends Factory<Processing, FactoryParams> {
   static get repository() {

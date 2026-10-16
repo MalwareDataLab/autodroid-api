@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import * as Sentry from "@sentry/node";
 import util from "node:util";
+import * as Sentry from "@sentry/node";
 
 // Configuration import
 import { getEnvConfig } from "@config/env";

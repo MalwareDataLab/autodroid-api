@@ -1,8 +1,12 @@
-import { logger } from "@shared/utils/logger";
 import { RedisStore } from "connect-redis";
 import session from "express-session";
 import { createClient } from "redis";
+
+// Configuration import
 import { getRedisConfig } from "./redis";
+
+// Util import
+import { logger } from "@shared/utils/logger";
 
 const { host, port, username, password, db } = getRedisConfig();
 const redisClient = createClient({

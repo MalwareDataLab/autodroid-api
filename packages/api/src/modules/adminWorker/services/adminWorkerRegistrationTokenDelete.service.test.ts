@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Repository import
@@ -11,7 +11,7 @@ import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Service import
+// Target import
 import { AdminWorkerRegistrationTokenDeleteService } from "./adminWorkerRegistrationTokenDelete.service";
 
 describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
@@ -27,7 +27,7 @@ describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
     );
   });
 
-  it("should delete a worker registration token", async () => {
+  it("should delete a worker registration token without returning its secret value", async () => {
     const admin = await userFactory.create({
       email: getAdminConfig().emails[0],
     });
@@ -40,7 +40,10 @@ describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
       language: "en",
     });
 
-    expect(response).toMatchObject({ id: workerRegistrationToken.id });
+    expect(response).toMatchObject({
+      id: workerRegistrationToken.id,
+      token: null,
+    });
     expect(response.archived_at).toBeInstanceOf(Date);
     await expect(
       workerRegistrationTokenRepository.findOne({

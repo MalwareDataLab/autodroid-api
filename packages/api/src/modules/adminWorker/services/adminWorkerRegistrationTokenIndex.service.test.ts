@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Service import
+// Target import
 import { AdminWorkerRegistrationTokenIndexService } from "./adminWorkerRegistrationTokenIndex.service";
 
 describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
@@ -19,7 +19,7 @@ describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
     );
   });
 
-  it("should list worker registration tokens", async () => {
+  it("should list worker registration tokens without their secret values", async () => {
     const admin = await userFactory.create({
       email: getAdminConfig().emails[0],
     });
@@ -32,13 +32,11 @@ describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
       language: "en",
     });
 
-    expect(response.edges).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          node: expect.objectContaining({ id: workerRegistrationToken.id }),
-        }),
-      ]),
-    );
+    expect(response.edges).toHaveLength(1);
+    expect(response.edges[0].node).toMatchObject({
+      id: workerRegistrationToken.id,
+      token: null,
+    });
   });
 
   it("should return an empty page when there are no tokens", async () => {

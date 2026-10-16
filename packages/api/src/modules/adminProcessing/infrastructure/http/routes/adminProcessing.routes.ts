@@ -1,7 +1,17 @@
 import { Router } from "express";
 
 // Middleware import
+import { paginationMiddleware } from "@modules/pagination/infrastructure/http/middlewares/pagination.middleware";
+import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
 import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
+
+// Constant import
+import { PAGINATION_QUERY_KEYS } from "@modules/pagination/constants/paginationQueryKeys.constant";
+import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
+import { SORTING_QUERY_KEYS } from "@modules/sorting/constants/sortingQueryKeys.constant";
+
+// Entity import
+import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Schema import
 import {
@@ -29,9 +39,15 @@ const adminProcessingRouter = Router();
 
 adminProcessingRouter.get(
   "/",
+  paginationMiddleware({ segment: "QUERY" }),
+  sortingMiddleware<Processing>({
+    segment: "QUERY",
+    allowed: ProcessingSortingOptions,
+  }),
   validateRequest({
     schema: AdminProcessingIndexSchema,
     segment: "QUERY",
+    ignoreKeys: [...PAGINATION_QUERY_KEYS, ...SORTING_QUERY_KEYS],
   }),
   adminProcessingController.index,
 );

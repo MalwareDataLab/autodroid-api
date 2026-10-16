@@ -6,15 +6,15 @@ import { i18n, TFunction } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IDatasetRepository } from "@shared/container/repositories";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IDatasetRepository } from "@shared/container/repositories";
 
 interface IRequest {
   user: User;

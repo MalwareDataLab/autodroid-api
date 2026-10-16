@@ -1,24 +1,24 @@
-import { describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import crypto from "node:crypto";
-
-// Repository import
-import { IWorkerRepository } from "../repositories/IWorker.repository";
+import { container } from "tsyringe";
+import { describe, expect, it, vi } from "vitest";
 
 // Util import
 import { generateWorkerRefreshToken } from "../utils/generateWorkerToken.util";
+
+// Entity import
+import { Worker } from "../entities/worker.entity";
+
+// Schema import
+import { WorkerRefreshTokenSchema } from "../schemas/worker.schema";
+
+// Repository import
+import { IWorkerRepository } from "../repositories/IWorker.repository";
 
 // Factory import
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Schema import
-import { WorkerRefreshTokenSchema } from "../schemas/worker.schema";
-
-// Entity import
-import { Worker } from "../entities/worker.entity";
-
-// Service import
+// Target import
 import { WorkerGenerateAccessTokenService } from "./workerGenerateAccessToken.service";
 
 describe("Service: WorkerGenerateAccessTokenService", () => {

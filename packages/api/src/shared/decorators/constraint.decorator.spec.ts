@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Decorator import
+// Target import
 import { Constraint } from "./constraint.decorator";
 
 const findFieldDirective = (target: object, fieldName: string) => {

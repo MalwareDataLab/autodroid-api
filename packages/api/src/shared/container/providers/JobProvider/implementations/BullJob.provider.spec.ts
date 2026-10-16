@@ -1,6 +1,5 @@
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-
 import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 
 // Configuration import
 import { getEnvConfig } from "@config/env";
@@ -8,7 +7,7 @@ import { getEnvConfig } from "@config/env";
 // Util import
 import { logger } from "@shared/utils/logger";
 
-// Provider import
+// Target import
 import { BullJobProvider } from "./BullJob.provider";
 
 const bullState = vi.hoisted(() => ({

@@ -1,14 +1,12 @@
+import { validateOrReject, ValidationError } from "class-validator";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 
-// Middleware import
-import { validateOrReject, ValidationError } from "class-validator";
+// Target import
 import {
   Segments,
   validateSchema,
   validateRequest,
 } from "./validation.middleware";
-
-// Library import
 
 vi.mock("class-validator", async importOriginal => {
   const actual = await importOriginal<typeof import("class-validator")>();
@@ -98,6 +96,48 @@ describe("Middleware: validateRequest", () => {
     await middleware(buildRequest(), {} as any, next);
 
     expect(next).toHaveBeenCalledOnce();
+  });
+
+  it("should leave the ignored keys out of the validated segment and the request alone", async () => {
+    const next = vi.fn();
+    const request: any = {
+      query: { status: "RUNNING", skip: "1", take: "1", sort: "[]" },
+      t: translate,
+    };
+    const middleware = validateRequest({
+      schema: Schema,
+      segment: "QUERY",
+      ignoreKeys: ["skip", "take", "sort"],
+    });
+
+    await middleware(request, {} as any, next);
+
+    expect(validateOrReject).toHaveBeenCalledWith(
+      { status: "RUNNING" },
+      expect.anything(),
+    );
+    expect(request.query).toEqual({
+      status: "RUNNING",
+      skip: "1",
+      take: "1",
+      sort: "[]",
+    });
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it("should validate the whole segment when no key is ignored", async () => {
+    const middleware = validateRequest({ schema: Schema, segment: "QUERY" });
+
+    await middleware(
+      { query: { status: "RUNNING", skip: "1" }, t: translate } as any,
+      {} as any,
+      vi.fn(),
+    );
+
+    expect(validateOrReject).toHaveBeenCalledWith(
+      { status: "RUNNING", skip: "1" },
+      expect.anything(),
+    );
   });
 
   it("should respond with the validation errors when the failure carries a payload", async () => {

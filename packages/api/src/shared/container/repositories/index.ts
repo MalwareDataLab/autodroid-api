@@ -1,32 +1,25 @@
 /* eslint prettier/prettier: ["error", {"printWidth": 250 }] */
 import { DependencyContainer, container as mainContainer } from "tsyringe";
 
-/* Document repositories */
-
-/* Relational repositories */
-import { IUserRepository } from "@modules/user/repositories/IUser.repository";
-import { PrismaUserRepository } from "@modules/user/infrastructure/prisma/repositories/prismaUser.repository";
-
-import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
-import { PrismaUserAuthProviderConnRepository } from "@modules/user/infrastructure/prisma/repositories/prismaUserAuthProviderConn.repository";
-
-import { IFileRepository } from "@modules/file/repositories/IFile.repository";
-import { PrismaFileRepository } from "@modules/file/infrastructure/prisma/repositories/prismaFile.repository";
-
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+// Repository import
 import { PrismaDatasetRepository } from "@modules/dataset/infrastructure/prisma/repositories/prismaDataset.repository";
-
-import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
-import { PrismaProcessorRepository } from "@modules/processor/infrastructure/prisma/repositories/prismaProcessor.repository";
-
-import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
-import { PrismaWorkerRepository } from "@modules/worker/infrastructure/prisma/repositories/prismaWorker.repository";
-
-import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
-import { PrismaWorkerRegistrationTokenRepository } from "@modules/worker/infrastructure/prisma/repositories/prismaWorkerRegistrationToken.repository";
-
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+import { PrismaFileRepository } from "@modules/file/infrastructure/prisma/repositories/prismaFile.repository";
+import { IFileRepository } from "@modules/file/repositories/IFile.repository";
+import { PrismaMcpAuthorizationGrantRepository } from "@modules/mcpAuthorization/infrastructure/prisma/repositories/prismaMcpAuthorizationGrant.repository";
+import { IMcpAuthorizationGrantRepository } from "@modules/mcpAuthorization/repositories/IMcpAuthorizationGrant.repository";
 import { PrismaProcessingRepository } from "@modules/processing/infrastructure/prisma/repositories/prismaProcessing.repository";
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { PrismaProcessorRepository } from "@modules/processor/infrastructure/prisma/repositories/prismaProcessor.repository";
+import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
+import { PrismaUserRepository } from "@modules/user/infrastructure/prisma/repositories/prismaUser.repository";
+import { PrismaUserAuthProviderConnRepository } from "@modules/user/infrastructure/prisma/repositories/prismaUserAuthProviderConn.repository";
+import { IUserRepository } from "@modules/user/repositories/IUser.repository";
+import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
+import { PrismaWorkerRepository } from "@modules/worker/infrastructure/prisma/repositories/prismaWorker.repository";
+import { PrismaWorkerRegistrationTokenRepository } from "@modules/worker/infrastructure/prisma/repositories/prismaWorkerRegistrationToken.repository";
+import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
+import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
 
 const repositories = {
   // MongoDB repositories
@@ -40,6 +33,7 @@ const repositories = {
   WorkerRepository: PrismaWorkerRepository as ClassType<IWorkerRepository>,
   WorkerRegistrationTokenRepository: PrismaWorkerRegistrationTokenRepository as ClassType<IWorkerRegistrationTokenRepository>,
   ProcessingRepository: PrismaProcessingRepository as ClassType<IProcessingRepository>,
+  McpAuthorizationGrantRepository: PrismaMcpAuthorizationGrantRepository as ClassType<IMcpAuthorizationGrantRepository>,
 };
 
 const initRepositories = async (selectedContainer: DependencyContainer = mainContainer) => {
@@ -63,6 +57,7 @@ export type {
   IWorkerRepository,
   IWorkerRegistrationTokenRepository,
   IProcessingRepository,
+  IMcpAuthorizationGrantRepository,
 };
 
 export { initRepositories, repositories };

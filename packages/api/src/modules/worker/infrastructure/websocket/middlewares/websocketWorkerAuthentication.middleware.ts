@@ -5,9 +5,6 @@ import { container } from "tsyringe";
 // Error import
 import { WebsocketUnauthorizedError } from "@shared/infrastructure/websocket/errors/WebsocketUnauthorized.error";
 
-// Service import
-import { HandleWorkerAuthenticationService } from "@modules/worker/services/handleWorkerAuthentication.service";
-
 // Type import
 import {
   ClientToServerEvents,
@@ -15,6 +12,9 @@ import {
   InterServerEvents,
   SocketData,
 } from "@shared/infrastructure/websocket/types";
+
+// Service import
+import { HandleWorkerAuthenticationService } from "@modules/worker/services/handleWorkerAuthentication.service";
 
 export const websocketWorkerAuthenticationMiddleware = async (
   socket: Socket<

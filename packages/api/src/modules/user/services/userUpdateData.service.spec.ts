@@ -1,17 +1,28 @@
+import { faker } from "@faker-js/faker";
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
+// Provider import
 import {
   IAuthenticationMethod,
   IAuthenticationProvider,
 } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
-import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
-import { faker } from "@faker-js/faker";
+
+// Util import
 import { parse } from "@shared/utils/instanceParser";
-import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
-import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
+
+// Enum import
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
+
+// Entity import
 import { User } from "../entities/user.entity";
-import { UserUpdateDataService } from "./userUpdateData.service";
+import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
+
+// Repository import
 import { IUserRepository } from "../repositories/IUser.repository";
+import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
+
+// Target import
+import { UserUpdateDataService } from "./userUpdateData.service";
 
 describe("Service: UserUpdateDataService", () => {
   let userRepositoryMock: Mocked<IUserRepository>;

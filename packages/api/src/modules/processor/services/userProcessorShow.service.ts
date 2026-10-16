@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
 
+// Guard import
+import { ProcessorGuard } from "../guards/processor.guard";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Processor } from "../entities/processor.entity";
-
-// Guard import
-import { ProcessorGuard } from "../guards/processor.guard";
 
 // Repository import
 import { IProcessorRepository } from "../repositories/IProcessor.repository";

@@ -1,26 +1,26 @@
-import { injectable, container } from "tsyringe";
 import { DoneCallback, Job } from "bull";
+import { injectable, container } from "tsyringe";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Interface import
-import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
-
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
 
+// Type import
+import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
+
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-
-// Service import
-import { ProcessingFailDanglingService } from "@modules/processing/services/processingFailDangling.service";
 
 // DTO import
 import {
   IJobOptionsDTO,
   IQueueOptionsDTO,
 } from "../../types/IAddJobOptions.dto";
+
+// Service import
+import { ProcessingFailDanglingService } from "@modules/processing/services/processingFailDangling.service";
 
 type IProcessingFailDanglingJob = never;
 

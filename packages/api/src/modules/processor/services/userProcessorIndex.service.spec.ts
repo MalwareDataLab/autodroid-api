@@ -1,16 +1,16 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { processorFactory } from "../entities/factories/processor.factory";
-
-// Repository import
-import { IProcessorRepository } from "../repositories/IProcessor.repository";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
 
-// Service import
+// Repository import
+import { IProcessorRepository } from "../repositories/IProcessor.repository";
+
+// Factory import
+import { processorFactory } from "../entities/factories/processor.factory";
+
+// Target import
 import { UserProcessorIndexService } from "./userProcessorIndex.service";
 
 describe("Service: UserProcessorIndexService", () => {

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // Util import
 import { logger } from "@shared/utils/logger";
 
-// Provider import
+// Target import
 import { RedisInMemoryDatabaseProvider } from "./redisInMemoryDatabase.provider";
 
 const { RedisMock, redisInstanceMock } = vi.hoisted(() => {

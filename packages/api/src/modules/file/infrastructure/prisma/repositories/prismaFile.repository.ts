@@ -6,11 +6,10 @@ import {
   IDatabaseProvider,
 } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
-// Interface import
-import { IFileRepository } from "@modules/file/repositories/IFile.repository";
+// Util import
+import { parse } from "@shared/utils/instanceParser";
 
 // DTO import
-
 import {
   ICreateFileDTO,
   IFindFileDTO,
@@ -20,8 +19,8 @@ import {
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 
-// Util import
-import { parse } from "@shared/utils/instanceParser";
+// Repository import
+import { IFileRepository } from "@modules/file/repositories/IFile.repository";
 
 @injectable()
 class PrismaFileRepository implements IFileRepository {

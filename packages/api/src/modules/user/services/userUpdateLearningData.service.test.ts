@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Repository import
 import { IUserRepository } from "@shared/container/repositories";
@@ -7,7 +7,7 @@ import { IUserRepository } from "@shared/container/repositories";
 // Factory import
 import { userFactory } from "../entities/factories/user.factory";
 
-// Service import
+// Target import
 import { UserUpdateLearningDataService } from "./userUpdateLearningData.service";
 
 describe("Service: UserUpdateLearningDataService", () => {

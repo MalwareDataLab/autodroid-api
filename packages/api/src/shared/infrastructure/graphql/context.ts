@@ -1,9 +1,11 @@
-import { i18n, TFunction } from "i18next";
 import { ExpressContextFunctionArgument } from "@apollo/server/express4";
+import { i18n, TFunction } from "i18next";
 
 // DTO import
-import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 import { Session } from "@modules/user/types/IUserSession.dto";
+import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
+
+// Entity import
 import { WorkerSession } from "@modules/worker/entities/workerSession.entity";
 
 export type GraphQLContext = {

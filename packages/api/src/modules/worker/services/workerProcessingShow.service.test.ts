@@ -1,15 +1,15 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Repository import
 import { IProcessingRepository } from "@shared/container/repositories";
 
 // Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerProcessingShowService } from "./workerProcessingShow.service";
 
 describe("Service: WorkerProcessingShowService", () => {

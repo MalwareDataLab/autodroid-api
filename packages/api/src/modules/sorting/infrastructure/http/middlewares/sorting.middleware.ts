@@ -1,11 +1,11 @@
 import { Transform, Type } from "class-transformer";
-import { Request, Response, NextFunction } from "express";
 import {
   ArrayMaxSize,
   IsArray,
   IsOptional,
   ValidateNested,
 } from "class-validator";
+import { Request, Response, NextFunction } from "express";
 
 // Middleware import
 import {
@@ -14,11 +14,11 @@ import {
 } from "@shared/infrastructure/http/middlewares/validation.middleware";
 
 // Util import
+import { validateSorting } from "@modules/sorting/utils/validateSorting.util";
 import { parse } from "@shared/utils/instanceParser";
 
 // Schema import
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
-import { validateSorting } from "@modules/sorting/utils/validateSorting.util";
 
 class SortingSchema<T extends readonly string[]> {
   @IsOptional()

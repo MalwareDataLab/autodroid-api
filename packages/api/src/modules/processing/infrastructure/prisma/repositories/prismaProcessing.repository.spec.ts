@@ -1,14 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Constant import
 import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
@@ -18,8 +14,12 @@ import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 // DTO import
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 
 // Target import
 import { PrismaProcessingRepository } from "./prismaProcessing.repository";
@@ -120,7 +120,7 @@ describe("Repository: PrismaProcessingRepository", () => {
       orderBy: defaultOrderBy,
       cursor: undefined,
       skip: 0,
-      take: undefined,
+      take: 1,
     });
     expect(result).toEqual(expect.objectContaining({ id: processing.id }));
   });

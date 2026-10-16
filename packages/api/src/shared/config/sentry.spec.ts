@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Package import
-import APP_INFO from "@/package.json";
-
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
@@ -11,6 +8,9 @@ import { AppError } from "@shared/errors/AppError";
 
 // Util import
 import { getEnvConfigMockValue } from "@/test/utils/getEnvConfigMockValue.util";
+
+// Data import
+import APP_INFO from "@/package.json";
 
 // Target import
 import { getSentryConfig } from "./sentry";

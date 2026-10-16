@@ -1,16 +1,18 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Factory import
+// Entity import
 import { User } from "@modules/user/entities/user.entity";
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 
 // Schema import
 import { AdminDatasetUpdateSchema } from "../schemas/adminDataset.schema";
 
-// Service import
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminDatasetUpdateService } from "./adminDatasetUpdate.service";
 
 describe("Service: AdminDatasetUpdateService", () => {
@@ -93,7 +95,7 @@ describe("Service: AdminDatasetUpdateService", () => {
       }),
     ).rejects.toThrowError(
       expect.objectContaining({
-        key: "@dataset_create_service/INVALID_DESCRIPTION",
+        key: "@admin_dataset_update_service/INVALID_DESCRIPTION",
       }),
     );
   });
@@ -114,7 +116,7 @@ describe("Service: AdminDatasetUpdateService", () => {
       }),
     ).rejects.toThrowError(
       expect.objectContaining({
-        key: "@dataset_create_service/TAGS_NOT_PROVIDED",
+        key: "@admin_dataset_update_service/TAGS_NOT_PROVIDED",
       }),
     );
   });

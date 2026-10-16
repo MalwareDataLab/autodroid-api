@@ -1,8 +1,10 @@
 import "reflect-metadata";
+
 import dotenv from "dotenv";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
+// Data import
 import AppInfo from "@/package.json";
 
 dotenv.config({

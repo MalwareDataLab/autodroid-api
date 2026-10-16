@@ -61,4 +61,26 @@ describe("E2E: WorkerResolver", () => {
 
     forbidden(response.body);
   });
+
+  it("should forbid a worker from reading its registration token", async context => {
+    const { accessToken } = await createAuthorizedWorker();
+
+    const response = await context.request
+      .post("/graphql")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        query: gql`
+          query Worker {
+            worker {
+              id
+              registration_token {
+                token
+              }
+            }
+          }
+        `,
+      });
+
+    forbidden(response.body);
+  });
 });

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
-// Test target import
+// Target import
 import { makeSortingArr, makeSortingArrWithNulls } from ".";
 
 const options = ["name", "created_at"] as const;

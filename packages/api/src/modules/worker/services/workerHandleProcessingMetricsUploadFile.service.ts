@@ -3,16 +3,16 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
-
 // Enum import
-import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 import { Worker } from "../entities/worker.entity";
+
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
 
 interface IRequest {
   worker: Worker;

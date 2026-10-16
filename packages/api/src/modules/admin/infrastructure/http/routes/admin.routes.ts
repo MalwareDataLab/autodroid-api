@@ -1,14 +1,14 @@
 import { Router } from "express";
 
+// Middleware import
+import { adminAuthenticationMiddleware } from "../middlewares/adminAuthentication.middleware";
+
 // Router import
 import { adminDatasetRouter } from "@modules/adminDataset/infrastructure/http/routes/adminDataset.routes";
 import { adminFileRouter } from "@modules/adminFile/infrastructure/http/routes/adminFile.routes";
-import { adminProcessorRouter } from "@modules/adminProcessor/infrastructure/http/routes/adminProcessor.routes";
 import { adminProcessingRouter } from "@modules/adminProcessing/infrastructure/http/routes/adminProcessing.routes";
+import { adminProcessorRouter } from "@modules/adminProcessor/infrastructure/http/routes/adminProcessor.routes";
 import { adminWorkerRouter } from "@modules/adminWorker/infrastructure/http/routes/adminWorker.routes";
-
-// Middleware import
-import { adminAuthenticationMiddleware } from "../middlewares/adminAuthentication.middleware";
 
 const adminRouter = Router();
 

@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Service import
 import { UserSessionsCloseService } from "@modules/user/services/userSessionsClose.service";

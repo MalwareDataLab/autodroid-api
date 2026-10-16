@@ -1,18 +1,18 @@
 import { Exclude, Type } from "class-transformer";
 import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
 
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
-
 // Type import
 import { WorkerEntityType } from "@shared/types/models";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
+import { User } from "@modules/user/entities/user.entity";
 import { WorkerRegistrationToken } from "./workerRegistrationToken.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class Worker implements WorkerEntityType {
@@ -88,11 +88,9 @@ class Worker implements WorkerEntityType {
   @Field()
   registration_token_id: string;
 
-  @Authorized(["ADMIN"])
-  @Directive("@auth(requires: ADMIN)")
+  // See WorkerFieldResolver
   @Exclude()
   @Type(() => WorkerRegistrationToken)
-  @Field(() => WorkerRegistrationToken)
   registration_token: WorkerRegistrationToken;
 
   @Exclude()

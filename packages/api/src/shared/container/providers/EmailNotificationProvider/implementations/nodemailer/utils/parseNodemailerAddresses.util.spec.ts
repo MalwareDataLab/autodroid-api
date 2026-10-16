@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
-// Util import
+// Target import
 import { parseNodemailerAddresses } from "./parseNodemailerAddresses.util";
 
 describe("Utils: parseNodemailerAddresses", () => {

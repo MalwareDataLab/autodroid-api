@@ -1,9 +1,6 @@
-import { inject, injectable } from "tsyringe";
 import { Prisma } from "@prisma/client";
+import { inject, injectable } from "tsyringe";
 import { isUUID } from "validator";
-
-// Constant import
-import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
 
 // Provider import
 import {
@@ -12,20 +9,18 @@ import {
 } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Util import
-import { parse } from "@shared/utils/instanceParser";
 import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
+import { parse } from "@shared/utils/instanceParser";
 
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
+// Constant import
+import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
 
-// Interface import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Enum import
+import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
-import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
   ICreateProcessingDTO,
   IFindProcessingDTO,
@@ -34,9 +29,14 @@ import {
   IProcessingEstimatedDatasetProcessingTimeFilterDTO,
   IUpdateProcessingDTO,
 } from "@modules/processing/types/IProcessing.dto";
+import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
-// Enum import
-import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 @injectable()
 class PrismaProcessingRepository implements IProcessingRepository {
@@ -181,7 +181,9 @@ class PrismaProcessingRepository implements IProcessingRepository {
   }
 
   public async findOne(filter: IFindProcessingDTO): Promise<Processing | null> {
-    return this.findMany(filter, { skip: 0 }).then(result => result[0] || null);
+    return this.findMany(filter, { skip: 0, take: 1 }).then(
+      result => result[0] || null,
+    );
   }
 
   public async findMany(

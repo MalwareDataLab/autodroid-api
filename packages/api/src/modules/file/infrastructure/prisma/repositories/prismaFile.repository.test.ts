@@ -1,15 +1,15 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IFileRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+
+// Repository import
+import { IFileRepository } from "@shared/container/repositories";
 
 // Factory import
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
@@ -74,14 +74,18 @@ describe("Repository: PrismaFileRepository", () => {
   });
 
   it("should find many files filtered by upload url expiration window", async () => {
+    const expiresAt = faker.date.future();
     const file = await fileFactory.create({
-      upload_url_expires_at: faker.date.future(),
+      upload_url_expires_at: expiresAt,
     });
 
     const result = await repository.findMany({
       provider_status: file.provider_status,
-      upload_url_expires_start_date: faker.date.past(),
-      upload_url_expires_end_date: faker.date.future({ years: 5 }),
+      upload_url_expires_start_date: faker.date.past({ refDate: expiresAt }),
+      upload_url_expires_end_date: faker.date.future({
+        years: 5,
+        refDate: expiresAt,
+      }),
     });
 
     expect(result).toEqual(

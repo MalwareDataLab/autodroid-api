@@ -9,15 +9,17 @@ import { AppError } from "@shared/errors/AppError";
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 
-// Repository import
-import { IWorkerRepository } from "../repositories/IWorker.repository";
-import { IWorkerRegistrationTokenRepository } from "../repositories/IWorkerRegistrationToken.repository";
-
 // Entity import
 import { Worker } from "../entities/worker.entity";
 
 // Schema import
 import { WorkerRegisterSchema } from "../schemas/worker.schema";
+
+// Repository import
+import { IWorkerRepository } from "../repositories/IWorker.repository";
+import { IWorkerRegistrationTokenRepository } from "../repositories/IWorkerRegistrationToken.repository";
+
+// Service import
 import { WorkerUpdateRefreshTokenService } from "./workerUpdateRefreshToken.service";
 
 interface IRequest {

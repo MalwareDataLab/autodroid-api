@@ -1,37 +1,37 @@
-/* eslint-disable import/first */
 import "reflect-metadata";
-import dotenv from "dotenv";
-import { afterAll, afterEach, beforeAll, beforeEach, inject } from "vitest";
+
 import { randomUUID } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
 import { Client } from "pg";
 import { container as mainContainer } from "tsyringe";
+import { afterAll, afterEach, beforeAll, beforeEach, inject } from "vitest";
 
-dotenv.config({
-  path: ".env.test",
-});
+// Configuration import
+import { setupGlobalMocks } from "./globalMocks";
 
-// Container import
+// Provider import
+import { PrismaDatabaseProvider } from "@shared/container/providers/DatabaseProvider/implementations/prismaDatabase.provider";
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+import { InMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider";
+import { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/implementations/redisInMemoryDatabase.provider";
+import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import { MongooseNonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/implementations/mongooseNonRelationalDatabase.provider";
+import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
+
+// Type import
+import { TestContext } from "../../types/testContext.type";
+
+// Repository import
 import {
   RepositoryToken,
   initRepositories,
   repositories,
 } from "@shared/container/repositories";
 
-// Provider import
-import { PrismaDatabaseProvider } from "@shared/container/providers/DatabaseProvider/implementations/prismaDatabase.provider";
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
-import { MongooseNonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/implementations/mongooseNonRelationalDatabase.provider";
-import { InMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider";
-import { RedisInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/implementations/redisInMemoryDatabase.provider";
-import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
-import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
-
-// Type import
-import { TestContext } from "../../types/testContext.type";
-
-// Mock import
-import { setupGlobalMocks } from "./globalMocks";
+dotenv.config({
+  path: ".env.test",
+});
 
 const DATABASE_MANAGEMENT_LOCK = "hashtext('autodroid_test_database')";
 
@@ -63,6 +63,7 @@ const createRelationalDatabase = async () => {
   const databaseName = `test_${randomUUID().replace(/-/g, "")}`;
   const url = new URL(baseUri);
   url.pathname = `/${databaseName}`;
+  url.searchParams.set("connection_limit", "10");
   relationalDatabaseUrl = url.toString();
 
   await executeAdministratorStatement(
@@ -142,6 +143,7 @@ const initNonRelationalDatabase = async (context: TestContext) => {
 const disposeNonRelationalDatabase = async (context: TestContext) => {
   const { connection } = context.NonRelationalDatabaseProvider!;
   await connection.dropDatabase();
+  await connection.close();
 };
 
 const initInMemoryDatabaseProvider = async (context: TestContext) => {

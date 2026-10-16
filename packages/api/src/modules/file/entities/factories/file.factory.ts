@@ -1,29 +1,31 @@
-import { container } from "tsyringe";
 import crypto from "node:crypto";
 import { faker } from "@faker-js/faker";
-import { Factory } from "fishery";
 import { plainToInstance } from "class-transformer";
-
-// Constant import
-import { MAX_SAFE_INT } from "@shared/constants/maxSafeInt.constant";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-
-// Type import
-import { FactoryParams } from "@/test/types/factoryParams.type";
-import { IFileBase, FileRelationFields } from "@modules/file/types/IFile.dto";
+import { Factory } from "fishery";
+import { container } from "tsyringe";
 
 // Util import
 import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
 import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
 import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 
+// Constant import
+import { MAX_SAFE_INT } from "@shared/constants/maxSafeInt.constant";
+
+// Type import
+import { FactoryParams } from "@/test/types/factoryParams.type";
+
 // Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+
+// DTO import
+import { IFileBase, FileRelationFields } from "@modules/file/types/IFile.dto";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
 
 class FileFactory extends Factory<File, FactoryParams> {
   static get repository() {

@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
+
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
-
-// Service import
+// Target import
 import { AdminWorkerRegistrationTokenIndexService } from "./adminWorkerRegistrationTokenIndex.service";
 
 describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
@@ -31,7 +31,7 @@ describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
       );
   });
 
-  it("should list worker registration tokens", async () => {
+  it("should list worker registration tokens without their secret values", async () => {
     const user = userFactory.build({ email: "luiz@laviola.dev" });
     const workerRegistrationToken = workerRegistrationTokenFactory.build(
       {},
@@ -49,15 +49,11 @@ describe("Service: AdminWorkerRegistrationTokenIndexService", () => {
       language: "en",
     });
 
-    expect(response).toEqual(
-      expect.objectContaining({
-        edges: expect.arrayContaining([
-          expect.objectContaining({
-            node: expect.objectContaining(workerRegistrationToken),
-          }),
-        ]),
-      }),
-    );
+    expect(response.edges).toHaveLength(1);
+    expect(response.edges[0].node).toEqual({
+      ...workerRegistrationToken,
+      token: null,
+    });
   });
 
   it("should throw if the user is not an admin", () => {

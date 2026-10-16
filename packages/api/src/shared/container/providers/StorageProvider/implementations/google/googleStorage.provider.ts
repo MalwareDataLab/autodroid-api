@@ -1,20 +1,20 @@
-import { inject, injectable } from "tsyringe";
 import { Bucket, Storage } from "@google-cloud/storage";
 import { addDays, addMilliseconds, isAfter, isBefore } from "date-fns";
+import { inject, injectable } from "tsyringe";
+
+// i18n import
+import { i18n, TFunction } from "@shared/i18n";
 
 // Configuration import
-import { getGoogleStorageProviderConfig } from "@config/google";
 import { getEnvConfig } from "@config/env";
+import { getGoogleStorageProviderConfig } from "@config/google";
 import { getMillisecondConfig } from "@config/millisecond";
-
-// Repository import
-import { IFileRepository } from "@shared/container/repositories";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// i18n import
-import { i18n, TFunction } from "@shared/i18n";
+// Provider import
+import { IStorageProvider } from "../../models/IStorage.provider";
 
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
@@ -23,23 +23,23 @@ import { generateRandomFilename } from "@shared/utils/generateRandomFilename";
 import { getFileExtensionFromFilename } from "@shared/utils/getFileExtensionFromFilename";
 import { isValidMimeTypeExtension } from "@shared/utils/isValidMimeTypeExtension";
 
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { FILE_TYPE } from "@modules/file/types/fileType.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+
+// DTO import
+import { IRefreshFileDTO } from "../../types/IRefreshFile.dto";
+import { IRemoveFileByNameDTO } from "../../types/IRemoveFile.dto";
+import { IGenerateUploadSignedUrlRequestParamsDTO } from "../../types/IUploadFile.dto";
+import { IGoogleStorageProviderConfigurationDTO } from "./types/IGoogleStorageProvider.dto";
+
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 
-// Enum import
-import { FILE_TYPE } from "@modules/file/types/fileType.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
-import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-
-// Interface import
-import { IStorageProvider } from "../../models/IStorage.provider";
-
-// DTO import
-import { IGoogleStorageProviderConfigurationDTO } from "./types/IGoogleStorageProvider.dto";
-import { IGenerateUploadSignedUrlRequestParamsDTO } from "../../types/IUploadFile.dto";
-import { IRemoveFileByNameDTO } from "../../types/IRemoveFile.dto";
-import { IRefreshFileDTO } from "../../types/IRefreshFile.dto";
+// Repository import
+import { IFileRepository } from "@shared/container/repositories";
 
 @injectable()
 class GoogleStorageProvider implements IStorageProvider {
@@ -132,7 +132,11 @@ class GoogleStorageProvider implements IStorageProvider {
           statusCode: 500,
           debug: {
             code: this.provider_code,
-            configuration: this.configuration,
+            configuration: {
+              project_id: this.configuration.project_id,
+              client_email: this.configuration.client_email,
+              bucket_name: this.configuration.bucket_name,
+            },
           },
         });
       }
@@ -319,7 +323,11 @@ class GoogleStorageProvider implements IStorageProvider {
           "Invalid storage provider.",
         ),
         debug: {
-          file,
+          file: {
+            id: file.id,
+            storage_provider: file.storage_provider,
+            provider_path: file.provider_path,
+          },
           provider: this.provider_code,
         },
       });
@@ -353,8 +361,12 @@ class GoogleStorageProvider implements IStorageProvider {
         ),
         statusCode: 500,
         debug: {
-          file,
-          params,
+          file: {
+            id: file.id,
+            storage_provider: file.storage_provider,
+            provider_path: file.provider_path,
+          },
+          customPublicUrlExpirationDate: params.customPublicUrlExpirationDate,
         },
       });
 

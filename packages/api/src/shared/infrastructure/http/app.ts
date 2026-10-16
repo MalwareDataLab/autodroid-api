@@ -1,41 +1,45 @@
 /* eslint-disable no-console */
 import "reflect-metadata";
 import "@shared/infrastructure/sentry";
-
-import express, { Express } from "express";
 import "express-async-errors";
+
+import http, { Server } from "node:http";
 import * as Sentry from "@sentry/node";
+import cookieParser from "cookie-parser";
 import cors from "cors";
+import express, { Express } from "express";
+import session from "express-session";
 import useragent from "express-useragent";
 import helmet from "helmet";
-import http, { Server } from "node:http";
 import * as i18nextMiddleware from "i18next-http-middleware";
-import cookieParser from "cookie-parser";
-import session from "express-session";
 
 // i18n import
 import { i18next } from "@shared/i18n";
 
 // Configuration import
+import { getCorsOptionsDelegate } from "@config/cors";
 import { getEnvConfig } from "@config/env";
-import { getCorsConfig } from "@config/cors";
 import { getSessionConfig } from "@config/session";
 
 // Middleware import
 import { authenticationMiddleware } from "@modules/authentication/infrastructure/http/middlewares/authentication.middleware";
 import { workerAuthenticationMiddleware } from "@modules/worker/infrastructure/http/middlewares/workerAuthentication.middleware";
-import { userAgentMiddleware } from "./middlewares/userAgent.middleware";
-import { lightRateLimiterMiddleware } from "./middlewares/lightRateLimiter.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import { lightRateLimiterMiddleware } from "./middlewares/lightRateLimiter.middleware";
+import { userAgentMiddleware } from "./middlewares/userAgent.middleware";
 
-// Route import
-import { router } from "./routes";
+// Strategy import
+import { federationManager } from "../saml/strategy";
+
+// Router import
+import { buildMcpRouter } from "@modules/mcp/infrastructure/http/routes/mcp.routes";
+import { mcpAuthorizationRouter } from "@modules/mcpAuthorization/infrastructure/http/routes/mcpAuthorization.routes";
 import { samlRouter } from "../saml/routes";
+import { router } from "./routes";
 
-// App import
+// Infrastructure import
 import { GraphQLApp } from "../graphql";
 import { WebsocketApp } from "../websocket";
-import { federationManager } from "../saml/strategy";
 
 class App {
   public readonly express: Express;
@@ -61,7 +65,7 @@ class App {
 
   private middlewares() {
     if (getEnvConfig().NODE_ENV === "production") this.express.use(helmet());
-    this.express.use(cors(getCorsConfig()));
+    this.express.use(cors(getCorsOptionsDelegate()));
     this.express.use(cookieParser());
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: true }));
@@ -72,6 +76,9 @@ class App {
     this.express.use(useragent.express());
 
     this.express.use(userAgentMiddleware);
+
+    this.express.use(mcpAuthorizationRouter);
+    this.express.use("/mcp", buildMcpRouter(this.graphqlServer));
 
     const samlPassport = this.samlManager.getPassport();
     this.express.use(session(getSessionConfig()));

@@ -1,22 +1,22 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
+// Schema import
+import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
+
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
-// Schema import
-
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { AdminProcessingFailDanglingService } from "./adminProcessingFailDangling.service";
 
 describe("Service: AdminProcessingFailDanglingService", () => {

@@ -1,5 +1,5 @@
-import { Query } from "type-graphql";
 import { container } from "tsyringe";
+import { Query } from "type-graphql";
 
 // Service import
 import { HealthCheckReadinessCheckService } from "@modules/healthCheck/services/healthCheckReadinessCheck.service";

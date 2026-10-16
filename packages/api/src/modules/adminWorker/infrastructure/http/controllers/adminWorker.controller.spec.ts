@@ -1,10 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
@@ -15,11 +11,15 @@ import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 // Schema import
 import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
+
 // Service import
+import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
 import { AdminWorkerIndexService } from "@modules/adminWorker/services/adminWorkerIndex.service";
 import { AdminWorkerShowService } from "@modules/adminWorker/services/adminWorkerShow.service";
 import { AdminWorkerUpdateService } from "@modules/adminWorker/services/adminWorkerUpdate.service";
-import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
 
 // Target import
 import { AdminWorkerController } from "./adminWorker.controller";
@@ -81,7 +81,8 @@ describe("Controller: AdminWorkerController", () => {
           archived: true,
           user_id: user.id,
           registration_token_id: worker.registration_token_id,
-          missing: true,
+          missing: "false",
+          internal_id: worker.internal_id,
         },
       }),
       response as unknown as Response,
@@ -92,6 +93,7 @@ describe("Controller: AdminWorkerController", () => {
     expect(request.filter).toBeInstanceOf(WorkerIndexSchema);
     expect({ ...request.filter }).toEqual({
       archived: true,
+      missing: false,
       user_id: user.id,
       registration_token_id: worker.registration_token_id,
     });

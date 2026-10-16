@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+// Util import
+import { runRouteQueryMiddlewares } from "@/test/utils/runRouteQueryMiddlewares.util";
+
+// Enum import
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// Router import
 import { adminWorkerRegistrationTokenRouter } from "./adminWorkerRegistrationToken.routes";
 
 // Target import
@@ -72,4 +79,35 @@ describe("Routes: adminWorker", () => {
 
     expect(mountIndex).toBeLessThan(parameterIndex);
   });
+
+  it("should let the page and sorting through the filter validation of the list route", async () => {
+    const outcome = await runRouteQueryMiddlewares(adminWorkerRouter, "/", {
+      skip: "2",
+      take: "3",
+      sort: JSON.stringify([{ field: "id", order: "asc" }]),
+    });
+
+    expect(outcome).toEqual({
+      pagination: { skip: 2, take: 3 },
+      sorting: [{ field: "id", order: SORT_ORDER.ASC }],
+    });
+  });
+
+  it.each([
+    ["archived=true", { archived: "true" }],
+    ["archived=false", { archived: "false" }],
+    ["missing=true", { missing: "true" }],
+    ["missing=false", { missing: "false" }],
+  ])(
+    "should read the boolean filter %s written in the query as a boolean",
+    async (_label, query) => {
+      const outcome = await runRouteQueryMiddlewares(
+        adminWorkerRouter,
+        "/",
+        query,
+      );
+
+      expect(outcome).toEqual({ pagination: {}, sorting: undefined });
+    },
+  );
 });

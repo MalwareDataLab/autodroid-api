@@ -3,12 +3,12 @@ import { Redis, RedisOptions } from "ioredis";
 // Configuration import
 import { getRedisConfig } from "@config/redis";
 
-// Util import
-import { logger } from "@shared/utils/logger";
-import { executeAction } from "@shared/utils/executeAction";
-
-// Interface import
+// Provider import
 import { InMemoryDatabaseProviderAdapter } from "../models/IInMemoryDatabase.provider";
+
+// Util import
+import { executeAction } from "@shared/utils/executeAction";
+import { logger } from "@shared/utils/logger";
 
 class RedisInMemoryDatabaseProvider implements InMemoryDatabaseProviderAdapter {
   private inMemoryDatabaseProvider: Redis;

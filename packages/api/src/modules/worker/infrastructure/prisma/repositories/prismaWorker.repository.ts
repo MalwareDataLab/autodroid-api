@@ -1,11 +1,5 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
-
-// Entity import
-import { Worker } from "@modules/worker/entities/worker.entity";
-
 // Provider import
 import {
   DatabaseHelperTypes,
@@ -13,9 +7,12 @@ import {
 } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Util import
-import { parse } from "@shared/utils/instanceParser";
 import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
+import { parse } from "@shared/utils/instanceParser";
+
+// Constant import
+import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
@@ -26,7 +23,10 @@ import {
   IUpdateWorkerDTO,
 } from "@modules/worker/types/IWorker.dto";
 
-// Interface import
+// Entity import
+import { Worker } from "@modules/worker/entities/worker.entity";
+
+// Repository import
 import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
 
 @injectable()

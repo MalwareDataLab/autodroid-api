@@ -7,7 +7,7 @@ import { generateHash } from "@shared/utils/generateHash";
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Test target import
+// Target import
 import { generateWorkerTokenPayload } from "./generateWorkerTokenPayload.util";
 
 describe("Utils: generateWorkerTokenPayload", () => {

@@ -1,8 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
@@ -10,12 +7,15 @@ import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJo
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
-// Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
-// Service import
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
+
+// Target import
 import { WorkerHandleProcessingFailureService } from "./workerHandleProcessingFailure.service";
 
 describe("Service: WorkerHandleProcessingFailureService", () => {

@@ -1,28 +1,30 @@
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-import { Factory } from "fishery";
 import { plainToInstance } from "class-transformer";
+import { Factory } from "fishery";
+import { container } from "tsyringe";
+
+// Util import
+import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
+import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
+import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
+
+// Type import
+import { FactoryParams } from "@/test/types/factoryParams.type";
+
+// Enum import
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+
+// DTO import
+import {
+  IProcessorBase,
+  ProcessorRelationFields,
+} from "@modules/processor/types/IProcessor.dto";
 
 // Entity import
 import { Processor } from "@modules/processor/entities/processor.entity";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
-
-// Type import
-import { FactoryParams } from "@/test/types/factoryParams.type";
-import {
-  IProcessorBase,
-  ProcessorRelationFields,
-} from "@modules/processor/types/IProcessor.dto";
-
-// Enum import
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-
-// Util import
-import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
-import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
-import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
 
 class ProcessorFactory extends Factory<Processor, FactoryParams> {
   static get repository() {

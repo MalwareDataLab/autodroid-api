@@ -1,5 +1,5 @@
-import { injectable, inject } from "tsyringe";
 import { DoneCallback, Job } from "bull";
+import { injectable, inject } from "tsyringe";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -7,11 +7,11 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IEmailNotificationProvider } from "@shared/container/providers/EmailNotificationProvider/models/IEmailNotification.provider";
 
-// Interface import
-import { ISendEmailNotificationDTO } from "@shared/container/providers/EmailNotificationProvider/types/IEmailNotification.dto";
+// Type import
 import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
 
 // DTO import
+import { ISendEmailNotificationDTO } from "@shared/container/providers/EmailNotificationProvider/types/IEmailNotification.dto";
 import {
   IJobOptionsDTO,
   IQueueOptionsDTO,

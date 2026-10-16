@@ -1,27 +1,27 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 // Factory import
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Guard import
+// Target import
 import { ProcessingGuard } from "./processing.guard";
 
 describe("Guard: ProcessingGuard", () => {

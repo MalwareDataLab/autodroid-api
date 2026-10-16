@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches:
@@ -10,40 +11,53 @@ on:
       - main
       - qa
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: package.json
-          cache: 'yarn'
+          cache: yarn
 
       - name: Bootstrap
         run: ./scripts/bootstrap.sh
 
-      - name: Check types
+      - name: Lint and check types
         run: yarn lint
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: package.json
-          cache: 'yarn'
+          cache: yarn
 
       - name: Bootstrap
         run: ./scripts/bootstrap.sh
@@ -51,31 +65,56 @@ jobs:
       - name: Run build
         run: yarn build
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
+  docker:
+    name: Docker image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build image (not pushed)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: package.json
-          cache: 'yarn'
+          cache: yarn
 
       - name: Bootstrap
         run: ./scripts/bootstrap.sh
 
-      - name: Parse secrets data dotenv syntax as .env file
-        id: parse-secrets
-        uses: luizfelipelaviola/parse-plain-dotenv@v1
-        with:
-          data: ${{ secrets.TEST_ENV }}
-          parse-env: false
-          write-env-file: true
-          env-file-path: .env.test
+      - name: Install Playwright browser
+        run: yarn workspace autodroid-api run playwright install --with-deps chromium
+
+      - name: Write test environment file
+        env:
+          TEST_ENV: ${{ secrets.TEST_ENV }}
+        run: printf '%s' "$TEST_ENV" > packages/api/.env.test
 
       - name: Run tests
         run: yarn test --bail 1

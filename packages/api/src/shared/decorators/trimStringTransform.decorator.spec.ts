@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
 import { plainToInstance } from "class-transformer";
+import { describe, expect, it } from "vitest";
 
-// Decorator import
+// Target import
 import { TrimStringTransform } from "./trimStringTransform.decorator";
 
 const buildClass = (apply: (target: object, key: string) => void) => {

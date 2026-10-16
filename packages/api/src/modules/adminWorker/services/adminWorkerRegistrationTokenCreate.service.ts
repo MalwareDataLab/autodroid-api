@@ -3,15 +3,15 @@ import { inject, injectable } from "tsyringe";
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@shared/container/repositories";
-
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
 
 // Schema import
 import { WorkerRegistrationTokenCreateSchema } from "@modules/worker/schemas/workerRegistrationToken.schema";
+
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@shared/container/repositories";
 
 // Service import
 import { WorkerRegistrationTokenGenerateService } from "@modules/worker/services/workerRegistrationTokenGenerate.service";

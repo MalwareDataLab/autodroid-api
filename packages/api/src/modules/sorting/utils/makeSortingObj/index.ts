@@ -1,7 +1,11 @@
+// Error import
+import { AppError } from "@shared/errors/AppError";
+
+// Util import
+import { isValidSortingField } from "../isValidSortingField";
+
 // DTO import
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
-import { AppError } from "@shared/errors/AppError";
-import { isValidSortingField } from "../isValidSortingField";
 
 export type SortingOrder = "asc" | "desc";
 
@@ -83,7 +87,9 @@ export const makeSortingObj = <T extends readonly string[]>(
 
   orderBy = {
     ...orderBy,
-    ...common,
+    ...Object.fromEntries(
+      Object.entries(common).filter(([field]) => !(field in orderBy)),
+    ),
   };
 
   return orderBy;

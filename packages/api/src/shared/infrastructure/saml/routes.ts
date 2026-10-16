@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction, Router } from "express";
 
-// Type import
+// Error import
 import { AppError } from "@shared/errors/AppError";
+
+// Type import
 import { AuthenticatedRequest } from "./types";
 
 // Strategy import

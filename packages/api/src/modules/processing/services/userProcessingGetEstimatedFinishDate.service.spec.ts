@@ -1,26 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mock, MockProxy } from "vitest-mock-extended";
 
-// Config import
+// Configuration import
 import { getProcessingConfig } from "@config/processing";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 import {
   IDatasetRepository,
   IProcessorRepository,
 } from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Target import
 import { UserProcessingGetEstimatedFinishDateService } from "./userProcessingGetEstimatedFinishDate.service";

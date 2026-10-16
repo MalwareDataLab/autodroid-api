@@ -1,12 +1,12 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 describe("E2E: UserDatasetPublicationController", () => {
   it("should request publication of a user dataset", async context => {

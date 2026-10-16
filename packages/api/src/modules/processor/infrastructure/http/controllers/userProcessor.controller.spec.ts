@@ -1,16 +1,16 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// Factory import
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Service import
 import { UserProcessorIndexService } from "@modules/processor/services/userProcessorIndex.service";

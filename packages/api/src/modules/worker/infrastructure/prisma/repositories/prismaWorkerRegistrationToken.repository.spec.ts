@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Constant import
 import { WorkerRegistrationTokenSortingOptions } from "@modules/worker/constants/workerRegistrationTokenSortingOptions.constant";
@@ -12,8 +12,8 @@ import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 // DTO import
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Factory import
+import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
 // Target import
 import { PrismaWorkerRegistrationTokenRepository } from "./prismaWorkerRegistrationToken.repository";

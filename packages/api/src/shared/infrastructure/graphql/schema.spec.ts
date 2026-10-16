@@ -1,12 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { buildSchemaSync } from "type-graphql";
 import { GraphQLObjectType, validateSchema } from "graphql";
+import { buildSchemaSync } from "type-graphql";
+import { describe, expect, it } from "vitest";
 
-// Resolver import
-import { resolvers } from "./resolvers";
-
-// Helper import
+// Infrastructure import
 import { authenticationHandler } from "./authentication";
+import { resolvers } from "./resolvers";
 import { validationHandler } from "./validation";
 
 const schema = buildSchemaSync({
@@ -69,6 +67,15 @@ describe("GraphQL: schema", () => {
     expect(fieldNames(processing)).toEqual(
       expect.arrayContaining(["id", "status", "dataset", "processor"]),
     );
+  });
+
+  it("should type the dataset and processing owners as a nullable user", () => {
+    const owners = ["Dataset", "Processing"].map(
+      typeName =>
+        (schema.getType(typeName) as GraphQLObjectType).getFields().user.type,
+    );
+
+    expect(owners.map(String)).toEqual(["User", "User"]);
   });
 
   it("should keep every query and mutation uniquely named", () => {

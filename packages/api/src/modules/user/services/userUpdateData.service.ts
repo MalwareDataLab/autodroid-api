@@ -6,19 +6,21 @@ import { i18n } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Util import
-import { isValidLanguage } from "@shared/utils/isValidLanguage";
-
 // Provider import
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
+
+// Util import
+import { isValidLanguage } from "@shared/utils/isValidLanguage";
 
 // Entity import
 import { User } from "../entities/user.entity";
 
+// Schema import
+import { UserUpdateDataSchema } from "../schemas/userUpdateData.schema";
+
 // Repository import
 import { IUserRepository } from "../repositories/IUser.repository";
 import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
-import { UserUpdateDataSchema } from "../schemas/userUpdateData.schema";
 
 interface IRequest {
   user: User;

@@ -1,5 +1,5 @@
-import { Arg, Authorized, Ctx, Mutation } from "type-graphql";
 import { container } from "tsyringe";
+import { Arg, Authorized, Ctx, Mutation } from "type-graphql";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
@@ -11,10 +11,10 @@ import { File } from "@modules/file/entities/file.entity";
 import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestFileUploadSignedUrl.schema";
 
 // Service import
-import { WorkerHandleProcessingResultUploadFileService } from "@modules/worker/services/workerHandleProcessingResultUploadFile.service";
-import { WorkerHandleProcessingMetricsUploadFileService } from "@modules/worker/services/workerHandleProcessingMetricsUploadFile.service";
-import { WorkerGenerateProcessingResultUploadFileService } from "@modules/worker/services/workerGenerateProcessingResultUploadFile.service";
 import { WorkerGenerateProcessingMetricsUploadFileService } from "@modules/worker/services/workerGenerateProcessingMetricsUploadFile.service";
+import { WorkerGenerateProcessingResultUploadFileService } from "@modules/worker/services/workerGenerateProcessingResultUploadFile.service";
+import { WorkerHandleProcessingMetricsUploadFileService } from "@modules/worker/services/workerHandleProcessingMetricsUploadFile.service";
+import { WorkerHandleProcessingResultUploadFileService } from "@modules/worker/services/workerHandleProcessingResultUploadFile.service";
 
 class WorkerProcessingFileResolver {
   @Authorized(["WORKER"])

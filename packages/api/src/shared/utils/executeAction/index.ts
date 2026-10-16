@@ -2,8 +2,8 @@
 import { getEnvConfig } from "@config/env";
 
 // Util import
-import { sleep } from "@shared/utils/sleep";
 import { logger } from "@shared/utils/logger";
+import { sleep } from "@shared/utils/sleep";
 
 interface IParams {
   actionName: string;

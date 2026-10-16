@@ -1,29 +1,31 @@
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-import { Factory } from "fishery";
 import { plainToInstance } from "class-transformer";
-
-// Entity import
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-
-// Type import
-import { FactoryParams } from "@/test/types/factoryParams.type";
-import {
-  DatasetRelationFields,
-  IDatasetBase,
-} from "@modules/dataset/types/IDataset.dto";
-
-// Enum import
-import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+import { Factory } from "fishery";
+import { container } from "tsyringe";
 
 // Util import
 import { generateEntityBaseData } from "@/test/utils/generateEntityBaseData.util";
 import { getBaseFactoryEntityData } from "@/test/utils/getBaseFactoryEntityData.util";
 import { loadEntityRelations } from "@/test/utils/loadEntityRelations.util";
+
+// Type import
+import { FactoryParams } from "@/test/types/factoryParams.type";
+
+// Enum import
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+
+// DTO import
+import {
+  DatasetRelationFields,
+  IDatasetBase,
+} from "@modules/dataset/types/IDataset.dto";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 class DatasetFactory extends Factory<Dataset, FactoryParams> {
   static get repository() {

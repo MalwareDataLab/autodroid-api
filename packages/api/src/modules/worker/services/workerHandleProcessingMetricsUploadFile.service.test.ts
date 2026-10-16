@@ -1,9 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { describe, expect, it, vi } from "vitest";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
@@ -12,12 +9,15 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
 
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
+
 // Factory import
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { workerFactory } from "../entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerHandleProcessingMetricsUploadFileService } from "./workerHandleProcessingMetricsUploadFile.service";
 
 describe("Service: WorkerHandleProcessingMetricsUploadFileService", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-// Middleware import
+// Target import
 import { ensureSamlAuthenticated } from "./middlewares";
 
 describe("Middleware: ensureSamlAuthenticated", () => {

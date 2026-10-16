@@ -1,25 +1,25 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Util import
 import { generateToken } from "@shared/utils/generateToken";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
-
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// DTO import
+import { ICreateWorkerRegistrationTokenDTO } from "@modules/worker/types/IWorkerRegistrationToken.dto";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
-
-// DTO import
-import { ICreateWorkerRegistrationTokenDTO } from "@modules/worker/types/IWorkerRegistrationToken.dto";
 
 describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
   let repository: IWorkerRegistrationTokenRepository;

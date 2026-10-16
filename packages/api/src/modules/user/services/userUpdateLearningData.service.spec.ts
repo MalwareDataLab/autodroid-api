@@ -6,7 +6,7 @@ import { IUserRepository } from "../repositories/IUser.repository";
 // Factory import
 import { userFactory } from "../entities/factories/user.factory";
 
-// Service import
+// Target import
 import { UserUpdateLearningDataService } from "./userUpdateLearningData.service";
 
 describe("Service: UserUpdateLearningDataService", () => {

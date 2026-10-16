@@ -1,11 +1,11 @@
 import geo from "geoip-lite";
 
+// Provider import
+import { IUserAgentInfoProvider } from "../models/IUserAgentInfo.provider";
+
 // DTO import
 import { IAgentInfoDTO } from "../types/IAgentInfo.dto";
 import { IParsedUserAgentInfoDTO } from "../types/IParsedUserAgentInfo.dto";
-
-// Provider import
-import { IUserAgentInfoProvider } from "../models/IUserAgentInfo.provider";
 
 class GeoLookupUserAgentInfoProvider implements IUserAgentInfoProvider {
   public readonly initialization: Promise<void>;

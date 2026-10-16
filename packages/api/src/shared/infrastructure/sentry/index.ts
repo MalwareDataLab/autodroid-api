@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
-// Config import
+// Configuration import
 import { getSentryConfig } from "@config/sentry";
 
 Sentry.init({

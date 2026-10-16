@@ -11,33 +11,33 @@ import {
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Enum import
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 
-// Enum import
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
-
 // Schema import
+import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
-import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Service import
+// Target import
 import { UserRequestDatasetProcessingService } from "./userRequestDatasetProcessing.service";
 
 describe("Service: UserRequestDatasetProcessingService", () => {

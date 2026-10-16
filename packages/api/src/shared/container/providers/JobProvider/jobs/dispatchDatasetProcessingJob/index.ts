@@ -1,23 +1,23 @@
-import { injectable, container } from "tsyringe";
 import { DoneCallback, Job } from "bull";
+import { injectable, container } from "tsyringe";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Interface import
-import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
-
 // Provider import
 import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
 
-// Service import
-import { ProcessingHandleFailureService } from "@modules/processing/services/processingHandleFailure.service";
+// Type import
+import { IJob } from "@shared/container/providers/JobProvider/types/IJob";
 
 // DTO import
 import {
   IJobOptionsDTO,
   IQueueOptionsDTO,
 } from "../../types/IAddJobOptions.dto";
+
+// Service import
+import { ProcessingHandleFailureService } from "@modules/processing/services/processingHandleFailure.service";
 
 type IDispatchDatasetProcessingJob = {
   processing_ids: string[];

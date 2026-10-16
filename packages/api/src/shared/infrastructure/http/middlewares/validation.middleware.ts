@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
-import { validateOrReject, ValidationError } from "class-validator";
 import { ClassConstructor, plainToInstance } from "class-transformer";
+import { validateOrReject, ValidationError } from "class-validator";
+import { NextFunction, Request, Response } from "express";
 
 // i18n import
 import { TFunction } from "@shared/i18n";
@@ -70,11 +70,21 @@ async function validateSchema<T extends object>(params: {
 function validationMiddleware<T extends object>(params: {
   schema: ClassConstructor<T>;
   segment: keyof typeof Segments;
+  ignoreKeys?: readonly string[];
 }) {
+  const { ignoreKeys } = params;
+
   return async (req: Request, res: Response, next: NextFunction) => {
+    const segment = req[Segments[params.segment]];
     try {
       await validateSchema({
-        value: req[Segments[params.segment]],
+        value: ignoreKeys
+          ? Object.fromEntries(
+              Object.entries(segment).filter(
+                ([key]) => !ignoreKeys.includes(key),
+              ),
+            )
+          : segment,
         t: req.t,
         schema: params.schema,
       });

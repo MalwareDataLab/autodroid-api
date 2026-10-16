@@ -9,18 +9,18 @@ import { AppError } from "@shared/errors/AppError";
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-
-// Helper import
+// Util import
 import { isValidCommaSeparatedString } from "@shared/utils/isValidCommaSeparatedString";
 
-// Repository import
-import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { User } from "@modules/user/entities/user.entity";
 
 // Schema import
 import { AdminDatasetUpdateSchema } from "../schemas/adminDataset.schema";
+
+// Repository import
+import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
 interface IRequest {
   dataset_id: string;
@@ -60,18 +60,18 @@ class AdminDatasetUpdateService {
 
     if (!!data.description && typeof data.description !== "string")
       throw new AppError({
-        key: "@dataset_create_service/INVALID_DESCRIPTION",
+        key: "@admin_dataset_update_service/INVALID_DESCRIPTION",
         message: t(
-          "@dataset_create_service/INVALID_DESCRIPTION",
+          "@admin_dataset_update_service/INVALID_DESCRIPTION",
           "Invalid description.",
         ),
       });
 
     if (!!data.tags && !isValidCommaSeparatedString(data.tags))
       throw new AppError({
-        key: "@dataset_create_service/TAGS_NOT_PROVIDED",
+        key: "@admin_dataset_update_service/TAGS_NOT_PROVIDED",
         message: t(
-          "@dataset_create_service/TAGS_NOT_PROVIDED",
+          "@admin_dataset_update_service/TAGS_NOT_PROVIDED",
           "Tags must be a comma-separated list.",
         ),
       });

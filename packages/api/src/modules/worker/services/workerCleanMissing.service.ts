@@ -4,8 +4,8 @@ import { inject, injectable } from "tsyringe";
 import { AppError } from "@shared/errors/AppError";
 
 // Util import
-import { logger } from "@shared/utils/logger";
 import { DateUtils } from "@shared/utils/dateUtils";
+import { logger } from "@shared/utils/logger";
 
 // Repository import
 import { IWorkerRepository } from "../repositories/IWorker.repository";

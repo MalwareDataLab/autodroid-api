@@ -1,11 +1,12 @@
-import { Args, Ctx, Mutation } from "type-graphql";
 import { container } from "tsyringe";
+import { Args, Ctx, Mutation } from "type-graphql";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
 // Entity import
 import { Worker } from "@modules/worker/entities/worker.entity";
+import { WorkerAccessToken } from "@modules/worker/entities/workerAccessToken.entity";
 
 // Schema import
 import {
@@ -14,10 +15,9 @@ import {
 } from "@modules/worker/schemas/worker.schema";
 
 // Service import
+import { WorkerGenerateAccessTokenService } from "@modules/worker/services/workerGenerateAccessToken.service";
 import { WorkerRegisterService } from "@modules/worker/services/workerRegister.service";
 import { WorkerUpdateRefreshTokenService } from "@modules/worker/services/workerUpdateRefreshToken.service";
-import { WorkerGenerateAccessTokenService } from "@modules/worker/services/workerGenerateAccessToken.service";
-import { WorkerAccessToken } from "@modules/worker/entities/workerAccessToken.entity";
 
 class WorkerRegistrationResolver {
   @Mutation(() => Worker)

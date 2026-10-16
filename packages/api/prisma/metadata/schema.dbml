@@ -19,6 +19,7 @@ Table users {
   datasets datasets [not null]
   processors processors [not null]
   processes processes [not null]
+  mcp_authorization_grants mcp_authorization_grants [not null]
 }
 
 Table user_auth_provider_conns {
@@ -165,6 +166,27 @@ Table processes {
   updated_at DateTime [not null]
 }
 
+Table mcp_authorization_grants {
+  id String [pk]
+  seq BigInt [increment, unique, not null]
+  user_id String [not null]
+  user users [not null]
+  client_id String [not null]
+  client_name String
+  resource String [not null]
+  scopes String[] [not null]
+  token_generation Int [not null, default: 0]
+  expires_at DateTime [not null]
+  revoked_at DateTime
+  last_used_at DateTime
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+
+  indexes {
+    (user_id, client_id, resource) [unique]
+  }
+}
+
 Ref: user_auth_provider_conns.user_id > users.id [delete: Cascade]
 
 Ref: datasets.user_id > users.id [delete: Cascade]
@@ -190,3 +212,5 @@ Ref: processes.worker_id > workers.id [delete: Set Null]
 Ref: processes.result_file_id > files.id [delete: Set Null]
 
 Ref: processes.metrics_file_id > files.id [delete: Set Null]
+
+Ref: mcp_authorization_grants.user_id > users.id [delete: Cascade]

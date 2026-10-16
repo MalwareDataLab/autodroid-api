@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Provider import
+// Target import
 import { SocketIoWebsocketProvider } from "./SocketIoWebsocket.provider";
 
 const { getBusMock, getServerMock, busMock, serverMock, emitMock } = vi.hoisted(

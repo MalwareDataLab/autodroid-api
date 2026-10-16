@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Repository import
 import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
 
-// Service import
+// Factory import
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessorShowService } from "./adminProcessorShow.service";
 
 describe("Service: AdminProcessorShowService", () => {

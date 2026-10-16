@@ -1,4 +1,4 @@
-// Config import
+// Configuration import
 import { getEnvConfig } from "@config/env";
 
 const getFirebaseTestCredentials = (kind: "USER" | "ADMIN") => {

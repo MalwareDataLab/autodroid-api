@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
+
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
-
-// Service import
+// Target import
 import { AdminWorkerRegistrationTokenCreateService } from "./adminWorkerRegistrationTokenCreate.service";
 
 describe("Service: AdminWorkerRegistrationTokenCreateService", () => {

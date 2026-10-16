@@ -1,9 +1,9 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Factory import
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 
 const makeProcessorBody = () => ({
   name: faker.system.fileName(),

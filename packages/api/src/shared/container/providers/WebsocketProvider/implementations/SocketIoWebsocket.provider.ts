@@ -1,20 +1,18 @@
+// Provider import
+import { IWebsocketProvider } from "../models/IWebsocket.provider";
+
 // Type import
 import {
   ServerToClientEvents,
   WebsocketServer,
 } from "@shared/infrastructure/websocket/types";
 
-// Websocket adapter import
+// Adapter import
 import { WebsocketAdapter } from "@shared/infrastructure/websocket/adapter";
-
-// Type import
 import type {
   WebsocketAdapterBus,
   WebsocketAdapterEvents,
 } from "@shared/infrastructure/websocket/adapter";
-
-// Interface import
-import { IWebsocketProvider } from "../models/IWebsocket.provider";
 
 class SocketIoWebsocketProvider implements IWebsocketProvider {
   public readonly initialization: Promise<void>;

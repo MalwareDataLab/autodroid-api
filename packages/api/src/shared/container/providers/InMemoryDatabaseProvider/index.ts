@@ -1,10 +1,7 @@
-// Provider import
 import { Redis, RedisOptions } from "ioredis";
 
-// Implementation import
+// Provider import
 import { RedisInMemoryDatabaseProvider } from "./implementations/redisInMemoryDatabase.provider";
-
-// Type import
 import {
   IInMemoryDatabaseProvider,
   InMemoryDatabaseProviderAdapter,

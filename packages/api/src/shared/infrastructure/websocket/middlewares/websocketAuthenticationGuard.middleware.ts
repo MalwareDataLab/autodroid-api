@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { Socket } from "socket.io";
 
+// Error import
+import { WebsocketUnauthorizedError } from "../errors/WebsocketUnauthorized.error";
+
 // Type import
 import {
   ClientToServerEvents,
@@ -8,7 +11,6 @@ import {
   InterServerEvents,
   SocketData,
 } from "@shared/infrastructure/websocket/types";
-import { WebsocketUnauthorizedError } from "../errors/WebsocketUnauthorized.error";
 
 export const websocketAuthenticationGuardMiddleware = async (
   socket: Socket<

@@ -1,19 +1,19 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
-// Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
 
-// Service import
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
+
+// Target import
 import { WorkerHandleProcessingProgressService } from "./workerHandleProcessingProgress.service";
 
 describe("Service: WorkerHandleProcessingProgressService", () => {

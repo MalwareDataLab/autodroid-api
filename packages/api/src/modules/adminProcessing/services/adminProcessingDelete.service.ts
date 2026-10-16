@@ -6,18 +6,18 @@ import { i18n } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Decorator import
-import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
-
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
+// Decorator import
+import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
+
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 interface IRequest {
   processing_id: string;

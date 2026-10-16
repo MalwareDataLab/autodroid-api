@@ -1,17 +1,19 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Factory import
+// Entity import
 import { User } from "@modules/user/entities/user.entity";
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 
 // Repository import
 import { IProcessorRepository } from "@shared/container/repositories";
 
-// Service import
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessorDeleteService } from "./adminProcessorDelete.service";
 
 describe("Service: AdminProcessorDeleteService", () => {

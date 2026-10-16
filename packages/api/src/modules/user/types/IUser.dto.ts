@@ -12,7 +12,8 @@ export type UserRelationFields =
   | "processors"
   | "worker_registration_tokens"
   | "workers"
-  | "processes";
+  | "processes"
+  | "mcp_authorization_grants";
 
 export type IUserBase = Omit<User, UserComputedFields | UserRelationFields>;
 

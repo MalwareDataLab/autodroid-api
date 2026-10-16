@@ -1,4 +1,4 @@
-// Interface import
+// Provider import
 import { GoogleStorageProvider } from "./implementations/google/googleStorage.provider";
 
 const providers = {

@@ -9,11 +9,11 @@ import { AppError } from "@shared/errors/AppError";
 // Entity import
 import { User } from "../entities/user.entity";
 
-// Repository import
-import { IUserRepository } from "../repositories/IUser.repository";
-
 // Schema import
 import { UserUpdateLearningDataSchema } from "../schemas/userUpdateData.schema";
+
+// Repository import
+import { IUserRepository } from "../repositories/IUser.repository";
 
 interface IRequest {
   user: User;

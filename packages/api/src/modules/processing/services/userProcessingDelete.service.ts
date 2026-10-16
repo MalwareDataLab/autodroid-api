@@ -6,19 +6,19 @@ import { AppError } from "@shared/errors/AppError";
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Guard import
+import { ProcessingGuard } from "../guards/processing.guard";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Processing } from "../entities/processing.entity";
 
-// Guard import
-import { ProcessingGuard } from "../guards/processing.guard";
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 interface IRequest {
   user: User;

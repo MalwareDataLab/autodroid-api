@@ -1,26 +1,51 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
+
 // Service import
-import { WorkerProcessingShowService } from "@modules/worker/services/workerProcessingShow.service";
-import { WorkerHandleProcessingSuccessService } from "@modules/worker/services/workerHandleProcessingSuccess.service";
 import { WorkerHandleProcessingFailureService } from "@modules/worker/services/workerHandleProcessingFailure.service";
 import { WorkerHandleProcessingProgressService } from "@modules/worker/services/workerHandleProcessingProgress.service";
+import { WorkerHandleProcessingSuccessService } from "@modules/worker/services/workerHandleProcessingSuccess.service";
+import { WorkerProcessingShowService } from "@modules/worker/services/workerProcessingShow.service";
 
 // Target import
 import { WorkerProcessingController } from "./workerProcessing.controller";
 
 describe("Controller: WorkerProcessingController", () => {
   const worker = workerFactory.build();
-  const processing = processingFactory.build();
+  const processing = processingFactory.build(
+    {},
+    {
+      associations: {
+        user: userFactory.build(),
+        dataset: datasetFactory.build(
+          {},
+          { associations: { user: userFactory.build() } },
+        ),
+      },
+    },
+  );
+  const processingWithHiddenOwners = Object.assign(
+    new Processing(),
+    processing,
+    {
+      user: null,
+      dataset: Object.assign(new Dataset(), processing.dataset, { user: null }),
+    },
+  );
 
   let workerProcessingShowService: { execute: ReturnType<typeof vi.fn> };
   let workerHandleProcessingProgressService: {
@@ -80,7 +105,9 @@ describe("Controller: WorkerProcessingController", () => {
       worker,
       processing_id: processing.id,
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithHiddenOwners),
+    );
     expect(result).toBe(response);
   });
 
@@ -111,7 +138,9 @@ describe("Controller: WorkerProcessingController", () => {
       worker,
       processing_id: processing.id,
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithHiddenOwners),
+    );
     expect(result).toBe(response);
   });
 
@@ -141,7 +170,9 @@ describe("Controller: WorkerProcessingController", () => {
       worker,
       processing_id: processing.id,
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithHiddenOwners),
+    );
     expect(result).toBe(response);
   });
 
@@ -173,7 +204,9 @@ describe("Controller: WorkerProcessingController", () => {
       processing_id: processing.id,
       data: body,
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithHiddenOwners),
+    );
     expect(result).toBe(response);
   });
 

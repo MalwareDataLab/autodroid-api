@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": "v22.17.1"
+    "node": "^24.21.0"
   },
   "workspaces": [
     "packages/*"
@@ -24,9 +24,7 @@
     "test": "yarn workspaces run test",
     "build": "yarn workspace autodroid-api run build",
     "changelog": "commit-and-tag-version --skip.bump --skip.commit --skip.tag -i ./docs/CHANGELOG.md",
-    "prepare": "husky",
-    "cli": "yarn workspace autodroid-cli run dev",
-    "mcp": "yarn workspace autodroid-mcp run dev"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",

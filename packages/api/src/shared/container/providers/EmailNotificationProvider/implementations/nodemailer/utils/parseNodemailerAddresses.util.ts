@@ -1,4 +1,4 @@
-// Type import
+// DTO import
 import { IEmailRecipientDTO } from "../../../types/IEmailNotification.dto";
 
 const parseNodemailerAddresses = (recipients?: IEmailRecipientDTO[]) =>

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Constant import
 import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
@@ -13,8 +13,8 @@ import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 // DTO import
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Factory import
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 
 // Target import
 import { PrismaProcessorRepository } from "./prismaProcessor.repository";
@@ -92,7 +92,7 @@ describe("Repository: PrismaProcessorRepository", () => {
       orderBy: defaultOrderBy,
       cursor: undefined,
       skip: 0,
-      take: undefined,
+      take: 1,
     });
     expect(result).toEqual(expect.objectContaining({ id: processor.id }));
   });

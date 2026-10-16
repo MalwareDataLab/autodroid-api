@@ -1,31 +1,31 @@
-import { describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { describe, expect, it, vi } from "vitest";
 
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Enum import
+import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
-import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-
-// Schema import
-import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestFileUploadSignedUrl.schema";
 
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
 
+// Schema import
+import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestFileUploadSignedUrl.schema";
+
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
+
 // Factory import
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { workerFactory } from "../entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { WorkerGenerateProcessingMetricsUploadFileService } from "./workerGenerateProcessingMetricsUploadFile.service";
 
 describe("Service: WorkerGenerateProcessingMetricsUploadFileService", () => {

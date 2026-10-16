@@ -1,13 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Service import
 import { UserProcessingExtendKeepUntilService } from "@modules/processing/services/userProcessingExtendKeepUntil.service";
@@ -17,7 +22,26 @@ import { UserProcessingExtendKeepUntilController } from "./userProcessingExtendK
 
 describe("Controller: UserProcessingExtendKeepUntilController", () => {
   const user = userFactory.build();
-  const processing = processingFactory.build();
+  const otherUser = userFactory.build();
+  const processing = processingFactory.build(
+    {},
+    {
+      associations: {
+        user,
+        dataset: datasetFactory.build(
+          {},
+          { associations: { user: otherUser } },
+        ),
+      },
+    },
+  );
+  const processingWithVisibleOwners = Object.assign(
+    new Processing(),
+    processing,
+    {
+      dataset: Object.assign(new Dataset(), processing.dataset, { user: null }),
+    },
+  );
 
   let userProcessingExtendKeepUntilService: {
     execute: ReturnType<typeof vi.fn>;
@@ -71,7 +95,9 @@ describe("Controller: UserProcessingExtendKeepUntilController", () => {
       user,
       language: "en",
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithVisibleOwners),
+    );
     expect(result).toBe(response);
   });
 

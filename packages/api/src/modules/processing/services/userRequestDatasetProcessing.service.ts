@@ -1,41 +1,41 @@
 import { inject, injectable } from "tsyringe";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // Configuration import
 import { getProcessingConfig } from "@config/processing";
+
+// Error import
+import { AppError } from "@shared/errors/AppError";
 
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
+// Guard import
+import { ProcessingGuard } from "../guards/processing.guard";
+
+// Util import
+import { validateAndParseProcessingParameters } from "@modules/processing/utils/validateAndParseProcessingParameters.util";
+import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
+import { DateUtils } from "@shared/utils/dateUtils";
+
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
+import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { User } from "@modules/user/entities/user.entity";
+import { Processing } from "../entities/processing.entity";
+
+// Schema import
+import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
+
 // Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 import {
   IDatasetRepository,
   IProcessorRepository,
 } from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
-// Enum import
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-
-// Util import
-import { DateUtils } from "@shared/utils/dateUtils";
-import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
-import { validateAndParseProcessingParameters } from "@modules/processing/utils/validateAndParseProcessingParameters.util";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { File } from "@modules/file/entities/file.entity";
-import { Processing } from "../entities/processing.entity";
-
-// Guard import
-import { ProcessingGuard } from "../guards/processing.guard";
-
-// Schema import
-import { RequestDatasetProcessingSchema } from "../schemas/requestDatasetProcessing.schema";
 
 interface IRequest {
   user: User;

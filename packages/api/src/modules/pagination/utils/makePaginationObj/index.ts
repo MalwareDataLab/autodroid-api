@@ -1,23 +1,43 @@
+// Error import
+import { AppError } from "@shared/errors/AppError";
+
+// Util import
+import { makeCursorObjFromEntity } from "../makeCursorObjFromEntity";
+
+// Constant import
+import { TAKE_DEFAULT } from "@modules/pagination/constants/paginationLimit.constant";
+
 // DTO import
 import {
   IProcessedPaginationDTO,
   IPaginationDTO,
 } from "@modules/pagination/types/IPagination.dto";
+
+// Scalar import
 import { isCursor } from "@modules/pagination/types/paginationConnectionCursor.scalar";
 
-// Util import
-import { makeCursorObjFromEntity } from "../makeCursorObjFromEntity";
+const invalidPagination = (message: string) =>
+  new AppError({
+    key: "@pagination/INVALID_PAGINATION",
+    message,
+    statusCode: 400,
+  });
 
 const makePaginationObj = (
   paginationSchema?: IPaginationDTO,
 ): IProcessedPaginationDTO => {
+  if (!paginationSchema)
+    return {
+      cursor: undefined,
+      skip: 0,
+      take: undefined,
+    };
+
   const defaultPagination = {
     cursor: undefined,
     skip: 0,
-    take: undefined,
+    take: TAKE_DEFAULT,
   };
-
-  if (!paginationSchema) return defaultPagination;
 
   const {
     /** Before cursor pagination */
@@ -40,13 +60,13 @@ const makePaginationObj = (
     (!!after || !!first || typeof first === "number") &&
     (!!skip || typeof skip === "number" || !!take || typeof take === "number")
   )
-    throw new Error("Cannot mix pagination strategies.");
+    throw invalidPagination("Cannot mix pagination strategies.");
 
   if (before) {
-    if (!isCursor(before)) throw new Error("Cursor is not valid.");
+    if (!isCursor(before)) throw invalidPagination("Cursor is not valid.");
 
     if (!last || typeof last !== "number" || last < 1)
-      throw new Error("Cannot use before without last.");
+      throw invalidPagination("Cannot use before without last.");
 
     return {
       cursor: makeCursorObjFromEntity(before),
@@ -56,10 +76,10 @@ const makePaginationObj = (
   }
 
   if (after) {
-    if (!isCursor(after)) throw new Error("Cursor is not valid.");
+    if (!isCursor(after)) throw invalidPagination("Cursor is not valid.");
 
     if (!first || typeof first !== "number" || first < 1)
-      throw new Error("Cannot use after without first.");
+      throw invalidPagination("Cannot use after without first.");
 
     return {
       cursor: makeCursorObjFromEntity(after),
@@ -69,20 +89,20 @@ const makePaginationObj = (
   }
 
   if (typeof skip === "number") {
-    if (skip < 0) throw new Error("Cannot use negative numbers for skip.");
+    if (skip < 0)
+      throw invalidPagination("Cannot use negative numbers for skip.");
 
-    // Allow server created queries like just { skip: 0 }
-    if (take !== undefined && typeof take !== "number")
-      throw new Error("Take should be a number");
+    if (take !== undefined && take !== null && typeof take !== "number")
+      throw invalidPagination("Take should be a number");
 
     return {
       cursor: undefined,
       skip,
-      take,
+      take: take ?? TAKE_DEFAULT,
     };
   }
 
-  throw new Error("Invalid pagination strategy.");
+  throw invalidPagination("Invalid pagination strategy.");
 };
 
 export { makePaginationObj };

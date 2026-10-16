@@ -1,9 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
@@ -11,7 +7,11 @@ import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enu
 // Repository import
 import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
-// Service import
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminDatasetUpdateVisibilityService } from "./adminDatasetUpdateVisibility.service";
 
 describe("Service: AdminDatasetUpdateVisibilityService", () => {

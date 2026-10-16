@@ -1,20 +1,20 @@
-import { Arg, Args, Authorized, Ctx, Query } from "type-graphql";
 import { container } from "tsyringe";
+import { Arg, Args, Authorized, Ctx, Query } from "type-graphql";
 
-// Constant import
-import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
 // Decorator import
 import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
+
+// Constant import
+import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
 
 // Entity import
 import {
   Processor,
   PaginatedProcessor,
 } from "@modules/processor/entities/processor.entity";
-
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
 // Schema import
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
@@ -50,7 +50,8 @@ class UserProcessorResolver {
   @Authorized()
   @Query(() => Processor)
   async userProcessor(
-    @Arg("processor_id") processor_id: string,
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
 
     @Ctx() { user_session, language }: GraphQLContext,
   ): Promise<Processor> {

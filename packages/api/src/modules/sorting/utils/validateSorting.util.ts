@@ -1,5 +1,5 @@
-import { GraphQLError } from "graphql";
 import { ApolloServerErrorCode } from "@apollo/server/errors";
+import { GraphQLError } from "graphql";
 
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
@@ -96,4 +96,4 @@ const validateSorting = <T>({
   }
 };
 
-export { validateSorting };
+export { MAX_SORTING_ARGS, validateSorting };

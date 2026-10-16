@@ -1,12 +1,12 @@
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-
 // DTO import
 import {
   ICreateFileDTO,
   IFindFileDTO,
   IUpdateFileDTO,
 } from "../types/IFile.dto";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
 
 export interface IFileRepository {
   createOne(data: ICreateFileDTO): Promise<File>;

@@ -1,13 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Constant import
 import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
@@ -16,8 +13,11 @@ import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 // DTO import
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 
 // Target import
 import { PrismaDatasetRepository } from "./prismaDataset.repository";

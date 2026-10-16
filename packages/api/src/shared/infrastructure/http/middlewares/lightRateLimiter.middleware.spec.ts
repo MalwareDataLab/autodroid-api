@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Middleware import
+// Target import
 import { lightRateLimiterMiddleware } from "./lightRateLimiter.middleware";
 
 const { consumeMock } = vi.hoisted(() => ({ consumeMock: vi.fn() }));

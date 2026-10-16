@@ -1,10 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
@@ -12,18 +8,46 @@ import { process } from "@shared/utils/instanceParser";
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
 // Service import
-import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
+import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";
 import { UserProcessingShowService } from "@modules/processing/services/userProcessingShow.service";
-import { UserProcessingDeleteService } from "@modules/processing/services/userProcessingDelete.service";
+import { UserRequestDatasetProcessingService } from "@modules/processing/services/userRequestDatasetProcessing.service";
 
 // Target import
 import { UserProcessingController } from "./userProcessing.controller";
 
 describe("Controller: UserProcessingController", () => {
   const user = userFactory.build();
-  const processing = processingFactory.build();
+  const otherUser = userFactory.build();
+  const processing = processingFactory.build(
+    {},
+    {
+      associations: {
+        user,
+        dataset: datasetFactory.build(
+          {},
+          { associations: { user: otherUser } },
+        ),
+      },
+    },
+  );
+  const processingWithVisibleOwners = Object.assign(
+    new Processing(),
+    processing,
+    {
+      dataset: Object.assign(new Dataset(), processing.dataset, { user: null }),
+    },
+  );
 
   const pagination = { skip: 0, take: 10 };
   const sorting = [{ field: "created_at", order: SORT_ORDER.DESC }];
@@ -93,7 +117,9 @@ describe("Controller: UserProcessingController", () => {
       user,
       language: "en",
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithVisibleOwners),
+    );
     expect(result).toBe(response);
   });
 
@@ -110,23 +136,61 @@ describe("Controller: UserProcessingController", () => {
     expect(response.json).not.toHaveBeenCalled();
   });
 
-  it("should index processings forwarding the query as params plus pagination and sorting", async () => {
-    const paginated = { edges: [], total_count: 0 };
+  it("should index processings forwarding the query as params, its boolean strings read as booleans, plus pagination and sorting", async () => {
+    const otherUserProcessing = processingFactory.build(
+      {},
+      {
+        associations: {
+          user: otherUser,
+          dataset: datasetFactory.build(
+            {},
+            { associations: { user: otherUser } },
+          ),
+        },
+      },
+    );
+    const paginated = {
+      edges: [
+        { cursor: "own-cursor", node: processing },
+        { cursor: "other-cursor", node: otherUserProcessing },
+      ],
+      totalCount: 2,
+    };
     userProcessingIndexService.execute.mockResolvedValueOnce(paginated);
 
     const result = await userProcessingController.index(
-      buildRequest({ query: { status: "RUNNING" } }),
+      buildRequest({
+        query: { status: "RUNNING", started: "true", finished: "false" },
+      }),
       response as unknown as Response,
     );
 
     expect(userProcessingIndexService.execute).toHaveBeenCalledWith({
       user,
-      params: { status: "RUNNING" },
+      params: { status: "RUNNING", started: true, finished: false },
       pagination,
       sorting,
       language: "en",
     });
-    expect(response.json).toHaveBeenCalledWith(process(paginated));
+    expect(response.json).toHaveBeenCalledWith(
+      process({
+        ...paginated,
+        edges: [
+          { cursor: "own-cursor", node: processingWithVisibleOwners },
+          {
+            cursor: "other-cursor",
+            node: Object.assign(new Processing(), otherUserProcessing, {
+              user: null,
+              dataset: Object.assign(
+                new Dataset(),
+                otherUserProcessing.dataset,
+                { user: null },
+              ),
+            }),
+          },
+        ],
+      }),
+    );
     expect(result).toBe(response);
   });
 
@@ -155,7 +219,9 @@ describe("Controller: UserProcessingController", () => {
       processing_id: processing.id,
       language: "en",
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithVisibleOwners),
+    );
     expect(result).toBe(response);
   });
 
@@ -184,7 +250,9 @@ describe("Controller: UserProcessingController", () => {
       processing_id: processing.id,
       language: "en",
     });
-    expect(response.json).toHaveBeenCalledWith(process(processing));
+    expect(response.json).toHaveBeenCalledWith(
+      process(processingWithVisibleOwners),
+    );
     expect(result).toBe(response);
   });
 

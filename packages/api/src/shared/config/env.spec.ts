@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-// Package import
+// Data import
 import APP_INFO from "@/package.json";
 
 // Target import

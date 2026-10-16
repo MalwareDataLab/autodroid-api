@@ -1,12 +1,12 @@
 /* eslint-disable no-use-before-define */
-import { Authorized, Directive, Field, ObjectType } from "type-graphql";
 import { Exclude, Type } from "class-transformer";
-
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
+import { Authorized, Directive, Field, ObjectType } from "type-graphql";
 
 // Entity import
 import { UserAuthProviderConn } from "./userAuthProviderConn.entity";
+
+// Scalar import
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class UserSession {

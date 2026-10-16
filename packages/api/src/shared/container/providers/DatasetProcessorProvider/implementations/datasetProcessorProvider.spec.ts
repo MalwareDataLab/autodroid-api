@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import {
   afterEach,
   beforeEach,
@@ -8,36 +9,36 @@ import {
   MockInstance,
   vi,
 } from "vitest";
-import { faker } from "@faker-js/faker";
 
-// Config import
+// Configuration import
 import { getWorkerConfig } from "@config/worker";
 
-// Util import
-import { logger } from "@shared/utils/logger";
-import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-
-// Enum import
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-
-// Factory import
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
-
-// Repository import
-import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Error import
+import { AppError } from "@shared/errors/AppError";
 
 // Provider import
 import { IWebsocketProvider } from "@shared/container/providers/WebsocketProvider/models/IWebsocket.provider";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
+// Util import
+import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
+import { logger } from "@shared/utils/logger";
+
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
+
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
 // Target import
 import { DatasetProcessorProvider } from "./datasetProcessorProvider";
@@ -495,6 +496,18 @@ describe("Provider: DatasetProcessorProvider", () => {
 
     expect(result).toEqual({ dispatched: [], failed: [], skipped: [] });
     expect(logger.info).toHaveBeenCalledWith("🆗 No processes to dispatch.");
+  });
+
+  it("should read every not dispatched process, oldest first, without a page bound", async () => {
+    processingRepositoryMock.findMany.mockResolvedValueOnce([]);
+
+    await provider.dispatchNotStartedProcesses({ processing_ids: [] });
+
+    expect(processingRepositoryMock.findMany).toHaveBeenCalledWith(
+      { worker_id: null },
+      undefined,
+      [{ field: "created_at", order: SORT_ORDER.ASC }],
+    );
   });
 
   it("should throw when there are no workers available", async () => {

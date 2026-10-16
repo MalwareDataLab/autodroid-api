@@ -16,6 +16,13 @@ declare module "vitest" {
     };
     nonRelationalDatabase: { baseUri: string };
     inMemoryDatabase: { host: string; port: number };
+    storageEmulator: {
+      host: string;
+      projectId: string;
+      clientEmail: string;
+      privateKey: string;
+      bucketName: string;
+    };
   }
 }
 

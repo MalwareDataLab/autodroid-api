@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 // Error import
 import { WebsocketUnauthorizedError } from "../errors/WebsocketUnauthorized.error";
 
-// Middleware import
+// Target import
 import { websocketAuthenticationGuardMiddleware } from "./websocketAuthenticationGuard.middleware";
 
 const buildSocket = (data: any): any => ({ data });

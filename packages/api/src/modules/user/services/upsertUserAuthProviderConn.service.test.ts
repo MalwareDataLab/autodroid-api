@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // i18n import
 import { TFunction } from "@shared/i18n";
@@ -14,7 +14,7 @@ import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProvid
 // Factory import
 import { userFactory } from "../entities/factories/user.factory";
 
-// Service import
+// Target import
 import {
   IUpsertUserAuthProviderConnServiceRequest,
   UpsertUserAuthProviderConnService,

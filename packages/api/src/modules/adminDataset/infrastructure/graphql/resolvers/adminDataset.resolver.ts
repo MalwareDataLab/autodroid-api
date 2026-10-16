@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Arg,
   Args,
@@ -7,7 +8,12 @@ import {
   Mutation,
   Query,
 } from "type-graphql";
-import { container } from "tsyringe";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Constant import
 import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
@@ -18,20 +24,14 @@ import {
   PaginatedDataset,
 } from "@modules/dataset/entities/dataset.entity";
 
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
-
-// Decorator import
-import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
-
 // Schema import
-import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import {
   AdminDatasetIndexSchema,
   AdminDatasetUpdateSchema,
   AdminDatasetUpdateVisibilitySchema,
 } from "@modules/adminDataset/schemas/adminDataset.schema";
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
 import { AdminDatasetDeleteService } from "@modules/adminDataset/services/adminDatasetDelete.service";
@@ -73,7 +73,7 @@ class AdminDatasetResolver {
   @Authorized(["ADMIN"])
   @Query(() => Dataset)
   async adminDataset(
-    @Arg("dataset_id") dataset_id: string,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -93,8 +93,9 @@ class AdminDatasetResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Dataset)
   async adminDatasetUpdate(
-    @Arg("dataset_id") dataset_id: string,
-    @Arg("data") data: AdminDatasetUpdateSchema,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
+    @Arg("data", { description: "The new description and tags." })
+    data: AdminDatasetUpdateSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -117,7 +118,7 @@ class AdminDatasetResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Dataset)
   async adminDatasetDelete(
-    @Arg("dataset_id") dataset_id: string,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -139,8 +140,9 @@ class AdminDatasetResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Dataset)
   async adminDatasetUpdateVisibility(
-    @Arg("dataset_id") dataset_id: string,
-    @Arg("data") data: AdminDatasetUpdateVisibilitySchema,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
+    @Arg("data", { description: "The new visibility." })
+    data: AdminDatasetUpdateVisibilitySchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ) {

@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { describe, expect, it } from "vitest";
 
 // Constant import
 import {
@@ -8,7 +8,7 @@ import {
   MIN_SAFE_INT,
 } from "@shared/constants/maxSafeInt.constant";
 
-// Decorator import
+// Target import
 import { ValidInt } from "./validInt.decorator";
 
 const buildClass = (apply: (target: object, key: string) => void) => {

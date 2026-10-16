@@ -19,9 +19,9 @@ describe("E2E: WorkerController", () => {
   it("should fail showing the worker when unauthenticated", async context => {
     const response = await context.request.get("/worker").send();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(401);
     expect(response.body).toMatchObject({
-      code: "@general/INTERNAL_SERVER_ERROR",
+      code: "@worker_auth_middleware/NOT_AUTHENTICATED",
     });
   });
 
@@ -31,9 +31,9 @@ describe("E2E: WorkerController", () => {
       .set("Authorization", `Bearer invalid.worker.token`)
       .send();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(401);
     expect(response.body).toMatchObject({
-      code: "@general/INTERNAL_SERVER_ERROR",
+      code: "@worker_auth_middleware/NOT_AUTHENTICATED",
     });
   });
 });

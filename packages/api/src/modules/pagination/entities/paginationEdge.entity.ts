@@ -1,10 +1,10 @@
 import { ClassType, Field, ObjectType } from "type-graphql";
 
-// Scalar import
-import { ConnectionCursor } from "@modules/pagination/types/paginationConnectionCursor.scalar";
-
 // Type import
 import { IEdge, INodeEntity } from "../types/IPagination.type";
+
+// Scalar import
+import { ConnectionCursor } from "@modules/pagination/types/paginationConnectionCursor.scalar";
 
 const PaginationEdge = <IEntity extends INodeEntity>(
   EntityClass: ClassType<IEntity>,

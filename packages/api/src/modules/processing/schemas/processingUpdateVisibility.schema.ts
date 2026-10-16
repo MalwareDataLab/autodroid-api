@@ -1,5 +1,5 @@
-import { ArgsType, Field } from "type-graphql";
 import { IsEnum } from "class-validator";
+import { ArgsType, Field } from "type-graphql";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
@@ -11,7 +11,7 @@ import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
 class ProcessingUpdateVisibilitySchema {
   @ValidString()
   @IsEnum(PROCESSING_VISIBILITY)
-  @Field(() => PROCESSING_VISIBILITY)
+  @Field(() => PROCESSING_VISIBILITY, { description: "The new visibility." })
   visibility: PROCESSING_VISIBILITY;
 }
 

@@ -1,8 +1,11 @@
+// Type import
+import { JobTypes } from "../jobs/types";
+
 // DTO import
 import { IJobOptionsDTO } from "../types/IAddJobOptions.dto";
 
+// Job import
 import * as Jobs from "../jobs";
-import { JobTypes } from "../jobs/types";
 
 type JobKey = keyof typeof Jobs;
 

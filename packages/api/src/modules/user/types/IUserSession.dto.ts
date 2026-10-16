@@ -1,10 +1,10 @@
-import { Field, ObjectType } from "type-graphql";
 import { Exclude, Type } from "class-transformer";
+import { Field, ObjectType } from "type-graphql";
 
 // Entity import
-import { UserSession } from "@modules/user/entities/userSession.entity";
 import { User } from "@modules/user/entities/user.entity";
 import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+import { UserSession } from "@modules/user/entities/userSession.entity";
 
 export interface IUserSessionDTO {
   user: User;

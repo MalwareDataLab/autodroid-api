@@ -1,37 +1,29 @@
 /* eslint prettier/prettier: ["error", {"printWidth": 250 }] */
 import "reflect-metadata";
+
 import { DependencyContainer, container as mainContainer } from "tsyringe";
 
-// Providers import
-import { IDatabaseProvider } from "./providers/DatabaseProvider/models/IDatabase.provider";
-import { DatabaseProvider } from "./providers/DatabaseProvider";
-
-import { INonRelationalDatabaseProvider } from "./providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
-import { NonRelationalDatabaseProvider } from "./providers/NonRelationalDatabaseProvider";
-
-import { IInMemoryDatabaseProvider } from "./providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
-import { InMemoryDatabaseProvider } from "./providers/InMemoryDatabaseProvider";
-
-import { IUserAgentInfoProvider } from "./providers/UserAgentInfoProvider/models/IUserAgentInfo.provider";
-import { UserAgentInfoProvider } from "./providers/UserAgentInfoProvider";
-
-import { IStorageProvider } from "./providers/StorageProvider/models/IStorage.provider";
-import { StorageProvider } from "./providers/StorageProvider";
-
-import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
+// Provider import
 import { AuthenticationProvider } from "./providers/AuthenticationProvider";
-
-import { IWebsocketProvider } from "./providers/WebsocketProvider/models/IWebsocket.provider";
-import { WebsocketProvider } from "./providers/WebsocketProvider";
-
-import { IEmailNotificationProvider } from "./providers/EmailNotificationProvider/models/IEmailNotification.provider";
-import { EmailNotificationProvider } from "./providers/EmailNotificationProvider";
-
-import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
+import { IAuthenticationProvider } from "./providers/AuthenticationProvider/models/IAuthentication.provider";
+import { DatabaseProvider } from "./providers/DatabaseProvider";
+import { IDatabaseProvider } from "./providers/DatabaseProvider/models/IDatabase.provider";
 import { DatasetProcessorProvider } from "./providers/DatasetProcessorProvider";
-
-import { IJobProvider } from "./providers/JobProvider/models/IJob.provider";
+import { IDatasetProcessorProvider } from "./providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
+import { EmailNotificationProvider } from "./providers/EmailNotificationProvider";
+import { IEmailNotificationProvider } from "./providers/EmailNotificationProvider/models/IEmailNotification.provider";
+import { InMemoryDatabaseProvider } from "./providers/InMemoryDatabaseProvider";
+import { IInMemoryDatabaseProvider } from "./providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
 import { JobProvider } from "./providers/JobProvider";
+import { IJobProvider } from "./providers/JobProvider/models/IJob.provider";
+import { NonRelationalDatabaseProvider } from "./providers/NonRelationalDatabaseProvider";
+import { INonRelationalDatabaseProvider } from "./providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
+import { StorageProvider } from "./providers/StorageProvider";
+import { IStorageProvider } from "./providers/StorageProvider/models/IStorage.provider";
+import { UserAgentInfoProvider } from "./providers/UserAgentInfoProvider";
+import { IUserAgentInfoProvider } from "./providers/UserAgentInfoProvider/models/IUserAgentInfo.provider";
+import { WebsocketProvider } from "./providers/WebsocketProvider";
+import { IWebsocketProvider } from "./providers/WebsocketProvider/models/IWebsocket.provider";
 
 // Repository import
 import { initRepositories } from "./repositories";

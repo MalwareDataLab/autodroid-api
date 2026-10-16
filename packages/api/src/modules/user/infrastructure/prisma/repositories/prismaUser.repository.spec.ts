@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Constant import
 import { UserSortingOptions } from "@modules/user/constants/userSortingOptions.constant";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Target import
 import { PrismaUserRepository } from "./prismaUser.repository";

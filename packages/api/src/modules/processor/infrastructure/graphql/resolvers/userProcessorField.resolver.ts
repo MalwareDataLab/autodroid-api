@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Args,
   Authorized,
@@ -6,10 +7,6 @@ import {
   Resolver,
   Root,
 } from "type-graphql";
-import { container } from "tsyringe";
-
-// Constant import
-import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
@@ -17,19 +14,20 @@ import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 // Decorator import
 import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
+// Constant import
+import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
+
 // Entity import
-import { Processor } from "@modules/processor/entities/processor.entity";
 import {
   PaginatedProcessing,
   Processing,
 } from "@modules/processing/entities/processing.entity";
-
-// Service import
-import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
+import { Processor } from "@modules/processor/entities/processor.entity";
 
 // Schema import
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";

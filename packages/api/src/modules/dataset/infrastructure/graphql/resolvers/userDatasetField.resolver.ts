@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Args,
   Authorized,
@@ -6,10 +7,6 @@ import {
   Resolver,
   Root,
 } from "type-graphql";
-import { container } from "tsyringe";
-
-// Constant import
-import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
@@ -17,25 +14,39 @@ import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 // Decorator import
 import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
+// Util import
+import { getVisibleOwner } from "@modules/user/utils/getVisibleOwner.util";
+
+// Constant import
+import { ProcessingSortingOptions } from "@modules/processing/constants/processingSortingOptions.constant";
+
 // Entity import
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
 import {
   PaginatedProcessing,
   Processing,
 } from "@modules/processing/entities/processing.entity";
-
-// Service import
-import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
+import { User } from "@modules/user/entities/user.entity";
 
 // Schema import
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { ProcessingIndexSchema } from "@modules/processing/schemas/processingIndex.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
 import { UserProcessingIndexService } from "@modules/processing/services/userProcessingIndex.service";
 
 @Resolver(() => Dataset)
 class UserDatasetFieldResolver {
+  @FieldResolver()
+  user(
+    @Root() dataset: Dataset,
+
+    @Ctx() { user_session }: GraphQLContext,
+  ): User | null {
+    return getVisibleOwner(dataset, user_session);
+  }
+
   @Authorized()
   @FieldResolver(() => PaginatedProcessing)
   async processes(

@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { describe, expect, it } from "vitest";
 
-// Decorator import
+// Target import
 import { IsNullable, NullableOptions } from "./isNullable.decorator";
 
 const buildClass = (apply: (target: object, key: string) => void) => {

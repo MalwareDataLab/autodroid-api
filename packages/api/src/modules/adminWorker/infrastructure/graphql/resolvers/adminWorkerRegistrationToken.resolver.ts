@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Arg,
   Args,
@@ -7,7 +8,12 @@ import {
   Mutation,
   Query,
 } from "type-graphql";
-import { container } from "tsyringe";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Constant import
 import { WorkerRegistrationTokenSortingOptions } from "@modules/worker/constants/workerRegistrationTokenSortingOptions.constant";
@@ -17,12 +23,6 @@ import {
   WorkerRegistrationToken,
   PaginatedWorkerRegistrationToken,
 } from "@modules/worker/entities/workerRegistrationToken.entity";
-
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
-
-// Decorator import
-import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Schema import
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
@@ -34,9 +34,9 @@ import {
 
 // Service import
 import { AdminWorkerRegistrationTokenCreateService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenCreate.service";
+import { AdminWorkerRegistrationTokenDeleteService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenDelete.service";
 import { AdminWorkerRegistrationTokenIndexService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenIndex.service";
 import { AdminWorkerRegistrationTokenShowService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenShow.service";
-import { AdminWorkerRegistrationTokenDeleteService } from "@modules/adminWorker/services/adminWorkerRegistrationTokenDelete.service";
 
 class AdminWorkerRegistrationTokenResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -73,7 +73,10 @@ class AdminWorkerRegistrationTokenResolver {
   @Authorized(["ADMIN"])
   @Query(() => WorkerRegistrationToken)
   async adminWorkerRegistrationToken(
-    @Arg("worker_registration_token_id") worker_registration_token_id: string,
+    @Arg("worker_registration_token_id", {
+      description: "The registration token id.",
+    })
+    worker_registration_token_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<WorkerRegistrationToken> {
@@ -96,7 +99,8 @@ class AdminWorkerRegistrationTokenResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => WorkerRegistrationToken)
   async adminWorkerRegistrationTokenCreate(
-    @Arg("data") data: WorkerRegistrationTokenCreateSchema,
+    @Arg("data", { description: "The new token's usage and expiry." })
+    data: WorkerRegistrationTokenCreateSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<WorkerRegistrationToken> {
@@ -119,7 +123,10 @@ class AdminWorkerRegistrationTokenResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => WorkerRegistrationToken)
   async adminWorkerRegistrationTokenDelete(
-    @Arg("worker_registration_token_id") worker_registration_token_id: string,
+    @Arg("worker_registration_token_id", {
+      description: "The registration token id.",
+    })
+    worker_registration_token_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<WorkerRegistrationToken> {

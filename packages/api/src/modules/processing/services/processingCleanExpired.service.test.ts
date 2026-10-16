@@ -1,14 +1,14 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Repository import
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import

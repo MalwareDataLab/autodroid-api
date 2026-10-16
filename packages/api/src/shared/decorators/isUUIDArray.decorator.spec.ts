@@ -1,9 +1,9 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
-import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { describe, expect, it } from "vitest";
 
-// Decorator import
+// Target import
 import { IsUUIDArray } from "./isUUIDArray.decorator";
 
 const buildClass = (apply: (target: object, key: string) => void) => {

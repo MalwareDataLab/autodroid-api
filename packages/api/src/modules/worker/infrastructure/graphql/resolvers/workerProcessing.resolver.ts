@@ -1,5 +1,5 @@
-import { Arg, Authorized, Ctx, Mutation, Query } from "type-graphql";
 import { container } from "tsyringe";
+import { Arg, Authorized, Ctx, Mutation, Query } from "type-graphql";
 
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
@@ -7,13 +7,11 @@ import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
 
-// Schema import
-
 // Service import
-import { WorkerProcessingShowService } from "@modules/worker/services/workerProcessingShow.service";
+import { WorkerHandleProcessingFailureService } from "@modules/worker/services/workerHandleProcessingFailure.service";
 import { WorkerHandleProcessingProgressService } from "@modules/worker/services/workerHandleProcessingProgress.service";
 import { WorkerHandleProcessingSuccessService } from "@modules/worker/services/workerHandleProcessingSuccess.service";
-import { WorkerHandleProcessingFailureService } from "@modules/worker/services/workerHandleProcessingFailure.service";
+import { WorkerProcessingShowService } from "@modules/worker/services/workerProcessingShow.service";
 
 class WorkerProcessingResolver {
   @Authorized(["WORKER"])

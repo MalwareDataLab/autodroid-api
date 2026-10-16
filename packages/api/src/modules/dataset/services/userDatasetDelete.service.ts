@@ -3,23 +3,21 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IFileRepository } from "@shared/container/repositories";
-
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+
+// Guard import
+import { DatasetGuard } from "../guards/dataset.guard";
+
+// Enum import
+import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "../entities/dataset.entity";
 
-// Enum import
-import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
-
-// Guard import
-import { DatasetGuard } from "../guards/dataset.guard";
-
 // Repository import
+import { IFileRepository } from "@shared/container/repositories";
 import { IDatasetRepository } from "../repositories/IDataset.repository";
 
 interface IRequest {

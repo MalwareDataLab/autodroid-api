@@ -35,6 +35,7 @@ model User {
   datasets                   Dataset[]                 @relation(name: "Dataset_User")
   processors                 Processor[]               @relation(name: "Processor_User")
   processes                  Processing[]              @relation(name: "Processing_User")
+  mcp_authorization_grants   McpAuthorizationGrant[]   @relation(name: "McpAuthorizationGrant_User")
 
   @@index([email])
   @@index([created_at, id], map: "users_pagination_idx")
@@ -262,4 +263,29 @@ model Processing {
   updated_at DateTime @updatedAt
 
   @@map("processes")
+}
+
+model McpAuthorizationGrant {
+  id  String @id
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "McpAuthorizationGrant_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  client_id   String
+  client_name String?
+  resource    String
+  scopes      String[]
+
+  token_generation Int @default(0)
+
+  expires_at   DateTime
+  revoked_at   DateTime?
+  last_used_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, client_id, resource])
+  @@map("mcp_authorization_grants")
 }

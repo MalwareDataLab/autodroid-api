@@ -1,25 +1,27 @@
-import nodemailer, { Transporter } from "nodemailer";
-import handlebars from "handlebars";
 import fs from "node:fs/promises";
 import path from "node:path";
+import handlebars from "handlebars";
+import nodemailer, { Transporter } from "nodemailer";
 
 // i18n import
 import { i18next } from "@shared/i18n";
 
+// Configuration import
+import { getEmailConfig } from "@config/email";
+
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Provider import
+import { IEmailNotificationProvider } from "../../models/IEmailNotification.provider";
+
 // Util import
-import { getEmailConfig } from "@config/email";
-import { logger } from "@shared/utils/logger";
 import { executeAction } from "@shared/utils/executeAction";
+import { logger } from "@shared/utils/logger";
 import { parseNodemailerAddresses } from "./utils/parseNodemailerAddresses.util";
 
 // DTO import
 import { ISendEmailNotificationDTO } from "../../types/IEmailNotification.dto";
-
-// Interface import
-import { IEmailNotificationProvider } from "../../models/IEmailNotification.provider";
 
 export class NodemailerEmailNotificationProvider
   implements IEmailNotificationProvider

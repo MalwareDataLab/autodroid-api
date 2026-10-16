@@ -1,13 +1,13 @@
 import { container } from "tsyringe";
 import { Authorized, Ctx, Mutation, Resolver } from "type-graphql";
 
-// Entity import
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
-
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
-// DTO import
+// Entity import
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+
+// Service import
 import { UserSessionsCloseService } from "@modules/user/services/userSessionsClose.service";
 
 @Resolver()

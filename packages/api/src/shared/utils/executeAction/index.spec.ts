@@ -6,7 +6,7 @@ import { getEnvConfig } from "@config/env";
 // Util import
 import { logger } from "@shared/utils/logger";
 
-// Test target import
+// Target import
 import { executeAction } from ".";
 
 vi.mock("@config/env", () => ({ getEnvConfig: vi.fn() }));

@@ -1,25 +1,34 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-import { Processor } from "@modules/processor/entities/processor.entity";
+// Provider import
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Constant import
+import { TAKE_DEFAULT } from "@modules/pagination/constants/paginationLimit.constant";
 
 // Enum import
+import { FILE_TYPE } from "@modules/file/types/fileType.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { Processor } from "@modules/processor/entities/processor.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 describe("Repository: PrismaProcessingRepository", () => {
   let repository: IProcessingRepository;
@@ -63,6 +72,47 @@ describe("Repository: PrismaProcessingRepository", () => {
     expect(found?.processor_id).toBe(processor.id);
   });
 
+  it("should refresh the download link of each file a found processing produced", async () => {
+    const downloadLinkExpiresAt = new Date("2030-01-01T00:00:00.000Z");
+    container.registerInstance<IStorageProvider>("StorageProvider", {
+      provider_code: STORAGE_PROVIDER.GOOGLE_CLOUD_STORAGE,
+      initialization: Promise.resolve(),
+      generateUploadSignedUrl: async () => fileFactory.build(),
+      refreshFile: async ({ file }) => ({
+        ...file,
+        public_url: `https://storage.example.test/download/${file.id}`,
+        public_url_expires_at: downloadLinkExpiresAt,
+      }),
+      removeFileByPath: async () => "",
+    });
+    const resultFile = await fileFactory.create({
+      type: FILE_TYPE.PROCESSING_RESULT,
+      public_url: null,
+      public_url_expires_at: null,
+    });
+    const processing = await processingFactory.create(
+      { result_file_id: resultFile.id },
+      { associations: { user, dataset, processor } },
+    );
+
+    const found = await repository.findOne({ id: processing.id });
+
+    expect(found?.result_file).toEqual(
+      expect.objectContaining({
+        id: resultFile.id,
+        public_url: `https://storage.example.test/download/${resultFile.id}`,
+        public_url_expires_at: downloadLinkExpiresAt,
+      }),
+    );
+    expect(found?.metrics_file).toEqual(
+      expect.objectContaining({
+        id: processing.metrics_file_id,
+        public_url: `https://storage.example.test/download/${processing.metrics_file_id}`,
+        public_url_expires_at: downloadLinkExpiresAt,
+      }),
+    );
+  });
+
   it("should return null finding a processing that does not exist", async () => {
     const found = await repository.findOne({ id: faker.string.uuid() });
 
@@ -101,13 +151,15 @@ describe("Repository: PrismaProcessingRepository", () => {
       { associations: { user, dataset, processor } },
     );
 
+    const oneYearAhead = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
     const result = await repository.findMany({
       started: true,
       finished: false,
       keep_until_start_date: new Date(0),
-      keep_until_end_date: faker.date.future({ years: 1 }),
+      keep_until_end_date: oneYearAhead,
       created_at_start_date: new Date(0),
-      created_at_end_date: faker.date.future({ years: 1 }),
+      created_at_end_date: oneYearAhead,
     });
 
     expect(result).toEqual(
@@ -146,6 +198,35 @@ describe("Repository: PrismaProcessingRepository", () => {
     const result = await repository.findMany({ started: false });
 
     expect(result.map(item => item.id)).toContain(pending.id);
+  });
+
+  it("should return every matching process when no pagination is requested", async () => {
+    await processingFactory.createList(
+      TAKE_DEFAULT + 1,
+      { visibility: PROCESSING_VISIBILITY.PRIVATE },
+      { associations: { user, dataset, processor } },
+    );
+
+    const result = await repository.findMany({ user_id: user.id });
+
+    expect(result).toHaveLength(TAKE_DEFAULT + 1);
+  });
+
+  it("should return a default-sized page when the pagination request omits take", async () => {
+    await processingFactory.createList(
+      TAKE_DEFAULT + 1,
+      { visibility: PROCESSING_VISIBILITY.PRIVATE },
+      { associations: { user, dataset, processor } },
+    );
+
+    const result = await repository.findMany({ user_id: user.id }, {});
+    const publicOrPrivateResult = await repository.findManyPublicOrUserPrivate(
+      { user_id: user.id },
+      {},
+    );
+
+    expect(result).toHaveLength(TAKE_DEFAULT);
+    expect(publicOrPrivateResult).toHaveLength(TAKE_DEFAULT);
   });
 
   it("should exclude archived processes by default and include them when requested", async () => {

@@ -1,14 +1,20 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
+// Constant import
+import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
+
+// Schema import
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+
 // Service import
+import { AdminDatasetDeleteService } from "@modules/adminDataset/services/adminDatasetDelete.service";
 import { AdminDatasetIndexService } from "@modules/adminDataset/services/adminDatasetIndex.service";
 import { AdminDatasetShowService } from "@modules/adminDataset/services/adminDatasetShow.service";
 import { AdminDatasetUpdateService } from "@modules/adminDataset/services/adminDatasetUpdate.service";
-import { AdminDatasetDeleteService } from "@modules/adminDataset/services/adminDatasetDelete.service";
 
 class AdminDatasetController {
   public async index(req: Request, res: Response) {
@@ -17,6 +23,10 @@ class AdminDatasetController {
     );
     const dataset = await adminDatasetIndexService.execute({
       filter: req.query,
+      pagination: req.pagination,
+      sorting: req.sorting as SortingFieldSchema<
+        typeof DatasetSortingOptions
+      >[],
       user: req.user_session.user,
     });
     return res.json(process(dataset));

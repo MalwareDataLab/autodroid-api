@@ -1,19 +1,19 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Util import
 import { process } from "@shared/utils/instanceParser";
 
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
 // Service import
+import { AdminDatasetDeleteService } from "@modules/adminDataset/services/adminDatasetDelete.service";
 import { AdminDatasetIndexService } from "@modules/adminDataset/services/adminDatasetIndex.service";
 import { AdminDatasetShowService } from "@modules/adminDataset/services/adminDatasetShow.service";
 import { AdminDatasetUpdateService } from "@modules/adminDataset/services/adminDatasetUpdate.service";
-import { AdminDatasetDeleteService } from "@modules/adminDataset/services/adminDatasetDelete.service";
 
 // Target import
 import { AdminDatasetController } from "./adminDataset.controller";
@@ -66,9 +66,15 @@ describe("Controller: AdminDatasetController", () => {
     adminDatasetController = new AdminDatasetController();
   });
 
-  it("should index datasets forwarding the raw query as the filter", async () => {
+  it("should index datasets forwarding the raw query as the filter plus pagination and sorting", async () => {
     const datasets = [dataset];
-    const request = buildRequest({ query: { archived: "true" } });
+    const pagination = { skip: 1, take: 1 };
+    const sorting = [{ field: "created_at", order: "ASC" }];
+    const request = buildRequest({
+      query: { archived: "true" },
+      pagination,
+      sorting,
+    });
     adminDatasetIndexService.execute.mockResolvedValueOnce(datasets);
 
     const result = await adminDatasetController.index(
@@ -78,6 +84,8 @@ describe("Controller: AdminDatasetController", () => {
 
     expect(adminDatasetIndexService.execute).toHaveBeenCalledWith({
       filter: { archived: "true" },
+      pagination,
+      sorting,
       user,
     });
     expect(response.json).toHaveBeenCalledWith(process(datasets));

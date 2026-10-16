@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-// Test target import
+// Target import
 import { isValidLanguage } from ".";
 
 describe("Utils: isValidLanguage", () => {

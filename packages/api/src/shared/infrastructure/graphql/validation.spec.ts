@@ -1,11 +1,9 @@
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { ArgumentValidationError } from "type-graphql";
-
-// Handler import
-
-// Library import
-import { validateOrReject } from "class-validator";
 import { instanceToInstance } from "class-transformer";
+import { validateOrReject } from "class-validator";
+import { ArgumentValidationError } from "type-graphql";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
+
+// Target import
 import { validationHandler } from "./validation";
 
 vi.mock("class-validator", () => ({

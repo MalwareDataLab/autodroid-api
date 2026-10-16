@@ -9,22 +9,32 @@ import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestF
 @InputType()
 class UserDatasetCreateSchema extends RequestFileUploadSignedUrlSchema {
   @ValidString({ nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "What the dataset contains.",
+  })
   description?: string | null;
 
   @ValidString({ nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: true, description: "Comma-separated tags." })
   tags?: string | null;
 }
 
 @InputType()
 class UserDatasetUpdateSchema {
   @ValidString({ nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "The new description; null or an omitted one is cleared.",
+  })
   description?: string | null;
 
   @ValidString({ nullable: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description:
+      "The new comma-separated tags; null or omitted tags are cleared.",
+  })
   tags?: string | null;
 }
 

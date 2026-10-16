@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 
+// Target import
 import { RequireAdminPermission } from "./requireAdminPermission.decorator";
 
 const setupClassDouble = (flag: () => void) => {

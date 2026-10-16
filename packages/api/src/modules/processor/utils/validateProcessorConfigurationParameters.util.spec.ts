@@ -9,7 +9,7 @@ import { PROCESSOR_PARAMETER_TYPE } from "../types/processorParameterType.enum";
 // Schema import
 import { ProcessorConfigurationParameterSchema } from "../schemas/processor.schema";
 
-// Test target import
+// Target import
 import { validateProcessorConfigurationParameters } from "./validateProcessorConfigurationParameters.util";
 
 const buildParameter = (

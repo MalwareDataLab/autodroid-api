@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Util import
 import { parse } from "@shared/utils/instanceParser";
 
-// Util import
-import { User } from "@modules/user/entities/user.entity";
-import { Dataset } from "../entities/dataset.entity";
-
 // Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { Dataset } from "../entities/dataset.entity";
 
 // Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";
 
-// Service import
+// Target import
 import { UserDatasetShowService } from "./userDatasetShow.service";
 
 describe("Service: UserDatasetShowService", () => {

@@ -6,7 +6,7 @@ import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories
 // Factory import
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Service import
+// Target import
 import { WorkerRegistrationTokenGenerateService } from "./workerRegistrationTokenGenerate.service";
 
 describe("Service: WorkerRegistrationTokenGenerateService", () => {

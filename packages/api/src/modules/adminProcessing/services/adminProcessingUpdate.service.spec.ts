@@ -1,17 +1,17 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Schema import
 import { AdminProcessingUpdateSchema } from "../schemas/adminProcessing.schema";
 
-// Service import
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessingUpdateService } from "./adminProcessingUpdate.service";
 
 describe("Service: AdminProcessingUpdateService", () => {

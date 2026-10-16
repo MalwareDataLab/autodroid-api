@@ -3,14 +3,12 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
-
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
-
-// Entity import
 import { Worker } from "../entities/worker.entity";
+
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
 
 interface IRequest {
   worker: Worker;

@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Type import
 import { INodeEntity } from "@modules/pagination/types/IPagination.type";
 
-// Test target import
+// Target import
 import { makeCursorObjFromEntity } from ".";
 
 describe("Utils: makeCursorObjFromEntity", () => {

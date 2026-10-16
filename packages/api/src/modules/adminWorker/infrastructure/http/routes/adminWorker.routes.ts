@@ -1,26 +1,28 @@
 import { Router } from "express";
 
-// Constant import
-import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
-
 // Middleware import
-import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
 import { paginationMiddleware } from "@modules/pagination/infrastructure/http/middlewares/pagination.middleware";
 import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
+import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
+
+// Constant import
+import { PAGINATION_QUERY_KEYS } from "@modules/pagination/constants/paginationQueryKeys.constant";
+import { SORTING_QUERY_KEYS } from "@modules/sorting/constants/sortingQueryKeys.constant";
+import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
 
 // Entity import
 import { Worker } from "@modules/worker/entities/worker.entity";
 
 // Schema import
-import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
-
-// Router import
-import { adminWorkerRegistrationTokenRouter } from "./adminWorkerRegistrationToken.routes";
+import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 
 // Controller import
 import { AdminWorkerController } from "../controllers/adminWorker.controller";
 import { AdminWorkerCleanMissingController } from "../controllers/adminWorkerCleanMissing.controller";
+
+// Router import
+import { adminWorkerRegistrationTokenRouter } from "./adminWorkerRegistrationToken.routes";
 
 const adminWorkerController = new AdminWorkerController();
 const adminWorkerCleanMissingController =
@@ -43,6 +45,7 @@ adminWorkerRouter.get(
   validateRequest({
     schema: WorkerIndexSchema,
     segment: "QUERY",
+    ignoreKeys: [...PAGINATION_QUERY_KEYS, ...SORTING_QUERY_KEYS],
   }),
   adminWorkerController.index,
 );

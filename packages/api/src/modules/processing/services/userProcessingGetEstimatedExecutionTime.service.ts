@@ -1,22 +1,24 @@
 import { inject, injectable } from "tsyringe";
 
-// Config import
+// Configuration import
 import { getProcessingConfig } from "@config/processing";
 
+// Guard import
+import { ProcessingGuard } from "../guards/processing.guard";
+
+// Util import
+import { DateUtils } from "@shared/utils/dateUtils";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { ProcessingTimeEstimation } from "../entities/processingTimeEstimation.entity";
+
 // Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 import {
   IDatasetRepository,
   IProcessorRepository,
 } from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { DateUtils } from "@shared/utils/dateUtils";
-import { ProcessingTimeEstimation } from "../entities/processingTimeEstimation.entity";
-
-// Guard import
-import { ProcessingGuard } from "../guards/processing.guard";
 
 interface IRequest {
   user: User;

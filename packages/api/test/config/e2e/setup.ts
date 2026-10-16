@@ -1,12 +1,14 @@
-import { afterEach, beforeEach, inject } from "vitest";
 import request from "supertest";
+import { afterEach, beforeEach, inject } from "vitest";
 
-// Util import
-import { disposeServer, getServer } from "@/test/utils/getServer.util";
+// Container import
 import {
   initSecondaryProviders,
   initAndWaitRequisites,
 } from "@shared/container";
+
+// Util import
+import { disposeServer, getServer } from "@/test/utils/getServer.util";
 
 beforeEach(async context => {
   initSecondaryProviders(context.container);

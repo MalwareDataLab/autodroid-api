@@ -1,6 +1,7 @@
+import { isEmail } from "validator";
+
 // Configuration import
 import { getEnvConfig } from "@config/env";
-import { isEmail } from "validator";
 
 const getEmailConfig = () => {
   const envConfig = getEnvConfig();

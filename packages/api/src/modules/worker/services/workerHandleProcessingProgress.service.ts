@@ -3,9 +3,6 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
-
 // Util import
 import { isProcessingSucceededAndComplete } from "@modules/processing/utils/isProcessingSucceededAndComplete.util";
 
@@ -15,6 +12,9 @@ import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.en
 // Entity import
 import { Processing } from "@modules/processing/entities/processing.entity";
 import { Worker } from "../entities/worker.entity";
+
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
 
 interface IRequest {
   worker: Worker;

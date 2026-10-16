@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Test target import
+// Target import
 import { generateHash } from ".";
 
 describe("Utils: generateHash", () => {

@@ -1,28 +1,28 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { addDays } from "date-fns";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Configuration import
 import { getGoogleStorageProviderConfig } from "@config/google";
 
-// Repository import
-import { IFileRepository } from "@modules/file/repositories/IFile.repository";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-
-// Factory import
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-
 // Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 
 // DTO import
 import { IGenerateUploadSignedUrlRequestParamsDTO } from "../../types/IUploadFile.dto";
 
-// Provider import
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+
+// Repository import
+import { IFileRepository } from "@modules/file/repositories/IFile.repository";
+
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+
+// Target import
 import { GoogleStorageProvider } from "./googleStorage.provider";
 
 const { StorageMock, storageInstanceMock, bucketMock, fileMock } = vi.hoisted(
@@ -174,6 +174,25 @@ describe("Provider: GoogleStorageProvider", () => {
       ).rejects.toThrowError(
         expect.objectContaining({
           key: "@google_storage_provider_get_provider/BUCKET_NOT_FOUND",
+        }),
+      );
+    });
+
+    it("should never leak the service account private key in the BUCKET_NOT_FOUND debug payload", async () => {
+      bucketMock.exists.mockResolvedValue([false]);
+
+      const provider = new GoogleStorageProvider(fileRepositoryMock);
+      provider.initialization.catch(() => undefined);
+
+      await expect(
+        provider.removeFileByPath({ path: "some/path", language: "en" }),
+      ).rejects.toThrowError(
+        expect.objectContaining({
+          debug: expect.not.objectContaining({
+            configuration: expect.objectContaining({
+              private_key: expect.anything(),
+            }),
+          }),
         }),
       );
     });
@@ -434,6 +453,28 @@ describe("Provider: GoogleStorageProvider", () => {
       );
     });
 
+    it("should never leak the file's signed URLs in the INVALID_STORAGE_PROVIDER debug payload", async () => {
+      const provider = await buildProvider();
+
+      const file = buildFile({
+        storage_provider: "OTHER_PROVIDER" as STORAGE_PROVIDER,
+        upload_url: "https://storage.googleapis.com/upload?X-Goog-Signature=a",
+        public_url: "https://storage.googleapis.com/read?X-Goog-Signature=b",
+      });
+
+      await expect(
+        provider.refreshFile({ file, language: "en" }),
+      ).rejects.toThrowError(
+        expect.objectContaining({
+          debug: expect.not.objectContaining({
+            file: expect.objectContaining({
+              upload_url: expect.anything(),
+            }),
+          }),
+        }),
+      );
+    });
+
     it("should return the file untouched when public access is disabled", async () => {
       const provider = await buildProvider();
 
@@ -473,6 +514,31 @@ describe("Provider: GoogleStorageProvider", () => {
       ).rejects.toThrowError(
         expect.objectContaining({
           key: "@google_storage_provider_update_public_url/INVALID_EXPIRATION_DATE",
+        }),
+      );
+    });
+
+    it("should never leak the file's signed URLs in the INVALID_EXPIRATION_DATE debug payload", async () => {
+      const provider = await buildProvider();
+
+      const file = buildFile({
+        upload_url: "https://storage.googleapis.com/upload?X-Goog-Signature=a",
+        public_url: "https://storage.googleapis.com/read?X-Goog-Signature=b",
+      });
+
+      await expect(
+        provider.refreshFile({
+          file,
+          customPublicUrlExpirationDate: addDays(new Date(), -1),
+          language: "en",
+        }),
+      ).rejects.toThrowError(
+        expect.objectContaining({
+          debug: expect.not.objectContaining({
+            file: expect.objectContaining({
+              upload_url: expect.anything(),
+            }),
+          }),
         }),
       );
     });

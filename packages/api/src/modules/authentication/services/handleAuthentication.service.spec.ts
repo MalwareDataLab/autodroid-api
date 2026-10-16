@@ -1,17 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Util import
-import { parse } from "@shared/utils/instanceParser";
-
-// Entity import
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
-
-// Enum import
-import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
-
-// DTO import
-import { IAuthenticationProviderSessionDTO } from "@shared/container/providers/AuthenticationProvider/types/IVerifyToken.dto";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Provider import
 import {
@@ -19,14 +7,26 @@ import {
   IAuthenticationProvider,
 } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
+// Util import
+import { parse } from "@shared/utils/instanceParser";
+
+// Enum import
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
+
+// DTO import
+import { IAuthenticationProviderSessionDTO } from "@shared/container/providers/AuthenticationProvider/types/IVerifyToken.dto";
+
+// Entity import
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
+
 // Repository import
-import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 import { IUserRepository } from "@modules/user/repositories/IUser.repository";
+import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { HandleAuthenticationService } from "./handleAuthentication.service";
 
 describe("Service: HandleAuthenticationService", () => {

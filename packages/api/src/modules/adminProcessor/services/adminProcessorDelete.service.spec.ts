@@ -1,10 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Repository import
 import {
@@ -12,7 +7,12 @@ import {
   IProcessorRepository,
 } from "@shared/container/repositories";
 
-// Service import
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessorDeleteService } from "./adminProcessorDelete.service";
 
 describe("Service: AdminProcessorDeleteService", () => {

@@ -1,18 +1,21 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { faker } from "@faker-js/faker";
 import { createHash } from "node:crypto";
-
-// Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
-import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Util import
+import {
+  generateStorageEmulatorPath,
+  getStorageEmulatorObjectStatus,
+  getStorageEmulatorSignedUrlTarget,
+  putStorageEmulatorObject,
+} from "@/test/utils/storageEmulator.util";
 import { createAuthorizedWorker } from "@/test/utils/workerAuth.util";
+
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { FILE_TYPE } from "@modules/file/types/fileType.enum";
+import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
 // Factory import
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
@@ -22,36 +25,6 @@ const md5 = () =>
   createHash("md5").update(faker.string.alphanumeric(10)).digest("hex");
 
 describe("E2E: WorkerProcessingMetricsFileController", () => {
-  beforeEach(context => {
-    context.container.registerInstance<IStorageProvider>("StorageProvider", {
-      provider_code: STORAGE_PROVIDER.GOOGLE_CLOUD_STORAGE,
-      initialization: Promise.resolve(),
-      generateUploadSignedUrl: async () => fileFactory.create(),
-      refreshFile: async ({ file }) => file,
-      removeFileByPath: async () => "",
-    });
-  });
-
-  it("should generate a metrics file upload url", async context => {
-    const { accessToken } = await createAuthorizedWorker();
-    const processing = await processingFactory.create({
-      status: PROCESSING_STATUS.RUNNING,
-    });
-
-    const response = await context.request
-      .post(`/worker/processing/${processing.id}/metrics_file/generate_upload`)
-      .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        filename: faker.system.fileName(),
-        mime_type: MIME_TYPE.CSV,
-        size: 1024,
-        md5_hash: md5(),
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.id).toBeTruthy();
-  });
-
   it("should fail generating a metrics upload for a processing not found", async context => {
     const { accessToken } = await createAuthorizedWorker();
 
@@ -116,5 +89,69 @@ describe("E2E: WorkerProcessingMetricsFileController", () => {
     expect(response.body).toMatchObject({
       code: "@worker_handle_processing_metrics_upload_file_service/METRICS_FILE_NOT_FOUND",
     });
+  });
+
+  it("should generate a metrics file upload url and replace the previous stored metrics", async context => {
+    const { worker, accessToken } = await createAuthorizedWorker();
+    const previousFile = await fileFactory.create({
+      provider_path: generateStorageEmulatorPath("processing_metrics"),
+    });
+    await putStorageEmulatorObject(previousFile.provider_path);
+    const processing = await processingFactory.create({
+      status: PROCESSING_STATUS.RUNNING,
+      metrics_file_id: previousFile.id,
+    });
+    const md5Hash = md5();
+
+    const response = await context.request
+      .post(`/worker/processing/${processing.id}/metrics_file/generate_upload`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        filename: `${faker.string.alphanumeric(12)}.csv`,
+        mime_type: MIME_TYPE.CSV,
+        size: 1024,
+        md5_hash: md5Hash,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      id: expect.any(String),
+      provider_status: FILE_PROVIDER_STATUS.PENDING,
+    });
+    const generatedFile = response.body;
+    const updatedProcessing =
+      await context.repositories.ProcessingRepository.findOne({
+        id: processing.id,
+      });
+    expect(updatedProcessing).toMatchObject({
+      worker_id: worker.id,
+      status: PROCESSING_STATUS.RUNNING,
+      finished_at: null,
+      metrics_file_id: generatedFile.id,
+    });
+    const storedFile = await context.repositories.FileRepository.findOne({
+      id: generatedFile.id,
+    });
+    expect(storedFile).toMatchObject({
+      provider_path: expect.stringMatching(
+        /^test\/processing_metrics\/.+\.csv$/,
+      ),
+      provider_status: FILE_PROVIDER_STATUS.PENDING,
+      type: FILE_TYPE.PROCESSING_METRICS,
+      mime_type: MIME_TYPE.CSV,
+      size: 1024,
+      md5_hash: Buffer.from(md5Hash, "hex").toString("base64"),
+      allow_public_access: true,
+    });
+    const uploadUrl = new URL(storedFile!.upload_url!);
+    expect(`${uploadUrl.origin}${uploadUrl.pathname}`).toBe(
+      getStorageEmulatorSignedUrlTarget(storedFile!.provider_path),
+    );
+    expect(uploadUrl.searchParams.get("X-Goog-Algorithm")).toBe(
+      "GOOG4-RSA-SHA256",
+    );
+    await expect(
+      getStorageEmulatorObjectStatus(previousFile.provider_path),
+    ).resolves.toBe(404);
   });
 });

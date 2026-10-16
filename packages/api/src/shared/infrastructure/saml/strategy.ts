@@ -1,24 +1,24 @@
 import { MultiSamlStrategy } from "@node-saml/passport-saml";
-import passport from "passport";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
-import xpath from "xpath";
-import schedule from "node-schedule";
-import { MetadataReader, toPassportConfig } from "passport-saml-metadata";
 import { XMLBuilder } from "fast-xml-parser";
+import schedule from "node-schedule";
+import passport from "passport";
+import { MetadataReader, toPassportConfig } from "passport-saml-metadata";
 import { container } from "tsyringe";
+import xpath from "xpath";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
 // Util import
-import { logger } from "@shared/utils/logger";
 import { isValidEmail } from "@shared/utils/isValidEmail";
-
-// Service import
-import { HandleSamlToFirebaseAuthenticationService } from "@modules/authentication/services/handleSamlToFirebaseAuthentication.service";
+import { logger } from "@shared/utils/logger";
 
 // Type import
 import { ParsedSamlUser } from "./types";
+
+// Service import
+import { HandleSamlToFirebaseAuthenticationService } from "@modules/authentication/services/handleSamlToFirebaseAuthentication.service";
 
 interface IdPConfig {
   entryPoint: string;

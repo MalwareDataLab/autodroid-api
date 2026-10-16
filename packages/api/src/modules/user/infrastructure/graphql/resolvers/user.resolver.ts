@@ -1,13 +1,13 @@
 import { Authorized, Ctx, Query, Resolver } from "type-graphql";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-
 // Context import
 import { GraphQLContext } from "@shared/infrastructure/graphql/context";
 
 // DTO import
 import { Session } from "@modules/user/types/IUserSession.dto";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
 
 @Resolver()
 class UserResolver {

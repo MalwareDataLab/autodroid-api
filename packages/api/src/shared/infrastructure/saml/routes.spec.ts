@@ -1,7 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-// Route import
 import "./routes";
+
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { routeRegistry, authenticateMock, federationManagerMock } = vi.hoisted(
   () => {

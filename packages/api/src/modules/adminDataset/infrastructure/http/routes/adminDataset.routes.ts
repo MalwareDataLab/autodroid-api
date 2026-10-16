@@ -1,12 +1,14 @@
 import { Router } from "express";
 
 // Middleware import
-import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
-import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
 import { paginationMiddleware } from "@modules/pagination/infrastructure/http/middlewares/pagination.middleware";
+import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
+import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
 
 // Constant import
 import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
+import { PAGINATION_QUERY_KEYS } from "@modules/pagination/constants/paginationQueryKeys.constant";
+import { SORTING_QUERY_KEYS } from "@modules/sorting/constants/sortingQueryKeys.constant";
 
 // Entity import
 import { Dataset } from "@modules/dataset/entities/dataset.entity";
@@ -37,6 +39,7 @@ adminDatasetRouter.get(
   validateRequest({
     schema: AdminDatasetIndexSchema,
     segment: "QUERY",
+    ignoreKeys: [...PAGINATION_QUERY_KEYS, ...SORTING_QUERY_KEYS],
   }),
   adminDatasetController.index,
 );

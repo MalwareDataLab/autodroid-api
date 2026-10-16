@@ -1,25 +1,23 @@
 # Build environment
-FROM node:22.17.1-alpine AS build
+FROM node:24.21.0-alpine AS build
 WORKDIR /usr/app
+RUN apk add --no-cache openssl
 
 COPY package.json yarn.lock ./
 COPY packages/api/package.json ./packages/api/package.json
-COPY packages/cli/package.json ./packages/cli/package.json
-COPY packages/mcp/package.json ./packages/mcp/package.json
 RUN yarn install --frozen-lockfile
 COPY . .
 RUN yarn workspace autodroid-api run build
 
 # Production environment
-FROM node:22.17.1-alpine AS production
+FROM node:24.21.0-alpine AS production
 WORKDIR /usr/app
+RUN apk add --no-cache openssl
 RUN addgroup -g 1001 -S nodegrp
 RUN adduser -S nodejs -u 1001
 
 COPY --from=build /usr/app/package.json /usr/app/yarn.lock /usr/app/scripts/wait-for.sh ./
 COPY --from=build /usr/app/packages/api/package.json ./packages/api/package.json
-COPY --from=build /usr/app/packages/cli/package.json ./packages/cli/package.json
-COPY --from=build /usr/app/packages/mcp/package.json ./packages/mcp/package.json
 COPY --from=build /usr/app/packages/api/prisma ./packages/api/prisma
 COPY --from=build /usr/app/packages/api/dist ./packages/api/src
 

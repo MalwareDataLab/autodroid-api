@@ -1,17 +1,17 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Enum import
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 describe("E2E: UserProcessingTimeEstimationController", () => {
   it("should show the estimated execution time", async context => {

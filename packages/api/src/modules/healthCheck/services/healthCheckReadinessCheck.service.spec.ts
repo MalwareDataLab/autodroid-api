@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Provider import
 import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
-import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
 import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import { INonRelationalDatabaseProvider } from "@shared/container/providers/NonRelationalDatabaseProvider/models/INonRelationalDatabase.provider";
 
-// Service import
+// Target import
 import { HealthCheckReadinessCheckService } from "./healthCheckReadinessCheck.service";
 
 describe("Service: HealthCheckReadinessCheckService", () => {

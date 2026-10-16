@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
@@ -11,7 +11,7 @@ import { IProcessingRepository } from "@modules/processing/repositories/IProcess
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Service import
+// Target import
 import { ProcessingHandleFailureService } from "./processingHandleFailure.service";
 
 describe("Service: ProcessingHandleFailureService", () => {

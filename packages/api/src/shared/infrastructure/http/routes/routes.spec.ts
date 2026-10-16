@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { healthCheckRouter } from "@modules/healthCheck/infrastructure/http/routes/healthCheck.routes";
-import { workerRouter } from "@modules/worker/infrastructure/http/routes/worker.routes";
+// Router import
 import { adminRouter } from "@modules/admin/infrastructure/http/routes/admin.routes";
-import { userRouter } from "@modules/user/infrastructure/http/routes/user.routes";
+import { cliAuthorizationRouter } from "@modules/cliAuthorization/infrastructure/http/routes/cliAuthorization.routes";
 import { userDatasetRouter } from "@modules/dataset/infrastructure/http/routes/userDataset.routes";
-import { userProcessorRouter } from "@modules/processor/infrastructure/http/routes/userProcessor.routes";
+import { healthCheckRouter } from "@modules/healthCheck/infrastructure/http/routes/healthCheck.routes";
+import { mcpAuthorizationRequestRouter } from "@modules/mcpAuthorization/infrastructure/http/routes/mcpAuthorizationRequest.routes";
 import { userProcessingRouter } from "@modules/processing/infrastructure/http/routes/userProcessing.routes";
+import { userProcessorRouter } from "@modules/processor/infrastructure/http/routes/userProcessor.routes";
+import { userRouter } from "@modules/user/infrastructure/http/routes/user.routes";
+import { workerRouter } from "@modules/worker/infrastructure/http/routes/worker.routes";
 
 // Target import
 import { router } from "./index";
@@ -27,6 +30,8 @@ describe("Routes: shared root router", () => {
     expect(mountedRouters()).toEqual([
       { path: "/health", handle: healthCheckRouter },
       { path: "/worker", handle: workerRouter },
+      { path: "/cli-auth", handle: cliAuthorizationRouter },
+      { path: "/mcp-auth", handle: mcpAuthorizationRequestRouter },
       { path: "/admin", handle: adminRouter },
       { path: "/user", handle: userRouter },
       { path: "/processor", handle: userProcessorRouter },
@@ -66,7 +71,12 @@ describe("Routes: shared root router", () => {
   it("should leave the health check and worker mounts unguarded", () => {
     const { stack } = router as any;
 
-    [healthCheckRouter, workerRouter].forEach(subRouter => {
+    [
+      healthCheckRouter,
+      workerRouter,
+      cliAuthorizationRouter,
+      mcpAuthorizationRequestRouter,
+    ].forEach(subRouter => {
       const mountIndex = stack.findIndex(
         (layer: any) => layer.handle === subRouter,
       );

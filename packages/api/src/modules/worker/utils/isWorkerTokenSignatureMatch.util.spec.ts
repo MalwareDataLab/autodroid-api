@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { JwtPayload } from "jsonwebtoken";
+import { describe, expect, it } from "vitest";
 
 // Configuration import
 import { getWorkerConfig } from "@config/worker";
@@ -11,7 +11,7 @@ import { generateWorkerTokenPayload } from "./generateWorkerTokenPayload.util";
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Test target import
+// Target import
 import { isWorkerTokenSignatureMatch } from "./isWorkerTokenSignatureMatch.util";
 
 const buildWorker = () => {

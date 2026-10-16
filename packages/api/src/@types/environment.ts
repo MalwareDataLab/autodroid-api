@@ -71,6 +71,8 @@ declare global {
       SAML_PRIVATE_KEY: string;
       SAML_FEDERATION_METADATA_URL: string;
       SAML_DISCOVERY_SERVICE_URL: string;
+
+      MCP_OAUTH_CLIENT_ID_SECRET: string;
     }
   }
 }

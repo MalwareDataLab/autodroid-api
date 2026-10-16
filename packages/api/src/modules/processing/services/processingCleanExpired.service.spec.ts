@@ -7,13 +7,13 @@ import { IStorageProvider } from "@shared/container/providers/StorageProvider/mo
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 
 // Repository import
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Service import
+// Target import
 import { ProcessingCleanExpiredService } from "./processingCleanExpired.service";
 
 describe("Service: ProcessingCleanExpiredService", () => {

@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { AdminWorkerUpdateService } from "./adminWorkerUpdate.service";
 
 describe("Service: AdminWorkerUpdateService", () => {
@@ -56,6 +56,37 @@ describe("Service: AdminWorkerUpdateService", () => {
     expect(response).toMatchObject({
       id: worker.id,
       description: "Updated",
+    });
+  });
+
+  it("should clear the description and tags when they are null", async context => {
+    const admin = await userFactory.create({
+      email: getAdminConfig().emails[0],
+    });
+    const worker = await workerFactory.create({
+      description: "Before",
+      tags: "one,two",
+    });
+
+    const response = await adminWorkerUpdateService.execute({
+      worker_id: worker.id,
+      data: { description: null, tags: null },
+      user: admin,
+      language: "en",
+    });
+
+    const stored = await context.repositories.WorkerRepository.findOne({
+      id: worker.id,
+    });
+    expect(response).toMatchObject({
+      id: worker.id,
+      description: null,
+      tags: null,
+    });
+    expect(stored).toMatchObject({
+      id: worker.id,
+      description: null,
+      tags: null,
     });
   });
 

@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Provider import
 import { IUserAgentInfoProvider } from "@shared/container/providers/UserAgentInfoProvider/models/IUserAgentInfo.provider";
 
-// Middleware import
+// Target import
 import { userAgentMiddleware } from "./userAgent.middleware";
 
 const buildProviderMock = () => ({

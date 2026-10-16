@@ -9,11 +9,11 @@ import { AppError } from "@shared/errors/AppError";
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
-// Repository import
-import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
-
 // Entity import
 import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
+
+// Repository import
+import { IUserAuthProviderConnRepository } from "@modules/user/repositories/IUserAuthProviderConn.repository";
 
 interface IUpsertUserAuthProviderConnServiceRequest {
   code: string;

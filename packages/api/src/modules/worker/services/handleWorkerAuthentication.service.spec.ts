@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Repository import
-import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
-
 // Util import
 import { generateWorkerAccessToken } from "@modules/worker/utils/generateWorkerToken.util";
+
+// Repository import
+import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
 
 // Factory import
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Service import
+// Target import
 import { HandleWorkerAuthenticationService } from "./handleWorkerAuthentication.service";
 
 describe("Service: HandleWorkerAuthenticationService", () => {

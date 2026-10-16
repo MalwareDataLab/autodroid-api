@@ -1,11 +1,11 @@
-import { Redis } from "ioredis";
 import { Server } from "node:http";
-import { Server as SocketIoServer } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
+import { Redis } from "ioredis";
+import { Server as SocketIoServer } from "socket.io";
 
 // Configuration import
-import { getRedisConfig } from "@config/redis";
 import { getCorsConfig } from "@config/cors";
+import { getRedisConfig } from "@config/redis";
 
 // Middleware import
 import { websocketUserAuthenticationMiddleware } from "@modules/user/infrastructure/websocket/middlewares/websocketUserAuthentication.middleware";

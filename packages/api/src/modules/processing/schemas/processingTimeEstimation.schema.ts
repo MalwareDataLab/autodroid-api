@@ -1,17 +1,19 @@
-import { ValidString } from "@shared/decorators/validString.decorator";
 import { IsUUID } from "class-validator";
 import { ArgsType, Field } from "type-graphql";
+
+// Decorator import
+import { ValidString } from "@shared/decorators/validString.decorator";
 
 @ArgsType()
 class ProcessingGetEstimatedExecutionTimeSchema {
   @ValidString()
   @IsUUID()
-  @Field()
+  @Field({ description: "The dataset id." })
   dataset_id: string;
 
   @ValidString()
   @IsUUID()
-  @Field()
+  @Field({ description: "The processor id." })
   processor_id: string;
 }
 
@@ -19,7 +21,7 @@ class ProcessingGetEstimatedExecutionTimeSchema {
 class ProcessingGetEstimatedFinishTimeSchema {
   @ValidString()
   @IsUUID()
-  @Field()
+  @Field({ description: "The processing run id." })
   processing_id: string;
 }
 

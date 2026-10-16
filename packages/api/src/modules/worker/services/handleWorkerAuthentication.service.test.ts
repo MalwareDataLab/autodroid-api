@@ -1,17 +1,17 @@
-import { describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
-
-// Repository import
-import { IWorkerRepository } from "../repositories/IWorker.repository";
+import { describe, expect, it, vi } from "vitest";
 
 // Util import
 import { generateWorkerAccessToken } from "../utils/generateWorkerToken.util";
+
+// Repository import
+import { IWorkerRepository } from "../repositories/IWorker.repository";
 
 // Factory import
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Service import
+// Target import
 import { HandleWorkerAuthenticationService } from "./handleWorkerAuthentication.service";
 
 describe("Service: HandleWorkerAuthenticationService", () => {

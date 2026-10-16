@@ -4,10 +4,10 @@ import validator from "validator";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Enum import
+// Constant import
 import { CURSORS, AVAILABLE_CURSOR } from "../constants/cursors.constant";
 
-// Interface import
+// Type import
 import { Cursor } from "./IPagination.type";
 
 const isCursor = (value: unknown): value is Cursor => {
@@ -25,7 +25,21 @@ const isCursor = (value: unknown): value is Cursor => {
   )
     return false;
 
-  return true;
+  const { created_at, id } = value as Record<AVAILABLE_CURSOR, unknown>;
+  const isServerDateText = (text: string) => {
+    const time = new Date(text).getTime();
+    return (
+      validator.isRFC3339(text) &&
+      !Number.isNaN(time) &&
+      new Date(time).toISOString() === text
+    );
+  };
+  const hasValidDate =
+    created_at instanceof Date
+      ? !Number.isNaN(created_at.getTime())
+      : typeof created_at === "string" && isServerDateText(created_at);
+
+  return hasValidDate && typeof id === "string" && id.length > 0;
 };
 const serializeCursor = (cursor: Cursor | unknown): string => {
   try {
@@ -55,6 +69,7 @@ const parseCursor = (str: string): Cursor => {
       debug: {
         str,
         error,
+        disableRegister: true,
       },
     });
 

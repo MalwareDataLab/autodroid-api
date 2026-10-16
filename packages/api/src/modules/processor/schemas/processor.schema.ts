@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from "type-graphql";
+import { plainToInstance, Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsArray,
@@ -10,13 +10,17 @@ import {
   IsString,
   ValidateNested,
 } from "class-validator";
-import { plainToInstance, Type } from "class-transformer";
+import { Field, InputType, Int } from "type-graphql";
 
 // Decorator import
+import { ValidInt } from "@shared/decorators/validInt.decorator";
 import { ValidString } from "@shared/decorators/validString.decorator";
 
+// Enum import
+import { PROCESSOR_PARAMETER_TYPE } from "../types/processorParameterType.enum";
+import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
+
 // DTO import
-import { ValidInt } from "@shared/decorators/validInt.decorator";
 import {
   ICreateProcessorDTO,
   ProcessorForeignKeys,
@@ -26,35 +30,39 @@ import {
 import { ProcessorConfiguration } from "../entities/processorConfiguration.entity";
 import { ProcessorParameter } from "../entities/processorParameter.entity";
 
-// Enum import
-import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
-import { PROCESSOR_PARAMETER_TYPE } from "../types/processorParameterType.enum";
-
 @InputType()
 class ProcessorConfigurationParameterSchema implements ProcessorParameter {
   @ValidInt()
-  @Field(() => Int)
+  @Field(() => Int, {
+    description: "Position of the parameter in the command line.",
+  })
   sequence: number;
 
   @ValidString()
-  @Field()
+  @Field({ description: "Parameter name." })
   name: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "What the parameter does." })
   description: string;
 
   @ValidString()
   @IsEnum(PROCESSOR_PARAMETER_TYPE)
-  @Field(() => PROCESSOR_PARAMETER_TYPE)
+  @Field(() => PROCESSOR_PARAMETER_TYPE, {
+    description: "Type of the parameter's value.",
+  })
   type: PROCESSOR_PARAMETER_TYPE;
 
   @IsBoolean()
-  @Field()
+  @Field({ description: "Whether a run must give the parameter." })
   is_required: boolean;
 
   @ValidString({ nullable: "allowNull" })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description:
+      "Value used when a run leaves the parameter out; null when there is none.",
+  })
   default_value: string | null;
 }
 
@@ -64,27 +72,29 @@ class ProcessorConfigurationSchema implements ProcessorConfiguration {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => ProcessorConfigurationParameterSchema)
-  @Field(() => [ProcessorConfigurationParameterSchema])
+  @Field(() => [ProcessorConfigurationParameterSchema], {
+    description: "The parameters a run of it accepts.",
+  })
   parameters: ProcessorConfigurationParameterSchema[];
 
   @ValidString()
-  @Field()
+  @Field({ description: "Argument name that receives the input dataset path." })
   dataset_input_argument: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "Input dataset path value." })
   dataset_input_value: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "Argument name that receives the output directory." })
   dataset_output_argument: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "Output directory value." })
   dataset_output_value: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "Command run inside the container." })
   command: string;
 
   @IsArray()
@@ -92,7 +102,9 @@ class ProcessorConfigurationSchema implements ProcessorConfiguration {
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
   @Type(() => String)
-  @Field(() => [String])
+  @Field(() => [String], {
+    description: "Glob patterns of the result files it produces.",
+  })
   output_result_file_glob_patterns: string[];
 
   @IsArray()
@@ -100,7 +112,9 @@ class ProcessorConfigurationSchema implements ProcessorConfiguration {
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
   @Type(() => String)
-  @Field(() => [String])
+  @Field(() => [String], {
+    description: "Glob patterns of the metrics files it produces.",
+  })
   output_metrics_file_glob_patterns: string[];
 }
 
@@ -113,39 +127,49 @@ class ProcessorSchema
     >
 {
   @ValidString()
-  @Field()
+  @Field({ description: "Processor name." })
   name: string;
 
   @ValidString()
   @IsSemVer()
-  @Field()
+  @Field({ description: "Semantic version, e.g. 1.2.0." })
   version: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "Container image tag to run." })
   image_tag: string;
 
   @ValidString({ nullable: "allowNull" })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "What the processor does; null when there is none.",
+  })
   description: string | null;
 
   @ValidString({ nullable: "allowNull" })
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Comma-separated tags; null when there are none.",
+  })
   tags: string | null;
 
   @ValidString()
-  @Field()
+  @Field({
+    description: "Comma-separated MIME types of the datasets it accepts.",
+  })
   allowed_mime_types: string;
 
   @ValidString()
   @IsEnum(PROCESSOR_VISIBILITY)
-  @Field(() => PROCESSOR_VISIBILITY)
+  @Field(() => PROCESSOR_VISIBILITY, { description: "Who can use it." })
   visibility: PROCESSOR_VISIBILITY;
 
   @IsObject()
   @ValidateNested()
   @Type(() => ProcessorConfigurationSchema)
-  @Field(() => ProcessorConfigurationSchema)
+  @Field(() => ProcessorConfigurationSchema, {
+    description: "How the processor runs.",
+  })
   configuration: ProcessorConfigurationSchema;
 
   static make(data: ProcessorSchema): ProcessorSchema {

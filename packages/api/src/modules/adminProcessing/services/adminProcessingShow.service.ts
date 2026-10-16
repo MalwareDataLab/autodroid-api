@@ -10,8 +10,8 @@ import { AppError } from "@shared/errors/AppError";
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { Processing } from "@modules/processing/entities/processing.entity";
+import { User } from "@modules/user/entities/user.entity";
 
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";

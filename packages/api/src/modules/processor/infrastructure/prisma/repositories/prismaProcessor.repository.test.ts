@@ -1,6 +1,10 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
+
+// Enum import
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
@@ -8,13 +12,9 @@ import { User } from "@modules/user/entities/user.entity";
 // Repository import
 import { IProcessorRepository } from "@shared/container/repositories";
 
-// Enum import
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
-import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
-
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 const makeConfiguration = () => ({
   parameters: [],

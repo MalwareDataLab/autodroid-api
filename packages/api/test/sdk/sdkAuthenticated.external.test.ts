@@ -1,18 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
-import path from "node:path";
 import type { AddressInfo } from "node:net";
+import path from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-// Server util import
+// Container import
 import {
   initAndWaitRequisites,
   initSecondaryProviders,
 } from "@shared/container";
-import { disposeServer, getServer } from "@/test/utils/getServer.util";
-import { getFirebaseTestCredentials } from "@/test/utils/getFirebaseTestCredentials.util";
-import { startAndGetSessionToken } from "@/test/utils/startAndGetSessionToken.util";
 
-// Container import
+// Util import
+import { getFirebaseTestCredentials } from "@/test/utils/getFirebaseTestCredentials.util";
+import { disposeServer, getServer } from "@/test/utils/getServer.util";
+import { startAndGetSessionToken } from "@/test/utils/startAndGetSessionToken.util";
 
 const SDK_CJS_PATH = path.join(
   __dirname,

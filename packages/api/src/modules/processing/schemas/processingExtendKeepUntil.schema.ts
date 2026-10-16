@@ -1,9 +1,9 @@
-import { ArgsType, Field } from "type-graphql";
-import { IsDate, MaxDate, MinDate } from "class-validator";
-
-// Helper import
-import { DateUtils } from "@shared/utils/dateUtils";
 import { Type } from "class-transformer";
+import { IsDate, MaxDate, MinDate } from "class-validator";
+import { ArgsType, Field } from "type-graphql";
+
+// Util import
+import { DateUtils } from "@shared/utils/dateUtils";
 
 @ArgsType()
 class UserProcessingExtendKeepUntilSchema {
@@ -15,7 +15,10 @@ class UserProcessingExtendKeepUntilSchema {
     message: "The date must be less than or equal to 30 days from now",
   })
   @Type(() => Date)
-  @Field(() => Date)
+  @Field(() => Date, {
+    description:
+      "The new keep-until moment, from now up to 30 days ahead (e.g. 2030-01-31T00:00:00Z).",
+  })
   keep_until: Date;
 }
 

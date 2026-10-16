@@ -1,4 +1,4 @@
-# Exemplo de Configuração do Firebase
+# Exemplo de configuração do Firebase
 
 Esta página visa auxiliar na configuração do Firebase para o projeto.
 
@@ -97,7 +97,7 @@ Siga os passos demonstrados nas imagens abaixo:
 
 ## Utilizar Firebase Storage <a name="firebase_storage"></a>
 
-❗❗❗ Caso não deseje utilizar o serviço de Storage do Firebase, ignore as etapas a seguir, retornando ao [README](./README.md).
+❗❗❗ Caso não deseje utilizar o serviço de Storage do Firebase, ignore as etapas a seguir, retornando ao [README](../README.md).
 
 ### Passo 31 <a name="firebase_setup_step_31"></a>
 <img src="../.github/docs/FIREBASE-STEP-31.png" />

@@ -1,15 +1,17 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { container } from "tsyringe";
-
-// Factory import
-import { User } from "@modules/user/entities/user.entity";
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
-// Service import
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminFileRemoveAllDanglingService } from "./adminFileRemoveAllDangling.service";
 
 describe("Service: AdminFileRemoveAllDanglingService", () => {

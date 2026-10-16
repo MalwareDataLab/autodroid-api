@@ -1,24 +1,27 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { WorkerRegistrationTokenSortingOptions } from "@modules/worker/constants/workerRegistrationTokenSortingOptions.constant";
-
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@shared/container/repositories";
+// Util import
+import { withoutWorkerRegistrationTokenValue } from "@modules/worker/utils/withoutWorkerRegistrationTokenValue.util";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { PaginatedWorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+// Constant import
+import { WorkerRegistrationTokenSortingOptions } from "@modules/worker/constants/workerRegistrationTokenSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { PaginatedWorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+
 // Schema import
 import { WorkerRegistrationTokenIndexSchema } from "@modules/worker/schemas/workerRegistrationToken.schema";
+
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@shared/container/repositories";
 
 interface IRequest {
   filter: WorkerRegistrationTokenIndexSchema;
@@ -55,7 +58,7 @@ class AdminWorkerRegistrationTokenIndexService {
       );
 
     return PaginatedWorkerRegistrationToken.make({
-      items: workerRegistrationTokens,
+      items: workerRegistrationTokens.map(withoutWorkerRegistrationTokenValue),
       totalCount,
       paginationRequest: pagination,
     });

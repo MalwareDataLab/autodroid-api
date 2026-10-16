@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { validate } from "class-validator";
 import { ClassConstructor, plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { describe, expect, it } from "vitest";
 
-// Decorator import
+// Target import
 import { ValidString } from "./validString.decorator";
 
 const buildClass = (apply: (target: object, key: string) => void) => {

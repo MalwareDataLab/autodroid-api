@@ -1,12 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-
-// Repository import
-import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Enum import
 import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
@@ -14,7 +7,14 @@ import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorPara
 // Schema import
 import { ProcessorSchema } from "@modules/processor/schemas/processor.schema";
 
-// Service import
+// Repository import
+import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
+
+// Factory import
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessorCreateService } from "./adminProcessorCreate.service";
 
 describe("Service: AdminProcessorCreateService", () => {

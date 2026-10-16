@@ -1,9 +1,6 @@
 // Constant import
 import { UserSortingOptions } from "@modules/user/constants/userSortingOptions.constant";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
@@ -12,6 +9,9 @@ import {
   IFindUserDTO,
   IUpdateUserDTO,
 } from "../types/IUser.dto";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
 
 export interface IUserRepository {
   createOne(data: ICreateUserDTO): Promise<User>;

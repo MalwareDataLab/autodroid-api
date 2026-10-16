@@ -1,13 +1,15 @@
+import { faker } from "@faker-js/faker";
 import { container } from "tsyringe";
 import { beforeEach, describe, expect, it } from "vitest";
-import { faker } from "@faker-js/faker";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
 
 // Factory import
-import { User } from "@modules/user/entities/user.entity";
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { UserProcessorShowService } from "./userProcessorShow.service";
 
 describe("Service: UserProcessorShowService", () => {

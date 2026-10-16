@@ -1,3 +1,4 @@
+import { Exclude, Type } from "class-transformer";
 import { container } from "tsyringe";
 import {
   Authorized,
@@ -7,31 +8,30 @@ import {
   Int,
   ObjectType,
 } from "type-graphql";
-import { Exclude, Type } from "class-transformer";
-
-// Type import
-import { FileEntityType } from "@shared/types/models";
-
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
-import { BigIntScalar } from "@shared/types/bigInt.scalar";
 
 // Util import
 import { ClassConstructor } from "@shared/utils/instanceParser";
 
-// Entity import
-import { Dataset } from "@modules/dataset/entities/dataset.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
-import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+// Type import
+import { FileEntityType } from "@shared/types/models";
 
 // Enum import
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
-import { FILE_TYPE } from "../types/fileType.enum";
 import { FILE_PROVIDER_STATUS } from "../types/fileProviderStatus.enum";
+import { FILE_TYPE } from "../types/fileType.enum";
+
+// Entity import
+import { Dataset } from "@modules/dataset/entities/dataset.entity";
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
 
 // Service import
 import { ProcessFilePublicAccessService } from "../services/processFilePublicAccess.service";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ObjectType()
 class File implements FileEntityType {

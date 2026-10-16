@@ -1,8 +1,5 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
-
 // Provider import
 import {
   DatabaseHelperTypes,
@@ -10,28 +7,31 @@ import {
 } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Util import
-import { parse } from "@shared/utils/instanceParser";
 import { makePaginationObj } from "@modules/pagination/utils/makePaginationObj";
 import { makeSortingArr } from "@modules/sorting/utils/makeSortingArr";
+import { parse } from "@shared/utils/instanceParser";
 
-// Entity import
-import { Processor } from "@modules/processor/entities/processor.entity";
-
-// Interface import
-import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
+// Constant import
+import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
 
 // Enum import
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
-import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 import {
   IFindProcessorDTO,
   ICreateProcessorDTO,
   IUpdateProcessorDTO,
   IFindProcessorPublicOrUserPrivateDTO,
 } from "@modules/processor/types/IProcessor.dto";
+import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
+
+// Entity import
+import { Processor } from "@modules/processor/entities/processor.entity";
+
+// Repository import
+import { IProcessorRepository } from "@modules/processor/repositories/IProcessor.repository";
 
 @injectable()
 class PrismaProcessorRepository implements IProcessorRepository {
@@ -86,7 +86,9 @@ class PrismaProcessorRepository implements IProcessorRepository {
   }
 
   public async findOne(filter: IFindProcessorDTO): Promise<Processor | null> {
-    return this.findMany(filter, { skip: 0 }).then(result => result[0] || null);
+    return this.findMany(filter, { skip: 0, take: 1 }).then(
+      result => result[0] || null,
+    );
   }
 
   public async findMany(

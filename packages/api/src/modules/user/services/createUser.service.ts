@@ -6,14 +6,14 @@ import { i18n } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// DTO import
+import { ICreateUserDTO } from "../types/IUser.dto";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 
 // Repository import
 import { IUserRepository } from "@modules/user/repositories/IUser.repository";
-
-// DTO import
-import { ICreateUserDTO } from "../types/IUser.dto";
 
 interface IRequest {
   data: ICreateUserDTO;

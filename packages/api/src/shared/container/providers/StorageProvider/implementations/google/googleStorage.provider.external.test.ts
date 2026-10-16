@@ -1,15 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createHash, randomUUID } from "node:crypto";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { MIME_TYPE } from "@modules/file/types/mimeType.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
 // Entity import
 import { File } from "@modules/file/entities/file.entity";
 
-// Provider import
+// Target import
 import { GoogleStorageProvider } from "./googleStorage.provider";
 
 describe("External: GoogleStorageProvider", () => {

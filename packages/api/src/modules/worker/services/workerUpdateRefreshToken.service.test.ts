@@ -1,21 +1,21 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IWorkerRepository } from "../repositories/IWorker.repository";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Util import
 import { generateWorkerRefreshToken } from "../utils/generateWorkerToken.util";
+
+// Schema import
+import { WorkerRefreshTokenSchema } from "../schemas/worker.schema";
+
+// Repository import
+import { IWorkerRepository } from "../repositories/IWorker.repository";
 
 // Factory import
 import { workerFactory } from "../entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Schema import
-import { WorkerRefreshTokenSchema } from "../schemas/worker.schema";
-
-// Service import
+// Target import
 import { WorkerUpdateRefreshTokenService } from "./workerUpdateRefreshToken.service";
 
 describe("Service: WorkerUpdateRefreshTokenService", () => {

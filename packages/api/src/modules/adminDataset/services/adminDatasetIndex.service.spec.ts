@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-
 // Repository import
 import { IDatasetRepository } from "@modules/dataset/repositories/IDataset.repository";
 
-// Service import
+// Factory import
+import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminDatasetIndexService } from "./adminDatasetIndex.service";
 
 describe("Service: AdminDatasetIndexService", () => {

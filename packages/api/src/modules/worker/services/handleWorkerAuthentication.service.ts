@@ -8,19 +8,17 @@ import { AppError } from "@shared/errors/AppError";
 
 // Util import
 import { parse } from "@shared/utils/instanceParser";
+import { verifyAndGetWorkerAccessTokenPayload } from "../utils/decodeAndValidateWorkerToken.util";
+import { isWorkerTokenSignatureMatch } from "../utils/isWorkerTokenSignatureMatch.util";
 
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
 
-// Repository import
-import { IWorkerRepository } from "../repositories/IWorker.repository";
-
 // Entity import
 import { WorkerSession } from "../entities/workerSession.entity";
 
-// Util import
-import { isWorkerTokenSignatureMatch } from "../utils/isWorkerTokenSignatureMatch.util";
-import { verifyAndGetWorkerAccessTokenPayload } from "../utils/decodeAndValidateWorkerToken.util";
+// Repository import
+import { IWorkerRepository } from "../repositories/IWorker.repository";
 
 interface IRequest {
   access_token: string;

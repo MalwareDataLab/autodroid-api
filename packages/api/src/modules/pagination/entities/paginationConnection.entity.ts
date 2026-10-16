@@ -1,16 +1,11 @@
 import { ClassType, Field, Int, ObjectType } from "type-graphql";
 
-// Constant import
-import { TAKE_DEFAULT } from "@modules/pagination/constants/paginationLimit.constant";
+// Error import
+import { AppError } from "@shared/errors/AppError";
 
 // Util import
-import { makePaginationObj } from "../utils/makePaginationObj";
-import { serializeCursor } from "../types/paginationConnectionCursor.scalar";
 import { makeCursorObjFromEntity } from "../utils/makeCursorObjFromEntity";
-
-// Entity import
-import { PageInfo } from "./pageInfo.entity";
-import { PaginationEdge } from "./paginationEdge.entity";
+import { makePaginationObj } from "../utils/makePaginationObj";
 
 // Type import
 import {
@@ -18,6 +13,13 @@ import {
   IMakePaginationConnection,
   INodeEntity,
 } from "../types/IPagination.type";
+
+// Entity import
+import { PageInfo } from "./pageInfo.entity";
+import { PaginationEdge } from "./paginationEdge.entity";
+
+// Scalar import
+import { serializeCursor } from "../types/paginationConnectionCursor.scalar";
 
 export function PaginationConnection<IEntity extends INodeEntity>(
   EntityClass: ClassType<IEntity>,
@@ -48,31 +50,42 @@ export function PaginationConnection<IEntity extends INodeEntity>(
       const connection = new PaginationConnectionFactory();
 
       const pagination = makePaginationObj(paginationRequest);
-      if (!pagination.take) pagination.take = TAKE_DEFAULT;
 
       connection.totalCount = totalCount;
 
-      // Cursor pagination
-      if (pagination.cursor) {
-        const cursorIndex = items.findIndex(
-          item => item.id === pagination.cursor?.id,
-        );
+      const { cursor, skip, take } = pagination;
 
-        const hasPreviousPage = cursorIndex >= 0;
+      // Cursor pagination
+      if (cursor) {
+        const cursorTake = take as number;
+
+        if (!items.length)
+          throw new AppError({
+            key: "@pagination/CURSOR_NOT_FOUND",
+            message:
+              "The cursor points to a row that no longer exists or is no longer listed.",
+            statusCode: 400,
+          });
+
+        const isForward = cursorTake > 0;
+        const pageSize = Math.abs(cursorTake) - 2;
+
+        const cursorIndex = items.findIndex(item => item.id === cursor.id);
+        const hasCursorRow = cursorIndex >= 0;
+
         const itemsWithoutCursor =
-          hasIncludedBoundaries && cursorIndex >= 0
-            ? pagination.take > 0
+          hasIncludedBoundaries && hasCursorRow
+            ? isForward
               ? items.slice(cursorIndex + 1)
               : items.slice(0, cursorIndex)
             : items;
 
-        const hasNextPage =
-          itemsWithoutCursor.length > Math.abs(pagination.take - 2);
+        const hasMoreBeyondPage = itemsWithoutCursor.length > pageSize;
 
-        const itemsWithoutExcess = hasNextPage
-          ? pagination.take > 0
-            ? itemsWithoutCursor.slice(0, Math.abs(pagination.take) - 2)
-            : itemsWithoutCursor.slice(1)
+        const itemsWithoutExcess = hasMoreBeyondPage
+          ? isForward
+            ? itemsWithoutCursor.slice(0, pageSize)
+            : itemsWithoutCursor.slice(-pageSize)
           : itemsWithoutCursor;
 
         connection.edges = itemsWithoutExcess.map(item => ({
@@ -83,8 +96,8 @@ export function PaginationConnection<IEntity extends INodeEntity>(
         connection.pageInfo = {
           startCursor: connection.edges[0]?.cursor || null,
           endCursor: connection.edges.slice(-1)[0]?.cursor || null,
-          hasPreviousPage,
-          hasNextPage,
+          hasPreviousPage: isForward ? hasCursorRow : hasMoreBeyondPage,
+          hasNextPage: isForward ? hasMoreBeyondPage : hasCursorRow,
         };
       }
 
@@ -98,8 +111,8 @@ export function PaginationConnection<IEntity extends INodeEntity>(
         connection.pageInfo = {
           startCursor: connection.edges[0]?.cursor || null,
           endCursor: connection.edges.slice(-1)[0]?.cursor || null,
-          hasPreviousPage: pagination.skip > 0,
-          hasNextPage: pagination.skip + pagination.take < totalCount,
+          hasPreviousPage: skip > 0,
+          hasNextPage: take !== undefined && skip + take < totalCount,
         };
       }
 

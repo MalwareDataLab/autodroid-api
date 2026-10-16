@@ -3,17 +3,17 @@ import { inject, injectable } from "tsyringe";
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
+// Enum import
+import { PROCESSING_STATUS } from "../types/processingStatus.enum";
+
+// Entity import
+import { Processing } from "../entities/processing.entity";
+
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 // Service import
 import { ProcessingReportStatusService } from "@modules/processing/services/processingReportStatus.service";
-
-// Entity import
-import { Processing } from "../entities/processing.entity";
-
-// Enum import
-import { PROCESSING_STATUS } from "../types/processingStatus.enum";
 
 interface IRequest {
   processing_ids: string[];

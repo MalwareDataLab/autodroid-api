@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-// Util import
+// Middleware import
 import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
 
 // Schema import
@@ -9,8 +9,8 @@ import { WorkerHandleProcessFailureSchema } from "@modules/worker/schemas/worker
 
 // Controller import
 import { WorkerProcessingController } from "../controllers/workerProcessing.controller";
-import { WorkerProcessingResultFileController } from "../controllers/workerProcessingResultFile.controller";
 import { WorkerProcessingMetricsFileController } from "../controllers/workerProcessingMetricsFile.controller";
+import { WorkerProcessingResultFileController } from "../controllers/workerProcessingResultFile.controller";
 
 const workerProcessingController = new WorkerProcessingController();
 const workerProcessingResultFileController =

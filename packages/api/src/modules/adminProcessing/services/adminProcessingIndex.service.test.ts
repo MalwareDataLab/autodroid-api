@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Schema import
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 import { AdminProcessingIndexSchema } from "../schemas/adminProcessing.schema";
 
-// Service import
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { AdminProcessingIndexService } from "./adminProcessingIndex.service";
 
 describe("Service: AdminProcessingIndexService", () => {

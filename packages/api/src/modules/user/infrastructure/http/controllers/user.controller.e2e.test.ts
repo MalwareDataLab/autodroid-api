@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
 
+// Util import
+import { createDisposableFirebaseSession } from "@/test/utils/createDisposableFirebaseSession.util";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
 describe("E2E: UserController", () => {
   it("should return user data", async context => {
     const response = await context
@@ -23,8 +29,11 @@ describe("E2E: UserController", () => {
   });
 
   it("should be able to update user data", async context => {
+    const currentResponse = await context
+      .userAuthorized(context.request.get("/user"))
+      .send();
     const data = {
-      name: "Updated",
+      name: currentResponse.body.name,
       language: "pt-BR",
     };
 
@@ -50,5 +59,40 @@ describe("E2E: UserController", () => {
     expect(response.body).toMatchObject({
       code: "@user_update_data_service/INVALID_LANGUAGE",
     });
+  });
+
+  it("should update the user's name in the authentication provider and in the user record", async context => {
+    const disposable = await createDisposableFirebaseSession(
+      context.container,
+      "Original",
+    );
+
+    try {
+      const user = await userFactory.create({
+        email: disposable.session.email,
+        name: "Original",
+        language: "en",
+      });
+      const data = { name: "Updated", language: "pt-BR" };
+
+      const response = await context.request
+        .put("/user")
+        .set("Authorization", `Bearer ${disposable.session.idToken}`)
+        .send(data);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({ id: user.id, ...data });
+      await expect(
+        context.repositories.UserRepository.findOne({ id: user.id }),
+      ).resolves.toEqual(expect.objectContaining(data));
+      await expect(
+        disposable.authenticationMethod.getUserByCode(
+          disposable.session.localId,
+          "en",
+        ),
+      ).resolves.toMatchObject({ name: data.name });
+    } finally {
+      await disposable.dispose();
+    }
   });
 });

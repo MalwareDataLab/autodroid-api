@@ -1,26 +1,23 @@
-import { gql } from "@/test/utils/gql.util";
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
+
+// Util import
+import { gql } from "@/test/utils/gql.util";
 
 // Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
-
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
-import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 const validProcessorConfiguration = {
   parameters: [
@@ -43,22 +40,6 @@ const validProcessorConfiguration = {
 };
 
 describe("E2E: UserProcessingResolver", () => {
-  beforeEach(context => {
-    context.container.registerInstance<IStorageProvider>("StorageProvider", {
-      provider_code: STORAGE_PROVIDER.GOOGLE_CLOUD_STORAGE,
-      initialization: Promise.resolve(),
-      generateUploadSignedUrl: async () => fileFactory.create(),
-      refreshFile: async ({ file }) => file,
-      removeFileByPath: async () => "",
-    });
-
-    context.container.registerInstance<IJobProvider>("JobProvider", {
-      initialization: Promise.resolve(),
-      add: () => undefined,
-      close: async () => undefined,
-    });
-  });
-
   const seedOwnedProcessing = async (params: {
     email: string;
     owned?: boolean;
@@ -87,6 +68,186 @@ describe("E2E: UserProcessingResolver", () => {
 
     return { user, dataset, processor, processing };
   };
+
+  it("should return an error listing processes filtered by a dataset that was not found", async context => {
+    await userFactory.create({ email: context.userSession.email });
+
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query UserProcesses($dataset_id: String) {
+            userProcesses(dataset_id: $dataset_id) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: { dataset_id: faker.string.uuid() },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: { code: "@processing_guard/DATASET_NOT_FOUND" },
+        }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+  });
+
+  it("should return an error listing processes when unauthorized", async context => {
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .set("Authorization", `Bearer someToken`)
+      .send({
+        query: gql`
+          query UserProcesses {
+            userProcesses {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        `,
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ extensions: { code: "UNAUTHORIZED" } }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+  });
+
+  it("should return an error showing a processing that was not found", async context => {
+    await userFactory.create({ email: context.userSession.email });
+
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query UserProcessing($processing_id: String!) {
+            userProcessing(processing_id: $processing_id) {
+              id
+            }
+          }
+        `,
+        variables: { processing_id: faker.string.uuid() },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: { code: "@processing_guard/PROCESSING_NOT_FOUND" },
+        }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+  });
+
+  it("should return an error requesting a dataset processing when unauthorized", async context => {
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .set("Authorization", `Bearer someToken`)
+      .send({
+        query: gql`
+          mutation UserRequestDatasetProcessing(
+            $data: RequestDatasetProcessingSchema!
+          ) {
+            userRequestDatasetProcessing(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          data: {
+            processor_id: faker.string.uuid(),
+            dataset_id: faker.string.uuid(),
+            parameters: [],
+          },
+        },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ extensions: { code: "UNAUTHORIZED" } }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+  });
+
+  it("should return an error getting the time estimation for a dataset that was not found", async context => {
+    const user = await userFactory.create({
+      email: context.userSession.email,
+    });
+    const processor = await processorFactory.create({
+      visibility: PROCESSOR_VISIBILITY.PUBLIC,
+    });
+
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query UserProcessingTimeEstimation(
+            $dataset_id: String!
+            $processor_id: String!
+          ) {
+            userProcessingTimeEstimation(
+              dataset_id: $dataset_id
+              processor_id: $processor_id
+            ) {
+              dataset_id
+            }
+          }
+        `,
+        variables: {
+          dataset_id: faker.string.uuid(),
+          processor_id: processor.id,
+        },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: { code: "@processing_guard/DATASET_NOT_FOUND" },
+        }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+    expect(user).toBeDefined();
+  });
+
+  it("should return an error getting the estimated finish for a processing that was not found", async context => {
+    await userFactory.create({ email: context.userSession.email });
+
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query UserProcessingEstimatedFinish($processing_id: String!) {
+            userProcessingEstimatedFinish(processing_id: $processing_id) {
+              processing_id
+            }
+          }
+        `,
+        variables: { processing_id: faker.string.uuid() },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: { code: "@processing_guard/PROCESSING_NOT_FOUND" },
+        }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
+  });
 
   it("should list user processes", async context => {
     const { processing } = await seedOwnedProcessing({
@@ -151,62 +312,6 @@ describe("E2E: UserProcessingResolver", () => {
     ).not.toContain(otherPrivateProcessing.id);
   });
 
-  it("should return an error listing processes filtered by a dataset that was not found", async context => {
-    await userFactory.create({ email: context.userSession.email });
-
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          query UserProcesses($dataset_id: String) {
-            userProcesses(dataset_id: $dataset_id) {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        `,
-        variables: { dataset_id: faker.string.uuid() },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          extensions: { code: "@processing_guard/DATASET_NOT_FOUND" },
-        }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
-  });
-
-  it("should return an error listing processes when unauthorized", async context => {
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .set("Authorization", `Bearer someToken`)
-      .send({
-        query: gql`
-          query UserProcesses {
-            userProcesses {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ extensions: { code: "UNAUTHORIZED" } }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
-  });
-
   it("should show a user processing", async context => {
     const { processing } = await seedOwnedProcessing({
       email: context.userSession.email,
@@ -232,32 +337,6 @@ describe("E2E: UserProcessingResolver", () => {
     expect(response.body.data.userProcessing).toMatchObject({
       id: processing.id,
     });
-  });
-
-  it("should return an error showing a processing that was not found", async context => {
-    await userFactory.create({ email: context.userSession.email });
-
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          query UserProcessing($processing_id: String!) {
-            userProcessing(processing_id: $processing_id) {
-              id
-            }
-          }
-        `,
-        variables: { processing_id: faker.string.uuid() },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          extensions: { code: "@processing_guard/PROCESSING_NOT_FOUND" },
-        }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
   });
 
   it("should return an error showing a private processing owned by another user", async context => {
@@ -391,37 +470,6 @@ describe("E2E: UserProcessingResolver", () => {
             code: "@user_request_dataset_processing/DATASET_NOT_AVAILABLE",
           },
         }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
-  });
-
-  it("should return an error requesting a dataset processing when unauthorized", async context => {
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .set("Authorization", `Bearer someToken`)
-      .send({
-        query: gql`
-          mutation UserRequestDatasetProcessing(
-            $data: RequestDatasetProcessingSchema!
-          ) {
-            userRequestDatasetProcessing(data: $data) {
-              id
-            }
-          }
-        `,
-        variables: {
-          data: {
-            processor_id: faker.string.uuid(),
-            dataset_id: faker.string.uuid(),
-            parameters: [],
-          },
-        },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ extensions: { code: "UNAUTHORIZED" } }),
       ]),
     );
     expect(response.body.data).toBeNull();
@@ -584,10 +632,14 @@ describe("E2E: UserProcessingResolver", () => {
     expect(response.body.data).toBeNull();
   });
 
-  it("should delete a user processing", async context => {
+  it("should delete a user processing that has no stored files", async context => {
     const { processing } = await seedOwnedProcessing({
       email: context.userSession.email,
     });
+    await context.repositories.ProcessingRepository.updateOne(
+      { id: processing.id },
+      { result_file_id: null, metrics_file_id: null },
+    );
 
     const response = await context
       .userAuthorized(context.request.post("/graphql"))
@@ -607,6 +659,9 @@ describe("E2E: UserProcessingResolver", () => {
     expect(response.body.data.userProcessingDelete).toMatchObject({
       id: processing.id,
     });
+    await expect(
+      context.repositories.ProcessingRepository.findOne({ id: processing.id }),
+    ).resolves.toBeNull();
   });
 
   it("should return an error deleting a processing owned by another user", async context => {
@@ -682,47 +737,6 @@ describe("E2E: UserProcessingResolver", () => {
     });
   });
 
-  it("should return an error getting the time estimation for a dataset that was not found", async context => {
-    const user = await userFactory.create({
-      email: context.userSession.email,
-    });
-    const processor = await processorFactory.create({
-      visibility: PROCESSOR_VISIBILITY.PUBLIC,
-    });
-
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          query UserProcessingTimeEstimation(
-            $dataset_id: String!
-            $processor_id: String!
-          ) {
-            userProcessingTimeEstimation(
-              dataset_id: $dataset_id
-              processor_id: $processor_id
-            ) {
-              dataset_id
-            }
-          }
-        `,
-        variables: {
-          dataset_id: faker.string.uuid(),
-          processor_id: processor.id,
-        },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          extensions: { code: "@processing_guard/DATASET_NOT_FOUND" },
-        }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
-    expect(user).toBeDefined();
-  });
-
   it("should get the processing estimated finish", async context => {
     const finished_at = faker.date.recent();
     const { processing, dataset, processor } = await seedOwnedProcessing({
@@ -756,31 +770,5 @@ describe("E2E: UserProcessingResolver", () => {
       processor_id: processor.id,
       processing_id: processing.id,
     });
-  });
-
-  it("should return an error getting the estimated finish for a processing that was not found", async context => {
-    await userFactory.create({ email: context.userSession.email });
-
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          query UserProcessingEstimatedFinish($processing_id: String!) {
-            userProcessingEstimatedFinish(processing_id: $processing_id) {
-              processing_id
-            }
-          }
-        `,
-        variables: { processing_id: faker.string.uuid() },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          extensions: { code: "@processing_guard/PROCESSING_NOT_FOUND" },
-        }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
   });
 });

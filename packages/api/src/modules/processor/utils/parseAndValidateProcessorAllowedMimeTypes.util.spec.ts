@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 // i18n import
 import { t } from "@shared/i18n";
 
-// Test target import
+// Target import
 import { validateAndGetProcessorAllowedMimeTypes } from "./parseAndValidateProcessorAllowedMimeTypes.util";
 
 describe("Utils: validateAndGetProcessorAllowedMimeTypes", () => {

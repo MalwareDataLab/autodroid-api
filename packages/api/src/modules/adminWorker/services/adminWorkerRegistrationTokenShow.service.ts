@@ -9,12 +9,12 @@ import { AppError } from "@shared/errors/AppError";
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@shared/container/repositories";
-
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
+
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@shared/container/repositories";
 
 interface IRequest {
   worker_registration_token_id: string;

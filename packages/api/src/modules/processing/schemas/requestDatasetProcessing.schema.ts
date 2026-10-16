@@ -1,6 +1,6 @@
-import { Field, InputType } from "type-graphql";
 import { Type } from "class-transformer";
 import { IsArray, IsUUID, ValidateNested } from "class-validator";
+import { Field, InputType } from "type-graphql";
 
 // Decorator import
 import { ValidString } from "@shared/decorators/validString.decorator";
@@ -8,11 +8,11 @@ import { ValidString } from "@shared/decorators/validString.decorator";
 @InputType()
 class RequestDatasetProcessingParameterSchema {
   @ValidString()
-  @Field()
+  @Field({ description: "The parameter name." })
   name: string;
 
   @ValidString()
-  @Field()
+  @Field({ description: "The parameter value." })
   value: string;
 }
 
@@ -20,18 +20,21 @@ class RequestDatasetProcessingParameterSchema {
 class RequestDatasetProcessingSchema {
   @ValidString()
   @IsUUID()
-  @Field()
+  @Field({ description: "The processor id." })
   processor_id: string;
 
   @ValidString()
   @IsUUID()
-  @Field()
+  @Field({ description: "The dataset id." })
   dataset_id: string;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RequestDatasetProcessingParameterSchema)
-  @Field(() => [RequestDatasetProcessingParameterSchema])
+  @Field(() => [RequestDatasetProcessingParameterSchema], {
+    description:
+      "Processor parameters as name/value pairs; an empty list when there are none.",
+  })
   parameters: RequestDatasetProcessingParameterSchema[];
 }
 

@@ -3,18 +3,20 @@ import { inject, injectable } from "tsyringe";
 // i18n import
 import { i18n } from "@shared/i18n";
 
+// Configuration import
+import { getFrontendConfig } from "@config/frontend";
+
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
-// Repository import
-import { getFrontendConfig } from "@config/frontend";
-import { IProcessingRepository } from "../repositories/IProcessing.repository";
-
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
+
+// Repository import
+import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 interface IRequest {
   processing_id: string;

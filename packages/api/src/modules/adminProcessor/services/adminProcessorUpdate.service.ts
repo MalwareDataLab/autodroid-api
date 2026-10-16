@@ -9,18 +9,18 @@ import { AppError } from "@shared/errors/AppError";
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IProcessorRepository } from "@shared/container/repositories";
-
 // Util import
 import { validateProcessorConfigurationParameters } from "@modules/processor/utils/validateProcessorConfigurationParameters.util";
 
 // Entity import
-import { User } from "@modules/user/entities/user.entity";
 import { Processor } from "@modules/processor/entities/processor.entity";
+import { User } from "@modules/user/entities/user.entity";
 
 // Schema import
 import { ProcessorSchema } from "@modules/processor/schemas/processor.schema";
+
+// Repository import
+import { IProcessorRepository } from "@shared/container/repositories";
 
 interface IRequest {
   processor_id: string;

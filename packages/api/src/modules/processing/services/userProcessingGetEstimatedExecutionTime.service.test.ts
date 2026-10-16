@@ -1,22 +1,24 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 
 // i18n import
 import { DEFAULT_LANGUAGE } from "@shared/i18n";
 
+// Configuration import
+import { getProcessingConfig } from "@config/processing";
+
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
-import { getProcessingConfig } from "@config/processing";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
-import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
+import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
 // Target import

@@ -6,9 +6,6 @@ import { DEFAULT_LANGUAGE } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import { IProcessingRepository } from "@shared/container/repositories";
-
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
@@ -19,17 +16,18 @@ import { isProcessingSucceededAndComplete } from "@modules/processing/utils/isPr
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-
 // DTO import
 import { IParsedUserAgentInfoDTO } from "@shared/container/providers/UserAgentInfoProvider/types/IParsedUserAgentInfo.dto";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { Worker } from "../entities/worker.entity";
 
 // Schema import
 import { RequestFileUploadSignedUrlSchema } from "@modules/file/schemas/requestFileUploadSignedUrl.schema";
 
-// Entity import
-import { Worker } from "../entities/worker.entity";
+// Repository import
+import { IProcessingRepository } from "@shared/container/repositories";
 
 interface IRequest {
   worker: Worker;

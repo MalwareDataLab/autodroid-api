@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { Job } from "bull";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -8,7 +8,7 @@ import { AppError } from "@shared/errors/AppError";
 // Service import
 import { ProcessingCleanExpiredService } from "@modules/processing/services/processingCleanExpired.service";
 
-// Test target import
+// Target import
 import { IProcessingCleanExpiredJob, ProcessingCleanExpiredJob } from ".";
 
 describe("Job: ProcessingCleanExpiredJob", () => {

@@ -1,27 +1,23 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Provider import
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
-// Repository import
-import { IFileRepository } from "@modules/file/repositories/IFile.repository";
-
 // Enum import
 import { FILE_TYPE } from "@modules/file/types/fileType.enum";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-
-// Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
 // Repository import
+import { IFileRepository } from "@modules/file/repositories/IFile.repository";
 import { IDatasetRepository } from "../repositories/IDataset.repository";
 
-// Service import
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
+
+// Target import
 import { UserDatasetDeleteService } from "./userDatasetDelete.service";
 
 describe("Service: UserDatasetDeleteService", () => {

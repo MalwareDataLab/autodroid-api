@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-// Entity import
-import { Processor } from "../entities/processor.entity";
-
 // Enum import
 import { PROCESSOR_PARAMETER_TYPE } from "../types/processorParameterType.enum";
+
+// Entity import
+import { Processor } from "../entities/processor.entity";
 
 // Factory import
 import { processorFactory } from "../entities/factories/processor.factory";
 
-// Test target import
+// Target import
 import { validateProcessor } from "./validateProcessor.util";
 
 const buildValidProcessor = (): Processor => {

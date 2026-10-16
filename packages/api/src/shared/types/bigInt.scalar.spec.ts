@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
 import { GraphQLError, Kind } from "graphql";
+import { describe, expect, it } from "vitest";
 
-// Test target import
+// Target import
 import { BigIntScalar } from "./bigInt.scalar";
 
 describe("Scalar: BigIntScalar", () => {

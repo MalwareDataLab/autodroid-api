@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Repository import
-import { IUserRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// Repository import
+import { IUserRepository } from "@shared/container/repositories";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";

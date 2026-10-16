@@ -1,16 +1,16 @@
 import { beforeEach, describe, it, expect } from "vitest";
 
-// Util import
-import { DateUtils } from "@shared/utils/dateUtils";
-
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
 
-// Repository import
-import { IProcessingRepository } from "../repositories/IProcessing.repository";
+// Util import
+import { DateUtils } from "@shared/utils/dateUtils";
 
 // Enum import
 import { PROCESSING_STATUS } from "../types/processingStatus.enum";
+
+// Repository import
+import { IProcessingRepository } from "../repositories/IProcessing.repository";
 
 // Factory import
 import { processingFactory } from "../entities/factories/processing.factory";

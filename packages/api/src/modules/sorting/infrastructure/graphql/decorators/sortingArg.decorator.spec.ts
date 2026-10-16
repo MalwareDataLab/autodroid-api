@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-// Decorator import
+// Target import
 import { SortingArg } from "./sortingArg.decorator";
 
 const h = vi.hoisted(() => ({
@@ -24,7 +24,11 @@ describe("Decorator: SortingArg", () => {
     const [name, , argOptions] = h.arg.mock.calls[0] as unknown as [
       string,
       () => unknown,
-      { nullable: boolean; validateFn: (value?: any) => void },
+      {
+        nullable: boolean;
+        description: string;
+        validateFn: (value?: any) => void;
+      },
     ];
 
     return { name, argOptions };
@@ -35,6 +39,14 @@ describe("Decorator: SortingArg", () => {
 
     expect(name).toBe("sorting");
     expect(argOptions.nullable).toBe(true);
+  });
+
+  it("should describe the sorting with its fields and its entry limit", () => {
+    const { argOptions } = applyDecorator(["created_at", "id"]);
+
+    expect(argOptions.description).toBe(
+      'How to sort, the first entry first, in up to 3 entries over the fields created_at, id; newest first when omitted. E.g. [{"field":"created_at","order":"ASC"}].',
+    );
   });
 
   it("should forward an explicit non-nullable option", () => {

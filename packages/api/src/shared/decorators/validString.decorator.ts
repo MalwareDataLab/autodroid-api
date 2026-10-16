@@ -1,6 +1,8 @@
 import { IsString, MinLength } from "class-validator";
-import { TrimStringTransform } from "./trimStringTransform.decorator";
+
+// Decorator import
 import { IsNullable, NullableOptions } from "./isNullable.decorator";
+import { TrimStringTransform } from "./trimStringTransform.decorator";
 
 export function ValidString(
   props: { nullable?: NullableOptions } = {

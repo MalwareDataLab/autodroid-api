@@ -1,24 +1,100 @@
-// .eslintrc.json's `parserOptions.project` is relative and typescript-eslint
-// resolves relative paths against `tsconfigRootDir`, which defaults to
-// `process.cwd()` when unset. `lint-staged`'s root-level `eslint --fix` runs
-// with cwd = repo root, not this package, so without an explicit
-// `tsconfigRootDir` it resolved "./tsconfig.json" against the WRONG
-// tsconfig (root's project-references tsconfig.json, which typescript-eslint
-// can't parse). Wrap the JSON config instead of duplicating it, and pin
-// tsconfigRootDir to this file's own directory so resolution is cwd-independent.
-const config = require("./.eslintrc.json");
-
 module.exports = {
-  ...config,
+  root: true,
+  env: {
+    es2024: true,
+  },
+  extends: [
+    "airbnb-base",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:prettier/recommended",
+  ],
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    ...config.parserOptions,
+    ecmaVersion: "latest",
+    sourceType: "module",
+    projectService: true,
     tsconfigRootDir: __dirname,
   },
-  // Same cwd-independence problem as `parserOptions.project` above: this
-  // resolver's own "project" option (when unset) can fall back to a cwd-
-  // relative lookup. Pin it to this package's own tsconfig explicitly.
+  plugins: [
+    "import",
+    "deprecation",
+    "@typescript-eslint",
+    "eslint-plugin-import-helpers",
+    "unicorn",
+    "prettier",
+  ],
+  rules: {
+    "prettier/prettier": "error",
+
+    "unicorn/prefer-node-protocol": "error",
+
+    "deprecation/deprecation": "error",
+
+    camelcase: [
+      "error",
+      {
+        properties: "never",
+        ignoreDestructuring: true,
+        allow: ["^\\w+_\\w+$"],
+      },
+    ],
+    "no-console": "off",
+    "no-nested-ternary": "off",
+    "no-underscore-dangle": "off",
+
+    "import/no-unresolved": [
+      "error",
+      { ignore: ["^@modelcontextprotocol/sdk/"] },
+    ],
+    "import/prefer-default-export": "off",
+    "import/order": "off",
+    "import/no-default-export": "error",
+    "import/exports-last": "warn",
+    "import/no-import-module-exports": "off",
+
+    "max-classes-per-file": "off",
+    "no-useless-constructor": "off",
+    "lines-between-class-members": "off",
+    "class-methods-use-this": "off",
+    "no-empty-function": "off",
+    "no-empty": [
+      "error",
+      {
+        allowEmptyCatch: true,
+      },
+    ],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "_",
+        ignoreRestSiblings: true,
+        caughtErrors: "none",
+      },
+    ],
+    "import/extensions": ["error", "ignorePackages", { ts: "never" }],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        devDependencies: [
+          "**/*.spec.ts",
+          "**/*.test.ts",
+          "**/mocks/*.ts",
+          "**/factories/*.ts",
+          "**/inMemory/*.ts",
+          `**/${require("path").basename(__dirname)}/test/**`,
+        ],
+      },
+    ],
+  },
   settings: {
-    ...config.settings,
+    "import/internal-regex": "^@(config|modules|shared)?/",
     "import/resolver": {
       typescript: {
         project: require("path").join(__dirname, "tsconfig.json"),

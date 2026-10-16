@@ -6,18 +6,18 @@ import { t } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Provider import
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
 import { parse, ClassConstructor } from "@shared/utils/instanceParser";
 
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+// Entity import
+import { File } from "../entities/file.entity";
 
 // Repository import
 import { IFileRepository } from "../repositories/IFile.repository";
-
-// Entity import
-import { File } from "../entities/file.entity";
 
 interface IRequest<T, V> {
   cls: ClassConstructor<T>;

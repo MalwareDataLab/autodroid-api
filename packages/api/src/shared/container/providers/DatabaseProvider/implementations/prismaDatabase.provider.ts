@@ -3,11 +3,11 @@ import { PrismaClient } from "@prisma/client";
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
+// Provider import
+import { IDatabaseProvider } from "../models/IDatabase.provider";
+
 // Util import
 import { executeAction } from "@shared/utils/executeAction";
-
-// Interface import
-import { IDatabaseProvider } from "../models/IDatabase.provider";
 
 const logEnabled = getEnvConfig().DATABASE_LOGGER_ENABLED === "true";
 

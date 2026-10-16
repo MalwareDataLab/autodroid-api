@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
-import { container } from "tsyringe";
 import { Job } from "bull";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Factory import
-import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
-
 // Provider import
 import { IDatasetProcessorProvider } from "@shared/container/providers/DatasetProcessorProvider/models/IDatasetProcessor.provider";
+
+// Factory import
+import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 
 // Service import
 import { ProcessingHandleFailureService } from "@modules/processing/services/processingHandleFailure.service";
 
-// Test target import
+// Target import
 import { DispatchDatasetProcessingJob, IDispatchDatasetProcessingJob } from ".";
 
 describe("Job: DispatchDatasetProcessingJob", () => {

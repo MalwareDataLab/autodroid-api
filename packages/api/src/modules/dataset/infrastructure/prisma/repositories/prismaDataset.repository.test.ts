@@ -1,22 +1,22 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { File } from "@modules/file/entities/file.entity";
-
-// Repository import
-import { IDatasetRepository } from "@shared/container/repositories";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { User } from "@modules/user/entities/user.entity";
+
+// Repository import
+import { IDatasetRepository } from "@shared/container/repositories";
+
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 describe("Repository: PrismaDatasetRepository", () => {
   let repository: IDatasetRepository;

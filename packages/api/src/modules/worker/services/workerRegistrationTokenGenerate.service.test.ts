@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Repository import
 import { IWorkerRegistrationTokenRepository } from "../repositories/IWorkerRegistrationToken.repository";
@@ -7,7 +7,7 @@ import { IWorkerRegistrationTokenRepository } from "../repositories/IWorkerRegis
 // Factory import
 import { workerRegistrationTokenFactory } from "../entities/factories/workerRegistrationToken.factory";
 
-// Service import
+// Target import
 import { WorkerRegistrationTokenGenerateService } from "./workerRegistrationTokenGenerate.service";
 
 describe("Service: WorkerRegistrationTokenGenerateService", () => {

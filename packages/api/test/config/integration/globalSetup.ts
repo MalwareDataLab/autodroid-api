@@ -1,16 +1,18 @@
-import dotenv from "dotenv";
 import { execSync } from "node:child_process";
-import { Client } from "pg";
-import type { TestProject } from "vitest/node";
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import {
   MongoDBContainer,
   StartedMongoDBContainer,
 } from "@testcontainers/mongodb";
+import {
+  PostgreSqlContainer,
+  StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { RedisContainer, StartedRedisContainer } from "@testcontainers/redis";
+import dotenv from "dotenv";
+import { Client } from "pg";
+import type { TestProject } from "vitest/node";
+
+// Util import
 import { startAndGetSessionToken } from "@/test/utils/startAndGetSessionToken.util";
 
 let teardownStarted = false;
@@ -34,6 +36,8 @@ const startPostgreSql = async () => {
       "full_page_writes=off",
       "-c",
       "synchronous_commit=off",
+      "-c",
+      "max_connections=1000",
     ])
     .start();
 

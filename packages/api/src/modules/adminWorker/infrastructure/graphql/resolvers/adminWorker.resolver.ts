@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import {
   Arg,
   Args,
@@ -8,7 +9,12 @@ import {
   Mutation,
   Query,
 } from "type-graphql";
-import { container } from "tsyringe";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Constant import
 import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
@@ -19,24 +25,18 @@ import {
   PaginatedWorker,
 } from "@modules/worker/entities/worker.entity";
 
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
-
-// Decorator import
-import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
-
 // Schema import
+import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
 import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
 import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
 
 // Service import
+import { AdminWorkerCleanMissingService } from "@modules/adminWorker/services/adminWorkerCleanMissing.service";
+import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
 import { AdminWorkerIndexService } from "@modules/adminWorker/services/adminWorkerIndex.service";
 import { AdminWorkerShowService } from "@modules/adminWorker/services/adminWorkerShow.service";
 import { AdminWorkerUpdateService } from "@modules/adminWorker/services/adminWorkerUpdate.service";
-import { AdminWorkerDeleteService } from "@modules/adminWorker/services/adminWorkerDelete.service";
-import { AdminWorkerUpdateSchema } from "@modules/adminWorker/schemas/adminWorkerUpdate.schema";
-import { AdminWorkerCleanMissingService } from "@modules/adminWorker/services/adminWorkerCleanMissing.service";
 
 class AdminWorkerResolver {
   @Directive("@auth(requires: ADMIN)")
@@ -70,7 +70,7 @@ class AdminWorkerResolver {
   @Authorized(["ADMIN"])
   @Query(() => Worker)
   async adminWorker(
-    @Arg("worker_id") worker_id: string,
+    @Arg("worker_id", { description: "The worker id." }) worker_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Worker> {
@@ -90,9 +90,10 @@ class AdminWorkerResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Worker)
   async adminWorkerUpdate(
-    @Arg("worker_id") worker_id: string,
+    @Arg("worker_id", { description: "The worker id." }) worker_id: string,
 
-    @Arg("data") data: AdminWorkerUpdateSchema,
+    @Arg("data", { description: "The new description and tags." })
+    data: AdminWorkerUpdateSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Worker> {
@@ -115,7 +116,7 @@ class AdminWorkerResolver {
   @Authorized(["ADMIN"])
   @Mutation(() => Worker)
   async adminWorkerDelete(
-    @Arg("worker_id") worker_id: string,
+    @Arg("worker_id", { description: "The worker id." }) worker_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Worker> {

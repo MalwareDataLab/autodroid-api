@@ -1,14 +1,15 @@
-import { container } from "tsyringe";
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 // Util import
+import { withVisibleProcessingOwners } from "@modules/processing/utils/withVisibleProcessingOwners.util";
 import { process } from "@shared/utils/instanceParser";
 
 // Service import
-import { WorkerProcessingShowService } from "@modules/worker/services/workerProcessingShow.service";
-import { WorkerHandleProcessingSuccessService } from "@modules/worker/services/workerHandleProcessingSuccess.service";
 import { WorkerHandleProcessingFailureService } from "@modules/worker/services/workerHandleProcessingFailure.service";
 import { WorkerHandleProcessingProgressService } from "@modules/worker/services/workerHandleProcessingProgress.service";
+import { WorkerHandleProcessingSuccessService } from "@modules/worker/services/workerHandleProcessingSuccess.service";
+import { WorkerProcessingShowService } from "@modules/worker/services/workerProcessingShow.service";
 
 class WorkerProcessingController {
   public async show(req: Request, res: Response) {
@@ -21,7 +22,9 @@ class WorkerProcessingController {
       processing_id: req.params.processing_id,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, undefined)),
+    );
   }
 
   public async progress(req: Request, res: Response) {
@@ -34,7 +37,9 @@ class WorkerProcessingController {
       processing_id: req.params.processing_id,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, undefined)),
+    );
   }
 
   public async success(req: Request, res: Response) {
@@ -47,7 +52,9 @@ class WorkerProcessingController {
       processing_id: req.params.processing_id,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, undefined)),
+    );
   }
 
   public async failure(req: Request, res: Response) {
@@ -61,7 +68,9 @@ class WorkerProcessingController {
       data: req.body,
     });
 
-    return res.json(process(processing));
+    return res.json(
+      process(withVisibleProcessingOwners(processing, undefined)),
+    );
   }
 }
 

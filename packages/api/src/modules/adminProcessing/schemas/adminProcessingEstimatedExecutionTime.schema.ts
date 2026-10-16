@@ -8,12 +8,18 @@ import { ValidString } from "@shared/decorators/validString.decorator";
 class AdminProcessingGetEstimatedExecutionTimeSchema {
   @ValidString({ nullable: "allowUndefined" })
   @IsUUID()
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Limit to this dataset.",
+  })
   dataset_id?: string;
 
   @ValidString({ nullable: "allowUndefined" })
   @IsUUID()
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Limit to this processor.",
+  })
   processor_id?: string;
 }
 

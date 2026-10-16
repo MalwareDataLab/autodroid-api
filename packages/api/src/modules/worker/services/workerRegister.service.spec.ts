@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
+// Schema import
+import { WorkerRegisterSchema } from "@modules/worker/schemas/worker.schema";
+
 // Repository import
 import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
 import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
@@ -8,10 +11,7 @@ import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Schema import
-import { WorkerRegisterSchema } from "@modules/worker/schemas/worker.schema";
-
-// Service import
+// Target import
 import { WorkerRegisterService } from "./workerRegister.service";
 
 describe("Service: WorkerRegisterService", () => {

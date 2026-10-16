@@ -1,4 +1,4 @@
-// Interface import
+// Type import
 import { Cursor } from "./IPagination.type";
 
 export interface IPaginationDTO {

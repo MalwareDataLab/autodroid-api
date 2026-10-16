@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
 import { Exclude } from "class-transformer";
+import { describe, expect, it } from "vitest";
 
-// Test target import
+// Target import
 import { parse, process } from ".";
 
 class SampleEntity {

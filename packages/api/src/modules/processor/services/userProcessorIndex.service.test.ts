@@ -1,5 +1,8 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
+
+// Enum import
+import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
@@ -11,10 +14,7 @@ import { IProcessorRepository } from "@shared/container/repositories";
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processorFactory } from "../entities/factories/processor.factory";
 
-// Enum import
-import { PROCESSOR_VISIBILITY } from "../types/processorVisibility.enum";
-
-// Service import
+// Target import
 import { UserProcessorIndexService } from "./userProcessorIndex.service";
 
 describe("Service: UserProcessorIndexService", () => {

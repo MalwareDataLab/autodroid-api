@@ -1,43 +1,43 @@
 import { inject, injectable } from "tsyringe";
 
+// Configuration import
+import { getWorkerConfig } from "@config/worker";
+
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Config import
-import { getWorkerConfig } from "@config/worker";
+// Provider import
+import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
+import { IWebsocketProvider } from "@shared/container/providers/WebsocketProvider/models/IWebsocket.provider";
+import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider";
+
+// Util import
+import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
+import { logger } from "@shared/utils/logger";
+
+// Type import
+import { ISocketWorkerStatusMessage } from "@shared/infrastructure/websocket/socket.types";
+
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// DTO import
+import {
+  IDispatchProcessesDTO,
+  IDispatchedProcessesDTO,
+} from "../types/IDatasetProcessor.dto";
+
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+import { Processing } from "@modules/processing/entities/processing.entity";
+import { Worker } from "@modules/worker/entities/worker.entity";
 
 // Repository import
 import {
   IProcessingRepository,
   IWorkerRepository,
 } from "@shared/container/repositories";
-
-// Util import
-import { logger } from "@shared/utils/logger";
-import { validateProcessor } from "@modules/processor/utils/validateProcessor.util";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
-import { Worker } from "@modules/worker/entities/worker.entity";
-import { Processing } from "@modules/processing/entities/processing.entity";
-
-// Enum import
-import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-
-// Provider import
-import { IInMemoryDatabaseProvider } from "@shared/container/providers/InMemoryDatabaseProvider/models/IInMemoryDatabase.provider";
-import { IWebsocketProvider } from "@shared/container/providers/WebsocketProvider/models/IWebsocket.provider";
-
-// Type import
-import { ISocketWorkerStatusMessage } from "@shared/infrastructure/websocket/socket.types";
-import {
-  IDispatchProcessesDTO,
-  IDispatchedProcessesDTO,
-} from "../types/IDatasetProcessor.dto";
-
-// Interface import
-import { IDatasetProcessorProvider } from "../models/IDatasetProcessor.provider";
 
 @injectable()
 class DatasetProcessorProvider implements IDatasetProcessorProvider {
@@ -376,7 +376,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
       {
         worker_id: null,
       },
-      { skip: 0 },
+      undefined,
       [{ field: "created_at", order: SORT_ORDER.ASC }],
     );
 

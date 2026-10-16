@@ -4,6 +4,7 @@ const hoisted = vi.hoisted(() => ({
   helmet: vi.fn(() => vi.fn()),
   getEnvConfig: vi.fn(() => ({ NODE_ENV: "test" })),
   setupExpressErrorHandler: vi.fn(),
+  buildMcpRouter: vi.fn(() => (_req: any, _res: any, next: any) => next()),
   getPassport: vi.fn(() => ({
     initialize: vi.fn(() => vi.fn()),
     session: vi.fn(() => vi.fn()),
@@ -14,7 +15,10 @@ vi.mock("helmet", () => ({ default: hoisted.helmet }));
 
 vi.mock("@config/env", () => ({ getEnvConfig: hoisted.getEnvConfig }));
 
-vi.mock("@config/cors", () => ({ getCorsConfig: () => ({ origin: "*" }) }));
+vi.mock("@config/cors", () => ({
+  getCorsOptionsDelegate: () => (_req: unknown, callback: any) =>
+    callback(null, { origin: "*" }),
+}));
 
 vi.mock("@config/session", () => ({
   getSessionConfig: () => ({
@@ -53,6 +57,10 @@ vi.mock("../saml/strategy", () => ({
 
 vi.mock("../saml/routes", () => ({
   samlRouter: (_req: any, _res: any, next: any) => next(),
+}));
+
+vi.mock("@modules/mcp/infrastructure/http/routes/mcp.routes", () => ({
+  buildMcpRouter: hoisted.buildMcpRouter,
 }));
 
 vi.mock("./routes", () => ({
@@ -112,6 +120,7 @@ describe("App: http", () => {
   beforeEach(() => {
     vi.resetModules();
     hoisted.helmet.mockClear();
+    hoisted.buildMcpRouter.mockClear();
     hoisted.getEnvConfig.mockReturnValue({ NODE_ENV: "test" } as any);
   });
 
@@ -137,6 +146,27 @@ describe("App: http", () => {
 
     expect(samlLayer).toBeDefined();
     expect(samlLayer.regexp.test("/processing")).toBe(false);
+  });
+
+  it("should serve the MCP endpoint at /mcp from the app's own GraphQL server, ahead of the session and SAML layers", async () => {
+    const { app, stack } = await buildApp();
+
+    expect(hoisted.buildMcpRouter).toHaveBeenLastCalledWith(app.graphqlServer);
+    const mcpIndex = stack.findIndex(
+      (layer: any) =>
+        layer.regexp?.test?.("/mcp") && !layer.regexp?.test?.("/graphql"),
+    );
+    const sessionIndex = stack.findIndex(
+      (layer: any) => layer.name === "session",
+    );
+    const samlIndex = stack.findIndex(
+      (layer: any) =>
+        layer.regexp?.test?.("/saml") && !layer.regexp?.test?.("/graphql"),
+    );
+    expect(mcpIndex).toBeGreaterThan(-1);
+    expect(sessionIndex).toBeGreaterThan(-1);
+    expect(mcpIndex).toBeLessThan(sessionIndex);
+    expect(sessionIndex).toBeLessThan(samlIndex);
   });
 
   it("should skip helmet outside production", async () => {

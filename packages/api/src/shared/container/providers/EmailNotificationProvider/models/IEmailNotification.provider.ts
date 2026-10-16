@@ -1,3 +1,4 @@
+// DTO import
 import { ISendEmailNotificationDTO } from "../types/IEmailNotification.dto";
 
 export interface IEmailNotificationProvider {

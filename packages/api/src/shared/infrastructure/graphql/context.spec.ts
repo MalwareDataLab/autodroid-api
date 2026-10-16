@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Handler import
+// Target import
 import { contextHandler } from "./context";
 
 describe("GraphQL: contextHandler", () => {

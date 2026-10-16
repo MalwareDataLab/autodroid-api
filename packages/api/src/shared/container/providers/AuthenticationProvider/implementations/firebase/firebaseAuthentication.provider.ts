@@ -1,5 +1,8 @@
-import { injectable } from "tsyringe";
 import firebase from "firebase-admin";
+import { injectable } from "tsyringe";
+
+// i18n import
+import { i18n } from "@shared/i18n";
 
 // Configuration import
 import { getFirebaseAuthProviderConfig } from "@config/firebase";
@@ -7,8 +10,8 @@ import { getFirebaseAuthProviderConfig } from "@config/firebase";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// i18n import
-import { i18n } from "@shared/i18n";
+// Provider import
+import { IAuthenticationMethod } from "../../models/IAuthentication.provider";
 
 // Util import
 import { executeAction } from "@shared/utils/executeAction";
@@ -17,21 +20,20 @@ import { executeAction } from "@shared/utils/executeAction";
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
 // DTO import
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
-import {
-  IAuthenticationProviderVerifyTokenRequestDTO,
-  IAuthenticationProviderSessionDTO,
-  ICreateUserTokenByCodeDTO,
-} from "../../types/IVerifyToken.dto";
 import {
   IAuthenticationProviderUserDTO,
   ICreateAuthenticationProviderUserDTO,
   IUpdateAuthenticationProviderUserDTO,
 } from "../../types/IAuthenticationProviderUser.dto";
+import {
+  IAuthenticationProviderVerifyTokenRequestDTO,
+  IAuthenticationProviderSessionDTO,
+  ICreateUserTokenByCodeDTO,
+} from "../../types/IVerifyToken.dto";
 import { IFirebaseAuthenticationProviderConfigurationDTO } from "./types/IFirebaseAuthenticationProvider.dto";
 
-// Interface import
-import { IAuthenticationMethod } from "../../models/IAuthentication.provider";
+// Entity import
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
 
 @injectable()
 class FirebaseAuthenticationProvider implements IAuthenticationMethod {

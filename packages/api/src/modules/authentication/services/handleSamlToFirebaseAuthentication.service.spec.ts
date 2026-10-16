@@ -1,11 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Enum import
-import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
-
-// Type import
-import { ParsedSamlUser } from "@shared/infrastructure/saml/types";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Provider import
 import {
@@ -13,7 +7,13 @@ import {
   IAuthenticationProvider,
 } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
 
-// Service import
+// Type import
+import { ParsedSamlUser } from "@shared/infrastructure/saml/types";
+
+// Enum import
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
+
+// Target import
 import { HandleSamlToFirebaseAuthenticationService } from "./handleSamlToFirebaseAuthentication.service";
 
 describe("Service: HandleSamlToFirebaseAuthenticationService", () => {

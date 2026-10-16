@@ -1,27 +1,29 @@
-import path from "node:path";
-import { Server } from "node:http";
 import fs from "node:fs/promises";
-import { GraphQLSchema, lexicographicSortSchema } from "graphql";
-import { buildSchemaSync } from "type-graphql";
+import { Server } from "node:http";
+import path from "node:path";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { ApolloServerPluginLandingPageDisabled } from "@apollo/server/plugin/disabled";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
+import { GraphQLSchema, lexicographicSortSchema } from "graphql";
+import { buildSchemaSync } from "type-graphql";
 
 // Configuration import
 import { getEnvConfig } from "@config/env";
 
-// Resolver import
-import { resolvers } from "./resolvers";
-
-// Helper import
-import { GraphQLContext, contextHandler } from "./context";
-import { authenticationHandler } from "./authentication";
+// Error import
 import { errorHandler, errorPlugin } from "./error";
-import { validationHandler } from "./validation";
+
+// Context import
+import { GraphQLContext, contextHandler } from "./context";
+
+// Infrastructure import
+import { authenticationHandler } from "./authentication";
 import { ComplexityPlugin } from "./complexity";
+import { resolvers } from "./resolvers";
+import { validationHandler } from "./validation";
 
 class GraphQLApp {
   public readonly initialization: Promise<void>;

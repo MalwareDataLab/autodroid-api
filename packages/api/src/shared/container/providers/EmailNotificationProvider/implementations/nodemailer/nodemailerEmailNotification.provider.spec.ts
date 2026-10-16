@@ -1,21 +1,22 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { faker } from "@faker-js/faker";
-
-import nodemailer from "nodemailer";
-import handlebars from "handlebars";
 import fs from "node:fs/promises";
+import { faker } from "@faker-js/faker";
+import handlebars from "handlebars";
+import nodemailer from "nodemailer";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // i18n import
 import { i18next } from "@shared/i18n";
 
-// Util import
+// Configuration import
 import { getEmailConfig } from "@config/email";
+
+// Util import
 import { logger } from "@shared/utils/logger";
 
 // DTO import
 import { ISendEmailNotificationDTO } from "../../types/IEmailNotification.dto";
 
-// Provider import
+// Target import
 import { NodemailerEmailNotificationProvider } from "./nodemailerEmailNotification.provider";
 
 vi.mock("nodemailer", () => ({ default: { createTransport: vi.fn() } }));

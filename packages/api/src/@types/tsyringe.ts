@@ -1,6 +1,6 @@
 import "tsyringe";
 
-// Type import
+// Repository import
 import type {
   Repository,
   RepositoryToken,

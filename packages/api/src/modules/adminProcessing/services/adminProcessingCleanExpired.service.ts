@@ -1,5 +1,8 @@
 import { inject, injectable } from "tsyringe";
 
+// Provider import
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
@@ -8,9 +11,6 @@ import { User } from "@modules/user/entities/user.entity";
 
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Service import
 import { ProcessingCleanExpiredService } from "@modules/processing/services/processingCleanExpired.service";

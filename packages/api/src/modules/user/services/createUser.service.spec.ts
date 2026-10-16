@@ -1,8 +1,11 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Util import
 import { parse } from "@shared/utils/instanceParser";
+
+// DTO import
+import { ICreateUserDTO } from "../types/IUser.dto";
 
 // Entity import
 import { User } from "../entities/user.entity";
@@ -10,10 +13,7 @@ import { User } from "../entities/user.entity";
 // Repository import
 import { IUserRepository } from "../repositories/IUser.repository";
 
-// DTO import
-import { ICreateUserDTO } from "../types/IUser.dto";
-
-// Service import
+// Target import
 import { CreateUserService } from "./createUser.service";
 
 describe("Service: CreateUserService", () => {

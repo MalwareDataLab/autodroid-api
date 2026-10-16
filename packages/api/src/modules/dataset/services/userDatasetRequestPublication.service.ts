@@ -3,15 +3,15 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Dataset } from "../entities/dataset.entity";
+// Guard import
+import { DatasetGuard } from "../guards/dataset.guard";
 
 // Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
-// Guard import
-import { DatasetGuard } from "../guards/dataset.guard";
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { Dataset } from "../entities/dataset.entity";
 
 // Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";

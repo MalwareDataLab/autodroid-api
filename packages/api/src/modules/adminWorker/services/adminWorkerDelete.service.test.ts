@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it } from "vitest";
 
-// Config import
+// Configuration import
 import { getAdminConfig } from "@config/admin";
 
 // Repository import
@@ -11,7 +11,7 @@ import { IWorkerRepository } from "@modules/worker/repositories/IWorker.reposito
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 
-// Service import
+// Target import
 import { AdminWorkerDeleteService } from "./adminWorkerDelete.service";
 
 describe("Service: AdminWorkerDeleteService", () => {

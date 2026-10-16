@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // i18n import
 import { TFunction } from "@shared/i18n";
@@ -16,7 +16,7 @@ import { UserAuthProviderConn } from "../entities/userAuthProviderConn.entity";
 // Repository import
 import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProviderConn.repository";
 
-// Service import
+// Target import
 import {
   IUpsertUserAuthProviderConnServiceRequest,
   UpsertUserAuthProviderConnService,

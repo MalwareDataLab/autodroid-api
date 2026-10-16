@@ -9,12 +9,12 @@ import { AppError } from "@shared/errors/AppError";
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IWorkerRepository } from "@shared/container/repositories";
-
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Worker } from "@modules/worker/entities/worker.entity";
+
+// Repository import
+import { IWorkerRepository } from "@shared/container/repositories";
 
 interface IRequest {
   worker_id: string;

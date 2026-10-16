@@ -1,20 +1,20 @@
-// Entity import
-import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
-
 // Enum import
 import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
 // DTO import
 import {
-  IAuthenticationProviderVerifyTokenRequestDTO,
-  IAuthenticationProviderSessionDTO,
-  ICreateUserTokenByCodeDTO,
-} from "../types/IVerifyToken.dto";
-import {
   IAuthenticationProviderUserDTO,
   ICreateAuthenticationProviderUserDTO,
   IUpdateAuthenticationProviderUserDTO,
 } from "../types/IAuthenticationProviderUser.dto";
+import {
+  IAuthenticationProviderVerifyTokenRequestDTO,
+  IAuthenticationProviderSessionDTO,
+  ICreateUserTokenByCodeDTO,
+} from "../types/IVerifyToken.dto";
+
+// Entity import
+import { UserAuthProviderConn } from "@modules/user/entities/userAuthProviderConn.entity";
 
 export interface IAuthenticationMethod {
   readonly auth_provider: AUTH_PROVIDER;

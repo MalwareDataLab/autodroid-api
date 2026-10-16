@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextFunction, Request, Response } from "express";
-
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
+
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 // Target import
 import { adminAuthenticationMiddleware } from "./adminAuthentication.middleware";

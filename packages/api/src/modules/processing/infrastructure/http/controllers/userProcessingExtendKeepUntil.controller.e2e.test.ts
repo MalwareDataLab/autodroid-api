@@ -1,17 +1,17 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Enum import
+import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
-import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
+import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
 describe("E2E: UserProcessingExtendKeepUntilController", () => {
   const seedProcessing = async (params: {
@@ -21,9 +21,11 @@ describe("E2E: UserProcessingExtendKeepUntilController", () => {
   }) => {
     const user = await userFactory.create({ email: params.email });
     const owner = params.owned === false ? await userFactory.create() : user;
-    const dataset = await datasetFactory.create({
-      visibility: DATASET_VISIBILITY.PUBLIC,
-    });
+    const datasetOwner = await userFactory.create();
+    const dataset = await datasetFactory.create(
+      { visibility: DATASET_VISIBILITY.PUBLIC },
+      { associations: { user: datasetOwner } },
+    );
     const processor = await processorFactory.create({
       visibility: PROCESSOR_VISIBILITY.PUBLIC,
     });
@@ -35,11 +37,11 @@ describe("E2E: UserProcessingExtendKeepUntilController", () => {
       { associations: { user: owner, dataset, processor } },
     );
 
-    return { processing };
+    return { processing, user, dataset };
   };
 
   it("should extend a processing keep until", async context => {
-    const { processing } = await seedProcessing({
+    const { processing, user, dataset } = await seedProcessing({
       email: context.userSession.email,
     });
 
@@ -50,7 +52,11 @@ describe("E2E: UserProcessingExtendKeepUntilController", () => {
       .send({ keep_until: faker.date.soon({ days: 10 }).toISOString() });
 
     expect(response.status).toBe(200);
-    expect(response.body).toMatchObject({ id: processing.id });
+    expect(response.body).toMatchObject({
+      id: processing.id,
+      user: { id: user.id },
+      dataset: { id: dataset.id, user: null },
+    });
   });
 
   it("should return an error extending the keep until of a processing owned by another user", async context => {

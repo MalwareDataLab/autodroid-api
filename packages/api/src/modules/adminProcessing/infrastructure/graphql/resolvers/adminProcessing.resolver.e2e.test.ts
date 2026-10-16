@@ -1,65 +1,19 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
+import { describe, expect, it } from "vitest";
 
 // Util import
 import { gql } from "@/test/utils/gql.util";
 
 // Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
-
 // Factory import
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
 import { processingFactory } from "@modules/processing/entities/factories/processing.factory";
 
 const futureDate = () =>
   new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
 
 describe("E2E: AdminProcessingResolver", () => {
-  beforeEach(context => {
-    context.container.registerInstance<IStorageProvider>("StorageProvider", {
-      provider_code: STORAGE_PROVIDER.GOOGLE_CLOUD_STORAGE,
-      initialization: Promise.resolve(),
-      generateUploadSignedUrl: async () => fileFactory.create(),
-      refreshFile: async ({ file }) => file,
-      removeFileByPath: async () => "",
-    });
-  });
-
-  it("should list processes for an admin", async context => {
-    const processing = await processingFactory.create();
-
-    const response = await context
-      .adminAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          query AdminProcesses {
-            adminProcesses {
-              edges {
-                node {
-                  id
-                }
-              }
-              totalCount
-            }
-          }
-        `,
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.adminProcesses.edges).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          node: expect.objectContaining({ id: processing.id }),
-        }),
-      ]),
-    );
-  });
-
   it("should forbid listing processes for a non-admin", async context => {
     const response = await context
       .userAuthorized(context.request.post("/graphql"))
@@ -100,29 +54,6 @@ describe("E2E: AdminProcessingResolver", () => {
     expect(response.body.data).toBeNull();
   });
 
-  it("should show a processing for an admin", async context => {
-    const processing = await processingFactory.create();
-
-    const response = await context
-      .adminAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          query AdminProcessing($processing_id: String!) {
-            adminProcessing(processing_id: $processing_id) {
-              id
-            }
-          }
-        `,
-        variables: { processing_id: processing.id },
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.adminProcessing).toMatchObject({
-      id: processing.id,
-    });
-  });
-
   it("should fail showing a processing that was not found", async context => {
     const response = await context
       .adminAuthorized(context.request.post("/graphql"))
@@ -147,37 +78,6 @@ describe("E2E: AdminProcessingResolver", () => {
       ]),
     );
     expect(response.body.data).toBeNull();
-  });
-
-  it("should update a processing for an admin", async context => {
-    const processing = await processingFactory.create();
-
-    const response = await context
-      .adminAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          mutation AdminProcessingUpdate(
-            $processing_id: String!
-            $data: AdminProcessingUpdateSchema!
-          ) {
-            adminProcessingUpdate(processing_id: $processing_id, data: $data) {
-              id
-              visibility
-            }
-          }
-        `,
-        variables: {
-          processing_id: processing.id,
-          data: { visibility: "PUBLIC", keep_until: futureDate() },
-        },
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.adminProcessingUpdate).toMatchObject({
-      id: processing.id,
-      visibility: PROCESSING_VISIBILITY.PUBLIC,
-    });
   });
 
   it("should fail updating a processing that was not found", async context => {
@@ -210,29 +110,6 @@ describe("E2E: AdminProcessingResolver", () => {
       ]),
     );
     expect(response.body.data).toBeNull();
-  });
-
-  it("should delete a processing for an admin", async context => {
-    const processing = await processingFactory.create();
-
-    const response = await context
-      .adminAuthorized(context.request.post("/graphql"))
-      .send({
-        query: gql`
-          mutation AdminProcessingDelete($processing_id: String!) {
-            adminProcessingDelete(processing_id: $processing_id) {
-              id
-            }
-          }
-        `,
-        variables: { processing_id: processing.id },
-      });
-
-    expect(response.status).toBe(200);
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.adminProcessingDelete).toMatchObject({
-      id: processing.id,
-    });
   });
 
   it("should fail deleting a processing that was not found", async context => {
@@ -317,5 +194,120 @@ describe("E2E: AdminProcessingResolver", () => {
     expect(
       Array.isArray(response.body.data.adminProcessingTimeEstimation),
     ).toBe(true);
+  });
+
+  it("should list processes for an admin", async context => {
+    const processing = await processingFactory.create();
+
+    const response = await context
+      .adminAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query AdminProcesses {
+            adminProcesses {
+              edges {
+                node {
+                  id
+                }
+              }
+              totalCount
+            }
+          }
+        `,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.adminProcesses.edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          node: expect.objectContaining({ id: processing.id }),
+        }),
+      ]),
+    );
+  });
+
+  it("should show a processing for an admin", async context => {
+    const processing = await processingFactory.create();
+
+    const response = await context
+      .adminAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          query AdminProcessing($processing_id: String!) {
+            adminProcessing(processing_id: $processing_id) {
+              id
+            }
+          }
+        `,
+        variables: { processing_id: processing.id },
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.adminProcessing).toMatchObject({
+      id: processing.id,
+    });
+  });
+
+  it("should update a processing for an admin", async context => {
+    const processing = await processingFactory.create();
+
+    const response = await context
+      .adminAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          mutation AdminProcessingUpdate(
+            $processing_id: String!
+            $data: AdminProcessingUpdateSchema!
+          ) {
+            adminProcessingUpdate(processing_id: $processing_id, data: $data) {
+              id
+              visibility
+            }
+          }
+        `,
+        variables: {
+          processing_id: processing.id,
+          data: { visibility: "PUBLIC", keep_until: futureDate() },
+        },
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.adminProcessingUpdate).toMatchObject({
+      id: processing.id,
+      visibility: PROCESSING_VISIBILITY.PUBLIC,
+    });
+  });
+
+  it("should delete a processing that has no stored files for an admin", async context => {
+    const processing = await processingFactory.create();
+    await context.repositories.ProcessingRepository.updateOne(
+      { id: processing.id },
+      { result_file_id: null, metrics_file_id: null },
+    );
+
+    const response = await context
+      .adminAuthorized(context.request.post("/graphql"))
+      .send({
+        query: gql`
+          mutation AdminProcessingDelete($processing_id: String!) {
+            adminProcessingDelete(processing_id: $processing_id) {
+              id
+            }
+          }
+        `,
+        variables: { processing_id: processing.id },
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.adminProcessingDelete).toMatchObject({
+      id: processing.id,
+    });
+    await expect(
+      context.repositories.ProcessingRepository.findOne({ id: processing.id }),
+    ).resolves.toBeNull();
   });
 });

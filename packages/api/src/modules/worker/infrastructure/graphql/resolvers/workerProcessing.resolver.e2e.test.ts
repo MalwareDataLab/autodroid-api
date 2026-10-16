@@ -1,19 +1,14 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Enum import
-import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
-import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
-import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
-import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
-
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
-import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+import { describe, expect, it } from "vitest";
 
 // Util import
 import { gql } from "@/test/utils/gql.util";
 import { createAuthorizedWorker } from "@/test/utils/workerAuth.util";
+
+// Enum import
+import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
+import { PROCESSING_VISIBILITY } from "@modules/processing/types/processingVisibility.enum";
 
 // Factory import
 import { fileFactory } from "@modules/file/entities/factories/file.factory";
@@ -68,20 +63,46 @@ const readyPublicFile = () =>
   });
 
 describe("E2E: WorkerProcessingResolver", () => {
-  beforeEach(context => {
-    context.container.registerInstance<IStorageProvider>("StorageProvider", {
-      provider_code: STORAGE_PROVIDER.GOOGLE_CLOUD_STORAGE,
-      initialization: Promise.resolve(),
-      generateUploadSignedUrl: async () => fileFactory.create(),
-      refreshFile: async ({ file }) => file,
-      removeFileByPath: async () => "",
+  it("should fail showing a processing that was not found", async context => {
+    const { accessToken } = await createAuthorizedWorker();
+
+    const response = await context.request
+      .post("/graphql")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        query: WORKER_PROCESSING_QUERY,
+        variables: { processing_id: faker.string.uuid() },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: {
+            code: "@worker_processing_show_service/PROCESSING_NOT_FOUND",
+          },
+        }),
+      ]),
+    );
+  });
+
+  it("should forbid the workerProcessing query for a user access token", async context => {
+    const processing = await processingFactory.create({
+      status: PROCESSING_STATUS.PENDING,
     });
 
-    context.container.registerInstance<IJobProvider>("JobProvider", {
-      initialization: Promise.resolve(),
-      add: () => undefined,
-      close: async () => undefined,
-    });
+    const response = await context
+      .userAuthorized(context.request.post("/graphql"))
+      .send({
+        query: WORKER_PROCESSING_QUERY,
+        variables: { processing_id: processing.id },
+      });
+
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ extensions: { code: "FORBIDDEN" } }),
+      ]),
+    );
+    expect(response.body.data).toBeNull();
   });
 
   it("should show a processing to the worker", async context => {
@@ -102,28 +123,6 @@ describe("E2E: WorkerProcessingResolver", () => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.workerProcessing).toEqual(
       expect.objectContaining({ id: processing.id }),
-    );
-  });
-
-  it("should fail showing a processing that was not found", async context => {
-    const { accessToken } = await createAuthorizedWorker();
-
-    const response = await context.request
-      .post("/graphql")
-      .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        query: WORKER_PROCESSING_QUERY,
-        variables: { processing_id: faker.string.uuid() },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          extensions: {
-            code: "@worker_processing_show_service/PROCESSING_NOT_FOUND",
-          },
-        }),
-      ]),
     );
   });
 
@@ -258,25 +257,5 @@ describe("E2E: WorkerProcessingResolver", () => {
         }),
       ]),
     );
-  });
-
-  it("should forbid the workerProcessing query for a user access token", async context => {
-    const processing = await processingFactory.create({
-      status: PROCESSING_STATUS.PENDING,
-    });
-
-    const response = await context
-      .userAuthorized(context.request.post("/graphql"))
-      .send({
-        query: WORKER_PROCESSING_QUERY,
-        variables: { processing_id: processing.id },
-      });
-
-    expect(response.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ extensions: { code: "FORBIDDEN" } }),
-      ]),
-    );
-    expect(response.body.data).toBeNull();
   });
 });

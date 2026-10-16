@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
 
+// Guard import
+import { DatasetGuard } from "../guards/dataset.guard";
+
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 import { Dataset } from "../entities/dataset.entity";
-
-// Guard import
-import { DatasetGuard } from "../guards/dataset.guard";
 
 // Repository import
 import { IDatasetRepository } from "../repositories/IDataset.repository";

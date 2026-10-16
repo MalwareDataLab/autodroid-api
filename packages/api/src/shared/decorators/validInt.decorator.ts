@@ -1,13 +1,13 @@
 import { IsInt, Min, Max } from "class-validator";
 
+// Decorator import
+import { IsNullable, NullableOptions } from "./isNullable.decorator";
+
 // Constant import
 import {
   MAX_SAFE_INT,
   MIN_SAFE_INT,
 } from "@shared/constants/maxSafeInt.constant";
-
-// Decorator import
-import { IsNullable, NullableOptions } from "./isNullable.decorator";
 
 export function ValidInt(
   props: { nullable?: NullableOptions } = {

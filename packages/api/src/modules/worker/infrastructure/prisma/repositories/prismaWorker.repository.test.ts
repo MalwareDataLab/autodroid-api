@@ -1,7 +1,13 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { container } from "tsyringe";
-import { faker } from "@faker-js/faker";
 import { createHash } from "node:crypto";
+import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it } from "vitest";
+
+// Enum import
+import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
+
+// DTO import
+import { ICreateWorkerDTO } from "@modules/worker/types/IWorker.dto";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
@@ -10,16 +16,10 @@ import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistra
 // Repository import
 import { IWorkerRepository } from "@modules/worker/repositories/IWorker.repository";
 
-// Enum import
-import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
-
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
-
-// DTO import
-import { ICreateWorkerDTO } from "@modules/worker/types/IWorker.dto";
 
 const sha256 = () =>
   createHash("sha256").update(faker.string.alphanumeric(16)).digest("hex");

@@ -1,202 +1,36 @@
 # Rotas da API
 
-A tabela a seguir mostra as rotas disponíveis na API.
+A tabela mostra as rotas REST do usuário. Todas, menos `/health`, exigem o header `Authorization: Bearer ${token}`, com o token do Firebase.
 
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| GET | /processor | Obter todos os processadores |
-| GET | /processor/:id | Obter um processador pelo ID |
-| POST (json) | /user/register | Registrar um novo usuário |
-| GET | /user/:id | Obter um usuário pelo ID |
-| POST (multipart/form-data) | /dataset | Enviar um conjunto de dados |
-| GET | /dataset | Obter todos os conjuntos de dados |
-| GET | /dataset/:id | Obter um conjunto de dados pelo ID |
-| GET | /dataset/:id/download | Baixar um conjunto de dados pelo ID |
-| PUT (json) | /dataset/:id | Atualizar um conjunto de dados pelo ID |
-| DELETE | /dataset/:id | Excluir um conjunto de dados pelo ID |
-| POST (json) | /processing | Solicitar o processamento de um conjunto de dados |
-| GET | /processing | Obter todos os processamentos |
-| GET | /processing/:id | Obter um processamento pelo ID |
-| GET | /processing/:id/download/:path | Baixar um arquivo de processamento pelo ID e caminho |
-| DELETE | /processing/:id | Excluir um processamento pelo ID com todos os arquivos |
+| Método | Rota                                             | Descrição                                         |
+| ------ | ------------------------------------------------ | ------------------------------------------------- |
+| GET    | /user                                            | Obter o usuário autenticado                       |
+| PUT    | /user                                            | Atualizar o usuário                               |
+| PATCH  | /user/learning-data                              | Atualizar os dados de aprendizado do usuário      |
+| GET    | /user/session                                    | Obter a sessão atual                              |
+| DELETE | /user/session                                    | Encerrar as sessões do usuário                    |
+| GET    | /processor                                       | Listar os processadores                           |
+| GET    | /processor/:processor_id                         | Obter um processador                              |
+| GET    | /dataset                                         | Listar os conjuntos de dados                      |
+| GET    | /dataset/:dataset_id                             | Obter um conjunto de dados                        |
+| POST   | /dataset                                         | Criar um conjunto de dados                        |
+| PUT    | /dataset/:dataset_id                             | Atualizar um conjunto de dados                    |
+| DELETE | /dataset/:dataset_id                             | Excluir um conjunto de dados                      |
+| POST   | /dataset/:dataset_id/request-publication         | Solicitar a publicação de um conjunto de dados    |
+| GET    | /processing                                      | Listar os processamentos                          |
+| GET    | /processing/estimated-execution-time             | Estimar o tempo de execução de um processamento   |
+| GET    | /processing/:processing_id                       | Obter um processamento                            |
+| POST   | /processing                                      | Solicitar o processamento de um conjunto de dados |
+| DELETE | /processing/:processing_id                       | Excluir um processamento                          |
+| PATCH  | /processing/:processing_id/extend-keep-until     | Estender o prazo de retenção do processamento     |
+| PATCH  | /processing/:processing_id/update-visibility     | Alterar a visibilidade do processamento           |
+| GET    | /processing/:processing_id/estimated-finish-time | Estimar quando o processamento termina            |
+| GET    | /health, /health/readiness, /health/liveness     | Verificar o estado da API (sem autenticação)      |
 
-Os seguintes comandos descrevem alguns exemplos de como usar a API com o curl.
+As listas aceitam ordenação e paginação por `skip` e `take`, ou por cursor (`after` com `first`, `before` com `last`), sem misturar os dois. Sem tamanho, a página tem 100 itens, e o máximo é 1000. `totalCount` e `pageInfo` dizem se há mais páginas. Um cursor de uma linha que já não existe devolve 400.
 
-## Processador
+Criar um conjunto de dados devolve uma `upload_url`. O arquivo é enviado para essa URL, e o campo `public_url` de um processamento concluído traz o link do resultado.
 
-### Obter todos os processadores
+Existem também as rotas de administração (`/admin`), do worker (`/worker`), do login do CLI (`/cli-auth`) e do consentimento do MCP (`/mcp-auth`). O servidor OAuth do MCP tem rotas públicas, sem o header `Authorization`: `/.well-known/oauth-authorization-server`, `/.well-known/oauth-protected-resource/mcp`, `/oauth/authorize`, `/oauth/token`, `/oauth/register` e `/oauth/revoke`. O servidor MCP responde em `/mcp` (veja [MCP](./MCP.md)). As operações de usuário e de administração também estão no GraphQL, em `/graphql`.
 
-```bash
-curl --request GET \
-  --url http://localhost:3333/processor
-```
-
-### Obter um processador pelo ID
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/processor/droidaugmentor
-```
-
-## Usuário
-
-### Registrar um novo usuário
-
-```bash
-curl --request POST \
-  --url http://localhost:3333/user/register
-```
-
-### Obter um usuário pelo ID
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/user/<<id>>
-```
-
-Substitua `<<id>>` pelo ID do usuário.
-
-## Conjunto de Dados
-
-### Criar/Enviar um conjunto de dados
-
-```bash
-curl --request POST \
-  --url http://localhost:3333/dataset \
-  --header 'Authorization: Bearer <<user_id>>' \
-  --header 'Content-Type: multipart/form-data' \
-  --form 'dataset=@<<file>>' \
-  --form 'description=<<description>>'
-```
-
-Substitua `<<user_id>>` pelo ID do usuário e `<<file>>` pelo arquivo do conjunto de dados.
-
-Substitua `<<description>>` pela descrição do conjunto de dados.
-
-### Obter todos os conjuntos de dados
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/dataset \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-### Obter um conjunto de dados pelo ID
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/dataset/<<dataset_id>> \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<dataset_id>>` pelo ID do conjunto de dados e `<<user_id>>` pelo ID do usuário.
-
-### Baixar um conjunto de dados pelo ID
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/dataset/<<dataset_id>/download \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<dataset_id>>` pelo ID do conjunto de dados e `<<user_id>>` pelo ID do usuário.
-
-### Atualizar um conjunto de dados pelo ID
-
-```bash
-curl --request PUT \
-  --url http://localhost:3333/dataset/<<dataset_id>> \
-  --header 'Authorization: Bearer <<user_id>>' \
-  --header 'Content-Type: application/json' \
-  --data '{
-  "description": "<<description>>"
-}'
-```
-
-Substitua `<<dataset_id>>` pelo ID do conjunto de dados, `<<user_id>>` pelo ID do usuário e `<<description>>` pela nova descrição.
-
-### Excluir um conjunto de dados pelo ID
-
-```bash
-curl --request DELETE \
-  --url http://localhost:3333/dataset/<<dataset_id>> \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<dataset_id>>` pelo ID do conjunto de dados e `<<user_id>>` pelo ID do usuário.
-
-## Processamento
-
-### Solicitar o processamento de um conjunto de dados
-
-```bash
-curl --request POST \
-  --url http://localhost:3333/processing \
-  --header 'Authorization: Bearer <<user_id>>' \
-  --header 'Content-Type: application/json' \
-  --data '{
-  "dataset_id": "<<dataset_id>>",
-  "processor": "droidaugmentor",
-  "params": {
-    "verbosity": "20",
-    "dense_layer_sizes_g": "256",
-    "dense_layer_sizes_d": "256",
-    "number_epochs": "1000",
-    "training_algorithm": "Adam"
-  }
-}'
-```
-
-Substitua `<<dataset_id>>` pelo ID do conjunto de dados e `<<user_id>>` pelo ID do usuário.
-
-Execute o comando "Obter todos os processadores" para obter os processadores disponíveis e seus parâmetros disponíveis.
-
-Substitua o valor "processor" pelo processador selecionado.
-
-Preencha o objeto "params" com os parâmetros disponíveis do processador.
-
-### Obter todos os processamentos
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/processing \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<user_id>>` pelo ID do usuário.
-
-### Obter um processamento pelo ID
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/processing/<<processing_id>> \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<processing_id>>` pelo ID do processamento e `<<user_id>>` pelo ID do usuário.
-
-### Baixar um arquivo de processamento pelo ID e caminho
-
-```bash
-curl --request GET \
-  --url http://localhost:3333/processing/<<processing_id>>/download/<<file_path>> \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<processing_id>>` pelo ID do processamento e `<<user_id>>` pelo ID do usuário.
-
-Execute o comando "Obter um processamento pelo ID" para obter os arquivos disponíveis.
-
-O caminho após `/download/` é o caminho do arquivo. Substitua `<<file_path>>` pelo caminho do arquivo desejado. Também pode ser um diretório ou arquivos e diretórios aninhados.
-
-Cada arquivo precisa ser baixado individualmente.
-
-### Excluir um processamento pelo ID com todos os arquivos
-
-```bash
-curl --request DELETE \
-  --url http://localhost:3333/processing/<<processing_id>> \
-  --header 'Authorization: Bearer <<user_id>>'
-```
-
-Substitua `<<processing_id>>` pelo ID do processamento e `<<user_id>>` pelo ID do usuário.
+Os corpos das requisições e das respostas estão na [coleção do Postman](https://www.postman.com/luizfelipelaviola/workspace/autodroid/collection/17242387-d69ee1f8-a603-4ac8-89aa-787cfacffaee?action=share&creator=17242387&active-environment=17242387-9dcb7b8e-4eb1-4a10-b607-74725449575f) e no esquema do GraphQL.

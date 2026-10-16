@@ -1,11 +1,11 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
 import { GraphQLError, Kind } from "graphql";
+import { describe, expect, it } from "vitest";
 
-// Interface import
+// Type import
 import { Cursor } from "./IPagination.type";
 
-// Test target import
+// Target import
 import {
   ConnectionCursor,
   isCursor,
@@ -46,6 +46,45 @@ describe("Scalar: ConnectionCursor", () => {
 
     it("should return false when a key does not match", () => {
       expect(isCursor({ created_at: new Date(), foo: "bar" })).toBe(false);
+    });
+
+    it("should accept the date as the ISO text a parsed cursor carries", () => {
+      expect(
+        isCursor({ created_at: "2026-01-01T00:00:00.000Z", id: "row-1" }),
+      ).toBe(true);
+    });
+
+    it.each([
+      ["a date that is not one", { created_at: "x", id: "row-1" }],
+      ["an invalid Date", { created_at: new Date("x"), id: "row-1" }],
+      ["a missing date", { created_at: null, id: "row-1" }],
+      ["an id that is not text", { created_at: new Date(), id: 7 }],
+      ["an id that is a list", { created_at: new Date(), id: ["row-1"] }],
+      ["a year alone as the date", { created_at: "2026", id: "row-1" }],
+      [
+        "a day that does not exist",
+        { created_at: "2026-02-30T00:00:00.000Z", id: "row-1" },
+      ],
+      [
+        "a leap day in a common year",
+        { created_at: "2026-02-29T00:00:00.000Z", id: "row-1" },
+      ],
+      [
+        "a year past 9999",
+        { created_at: "+010000-01-01T00:00:00.000Z", id: "row-1" },
+      ],
+      [
+        "a leap second",
+        { created_at: "2026-01-01T23:59:60.000Z", id: "row-1" },
+      ],
+      ["a date without a time", { created_at: "2026-01-01", id: "row-1" }],
+      [
+        "a time without a zone",
+        { created_at: "2026-01-01T00:00:00", id: "row-1" },
+      ],
+      ["an empty id", { created_at: new Date(), id: "" }],
+    ])("should return false for %s", (_label, value) => {
+      expect(isCursor(value)).toBe(false);
     });
   });
 

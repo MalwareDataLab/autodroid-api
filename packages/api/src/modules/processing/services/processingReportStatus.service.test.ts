@@ -1,5 +1,5 @@
-import { beforeEach, describe, it, expect, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 
 // Provider import
 import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";

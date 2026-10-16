@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as Sentry from "@sentry/node";
 import { GraphQLError } from "graphql";
 import {
   AuthenticationError,
   AuthorizationError,
   ArgumentValidationError,
 } from "type-graphql";
-import * as Sentry from "@sentry/node";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -14,7 +14,7 @@ import { ValidationError } from "@shared/errors/ValidationError";
 // Util import
 import { logger } from "@shared/utils/logger";
 
-// Handler import
+// Target import
 import { errorPlugin, errorHandler } from "./error";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));

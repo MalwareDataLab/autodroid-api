@@ -1,11 +1,11 @@
-import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
 import { ParameterDecorator } from "type-graphql";
+import { describe, expect, it } from "vitest";
 
 // Error import
 import { ValidationError } from "@shared/errors/ValidationError";
 
-// Decorator import
+// Target import
 import { ArgUUID } from "./argUUID.decorator";
 
 const applyAndGetParam = (
@@ -39,6 +39,21 @@ describe("Decorator: ArgUUID", () => {
 
     expect(param.getType()).toBe(String);
     expect(() => param.validateFn(faker.string.uuid())).not.toThrow();
+  });
+
+  it("should describe the argument with the given description", () => {
+    class Resolver {
+      handler(id: string) {
+        return id;
+      }
+    }
+    const param = applyAndGetParam(
+      ArgUUID("id", { description: "The id." }),
+      Resolver.prototype,
+      "handler",
+    );
+
+    expect(param.description).toBe("The id.");
   });
 
   it("should throw a ValidationError for an invalid uuid", () => {

@@ -1,23 +1,23 @@
 import { inject, injectable } from "tsyringe";
 
-// Config import
+// Configuration import
 import { getProcessingConfig } from "@config/processing";
 
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
-
 // Util import
 import { DateUtils } from "@shared/utils/dateUtils";
 
-// Repository import
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+// Entity import
+import { ProcessingTimeEstimation } from "@modules/processing/entities/processingTimeEstimation.entity";
+import { User } from "@modules/user/entities/user.entity";
 
 // Schema import
 import { AdminProcessingGetEstimatedExecutionTimeSchema } from "../schemas/adminProcessingEstimatedExecutionTime.schema";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
 interface IRequest {
   user: User;

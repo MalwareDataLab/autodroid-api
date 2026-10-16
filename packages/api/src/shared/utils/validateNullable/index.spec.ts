@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 // Error import
 import { ValidationError } from "@shared/errors/ValidationError";
 
-// Test target import
+// Target import
 import { validateNullable } from ".";
 
 describe("Utils: validateNullable", () => {

@@ -1,16 +1,17 @@
+import { plainToInstance } from "class-transformer";
 import { IsBoolean, IsHash, IsUUID, IsObject } from "class-validator";
 import { ArgsType, Field } from "type-graphql";
-import { plainToInstance } from "class-transformer";
-
-// Scalar import
-import { JSONScalar } from "@shared/types/json.scalar";
 
 // Decorator import
-import { ValidString } from "@shared/decorators/validString.decorator";
+import { BooleanStringTransform } from "@shared/decorators/booleanStringTransform.decorator";
 import { IsNullable } from "@shared/decorators/isNullable.decorator";
+import { ValidString } from "@shared/decorators/validString.decorator";
 
 // DTO import
 import { IFindWorkerDTO } from "../types/IWorker.dto";
+
+// Scalar import
+import { JSONScalar } from "@shared/types/json.scalar";
 
 @ArgsType()
 class WorkerRegisterSchema {
@@ -56,22 +57,36 @@ class WorkerRefreshTokenSchema extends WorkerIdentificationSchema {
 class WorkerIndexSchema implements IFindWorkerDTO {
   @ValidString({ nullable: "allowUndefined" })
   @IsUUID()
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Only workers of this user.",
+  })
   user_id?: string;
 
   @ValidString({ nullable: "allowUndefined" })
   @IsUUID()
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: "Only workers registered with this token.",
+  })
   registration_token_id?: string;
 
   @IsNullable({ nullable: "allowUndefined" })
   @IsBoolean()
-  @Field(() => Boolean, { nullable: true })
+  @BooleanStringTransform()
+  @Field(() => Boolean, {
+    nullable: true,
+    description: "Only workers marked missing.",
+  })
   missing?: boolean;
 
   @IsNullable({ nullable: "allowUndefined" })
   @IsBoolean()
-  @Field(() => Boolean, { nullable: true })
+  @BooleanStringTransform()
+  @Field(() => Boolean, {
+    nullable: true,
+    description: "Only archived workers.",
+  })
   archived?: boolean;
 
   static make(data: WorkerIndexSchema) {

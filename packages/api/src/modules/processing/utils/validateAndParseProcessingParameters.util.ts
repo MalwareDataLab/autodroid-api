@@ -6,12 +6,14 @@ import { TFunction } from "@shared/i18n";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
+// Enum import
+import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
+
 // Entity import
-import { Processor } from "@modules/processor/entities/processor.entity";
 import { ProcessingParameter } from "@modules/processing/entities/processingParameter.entity";
+import { Processor } from "@modules/processor/entities/processor.entity";
 
 // Schema import
-import { PROCESSOR_PARAMETER_TYPE } from "@modules/processor/types/processorParameterType.enum";
 import { RequestDatasetProcessingParameterSchema } from "../schemas/requestDatasetProcessing.schema";
 
 interface IValidateAndParseProcessingParametersDTO {

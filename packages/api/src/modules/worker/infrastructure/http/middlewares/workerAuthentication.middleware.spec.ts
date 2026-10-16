@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { NextFunction, Request, Response } from "express";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Factory import
 import { workerFactory } from "@modules/worker/entities/factories/worker.factory";

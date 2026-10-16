@@ -1,26 +1,26 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
 // Enum import
 import { DATASET_VISIBILITY } from "@modules/dataset/types/datasetVisibility.enum";
 import { PROCESSOR_VISIBILITY } from "@modules/processor/types/processorVisibility.enum";
 
 // Schema import
+import { ProcessingIndexSchema } from "../schemas/processingIndex.schema";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 // Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { datasetFactory } from "@modules/dataset/entities/factories/dataset.factory";
 import { processorFactory } from "@modules/processor/entities/factories/processor.factory";
-import { ProcessingIndexSchema } from "../schemas/processingIndex.schema";
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { processingFactory } from "../entities/factories/processing.factory";
 
-// Service import
+// Target import
 import { UserProcessingIndexService } from "./userProcessingIndex.service";
 
 describe("Service: UserProcessingIndexService", () => {

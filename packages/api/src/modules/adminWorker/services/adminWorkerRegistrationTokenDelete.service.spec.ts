@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
+
+// Repository import
+import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
 
 // Factory import
 import { userFactory } from "@modules/user/entities/factories/user.factory";
 import { workerRegistrationTokenFactory } from "@modules/worker/entities/factories/workerRegistrationToken.factory";
 
-// Repository import
-import { IWorkerRegistrationTokenRepository } from "@modules/worker/repositories/IWorkerRegistrationToken.repository";
-
-// Service import
+// Target import
 import { AdminWorkerRegistrationTokenDeleteService } from "./adminWorkerRegistrationTokenDelete.service";
 
 describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
@@ -32,7 +32,7 @@ describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
       );
   });
 
-  it("should delete a worker registration token", async () => {
+  it("should delete a worker registration token without returning its secret value", async () => {
     const user = userFactory.build({ email: "luiz@laviola.dev" });
     const workerRegistrationToken = workerRegistrationTokenFactory.build();
 
@@ -46,7 +46,7 @@ describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
       language: "en",
     });
 
-    expect(response).toMatchObject(workerRegistrationToken);
+    expect(response).toEqual({ ...workerRegistrationToken, token: null });
   });
 
   it("should throw if the worker registration token was not found", async () => {

@@ -1,5 +1,5 @@
-import { FieldResolver, Resolver, Root } from "type-graphql";
 import { container } from "tsyringe";
+import { FieldResolver, Resolver, Root } from "type-graphql";
 
 // Entity import
 import { File } from "@modules/file/entities/file.entity";

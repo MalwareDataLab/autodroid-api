@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { container } from "tsyringe";
 import { faker } from "@faker-js/faker";
+import { container } from "tsyringe";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Provider import
 import { IAuthenticationProvider } from "@shared/container/providers/AuthenticationProvider/models/IAuthentication.provider";
@@ -15,7 +15,7 @@ import { IUserAuthProviderConnRepository } from "../repositories/IUserAuthProvid
 // Factory import
 import { userFactory } from "../entities/factories/user.factory";
 
-// Service import
+// Target import
 import { UserUpdateDataService } from "./userUpdateData.service";
 
 describe("Service: UserUpdateDataService", () => {

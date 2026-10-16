@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
-// Factory import
-import { userFactory } from "@modules/user/entities/factories/user.factory";
+// Provider import
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
 
 // Enum import
 import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
@@ -9,10 +9,10 @@ import { STORAGE_PROVIDER } from "@modules/file/types/storageProvider.enum";
 // Repository import
 import { IFileRepository } from "@modules/file/repositories/IFile.repository";
 
-// Provider import
-import { IStorageProvider } from "@shared/container/providers/StorageProvider/models/IStorage.provider";
+// Factory import
+import { userFactory } from "@modules/user/entities/factories/user.factory";
 
-// Service import
+// Target import
 import { AdminFileRemoveAllDanglingService } from "./adminFileRemoveAllDangling.service";
 
 describe("Service: AdminFileRemoveAllDanglingService", () => {

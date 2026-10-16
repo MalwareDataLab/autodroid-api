@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-// Adapter import
+// Target import
 import { WebsocketAdapter } from "./adapter";
 
 describe("Websocket: WebsocketAdapter", () => {

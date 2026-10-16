@@ -1,22 +1,20 @@
 import { container } from "tsyringe";
 
-// Error import
-import { AppError } from "@shared/errors/AppError";
-
 // i18n import
 import { i18n } from "@shared/i18n";
 
-// Enum import
-import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
+// Error import
+import { AppError } from "@shared/errors/AppError";
 
-// Interface import
+// Provider import
+import * as AuthenticationProviders from "./implementations";
 import {
   IAuthenticationMethod,
   IAuthenticationProvider,
 } from "./models/IAuthentication.provider";
 
-// Provider import
-import * as AuthenticationProviders from "./implementations";
+// Enum import
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
 
 class AuthenticationProvider implements IAuthenticationProvider {
   public readonly default_auth_provider: AUTH_PROVIDER = AUTH_PROVIDER.FIREBASE;

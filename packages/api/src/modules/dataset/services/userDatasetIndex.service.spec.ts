@@ -1,16 +1,16 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { faker } from "@faker-js/faker";
-
-// Factory import
-import { datasetFactory } from "../entities/factories/dataset.factory";
-
-// Repository import
-import { IDatasetRepository } from "../repositories/IDataset.repository";
+import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 
 // Enum import
 import { DATASET_VISIBILITY } from "../types/datasetVisibility.enum";
 
-// Service import
+// Repository import
+import { IDatasetRepository } from "../repositories/IDataset.repository";
+
+// Factory import
+import { datasetFactory } from "../entities/factories/dataset.factory";
+
+// Target import
 import { UserDatasetIndexService } from "./userDatasetIndex.service";
 
 describe("Service: UserDatasetIndexService", () => {

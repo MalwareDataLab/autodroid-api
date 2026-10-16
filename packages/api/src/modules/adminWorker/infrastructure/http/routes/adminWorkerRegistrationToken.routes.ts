@@ -1,12 +1,14 @@
 import { Router } from "express";
 
-// Constant import
-import { WorkerRegistrationTokenSortingOptions } from "@modules/worker/constants/workerRegistrationTokenSortingOptions.constant";
-
 // Middleware import
-import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
 import { paginationMiddleware } from "@modules/pagination/infrastructure/http/middlewares/pagination.middleware";
 import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
+import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
+
+// Constant import
+import { PAGINATION_QUERY_KEYS } from "@modules/pagination/constants/paginationQueryKeys.constant";
+import { SORTING_QUERY_KEYS } from "@modules/sorting/constants/sortingQueryKeys.constant";
+import { WorkerRegistrationTokenSortingOptions } from "@modules/worker/constants/workerRegistrationTokenSortingOptions.constant";
 
 // Entity import
 import { WorkerRegistrationToken } from "@modules/worker/entities/workerRegistrationToken.entity";
@@ -44,6 +46,7 @@ adminWorkerRegistrationTokenRouter.get(
   validateRequest({
     schema: WorkerRegistrationTokenIndexSchema,
     segment: "QUERY",
+    ignoreKeys: [...PAGINATION_QUERY_KEYS, ...SORTING_QUERY_KEYS],
   }),
   adminWorkerRegistrationTokenController.index,
 );

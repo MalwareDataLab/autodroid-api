@@ -3,22 +3,22 @@ import { inject, injectable } from "tsyringe";
 // Error import
 import { AppError } from "@shared/errors/AppError";
 
-// Repository import
-import {
-  IDatasetRepository,
-  IProcessorRepository,
-} from "@shared/container/repositories";
-import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { Processing } from "../entities/processing.entity";
-
 // Guard import
 import { ProcessingGuard } from "../guards/processing.guard";
 
 // Enum import
 import { PROCESSING_VISIBILITY } from "../types/processingVisibility.enum";
+
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { Processing } from "../entities/processing.entity";
+
+// Repository import
+import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
+import {
+  IDatasetRepository,
+  IProcessorRepository,
+} from "@shared/container/repositories";
 
 interface IRequest {
   user: User;

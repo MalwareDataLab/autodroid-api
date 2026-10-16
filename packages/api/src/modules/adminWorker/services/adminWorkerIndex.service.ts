@@ -1,24 +1,24 @@
 import { inject, injectable } from "tsyringe";
 
-// Constant import
-import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
-
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
-// Repository import
-import { IWorkerRepository } from "@shared/container/repositories";
-
-// Entity import
-import { User } from "@modules/user/entities/user.entity";
-import { PaginatedWorker } from "@modules/worker/entities/worker.entity";
+// Constant import
+import { WorkerSortingOptions } from "@modules/worker/constants/workerSortingOptions.constant";
 
 // DTO import
 import { IPaginationDTO } from "@modules/pagination/types/IPagination.dto";
 import { ISortingDTO } from "@modules/sorting/types/ISorting.dto";
 
+// Entity import
+import { User } from "@modules/user/entities/user.entity";
+import { PaginatedWorker } from "@modules/worker/entities/worker.entity";
+
 // Schema import
 import { WorkerIndexSchema } from "@modules/worker/schemas/worker.schema";
+
+// Repository import
+import { IWorkerRepository } from "@shared/container/repositories";
 
 interface IRequest {
   filter: WorkerIndexSchema;

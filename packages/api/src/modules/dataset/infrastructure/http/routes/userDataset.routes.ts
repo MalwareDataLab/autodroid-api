@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 // Middleware import
-import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
-import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
 import { paginationMiddleware } from "@modules/pagination/infrastructure/http/middlewares/pagination.middleware";
+import { sortingMiddleware } from "@modules/sorting/infrastructure/http/middlewares/sorting.middleware";
+import { validateRequest } from "@shared/infrastructure/http/middlewares/validation.middleware";
 
 // Constant import
 import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";

@@ -1,5 +1,11 @@
-import { Arg, Args, Authorized, Ctx, Mutation, Query } from "type-graphql";
 import { container } from "tsyringe";
+import { Arg, Args, Authorized, Ctx, Mutation, Query } from "type-graphql";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
 
 // Constant import
 import { DatasetSortingOptions } from "@modules/dataset/constants/datasetSortingOptions.constant";
@@ -10,27 +16,21 @@ import {
   PaginatedDataset,
 } from "@modules/dataset/entities/dataset.entity";
 
-// Context import
-import { GraphQLContext } from "@shared/infrastructure/graphql/context";
-
-// Decorator import
-import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
-
 // Schema import
-import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
-import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 import {
   UserDatasetCreateSchema,
   UserDatasetUpdateSchema,
 } from "@modules/dataset/schemas/userDataset.schema";
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
 
 // Service import
+import { UserDatasetCreateService } from "@modules/dataset/services/userDatasetCreate.service";
 import { UserDatasetDeleteService } from "@modules/dataset/services/userDatasetDelete.service";
 import { UserDatasetIndexService } from "@modules/dataset/services/userDatasetIndex.service";
+import { UserDatasetRequestPublicationService } from "@modules/dataset/services/userDatasetRequestPublication.service";
 import { UserDatasetShowService } from "@modules/dataset/services/userDatasetShow.service";
 import { UserDatasetUpdateService } from "@modules/dataset/services/userDatasetUpdate.service";
-import { UserDatasetRequestPublicationService } from "@modules/dataset/services/userDatasetRequestPublication.service";
-import { UserDatasetCreateService } from "@modules/dataset/services/userDatasetCreate.service";
 
 class UserDatasetResolver {
   @Authorized()
@@ -57,7 +57,7 @@ class UserDatasetResolver {
   @Authorized()
   @Query(() => Dataset)
   async userDataset(
-    @Arg("dataset_id") dataset_id: string,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -76,7 +76,10 @@ class UserDatasetResolver {
   @Authorized()
   @Mutation(() => Dataset)
   async userDatasetCreate(
-    @Arg("data") data: UserDatasetCreateSchema,
+    @Arg("data", {
+      description: "The dataset to register, described by its file.",
+    })
+    data: UserDatasetCreateSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -97,8 +100,9 @@ class UserDatasetResolver {
   @Authorized()
   @Mutation(() => Dataset)
   async userDatasetUpdate(
-    @Arg("dataset_id") dataset_id: string,
-    @Arg("data") data: UserDatasetUpdateSchema,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
+    @Arg("data", { description: "The new description and tags." })
+    data: UserDatasetUpdateSchema,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -120,7 +124,7 @@ class UserDatasetResolver {
   @Authorized()
   @Mutation(() => Dataset)
   async userDatasetDelete(
-    @Arg("dataset_id") dataset_id: string,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ): Promise<Dataset> {
@@ -141,7 +145,7 @@ class UserDatasetResolver {
   @Authorized()
   @Mutation(() => Dataset)
   async userDatasetRequestPublication(
-    @Arg("dataset_id") dataset_id: string,
+    @Arg("dataset_id", { description: "The dataset id." }) dataset_id: string,
 
     @Ctx() { language, user_session }: GraphQLContext,
   ) {

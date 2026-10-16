@@ -1,22 +1,22 @@
 import { inject, injectable } from "tsyringe";
 
+// Provider import
+import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
+
 // Decorator import
 import { RequireAdminPermission } from "@modules/admin/decorators/requireAdminPermission.decorator";
 
 // Entity import
 import { User } from "@modules/user/entities/user.entity";
 
+// Schema import
+import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
+
 // Repository import
 import { IProcessingRepository } from "@modules/processing/repositories/IProcessing.repository";
 
-// Provider import
-import { IJobProvider } from "@shared/container/providers/JobProvider/models/IJob.provider";
-
 // Service import
 import { ProcessingFailDanglingService } from "@modules/processing/services/processingFailDangling.service";
-
-// Schema import
-import { AdminProcessingFailDanglingSchema } from "../schemas/adminProcessing.schema";
 
 interface IRequest {
   user: User;

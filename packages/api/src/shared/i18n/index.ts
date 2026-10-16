@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
+import { join } from "node:path";
 import i18next, { InitOptions, TFunction } from "i18next";
 import i18nextBackend from "i18next-fs-backend";
 import i18nextMiddleware from "i18next-http-middleware";
-import { join } from "node:path";
 
 // Configuration import
 import { getEnvConfig } from "@config/env";

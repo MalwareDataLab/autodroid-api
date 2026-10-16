@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Factory import
-import { fileFactory } from "@modules/file/entities/factories/file.factory";
-
-// Entity import
-import { File } from "@modules/file/entities/file.entity";
+// Provider import
+import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
 
-// Provider import
-import { IDatabaseProvider } from "@shared/container/providers/DatabaseProvider/models/IDatabase.provider";
+// Entity import
+import { File } from "@modules/file/entities/file.entity";
+
+// Factory import
+import { fileFactory } from "@modules/file/entities/factories/file.factory";
 
 // Target import
 import { PrismaFileRepository } from "./prismaFile.repository";
