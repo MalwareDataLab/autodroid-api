@@ -114,7 +114,16 @@ jobs:
       - name: Write test environment file
         env:
           TEST_ENV: ${{ secrets.TEST_ENV }}
-        run: printf '%s' "$TEST_ENV" > packages/api/.env.test
+        run: |
+          printf '%s\n' "$TEST_ENV" > packages/api/.env.test
+          for entry in \
+            APP_URL=http://localhost:3333 \
+            FRONTEND_URL=https://localhost:3000 \
+            SESSION_SECRET=test-session-secret \
+            MCP_OAUTH_CLIENT_ID_SECRET=test-mcp-oauth-client-id-secret
+          do
+            grep -q "^${entry%%=*}=." packages/api/.env.test || printf '%s\n' "$entry" >> packages/api/.env.test
+          done
 
       - name: Run tests
         run: yarn test --bail 1
