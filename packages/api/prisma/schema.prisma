@@ -1,0 +1,291 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+  output   = "./metadata"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  email        String  @unique
+  name         String?
+  phone_number String?
+
+  learning_data Json @default("{}")
+
+  language String?
+
+  notifications_enabled Boolean? @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  auth_provider_conns        UserAuthProviderConn[]    @relation(name: "UserAuthProviderConn_User")
+  worker_registration_tokens WorkerRegistrationToken[] @relation(name: "WorkerRegistrationToken_User")
+  workers                    Worker[]                  @relation(name: "Worker_User")
+  datasets                   Dataset[]                 @relation(name: "Dataset_User")
+  processors                 Processor[]               @relation(name: "Processor_User")
+  processes                  Processing[]              @relation(name: "Processing_User")
+  mcp_authorization_grants   McpAuthorizationGrant[]   @relation(name: "McpAuthorizationGrant_User")
+
+  @@index([email])
+  @@index([created_at, id], map: "users_pagination_idx")
+  @@map("users")
+}
+
+model UserAuthProviderConn {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  auth_provider String
+
+  user_id String
+  user    User   @relation(name: "UserAuthProviderConn_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  code    String
+  payload Json
+
+  disconnected_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([auth_provider, code])
+  @@index([created_at, id], map: "user_auth_provider_conns_pagination_idx")
+  @@map("user_auth_provider_conns")
+}
+
+model File {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  storage_provider     String
+  provider_path        String
+  provider_status      String
+  provider_verified_at DateTime?
+
+  type String
+
+  upload_url            String?
+  upload_url_expires_at DateTime?
+
+  allow_public_access   Boolean
+  public_url            String?
+  public_url_expires_at DateTime?
+
+  filename  String
+  mime_type String
+  size      Int
+
+  md5_hash String
+
+  payload Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  dataset Dataset? @relation(name: "Dataset_File")
+
+  processing_results Processing[] @relation(name: "Processing_ResultFile")
+  processing_metrics Processing[] @relation(name: "Processing_MetricsFile")
+
+  @@map("files")
+}
+
+model Dataset {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "Dataset_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  file_id String @unique
+  file    File   @relation(name: "Dataset_File", fields: [file_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  description String?
+  tags        String?
+
+  visibility String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  processes Processing[] @relation(name: "Processing_Dataset")
+
+  @@map("datasets")
+}
+
+model Processor {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "Processor_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  name    String
+  version String
+
+  image_tag String
+
+  description String?
+  tags        String?
+
+  allowed_mime_types String
+
+  visibility String
+
+  configuration Json
+  payload       Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  processes Processing[] @relation(name: "Processing_Processor")
+
+  @@map("processors")
+}
+
+model WorkerRegistrationToken {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "WorkerRegistrationToken_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  token String @unique
+
+  is_unlimited_usage Boolean
+
+  activated_at DateTime?
+  expires_at   DateTime?
+
+  archived_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  workers Worker[] @relation(name: "WorkerRegistrationToken_Worker")
+
+  @@map("worker_registration_tokens")
+}
+
+model Worker {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "Worker_User", fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  registration_token_id String
+  registration_token    WorkerRegistrationToken @relation(name: "WorkerRegistrationToken_Worker", fields: [registration_token_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  refresh_token            String
+  refresh_token_expires_at DateTime
+
+  name        String?
+  internal_id String
+  signature   String
+
+  missing Boolean @default(false)
+
+  version     String?
+  system_info Json
+  agent_info  Json
+  payload     Json
+
+  description String?
+  tags        String?
+
+  last_seen_at DateTime?
+
+  archived_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  processes Processing[] @relation(name: "Processing_Worker")
+
+  @@index([refresh_token])
+  @@map("workers")
+}
+
+model Processing {
+  id  String @id @default(uuid())
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "Processing_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  processor_id String
+  processor    Processor @relation(name: "Processing_Processor", fields: [processor_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  dataset_id String
+  dataset    Dataset @relation(name: "Processing_Dataset", fields: [dataset_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  worker_id String?
+  worker    Worker? @relation(name: "Processing_Worker", fields: [worker_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  result_file_id String?
+  result_file    File?   @relation(name: "Processing_ResultFile", fields: [result_file_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  metrics_file_id String?
+  metrics_file    File?   @relation(name: "Processing_MetricsFile", fields: [metrics_file_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  status String
+
+  visibility String
+
+  started_at  DateTime?
+  finished_at DateTime?
+
+  verified_at DateTime?
+  attempts    Int?
+  message     String?
+
+  reported_at DateTime?
+
+  keep_until  DateTime?
+  archived_at DateTime?
+
+  configuration Json
+  payload       Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("processes")
+}
+
+model McpAuthorizationGrant {
+  id  String @id
+  seq BigInt @unique @default(autoincrement())
+
+  user_id String
+  user    User   @relation(name: "McpAuthorizationGrant_User", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  client_id   String
+  client_name String?
+  resource    String
+  scopes      String[]
+
+  token_generation Int @default(0)
+
+  expires_at   DateTime
+  revoked_at   DateTime?
+  last_used_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, client_id, resource])
+  @@map("mcp_authorization_grants")
+}

@@ -1,0 +1,158 @@
+import util from "node:util";
+import { ApolloServerPlugin } from "@apollo/server";
+import {
+  ApolloServerErrorCode,
+  unwrapResolverError,
+} from "@apollo/server/errors";
+import * as Sentry from "@sentry/node";
+import { GraphQLFormattedError, GraphQLError } from "graphql";
+import {
+  AuthorizationError as TypeGraphQLAuthorizationError,
+  AuthenticationError as TypeGraphQLAuthenticationError,
+  ArgumentValidationError as TypeGraphQLArgumentValidationError,
+  NoExplicitTypeError as TypeGraphQLNoExplicitTypeError,
+  WrongNullableListOptionError as TypeGraphQLWrongNullableListOptionError,
+} from "type-graphql";
+
+// Error import
+import { AppError } from "@shared/errors/AppError";
+import { ValidationError } from "@shared/errors/ValidationError";
+
+// Util import
+import { logger } from "@shared/utils/logger";
+
+export const errorPlugin: ApolloServerPlugin = {
+  async requestDidStart() {
+    return {
+      async willSendResponse({ response }) {
+        if (
+          response.body.kind === "single" &&
+          response.body.singleResult.errors?.length &&
+          "data" in response.body.singleResult
+        )
+          response.body.singleResult.data = null;
+
+        if (
+          response.body.kind === "incremental" &&
+          "initialResult" in response.body &&
+          response.body.initialResult.errors?.length &&
+          "data" in response.body.initialResult
+        )
+          response.body.initialResult.data = null;
+      },
+    };
+  },
+};
+
+export function errorHandler(
+  formattedError: GraphQLFormattedError,
+  dispatchedError: any,
+): GraphQLFormattedError {
+  const error = unwrapResolverError(dispatchedError) as any;
+  const { originalError } = error;
+
+  try {
+    const appError = AppError.isInstance(originalError)
+      ? originalError
+      : AppError.isInstance(error)
+        ? error
+        : null;
+
+    if (appError)
+      return {
+        ...formattedError,
+        message: appError.message || "Internal server error.",
+        extensions: {
+          code: appError.key || ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+          ...(!!appError.debug && { fatal: true }),
+        },
+      };
+
+    const validationError =
+      originalError instanceof ValidationError
+        ? originalError
+        : error instanceof ValidationError
+          ? error
+          : null;
+
+    if (validationError)
+      return {
+        ...formattedError,
+        message: validationError.message,
+        extensions: {
+          code: ApolloServerErrorCode.BAD_USER_INPUT,
+        },
+      };
+
+    if (error instanceof TypeGraphQLAuthenticationError)
+      return {
+        ...formattedError,
+        message: "Authentication error.",
+        extensions: {
+          code: "UNAUTHORIZED",
+        },
+      };
+
+    if (error instanceof TypeGraphQLAuthorizationError)
+      return {
+        ...formattedError,
+        message: "Authentication error.",
+        extensions: {
+          code: "FORBIDDEN",
+        },
+      };
+
+    const validationErrors = [
+      TypeGraphQLArgumentValidationError,
+      TypeGraphQLNoExplicitTypeError,
+      TypeGraphQLWrongNullableListOptionError,
+    ];
+    if (validationErrors.some(errorClass => error instanceof errorClass)) {
+      return {
+        ...formattedError,
+        message: formattedError.message,
+        extensions: {
+          ...error.extensions,
+          code: ApolloServerErrorCode.GRAPHQL_VALIDATION_FAILED,
+        },
+      };
+    }
+
+    if (error instanceof GraphQLError)
+      return {
+        ...formattedError,
+        message: error.message,
+        extensions: {
+          code: ApolloServerErrorCode.GRAPHQL_PARSE_FAILED,
+          ...error.extensions,
+        },
+      };
+
+    if (
+      !!formattedError.extensions?.code &&
+      formattedError.extensions.code !==
+        ApolloServerErrorCode.INTERNAL_SERVER_ERROR &&
+      Object.values(ApolloServerErrorCode).includes(
+        formattedError.extensions.code as any,
+      )
+    )
+      return formattedError;
+
+    logger.error(
+      `❌ Application failure: `,
+      util.inspect(error, false, null, true),
+    );
+
+    Sentry.captureException(error);
+
+    return {
+      ...formattedError,
+      message: "Internal server error.",
+      extensions: {
+        code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+      },
+    };
+  } catch (err) {
+    return formattedError;
+  }
+}

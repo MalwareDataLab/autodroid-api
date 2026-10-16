@@ -8,7 +8,14 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "changelog-path": ".github/outputs/CHANGELOG-qa.md"
+      "changelog-path": ".github/outputs/CHANGELOG-qa.md",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "packages/api/package.json",
+          "jsonpath": "$.version"
+        }
+      ]
     }
   },
   "initial-version": "0.0.1-beta",

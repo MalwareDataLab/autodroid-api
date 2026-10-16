@@ -1,0 +1,1102 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MCP tools: run through the GraphQL API > 0 autodroid_whoami should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "email": "<ownerUser.email>",
+  "id": "<ownerUser>",
+  "is_admin": false,
+  "language": "en",
+  "name": null,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 1 autodroid_show_session should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "access_token_expires_at": "2031-01-01T01:00:00.000Z",
+  "refresh_token_expires_at": null,
+  "user": {
+    "email": "<ownerUser.email>",
+    "id": "<ownerUser>",
+    "is_admin": false,
+    "language": "en",
+    "name": null,
+  },
+  "user_auth_provider_conn_id": "<ownerConnection>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 2 autodroid_close_sessions should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "closed": true,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 3 autodroid_update_profile should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "email": "<ownerUser.email>",
+  "id": "<ownerUser>",
+  "is_admin": false,
+  "language": "pt-BR",
+  "name": "Renamed Person",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 4 autodroid_update_profile_learning_data should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "email": "<ownerUser.email>",
+  "id": "<ownerUser>",
+  "is_admin": false,
+  "language": "en",
+  "name": null,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 5 autodroid_list_mcp_connections should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "client_id": "mcpc1.seededClient",
+      "client_name": "First agent",
+      "client_verified_host": null,
+      "created_at": "2026-03-01T10:19:00.000Z",
+      "expires_at": "2099-01-01T00:00:00.000Z",
+      "id": "<grant>",
+      "last_used_at": null,
+      "scopes": [
+        "autodroid:read",
+        "autodroid:write",
+      ],
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 6 autodroid_revoke_mcp_connection should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "client_id": "mcpc1.seededClient",
+  "client_name": "First agent",
+  "client_verified_host": null,
+  "created_at": "2026-03-01T10:19:00.000Z",
+  "expires_at": "2099-01-01T00:00:00.000Z",
+  "id": "<grant>",
+  "last_used_at": null,
+  "scopes": [
+    "autodroid:read",
+    "autodroid:write",
+  ],
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 7 autodroid_list_datasets should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:09:00.000Z",
+      "description": "Public dataset",
+      "id": "<publicDataset>",
+      "tags": "public",
+      "user_id": "<otherUser>",
+      "visibility": "PUBLIC",
+    },
+    {
+      "created_at": "2026-03-01T10:08:00.000Z",
+      "description": "Own dataset",
+      "id": "<ownDataset>",
+      "tags": "own,seed",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+  ],
+  "total_count": 2,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 8 autodroid_list_datasets should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:09:00.000Z",
+      "description": "Public dataset",
+      "id": "<publicDataset>",
+      "tags": "public",
+      "user_id": "<otherUser>",
+      "visibility": "PUBLIC",
+    },
+  ],
+  "total_count": 2,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 9 autodroid_show_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:08:00.000Z",
+  "description": "Own dataset",
+  "file": {
+    "filename": "own.csv",
+    "id": "<ownDatasetFile>",
+    "mime_type": "CSV",
+    "public_url": "https://storage.example.test/download/<ownDatasetFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 2048,
+  },
+  "id": "<ownDataset>",
+  "tags": "own,seed",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 10 autodroid_show_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:09:00.000Z",
+  "description": "Public dataset",
+  "file": {
+    "filename": "public.csv",
+    "id": "<publicDatasetFile>",
+    "mime_type": "CSV",
+    "public_url": "https://storage.example.test/download/<publicDatasetFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 2048,
+  },
+  "id": "<publicDataset>",
+  "tags": "public",
+  "user_id": "<otherUser>",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 11 autodroid_create_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "<volatile>",
+  "description": "Created through MCP",
+  "file": {
+    "filename": "created.csv",
+    "id": "<volatile>",
+    "mime_type": "CSV",
+    "provider_status": "READY",
+    "size": 1024,
+    "upload_url": "https://storage.example.test/upload/created.csv",
+    "upload_url_expires_at": "2029-06-01T00:00:00.000Z",
+  },
+  "id": "<volatile>",
+  "tags": "mcp",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 12 autodroid_update_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:08:00.000Z",
+  "description": "Updated through MCP",
+  "id": "<ownDataset>",
+  "tags": "mcp,updated",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 13 autodroid_update_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:08:00.000Z",
+  "description": null,
+  "id": "<ownDataset>",
+  "tags": null,
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 14 autodroid_delete_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:08:00.000Z",
+  "description": "Own dataset",
+  "id": "<ownDataset>",
+  "tags": "own,seed",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 15 autodroid_publish_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:08:00.000Z",
+  "description": "Own dataset",
+  "id": "<ownDataset>",
+  "tags": "own,seed",
+  "user_id": "<ownerUser>",
+  "visibility": "UNDER_REVIEW",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 16 autodroid_list_processors should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "configuration": {
+        "parameters": [
+          {
+            "default_value": "10",
+            "description": "How many epochs",
+            "is_required": false,
+            "name": "epochs",
+            "sequence": 1,
+            "type": "INTEGER",
+          },
+        ],
+      },
+      "id": "<processor>",
+      "name": "Public processor",
+      "version": "1.0.0",
+      "visibility": "PUBLIC",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 17 autodroid_show_processor should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "configuration": {
+    "parameters": [
+      {
+        "default_value": "10",
+        "description": "How many epochs",
+        "is_required": false,
+        "name": "epochs",
+        "sequence": 1,
+        "type": "INTEGER",
+      },
+    ],
+  },
+  "id": "<processor>",
+  "name": "Public processor",
+  "version": "1.0.0",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 18 autodroid_list_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:15:00.000Z",
+      "finished_at": null,
+      "id": "<publicProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": null,
+      "status": "FAILED",
+      "user_id": "<otherUser>",
+      "visibility": "PUBLIC",
+    },
+    {
+      "created_at": "2026-03-01T10:14:00.000Z",
+      "finished_at": null,
+      "id": "<pendingProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": null,
+      "status": "PENDING",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+    {
+      "created_at": "2026-03-01T10:13:00.000Z",
+      "finished_at": "2026-03-01T11:00:00.000Z",
+      "id": "<finishedProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": "2026-03-01T10:00:00.000Z",
+      "status": "SUCCEEDED",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+  ],
+  "total_count": 3,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 19 autodroid_list_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:13:00.000Z",
+      "finished_at": "2026-03-01T11:00:00.000Z",
+      "id": "<finishedProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": "2026-03-01T10:00:00.000Z",
+      "status": "SUCCEEDED",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 20 autodroid_show_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:13:00.000Z",
+  "dataset": {
+    "description": "Own dataset",
+    "id": "<ownDataset>",
+  },
+  "finished_at": "2026-03-01T11:00:00.000Z",
+  "id": "<finishedProcessing>",
+  "keep_until": "2030-01-01T00:00:00.000Z",
+  "metrics_file": {
+    "filename": "metrics.csv",
+    "id": "<metricsFile>",
+    "mime_type": "CSV",
+    "public_url": "https://storage.example.test/download/<metricsFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 512,
+  },
+  "processor": {
+    "id": "<processor>",
+    "name": "Public processor",
+  },
+  "result_file": {
+    "filename": "result.zip",
+    "id": "<resultFile>",
+    "mime_type": "ZIP",
+    "public_url": "https://storage.example.test/download/<resultFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 4096,
+  },
+  "started_at": "2026-03-01T10:00:00.000Z",
+  "status": "SUCCEEDED",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 21 autodroid_run_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "<volatile>",
+  "finished_at": null,
+  "id": "<volatile>",
+  "keep_until": "<volatile>",
+  "started_at": null,
+  "status": "PENDING",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 22 autodroid_delete_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:14:00.000Z",
+  "finished_at": null,
+  "id": "<pendingProcessing>",
+  "keep_until": "2030-01-01T00:00:00.000Z",
+  "started_at": null,
+  "status": "PENDING",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 23 autodroid_extend_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:13:00.000Z",
+  "finished_at": "2026-03-01T11:00:00.000Z",
+  "id": "<finishedProcessing>",
+  "keep_until": "<volatile>",
+  "started_at": "2026-03-01T10:00:00.000Z",
+  "status": "SUCCEEDED",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 24 autodroid_set_processing_visibility should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:13:00.000Z",
+  "finished_at": "2026-03-01T11:00:00.000Z",
+  "id": "<finishedProcessing>",
+  "keep_until": "2030-01-01T00:00:00.000Z",
+  "started_at": "2026-03-01T10:00:00.000Z",
+  "status": "SUCCEEDED",
+  "user_id": "<ownerUser>",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 25 autodroid_estimate_processing_time should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "dataset_id": "<ownDataset>",
+  "estimated_execution_time": 3600,
+  "estimated_total_time": 7260,
+  "estimated_waiting_time": 3660,
+  "processor_id": "<processor>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 26 autodroid_estimate_processing_finish should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "dataset_id": "<ownDataset>",
+  "estimated_finish_time": "<volatile>",
+  "estimated_start_time": "<volatile>",
+  "processing_id": "<pendingProcessing>",
+  "processor_id": "<processor>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 27 autodroid_health_check should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "checked_at": "<volatile>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 28 autodroid_health_liveness should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "checked_at": "<volatile>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 29 autodroid_health_readiness should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "checked_at": "<volatile>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 30 autodroid_admin_list_datasets should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:10:00.000Z",
+      "description": "Other person's private dataset",
+      "id": "<otherPrivateDataset>",
+      "tags": "private",
+      "user_id": "<otherUser>",
+      "visibility": "PRIVATE",
+    },
+    {
+      "created_at": "2026-03-01T10:09:00.000Z",
+      "description": "Public dataset",
+      "id": "<publicDataset>",
+      "tags": "public",
+      "user_id": "<otherUser>",
+      "visibility": "PUBLIC",
+    },
+    {
+      "created_at": "2026-03-01T10:08:00.000Z",
+      "description": "Own dataset",
+      "id": "<ownDataset>",
+      "tags": "own,seed",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+  ],
+  "total_count": 3,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 31 autodroid_admin_list_datasets should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:09:00.000Z",
+      "description": "Public dataset",
+      "id": "<publicDataset>",
+      "tags": "public",
+      "user_id": "<otherUser>",
+      "visibility": "PUBLIC",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 32 autodroid_admin_show_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:10:00.000Z",
+  "description": "Other person's private dataset",
+  "file": {
+    "filename": "other-private.csv",
+    "id": "<otherPrivateDatasetFile>",
+    "mime_type": "CSV",
+    "public_url": "https://storage.example.test/download/<otherPrivateDatasetFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 2048,
+  },
+  "id": "<otherPrivateDataset>",
+  "tags": "private",
+  "user_id": "<otherUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 33 autodroid_admin_update_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:10:00.000Z",
+  "description": "Admin edited",
+  "id": "<otherPrivateDataset>",
+  "tags": "admin",
+  "user_id": "<otherUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 34 autodroid_admin_set_dataset_visibility should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:10:00.000Z",
+  "description": "Other person's private dataset",
+  "id": "<otherPrivateDataset>",
+  "tags": "private",
+  "user_id": "<otherUser>",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 35 autodroid_admin_delete_dataset should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:10:00.000Z",
+  "description": "Other person's private dataset",
+  "id": "<otherPrivateDataset>",
+  "tags": "private",
+  "user_id": "<otherUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 36 autodroid_admin_list_processors should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "allowed_mime_types": "image/png",
+      "configuration": {
+        "command": "",
+        "dataset_input_argument": "",
+        "dataset_input_value": "",
+        "dataset_output_argument": "",
+        "dataset_output_value": "",
+        "output_metrics_file_glob_patterns": [
+          "*",
+        ],
+        "output_result_file_glob_patterns": [
+          "*",
+        ],
+        "parameters": [],
+      },
+      "description": "Hidden from the public",
+      "id": "<hiddenProcessor>",
+      "image_tag": "registry.example.test/hidden:0.1.0",
+      "name": "Hidden processor",
+      "tags": "one,two,three",
+      "version": "0.1.0",
+      "visibility": "HIDDEN",
+    },
+    {
+      "allowed_mime_types": "text/csv",
+      "configuration": {
+        "command": "python run.py",
+        "dataset_input_argument": "--input",
+        "dataset_input_value": "/data/input.csv",
+        "dataset_output_argument": "--output",
+        "dataset_output_value": "/data/output",
+        "output_metrics_file_glob_patterns": [
+          "metrics*.csv",
+        ],
+        "output_result_file_glob_patterns": [
+          "result*.zip",
+        ],
+        "parameters": [
+          {
+            "default_value": "10",
+            "description": "How many epochs",
+            "is_required": false,
+            "name": "epochs",
+            "sequence": 1,
+            "type": "INTEGER",
+          },
+        ],
+      },
+      "description": "Synthesizes data",
+      "id": "<processor>",
+      "image_tag": "registry.example.test/processor:1.0.0",
+      "name": "Public processor",
+      "tags": "synth",
+      "version": "1.0.0",
+      "visibility": "PUBLIC",
+    },
+  ],
+  "total_count": 2,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 37 autodroid_admin_show_processor should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "allowed_mime_types": "text/csv",
+  "configuration": {
+    "command": "python run.py",
+    "dataset_input_argument": "--input",
+    "dataset_input_value": "/data/input.csv",
+    "dataset_output_argument": "--output",
+    "dataset_output_value": "/data/output",
+    "output_metrics_file_glob_patterns": [
+      "metrics*.csv",
+    ],
+    "output_result_file_glob_patterns": [
+      "result*.zip",
+    ],
+    "parameters": [
+      {
+        "default_value": "10",
+        "description": "How many epochs",
+        "is_required": false,
+        "name": "epochs",
+        "sequence": 1,
+        "type": "INTEGER",
+      },
+    ],
+  },
+  "description": "Synthesizes data",
+  "id": "<processor>",
+  "image_tag": "registry.example.test/processor:1.0.0",
+  "name": "Public processor",
+  "tags": "synth",
+  "version": "1.0.0",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 38 autodroid_admin_show_processor should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "allowed_mime_types": "image/png",
+  "configuration": {
+    "command": "",
+    "dataset_input_argument": "",
+    "dataset_input_value": "",
+    "dataset_output_argument": "",
+    "dataset_output_value": "",
+    "output_metrics_file_glob_patterns": [
+      "*",
+    ],
+    "output_result_file_glob_patterns": [
+      "*",
+    ],
+    "parameters": [],
+  },
+  "description": "Hidden from the public",
+  "id": "<hiddenProcessor>",
+  "image_tag": "registry.example.test/hidden:0.1.0",
+  "name": "Hidden processor",
+  "tags": "one,two,three",
+  "version": "0.1.0",
+  "visibility": "HIDDEN",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 39 autodroid_admin_create_processor should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "allowed_mime_types": "text/csv",
+  "configuration": {
+    "command": "python created.py",
+    "dataset_input_argument": "--in",
+    "dataset_input_value": "/in.csv",
+    "dataset_output_argument": "--out",
+    "dataset_output_value": "/out",
+    "output_metrics_file_glob_patterns": [
+      "metrics*.csv",
+    ],
+    "output_result_file_glob_patterns": [
+      "result*.zip",
+    ],
+    "parameters": [
+      {
+        "default_value": "5",
+        "description": "How many epochs",
+        "is_required": true,
+        "name": "epochs",
+        "sequence": 1,
+        "type": "INTEGER",
+      },
+      {
+        "default_value": null,
+        "description": "Whether to log",
+        "is_required": false,
+        "name": "verbose",
+        "sequence": 2,
+        "type": "BOOLEAN",
+      },
+    ],
+  },
+  "description": null,
+  "id": "<volatile>",
+  "image_tag": "registry.example.test/created:2.0.0",
+  "name": "Created processor",
+  "tags": null,
+  "version": "2.0.0",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 40 autodroid_admin_update_processor should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "allowed_mime_types": "text/csv",
+  "configuration": {
+    "command": "python created.py",
+    "dataset_input_argument": "--in",
+    "dataset_input_value": "/in.csv",
+    "dataset_output_argument": "--out",
+    "dataset_output_value": "/out",
+    "output_metrics_file_glob_patterns": [
+      "metrics*.csv",
+    ],
+    "output_result_file_glob_patterns": [
+      "result*.zip",
+    ],
+    "parameters": [
+      {
+        "default_value": "5",
+        "description": "How many epochs",
+        "is_required": true,
+        "name": "epochs",
+        "sequence": 1,
+        "type": "INTEGER",
+      },
+      {
+        "default_value": null,
+        "description": "Whether to log",
+        "is_required": false,
+        "name": "verbose",
+        "sequence": 2,
+        "type": "BOOLEAN",
+      },
+    ],
+  },
+  "description": "Replaced",
+  "id": "<hiddenProcessor>",
+  "image_tag": "registry.example.test/created:2.0.0",
+  "name": "Created processor",
+  "tags": null,
+  "version": "2.0.0",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 41 autodroid_admin_delete_processor should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "allowed_mime_types": "image/png",
+  "configuration": {
+    "command": "",
+    "dataset_input_argument": "",
+    "dataset_input_value": "",
+    "dataset_output_argument": "",
+    "dataset_output_value": "",
+    "output_metrics_file_glob_patterns": [
+      "*",
+    ],
+    "output_result_file_glob_patterns": [
+      "*",
+    ],
+    "parameters": [],
+  },
+  "description": "Hidden from the public",
+  "id": "<hiddenProcessor>",
+  "image_tag": "registry.example.test/hidden:0.1.0",
+  "name": "Hidden processor",
+  "tags": "one,two,three",
+  "version": "0.1.0",
+  "visibility": "HIDDEN",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 42 autodroid_admin_list_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:15:00.000Z",
+      "finished_at": null,
+      "id": "<publicProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": null,
+      "status": "FAILED",
+      "user_id": "<otherUser>",
+      "visibility": "PUBLIC",
+    },
+    {
+      "created_at": "2026-03-01T10:14:00.000Z",
+      "finished_at": null,
+      "id": "<pendingProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": null,
+      "status": "PENDING",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+    {
+      "created_at": "2026-03-01T10:13:00.000Z",
+      "finished_at": "2026-03-01T11:00:00.000Z",
+      "id": "<finishedProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": "2026-03-01T10:00:00.000Z",
+      "status": "SUCCEEDED",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+  ],
+  "total_count": 3,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 43 autodroid_admin_list_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:13:00.000Z",
+      "finished_at": "2026-03-01T11:00:00.000Z",
+      "id": "<finishedProcessing>",
+      "keep_until": "2030-01-01T00:00:00.000Z",
+      "started_at": "2026-03-01T10:00:00.000Z",
+      "status": "SUCCEEDED",
+      "user_id": "<ownerUser>",
+      "visibility": "PRIVATE",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 44 autodroid_admin_show_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:13:00.000Z",
+  "dataset": {
+    "description": "Own dataset",
+    "id": "<ownDataset>",
+  },
+  "finished_at": "2026-03-01T11:00:00.000Z",
+  "id": "<finishedProcessing>",
+  "keep_until": "2030-01-01T00:00:00.000Z",
+  "metrics_file": {
+    "filename": "metrics.csv",
+    "id": "<metricsFile>",
+    "mime_type": "CSV",
+    "public_url": "https://storage.example.test/download/<metricsFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 512,
+  },
+  "processor": {
+    "id": "<processor>",
+    "name": "Public processor",
+  },
+  "result_file": {
+    "filename": "result.zip",
+    "id": "<resultFile>",
+    "mime_type": "ZIP",
+    "public_url": "https://storage.example.test/download/<resultFile>",
+    "public_url_expires_at": "2030-01-01T00:00:00.000Z",
+    "size": 4096,
+  },
+  "started_at": "2026-03-01T10:00:00.000Z",
+  "status": "SUCCEEDED",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 45 autodroid_admin_update_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:13:00.000Z",
+  "finished_at": "2026-03-01T11:00:00.000Z",
+  "id": "<finishedProcessing>",
+  "keep_until": "<volatile>",
+  "started_at": "2026-03-01T10:00:00.000Z",
+  "status": "SUCCEEDED",
+  "user_id": "<ownerUser>",
+  "visibility": "PUBLIC",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 46 autodroid_admin_delete_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:13:00.000Z",
+  "finished_at": "2026-03-01T11:00:00.000Z",
+  "id": "<finishedProcessing>",
+  "keep_until": "2030-01-01T00:00:00.000Z",
+  "started_at": "2026-03-01T10:00:00.000Z",
+  "status": "SUCCEEDED",
+  "user_id": "<ownerUser>",
+  "visibility": "PRIVATE",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 47 autodroid_admin_clean_expired_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "removed": 0,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 48 autodroid_admin_estimate_processing_time should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "dataset_id": "<ownDataset>",
+      "estimated_execution_time": 3600,
+      "estimated_total_time": 7260,
+      "estimated_waiting_time": 3660,
+      "processor_id": "<processor>",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 49 autodroid_admin_estimate_processing_time should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "dataset_id": "<ownDataset>",
+      "estimated_execution_time": 3600,
+      "estimated_total_time": 7260,
+      "estimated_waiting_time": 3660,
+      "processor_id": "<processor>",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 50 autodroid_admin_fail_dangling_processing should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "failed": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 51 autodroid_admin_list_workers should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "archived_at": null,
+      "created_at": "2026-03-01T10:18:00.000Z",
+      "description": "A worker",
+      "id": "<worker>",
+      "last_seen_at": "2026-03-01T10:00:00.000Z",
+      "name": "worker-one",
+      "tags": "gpu",
+      "user_id": "<adminUser>",
+      "version": "1.2.3",
+    },
+  ],
+  "total_count": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 52 autodroid_admin_show_worker should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "archived_at": null,
+  "created_at": "2026-03-01T10:18:00.000Z",
+  "description": "A worker",
+  "id": "<worker>",
+  "last_seen_at": "2026-03-01T10:00:00.000Z",
+  "name": "worker-one",
+  "tags": "gpu",
+  "user_id": "<adminUser>",
+  "version": "1.2.3",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 53 autodroid_admin_update_worker should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "archived_at": null,
+  "created_at": "2026-03-01T10:18:00.000Z",
+  "description": "Admin described",
+  "id": "<worker>",
+  "last_seen_at": "2026-03-01T10:00:00.000Z",
+  "name": "worker-one",
+  "tags": null,
+  "user_id": "<adminUser>",
+  "version": "1.2.3",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 54 autodroid_admin_delete_worker should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "archived_at": "<volatile>",
+  "created_at": "2026-03-01T10:18:00.000Z",
+  "description": "A worker",
+  "id": "<worker>",
+  "last_seen_at": "2026-03-01T10:00:00.000Z",
+  "name": "worker-one",
+  "tags": "gpu",
+  "user_id": "<adminUser>",
+  "version": "1.2.3",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 55 autodroid_admin_clean_missing_workers should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "removed": 1,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 56 autodroid_admin_list_worker_registration_tokens should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "has_next_page": false,
+  "items": [
+    {
+      "created_at": "2026-03-01T10:17:00.000Z",
+      "expires_at": null,
+      "id": "<freeRegistrationToken>",
+      "is_unlimited_usage": false,
+    },
+    {
+      "created_at": "2026-03-01T10:16:00.000Z",
+      "expires_at": null,
+      "id": "<usedRegistrationToken>",
+      "is_unlimited_usage": true,
+    },
+  ],
+  "total_count": 2,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 57 autodroid_admin_show_worker_registration_token should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:17:00.000Z",
+  "expires_at": null,
+  "id": "<freeRegistrationToken>",
+  "is_unlimited_usage": false,
+  "token": "free-registration-token",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 58 autodroid_admin_create_worker_registration_token should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "<volatile>",
+  "expires_at": "2031-06-01T00:00:00.000Z",
+  "id": "<volatile>",
+  "is_unlimited_usage": true,
+  "token": "<volatile>",
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 59 autodroid_admin_delete_worker_registration_token should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "created_at": "2026-03-01T10:17:00.000Z",
+  "expires_at": null,
+  "id": "<freeRegistrationToken>",
+  "is_unlimited_usage": false,
+}
+`;
+
+exports[`MCP tools: run through the GraphQL API > 60 autodroid_admin_remove_dangling_files should answer with exactly the contract's fields and none of the world's secrets 1`] = `
+{
+  "removed": 0,
+}
+`;

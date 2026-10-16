@@ -1,0 +1,63 @@
+import { Exclude, Type } from "class-transformer";
+import { Authorized, Directive, Field, ID, ObjectType } from "type-graphql";
+
+// Type import
+import { UserAuthProviderConnEntityType } from "@shared/types/models";
+
+// Enum import
+import { AUTH_PROVIDER } from "@shared/container/providers/AuthenticationProvider/types/authProvider.enum";
+
+// Entity import
+import { PaginationConnection } from "@modules/pagination/entities/paginationConnection.entity";
+import { User } from "./user.entity";
+
+// Scalar import
+import { BigIntScalar } from "@shared/types/bigInt.scalar";
+import { JSONScalar } from "@shared/types/json.scalar";
+
+@ObjectType()
+class UserAuthProviderConn implements UserAuthProviderConnEntityType {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => BigIntScalar)
+  seq: bigint;
+
+  @Field(() => AUTH_PROVIDER)
+  auth_provider: AUTH_PROVIDER;
+
+  @Field()
+  code: string;
+
+  @Authorized(["ADMIN"])
+  @Directive("@auth(requires: ADMIN)")
+  @Exclude()
+  @Field(() => JSONScalar)
+  payload: Record<string, any>;
+
+  @Field(() => Date, { nullable: true })
+  disconnected_at: Date | null;
+
+  @Field()
+  created_at: Date;
+
+  @Field()
+  updated_at: Date;
+
+  /* Relations */
+
+  @Field()
+  user_id: string;
+
+  @Exclude()
+  @Type(() => User)
+  user: User;
+}
+
+const PaginatedUserAuthProviderConn =
+  PaginationConnection(UserAuthProviderConn);
+export type PaginatedUserAuthProviderConn = InstanceType<
+  typeof PaginatedUserAuthProviderConn
+>;
+
+export { UserAuthProviderConn, PaginatedUserAuthProviderConn };

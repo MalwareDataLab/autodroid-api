@@ -1,0 +1,29 @@
+import { Request, Response } from "express";
+import { container } from "tsyringe";
+
+// Util import
+import { process } from "@shared/utils/instanceParser";
+
+// Service import
+import { UserSessionsCloseService } from "@modules/user/services/userSessionsClose.service";
+
+class UserSessionController {
+  public async get(req: Request, res: Response) {
+    return res.json(process(req.user_session));
+  }
+
+  public async delete(req: Request, res: Response) {
+    const userSessionsCloseService = container.resolve(
+      UserSessionsCloseService,
+    );
+
+    await userSessionsCloseService.execute({
+      user: req.user_session.user,
+      language: req.language,
+    });
+
+    return res.json(process(req.user_session.user_auth_provider_conn));
+  }
+}
+
+export { UserSessionController };

@@ -1,0 +1,104 @@
+module.exports = {
+  root: true,
+  env: {
+    es2024: true,
+  },
+  extends: [
+    "airbnb-base",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:prettier/recommended",
+  ],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
+    projectService: true,
+    tsconfigRootDir: __dirname,
+  },
+  plugins: [
+    "import",
+    "deprecation",
+    "@typescript-eslint",
+    "eslint-plugin-import-helpers",
+    "unicorn",
+    "prettier",
+  ],
+  rules: {
+    "prettier/prettier": "error",
+
+    "unicorn/prefer-node-protocol": "error",
+
+    "deprecation/deprecation": "error",
+
+    camelcase: [
+      "error",
+      {
+        properties: "never",
+        ignoreDestructuring: true,
+        allow: ["^\\w+_\\w+$"],
+      },
+    ],
+    "no-console": "off",
+    "no-nested-ternary": "off",
+    "no-underscore-dangle": "off",
+
+    "import/no-unresolved": [
+      "error",
+      { ignore: ["^@modelcontextprotocol/sdk/"] },
+    ],
+    "import/prefer-default-export": "off",
+    "import/order": "off",
+    "import/no-default-export": "error",
+    "import/exports-last": "warn",
+    "import/no-import-module-exports": "off",
+
+    "max-classes-per-file": "off",
+    "no-useless-constructor": "off",
+    "lines-between-class-members": "off",
+    "class-methods-use-this": "off",
+    "no-empty-function": "off",
+    "no-empty": [
+      "error",
+      {
+        allowEmptyCatch: true,
+      },
+    ],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "_",
+        ignoreRestSiblings: true,
+        caughtErrors: "none",
+      },
+    ],
+    "import/extensions": ["error", "ignorePackages", { ts: "never" }],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        devDependencies: [
+          "**/*.spec.ts",
+          "**/*.test.ts",
+          "**/mocks/*.ts",
+          "**/factories/*.ts",
+          "**/inMemory/*.ts",
+          `**/${require("path").basename(__dirname)}/test/**`,
+        ],
+      },
+    ],
+  },
+  settings: {
+    "import/internal-regex": "^@(config|modules|shared)?/",
+    "import/resolver": {
+      typescript: {
+        project: require("path").join(__dirname, "tsconfig.json"),
+      },
+    },
+  },
+};

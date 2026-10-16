@@ -1,0 +1,162 @@
+import { container } from "tsyringe";
+import {
+  Arg,
+  Args,
+  Authorized,
+  Ctx,
+  Directive,
+  Mutation,
+  Query,
+} from "type-graphql";
+
+// Context import
+import { GraphQLContext } from "@shared/infrastructure/graphql/context";
+
+// Decorator import
+import { SortingArg } from "@modules/sorting/infrastructure/graphql/decorators/sortingArg.decorator";
+
+// Constant import
+import { ProcessorSortingOptions } from "@modules/processor/constants/processorSortingOptions.constant";
+
+// Entity import
+import {
+  Processor,
+  PaginatedProcessor,
+} from "@modules/processor/entities/processor.entity";
+
+// Schema import
+import { PaginationSchema } from "@modules/pagination/schemas/pagination.schema";
+import { ProcessorSchema } from "@modules/processor/schemas/processor.schema";
+import { SortingFieldSchema } from "@modules/sorting/schemas/sorting.schema";
+
+// Service import
+import { AdminProcessorCreateService } from "@modules/adminProcessor/services/adminProcessorCreate.service";
+import { AdminProcessorDeleteService } from "@modules/adminProcessor/services/adminProcessorDelete.service";
+import { AdminProcessorIndexService } from "@modules/adminProcessor/services/adminProcessorIndex.service";
+import { AdminProcessorShowService } from "@modules/adminProcessor/services/adminProcessorShow.service";
+import { AdminProcessorUpdateService } from "@modules/adminProcessor/services/adminProcessorUpdate.service";
+
+class AdminProcessorResolver {
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Query(() => PaginatedProcessor)
+  async adminProcessors(
+    @Args() pagination: PaginationSchema,
+    @SortingArg<Processor>(ProcessorSortingOptions)
+    sorting: SortingFieldSchema<typeof ProcessorSortingOptions>[],
+
+    @Ctx() { user_session, language }: GraphQLContext,
+  ): Promise<PaginatedProcessor> {
+    const adminProcessorIndexService = container.resolve(
+      AdminProcessorIndexService,
+    );
+
+    const paginatedProcessors = await adminProcessorIndexService.execute({
+      user: user_session.user,
+
+      pagination,
+      sorting,
+
+      language,
+    });
+
+    return paginatedProcessors;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Query(() => Processor)
+  async adminProcessor(
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
+
+    @Ctx() { language, user_session }: GraphQLContext,
+  ): Promise<Processor> {
+    const adminProcessorShowService = container.resolve(
+      AdminProcessorShowService,
+    );
+
+    const processor = await adminProcessorShowService.execute({
+      processor_id,
+
+      user: user_session.user,
+      language,
+    });
+
+    return processor;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Processor)
+  async adminProcessorCreate(
+    @Arg("data", { description: "The processor's whole definition." })
+    data: ProcessorSchema,
+
+    @Ctx() { language, user_session }: GraphQLContext,
+  ): Promise<Processor> {
+    const adminProcessorCreateService = container.resolve(
+      AdminProcessorCreateService,
+    );
+
+    const processor = await adminProcessorCreateService.execute({
+      data,
+
+      user: user_session.user,
+      language,
+    });
+
+    return processor;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Processor)
+  async adminProcessorUpdate(
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
+    @Arg("data", { description: "The processor's whole definition." })
+    data: ProcessorSchema,
+
+    @Ctx() { language, user_session }: GraphQLContext,
+  ): Promise<Processor> {
+    const adminProcessorUpdateService = container.resolve(
+      AdminProcessorUpdateService,
+    );
+
+    const processor = await adminProcessorUpdateService.execute({
+      processor_id,
+      data,
+
+      user: user_session.user,
+      language,
+    });
+
+    return processor;
+  }
+
+  @Directive("@auth(requires: ADMIN)")
+  @Authorized(["ADMIN"])
+  @Mutation(() => Processor)
+  async adminProcessorDelete(
+    @Arg("processor_id", { description: "The processor id." })
+    processor_id: string,
+
+    @Ctx() { language, user_session }: GraphQLContext,
+  ): Promise<Processor> {
+    const adminProcessorDeleteService = container.resolve(
+      AdminProcessorDeleteService,
+    );
+
+    const processor = await adminProcessorDeleteService.execute({
+      processor_id,
+
+      user: user_session.user,
+      language,
+    });
+
+    return processor;
+  }
+}
+
+export { AdminProcessorResolver };
