@@ -1,379 +1,145 @@
 <p align="center">
-  <a href="" rel="noopener">
-    <img width="200px" height="200px" src=".github/docs/0-logo.png" alt="Project logo" style="fill:#000000">
-  </a>
+  <img width="200px" height="200px" src=".github/docs/0-logo.png" alt="Logo da AutoDroid" style="fill:#000000">
 </p>
 
 <h3 align="center">AutoDroid</h3>
 
 <div align="center">
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+![Status](https://img.shields.io/badge/status-active-success.svg)
 
 </div>
 
----
+Este repositório tem o código da API da AutoDroid, com REST, GraphQL e um servidor MCP. O cliente de linha de comando e o SDK ficam no repositório [autodroid-sdk](https://github.com/MalwareDataLab/autodroid-sdk) (pacote [autodroid](https://www.npmjs.com/package/autodroid) no npm).
 
-## 📝 Índice <a name="summary"></a>
+Outros documentos: [requisitos funcionais e não funcionais](https://docs.google.com/document/d/1tCNZw9VFt5honSpTOx_DjVQ7-l0qdYta), [configuração](docs/CONFIGURATION.md), [API](docs/API.md), [MCP](docs/MCP.md), [estrutura do código](docs/CODEBASE_STRUCTURE.md), [contribuições](docs/CONTRIBUTING.md) e [changelog](CHANGELOG.md).
 
-- [📖 Sobre](#about)
-- [✨ Visão Geral do Projeto](#overview)
-- [✅ Requisitos Funcionais e Não Funcionais](https://docs.google.com/document/d/1tCNZw9VFt5honSpTOx_DjVQ7-l0qdYta)
-- [📚 SDK](https://www.npmjs.com/package/autodroid)
-- [🏦 Arquitetura](#architecture)
-- [⛏️ Tecnologias Utilizadas](#built_using)
-- [💻 Ambiente do Usuário](#user_environment)
-- [📡 Ambiente do Servidor](#server_environment)
-- [🏁 Primeiros Passos](#getting_started)
-- [📱 Utilização](#usage)
-- [✅ Testes](#tests)
-- [🎯 Demonstração](#demo)
-- [🚀 Deployment](#deployment)
-- [🔃 Atualizando](#updating)
-- [🔧 Solução de Problemas](#troubleshooting)
-- [🤝🏻 Contribuições](docs/CONTRIBUTING.md)
-- [💾 Changelog](CHANGELOG.md)
-- [📖 Referências](#bibliography)
+## Sobre
 
-## 📖 Sobre <a name = "about"></a>
+Ferramentas de IA como a DroidAugmentor ajudam a detectar variações ("mutações") de malware, mas rodá-las à mão dá trabalho e não escala. A AutoDroid oferece essas ferramentas como serviço: o usuário envia um conjunto de dados, escolhe um processador e baixa o resultado.
 
-Este repositório contém o código da API AutoDroid.
-
-### Motivação
-
-Os Hackers do Mal estão utilizando técnicas de IA (Inteligência Artificial) para realizar "mutações" em malware, dificultando sua detecção, que afeta os usuários de computadores e dispositivos móveis, dentre outras tecnologias que possam estar sujeitas a ataque de malware, gerando um aumento do nível de proliferação de malware: um dos maiores desafios da segurança da informação.
-
-Os Hackers do Bem podem enfrentar esta proliferação de malwares utilizando ferramentas de IA como o DroidAugmentor para que a detecção dos malwares "mutantes" seja amplamente aprimorada.
-
-Todavia ferramentas tais como a DroidAugmentor manualmente pode ser uma tarefa muito complexa e nada escalável, criando uma grande barreira de aprendizagem e utilização da ferramenta.
-
-Encapsular aplicativos em contêineres Docker pode ser uma solução para esse problema, mas ainda é um processo muito manual e não é muito fácil de gerenciar.
-
-### Solução
-
-Ao oferecer ferramentas como a DroidAugmentor como um serviço, torna sua execução escalável, de fácil aprendizado e com melhor aproveitamento para experimentação.
-
-A AutoDroid é uma aplicação que visa oferecer aplicações como a DroidAugmentor como um serviço, tornando sua execução escalável, de fácil aprendizado e com melhor aproveitamento para experimentação.
-
-## ✨ Visão Geral do Projeto <a name="overview"></a>
-
-O serviço proposto se trata da etapa de expansão de Dataset na pipeline de AutoML, conforme apresentado em [DroidAugmentor](https://sol.sbc.org.br/index.php/sbseg_estendido/article/view/27273).
+O serviço cobre a etapa de expansão de dataset do pipeline de AutoML descrita em [DroidAugmentor](https://sol.sbc.org.br/index.php/sbseg_estendido/article/view/27273).
 
 <img src=".github/docs/2-proposal.jpg" alt="Overview" style="fill:#000000">
 
-O projeto é composto por diversas partes, com o objetivo final de oferecer uma ferramenta escalável para executar instâncias da DroidAugmentor.
-
 <img src=".github/docs/1-overview.jpg" alt="Overview" style="fill:#000000">
 
-## 🏦 Arquitetura <a name="architecture"></a>
+## Arquitetura
 
-Esta aplicação é uma API REST/GraphQL construída usando Typescript com Node.js, Express e TypeGraphQL.
+A API é escrita em TypeScript, com Node.js, Express e TypeGraphQL. Usa PostgreSQL (via Prisma), Redis (filas com Bull), MongoDB, Tsyringe para injeção de dependência e Vitest para testes. O código segue DDD e Clean Architecture, com os princípios SOLID, e os testes são escritos com TDD.
 
-Seguindo o [modelo C4](https://c4model.com/), a arquitetura do back-end é apresentada a seguir:
+Diagramas no [modelo C4](https://c4model.com/):
 
-Visão de sistema:
 <img src=".github/docs/backend-01-system.jpg" alt="be-system" style="fill:#000000">
 
-Visão de contêiner:
 <img src=".github/docs/backend-02-container.jpg" alt="be-container" style="fill:#000000">
 
-Visão de componente:
 <img src=".github/docs/backend-03-component.jpg" alt="be-component" style="fill:#000000">
 
-### Entidades
+Entidades:
 
-- `User`: representa um usuário da aplicação. Nenhum dado pessoal é coletado, é apenas um identificador anônimo.
-- `File`: representa um arquivo, que pode ser um dataset ou resultado de processamento, por exemplo.
-- `Processor`: representa um processador que será usado para processar um conjunto de dados. É uma imagem Docker que será usada para processar a solicitação de processamento do usuário com os parâmetros fornecidos.
-- `Dataset`: representa um conjunto de dados que será usado por um processador, é um arquivo que será usado como entrada para o processador.
-- `Processing`: representa uma solicitação de processamento feita por um usuário. É uma solicitação para processar um conjunto de dados usando um processador com os parâmetros fornecidos. Todo o ciclo de vida do processamento está disponível nesta entidade, incluindo o status de execução e seu resultado.
-- `Worker`: representa uma instância da aplicação Worker, que é responsável por processar os jobs em background.
+- `User`: usuário da aplicação. Guarda email, nome e telefone. O login é feito pelo Firebase ou por SAML (RNP CAFe).
+- `UserAuthProviderConn`: vínculo de um usuário com um provedor de autenticação.
+- `File`: arquivo, como um dataset ou o resultado de um processamento.
+- `Processor`: imagem Docker que processa um conjunto de dados com os parâmetros informados.
+- `Dataset`: arquivo de entrada de um processador.
+- `Processing`: pedido de processamento de um usuário. Guarda o ciclo de vida completo, com status e resultado.
+- `Worker`: instância da aplicação Worker, que executa os jobs em segundo plano.
+- `WorkerRegistrationToken`: token que um administrador cria para registrar workers.
+- `McpAuthorizationGrant`: autorização que um usuário dá a um cliente MCP, com uma linha por usuário, cliente e recurso.
 
-### Estrutura do código
+## Requisitos
 
-A estrutura interna é apresentada em [estrutura do código](./docs/CODEBASE_STRUCTURE.md) e guiada pelo documento de [Guidelines de Código](./docs/CODE_GUIDELINES.md).
+Servidor:
 
-A proposta de arquitetura do back-end é baseada em [DDD](https://en.wikipedia.org/wiki/Domain-driven_design) e [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html). É guiada por princípios de SOLID e visa a separação de responsabilidades, facilitando a manutenção e evolução do código. Além disso, é proposto o método de desenvolvimento [TDD](https://en.wikipedia.org/wiki/Test-driven_development) para garantir a qualidade do código guiado por testes.
-
-## ⛏️ Tecnologias Utilizadas <a name = "built_using"></a>
-
-- [TypeScript](https://www.typescriptlang.org/) - Linguagem de programação
-- [Node.js](https://nodejs.org/) - Ambiente de execução
-- [Express](https://www.fastify.io/) - Framework web
-- [Docker](https://www.docker.com/) - conteinerização
-- [PostgreSQL](https://www.postgresql.org/) - Banco de dados
-- [Redis](https://redis.io/) - Banco de dados em memória
-- [Tsyringe](https://github.com/microsoft/tsyringe) - Injeção de dependência
-- [Prisma](https://www.prisma.io/) - ORM
-- [Bull](https://optimalbits.github.io/bull/) - Gerenciador de filas
-- [Dockerode](https://github.com/apocas/dockerode) - API Docker
-- [Vitest](https://vitest.dev/) - Framework de testes
-- [Yarn](https://yarnpkg.com/) - Gerenciador de pacotes
-
-### Geral
-
-É importante mencionar as demais ferramentas que serão utilizadas nas duas partes do projeto:
-
-- [Git](https://git-scm.com/) - Controle de versão
-- [Husky](https://typicode.github.io/husky/#/) - Hooks do Git
-- [Lint Staged](https://github.com/okonet/lint-staged) - Ferramenta para verificar arquivos commitados
-- [Commitizen](https://github.com/commitizen/cz-cli) - Auxiliar para mensagens de commit do Git
-- [Commitlint](https://commitlint.js.org/) - Verificador de mensagens de commit do Git
-- [Standard Version](https://github.com/conventional-changelog/standard-version) - Gerador de changelog
-- [Eslint](https://eslint.org/) - Framework de verificação de código
-- [Prettier](https://prettier.io/) - Formatador de código
-- [Semver](https://semver.org/) - Versionamento semântico
-
-## 💻 Ambiente do Usuário <a name="user_environment"></a>
-
-O ambiente do usuário final (utilizador) deverá ter um dispositivo (seja fixo ou móvel) com acesso à internet e com ao menos uma ferramenta de navegação para acessar a versão web do produto ou um cliente de API REST/GraphQL (ex.: curl, httpie, postman, insomnia) previamente instalado em seu dispositivo.
-
-## 📡 Ambiente do Servidor <a name = "server_environment"></a>
-
-- Sistema operacional Linux (por exemplo, Ubuntu, Debian e outros...) (MacOS/Windows é experimental)
+- Linux (macOS e Windows são experimentais)
 - Virtualização habilitada na BIOS
-- Mínimo de 4GB de RAM
-- Mínimo de 10GB de espaço livre em disco, dependendo dos "processadores" disponíveis (para arquivos, resultados de processamento, banco de dados e imagens Docker)
-- [Git](https://git-scm.com/downloads) instalado
-- [Docker](https://docs.docker.com/get-docker/) instalado
+- 4 GB de RAM
+- 10 GB de disco livre, mais conforme os processadores usados (arquivos, resultados, banco de dados e imagens Docker)
+- [Git](https://git-scm.com/downloads) e [Docker](https://docs.docker.com/get-docker/)
 
-## 🚩 Antes de começar <a name = "before_start"></a>
+Usuário: um navegador ou um cliente de API (curl, httpie, Postman, Insomnia).
 
-Este projeto requer credenciais e chaves de acesso para a integração com serviços externos, sendo eles:
-- Firebase: autenticação/autorização
-- Google Cloud Storage: armazenamento de arquivos
+## Como executar
 
-O requisito "Google Cloud Storage" pode ser provido pela mesma conta do requisito "Firebase", tanto como pode ser uma conta/projeto Google distinto.
-
-### Firebase <a name = "firebase"></a>
-
-- Entre na conta Google que será utilizada para gerenciar o projeto.
-- Acesse o [Firebase Console](https://console.firebase.google.com/).
-- Crie um novo projeto ou utilize um projeto existente.
-- Inicie o [Firebase Authentication](https://console.firebase.google.com/project/_/authentication/providers).
-- Habilite o provedor de autenticação Email.
-- Habilite o provedor de autenticação Google.
-- Inicie o [Firebase Storage](https://console.firebase.google.com/project/_/storage).
-- Crie um novo bucket ou utilize um bucket existente, coletando o valor ```nome``` do bucket.
-- Crie a aplicação web e armazene os dados de configuração a serem usados pelo frontend posteriormente.
-- Crie uma [conta de serviço (service account) para SDK Admin do Firebase](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk).
-- Crie uma chave de acesso JSON para a conta de serviço e salve o arquivo em um local seguro.
-
-> **Nota sobre o Firebase Storage**: O Firebase pode solicitar um cartão de crédito para habilitar o Storage, mesmo que você não ultrapasse o limite gratuito. No momento da escrita desta documentação, o Firebase oferece 5GB de armazenamento gratuito, o que é mais que suficiente para executar esta aplicação. Para mais detalhes sobre preços e limites, consulte a [documentação oficial do Firebase](https://firebase.google.com/pricing).
-
-- Coletado o ```nome``` do bucket e a chave de acesso JSON, [prossiga para a configuração das variáveis de ambiente](#env_variables).
-
-Para mais detalhes, foi desenvolvido o [tutorial detalhado sobre como configurar o Firebase (Authentication + Storage) para a AutoDroid](./docs/FIREBASE_SETUP_EXAMPLE.md).
-
-### Google Cloud Storage
-
-- Entre na conta Google que será utilizada para gerenciar o projeto.
-- Acesse o [Google Cloud Console](https://console.cloud.google.com/).
-- Crie um novo projeto ou utilize um projeto existente.
-- Ative a [API do Google Cloud Storage](https://console.cloud.google.com/apis/library/storage.googleapis.com).
-- Verifique se o projeto possui uma [conta de faturamento](https://console.cloud.google.com/billing) caso necessário.
-- Crie um [novo bucket ou utilize um bucket existente](https://console.cloud.google.com/storage/browser), coletando o valor ```nome``` do bucket.
-- Crie uma [nova conta de serviço (service account) ou utilize uma existente](https://console.cloud.google.com/iam-admin/serviceaccounts).
-- Verifique se a conta de serviço possui a [permissão de escrita no bucket selecionado](https://cloud.google.com/storage/docs/access-control/iam-roles).
-- Crie uma [chave de acesso JSON para a conta de serviço](https://cloud.google.com/iam/docs/keys-create-delete) e salve o arquivo em um local seguro.
-
-- Coletado o ```nome``` do bucket desejado e a chave de acesso JSON, [prossiga para a configuração das variáveis de ambiente](#env_variables).
-
-### Variáveis de ambiente <a name = "env_variables"></a>
-
-Os campos das seções ```#General```, ```#Database```, ```#Non-relational database``` e ```# Redis``` estão configurados para funcionarem adequadamente em ambiente Docker, altere conforme necessário.
-
-O campo ```CORS_ALLOWED_FROM``` é configurado para aceitar requisições de qualquer origem, altere conforme necessário.
-
-Os campos da seção ```#Providers``` são obrigatórios para o funcionamento da aplicação e devem ser preenchidos com os valores coletados anteriormente.
-
-- (Obrigatório) Preencha os campos ```FIREBASE_AUTHENTICATION_PROVIDER_PROJECT_ID```, ```FIREBASE_AUTHENTICATION_PROVIDER_CLIENT_EMAIL``` e ```FIREBASE_AUTHENTICATION_PROVIDER_PRIVATE_KEY``` com os valores da conta de serviço do Firebase.
-- (Obrigatório) Preencha os campos ```GOOGLE_STORAGE_PROVIDER_PROJECT_ID```, ```GOOGLE_STORAGE_PROVIDER_CLIENT_EMAIL``` e ```GOOGLE_STORAGE_PROVIDER_PRIVATE_KEY``` e ```GOOGLE_STORAGE_PROVIDER_BUCKET_NAME``` com os valores da conta de serviço do Google Cloud Storage (ou Firebase Storage, com o nome do bucket coletado em ```Criação → Storage``` sem o prefixo ```gs://```).
-
-Os campos ```#Feature``` devem ser ajustados conforme suas preferências para o funcionamento.
-
-- (Obrigatório) Preencha o campo ```ADMIN_EMAILS``` com os emails dos administradores separados por vírgula.
-- (Obrigatório) O campo ```JOBS_ENABLED``` deve ser preenchido com ```true``` para habilitar o processamento de jobs em background.
-- (Obrigatório) Os campos ```WORKER_REFRESH_TOKEN_SECRET``` e ```WORKER_ACCESS_TOKEN_SECRET``` são obrigatórios e devem ser preenchidos com valores aleatórios para garantir a segurança da aplicação.
-
-Os campos opcionais podem ficar vazios (exemplo: ```CAMPO=```, deixando nenhum valor após o sinal de igualdade ```=```), caso não deseje especificar um valor
-
-- (Opcional) Preencha o campo ```SENTRY_DSN``` com a chave fornecida pelo [Sentry](https://sentry.io/) caso desejado.
-- (Opcional) Preencha os campos ```STORAGE_PROVIDER_PUBLIC_READ_URL_EXPIRATION```, ```STORAGE_PROVIDER_PUBLIC_WRITE_URL_EXPIRATION```, ```WORKER_REFRESH_TOKEN_EXPIRATION```, ```WORKER_ACCESS_TOKEN_EXPIRATION```, ```PROCESSING_DEFAULT_KEEP_UNTIL``` e ```PROCESSING_ALLOWED_KEEP_UNTIL_EXTEND``` [conforme a especificação da biblioteca ms](https://www.npmjs.com/package/ms).
-
-## 🏁 Primeiros Passos <a name = "getting_started"></a>
-
-Estas instruções irão ajudá-lo a obter uma cópia deste projeto e executá-lo em sua máquina local para fins de desenvolvimento e teste. Consulte [deployment](#deployment) para obter informações sobre como implantar o projeto em ambiente produtivo.
-
-Verifique se você atende aos [requisitos do ambiente do servidor](#server_environment) antes de começar.
-
-Execute todos os passos de [antes de começar](#before_start). Salve todos certificados e chaves de acesso em um local seguro.
-
-Existem duas maneiras de instalar esta aplicação: [utilizando o Docker (recomendado)](#docker_setup) ou [manualmente](#manual_setup).
-
-### Instalação via Docker (recomendado) <a name="docker_setup"></a>
-
-Usando o terminal, clone este repositório em sua máquina local usando o Git:
+Antes de tudo, siga a [configuração](docs/CONFIGURATION.md) para obter as credenciais do Firebase e do Google Cloud Storage e preencha as variáveis obrigatórias no `docker-compose.yml`. Sem `SESSION_SECRET` e `MCP_OAUTH_CLIENT_ID_SECRET`, a API não sobe.
 
 ```bash
 git clone https://github.com/MalwareDataLab/AutoDroid.git
-```
-
-Navegue até a pasta do repositório:
-
-```bash
-cd autodroid
-```
-
-Atualize o repositório sempre, utilizando:
-
-```bash
-git pull
-```
-
-Inicie o projeto:
-
-```bash
+cd AutoDroid
 docker compose up --build
 ```
 
-Este script irá iniciar a aplicação usando o Docker compose.
-A inicialização da aplicação pode levar alguns minutos, dependendo da sua conexão com a internet e do tamanho dos "processadores" fornecidos.
-O terminal deve ser mantido aberto durante a execução da aplicação.
-
-Se a inicialização for bem-sucedida, você verá algumas mensagens no console, como por exemplo:
+A primeira inicialização pode levar alguns minutos. Deixe o terminal aberto. Quando der certo, o console mostra algo assim:
 
 ```bash
 autodroid_api_gateway_prod  | 🆗 Database connection success.
 autodroid_api_gateway_prod  | 🆗 Redis default connection success.
-autodroid_api_gateway_prod  | 🆗 Image someImage:latest loaded.
-autodroid_api_gateway_prod  | 🆗 Docker dataset processor provider connection success.
-autodroid_api_gateway_prod  | 🆗 Processing background jobs on @autodroid/api.
-autodroid_api_gateway_prod  | ⚡️ @autodroid/api production version X using Node.js X running at port 3333 with PID X.
+autodroid_api_gateway_prod  | 🆗 Non-relational Database connection success.
+autodroid_api_gateway_prod  | 🆗 Firebase authentication provider init success.
+autodroid_api_gateway_prod  | 🆗 Google storage provider init success.
+autodroid_api_gateway_prod  | 🆗 Processing background jobs on autodroid-api.
+autodroid_api_gateway_prod  | ⚡️ autodroid-api development version X using Node.js X running at port 3333 with PID X.
 ```
 
-Prossiga para a seção [utilização](#usage) para obter informações sobre como usar a aplicação.
+Para parar, use `Ctrl + C` ou `docker compose down`. A pasta `./.runtime` guarda os arquivos da aplicação e pode exigir permissão de superusuário para ser alterada ou apagada.
 
-Para parar a aplicação, pressione ```Ctrl + C``` no terminal ou execute ```docker compose down``` na raiz deste repositório, caso esteja executando a aplicação em modo destacado.
+Para rodar sem Docker, veja a [instalação manual](docs/MANUAL_SETUP.md).
 
-Uma pasta `./runtime` será criada na raiz deste repositório para armazenar os arquivos temporários da aplicação. Pode ser necessário permissões de superusuário para acessar, modificar ou excluir esta pasta.
+## Uso
 
-### Instalação Manual <a name="manual_setup"></a>
+A API responde em http://localhost:3333 (REST) e http://localhost:3333/graphql (GraphQL). As rotas estão em [docs/API.md](docs/API.md), e há uma [coleção do Postman](https://www.postman.com/luizfelipelaviola/workspace/autodroid/collection/17242387-d69ee1f8-a603-4ac8-89aa-787cfacffaee?action=share&creator=17242387&active-environment=17242387-9dcb7b8e-4eb1-4a10-b607-74725449575f) com todas as rotas, queries e mutations. O script `./demo.sh` faz uma demonstração completa, depois da configuração.
 
-Um guia para configurar o projeto manualmente está disponível no guia de [configuração manual](./docs/MANUAL_SETUP.md).
+O fluxo comum:
 
-## 📱 Utilização <a name="usage"></a>
+1. Toda requisição leva o header `Authorization: Bearer ${token}`, com o token do Firebase.
+2. Um administrador registra um processador (imagem Docker).
+3. O usuário cria um dataset. A API devolve a `upload_url` do campo `file`, e o arquivo é enviado para ela. Há um [dataset de exemplo](./docs/samples/dataset_example.csv).
+4. Com o `processor_id` e o `dataset_id`, o usuário pede o processamento, com os parâmetros padrão ou personalizados.
+5. Quando o `status` indica que terminou, o resultado (um zip) é baixado pela `public_url` do campo `result_file`.
 
-Esta aplicação fornece uma API REST/GraphQL no ambiente Docker compose.
-
-Por padrão, estará disponível em sua máquina local nos seguintes URLs:
-- API REST (porta 3333): http://localhost:3333
-- API GraphQL (porta 3333): http://localhost:3333/graphql
-
-Esta URL estará disponível até que a aplicação seja interrompida.
-
-Para usar a API diretamente, você pode seguir as instruções na [documentação da API](./docs/API.md) ou pode usar ferramentas de cliente HTTP como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/).
-
-Todas as rotas, queries e mutations da API estão disponíveis [nesta coleção do Postman](https://www.postman.com/luizfelipelaviola/workspace/autodroid/collection/17242387-d69ee1f8-a603-4ac8-89aa-787cfacffaee?action=share&creator=17242387&active-environment=17242387-9dcb7b8e-4eb1-4a10-b607-74725449575f).
-
-### Usuário/Autorização
-
-Esta aplicação usa autenticação através do provedor Firebase, sendo necessário o envio do header `Authorization` em cada requisição, com o respectivo valor `Bearer ${token}`.
-
-### Processador
-
-O processador é uma aplicação (imagem Docker) a ser registrada pelo adminsitrador para ser utilizada pelos usuários para processar conjuntos de dados. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-72c95160-e485-466b-a22b-2dc7a201aeb0?action=share&source=copy-link&creator=17242387&ctx=documentation).
-
-### Dataset
-
-O arquivo de conjunto de dados pode ser enviado pelo usuário usando a API. O arquivo de conjunto de dados deve ser um arquivo válido com um tipo MIME válido, de acordo com a configuração do processador.
-
-Há um [dataset de exemplo](./docs/samples/dataset_example.csv) na pasta ```./docs/samples``` deste repositório que você pode usar para testar a aplicação.
-
-O envio é feito por URL assinada, a funcionalidade de `Create dataset` irá fornecer uma `upload_url`, para onde o arquivo de fato deverá ser enviado. [Exemplo de requisições](https://www.postman.com/luizfelipelaviola/workspace/autodroid/folder/17242387-303cd191-1127-448c-920c-18bc5f9d0e46?action=share&source=copy-link&creator=17242387&ctx=documentation).
-
-### Processamento
-
-Obtidos o `processor_id` e `dataset_id` a partir da criação dos dois passos anteriores, o usuário pode solicitar o processamento do conjunto de dados, seja com os parâmetros predefinidos ou customizados. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-3c8296fb-5506-428c-95d2-8abc65cc92bc?action=share&source=copy-link&creator=17242387&ctx=documentation).
-
-O resultado pode ser obtido através do download do arquivo zip fornecido pelo campo `public_url` após a conclusão do processamento (campo `status`). [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-6f8c7085-04f4-47d0-8f83-abe90fbffd25?action=share&source=copy-link&creator=17242387&ctx=documentation).
-
-### Worker
-
-O worker é uma aplicação (imagem Docker) que será utilizada para processar os jobs em background. O worker é uma aplicação separada da API e deve ser configurada para funcionar corretamente.
-
-Inicialmente o administrador cria um `WorkerRegistrationToken` onde o campo `token` será utilizado para autenticar a aplicação com o backend. [Exemplo de requisição](https://www.postman.com/luizfelipelaviola/workspace/autodroid/request/17242387-bddce5bd-44f1-4ccc-89f3-aee615c7e7d6?action=share&source=copy-link&creator=17242387&ctx=documentation).
-
-Siga as instruções em [worker](https://github.com/MalwareDataLab/autodroid-worker) para a instalação e configuração do worker.
-
-### Fluxo comum
-
-O fluxograma a seguir descreve o fluxo comum da aplicação:
+O worker é uma aplicação separada, que executa os jobs em segundo plano. Um administrador cria um `WorkerRegistrationToken`, e o campo `token` autentica o worker na API. A instalação está em [autodroid-worker](https://github.com/MalwareDataLab/autodroid-worker).
 
 <p align="center">
   <img src=".github/docs/3-common-flowchart.jpg" alt="Fluxo comum">
 </p>
 
-## ✅ Testes <a name = "tests"></a>
+Os mesmos recursos também estão disponíveis por MCP, para qualquer cliente MCP. Os dois modos de uso estão em [docs/MCP.md](docs/MCP.md).
 
-Para executar os testes, por favor execute o comando abaixo:
+## Testes
+
 ```bash
 yarn test
 ```
 
-A cobertura de código e outros relatórios serão gerados na pasta `./test/outputs`.
+Roda as camadas unitária, de integração e e2e. As duas últimas sobem bancos e um emulador de storage em contêineres, então o Docker precisa estar rodando. Elas também entram no Firebase com contas de teste: copie `packages/api/.env.test.example` para `packages/api/.env.test` e preencha `TESTING_FIREBASE_WEB_API_KEY`, `TESTING_ADMIN_*` e `TESTING_USER_*`. A camada e2e usa o Chromium do Playwright (`yarn workspace autodroid-api run playwright install --with-deps chromium`). Os relatórios de cobertura ficam em `packages/api/test/outputs`.
 
-## 🎯 Demonstração <a name = "demo"></a>
+Cada camada roda sozinha com `yarn workspace autodroid-api run test:unit`, `test:integration` ou `test:e2e`. O que cada camada simula e as metas de cobertura estão no [AGENTS.md](AGENTS.md).
 
-Foi disponibilizado um script de demonstração ponta-a-ponta para a aplicação, que pode ser executado com o comando (após realizar a configuração solicitada em [antes de começar](#before_start)):
-
-```bash
-./demo.sh
-```
-
-## 🚀 Deployment <a name = "deployment"></a>
-
-Esta aplicação está pronta para implantação com Docker e docker compose.
-
-Para disponibilizar esta aplicação em ambiente produtivo:
-
-Realize o download na pasta desejada:
+A camada `test:external` usa serviços reais (Google Cloud Storage e Firebase) e não roda por padrão:
 
 ```bash
-git clone https://github.com/MalwareDataLab/AutoDroid.git
+yarn workspace autodroid-api run test:external
 ```
 
-Atualize o repositório utilizando:
+O comando `yarn lint` checa o lint e os tipos e corrige o que for possível. Os testes do CLI estão no repositório [autodroid-sdk](https://github.com/MalwareDataLab/autodroid-sdk).
 
-```bash
-git pull
-```
+## CI e releases
 
-Complete os mesmos processos citados anteriormente em [antes de começar](#before_start).
+O workflow `ci.yml` roda em pull requests e pushes para `main` e `qa`: lint, build, build da imagem Docker (sem publicar) e testes. O workflow `deploy.yml` roda em pushes para `main`, `staging` e `qa`: o release-please abre o PR de release e, quando não há PR de release aberto, a imagem Docker é construída e publicada no Docker Hub e a release é criada. Depois, o job `sync-develop` atualiza o `develop`.
 
-Realize o processo de construção da imagem Docker utilizando:
+## Implantação
+
+Com a [configuração](docs/CONFIGURATION.md) pronta, preencha as variáveis no `docker-compose.yml`, troque `NODE_ENV=development` por `NODE_ENV=production` (só assim valem o CORS restrito, o cookie de sessão seguro e a checagem de origem do `/mcp`) e rode:
 
 ```bash
 docker compose build --no-cache
-```
-
-Depois que a aplicação for construída, preencha e verifique o arquivo ```docker-compose.yml``` com suas variáveis de ambiente (conforme especificado em [antes de começar](#before_start)) e execute o seguinte comando:
-
-```bash
 docker compose up -d
 ```
 
-A aplicação estará disponível na porta 3333 (configuração padrão), para alterar, modifique o arquivo ```docker-compose.yml``` e reinicie a aplicação utilizando o comando ```docker compose restart```.
+A aplicação usa a porta 3333. Para mudar, troque o lado do host em `ports` (por exemplo `8080:3333`) no `docker-compose.yml` e rode `docker compose up -d`. Libere a porta no firewall e verifique as restrições da sua rede e do seu provedor.
 
-Configure sua rede local e as portas do firewall para permitir o acesso à aplicação.
-
-Verifique as restrições da sua rede local e ISP.
-
-## 🔃 Atualizando <a name = "updating"></a>
-
-O docker compose está instrumentado com a ferramenta [watchtower](https://containrrr.dev/watchtower/) para atualizações automáticas.
-
-Para realizar atualização manual, execute o seguinte comando:
+O `docker-compose.yml` inclui o [watchtower](https://containrrr.dev/watchtower/), que atualiza a aplicação sozinho. Para atualizar à mão:
 
 ```bash
 docker compose down
@@ -381,57 +147,23 @@ docker compose pull
 docker compose up -d
 ```
 
-## 🔧 Solução de Problemas <a name = "troubleshooting"></a>
+## Problemas comuns
 
-O Docker é incrível, mas às vezes pode ser um pouco complicado. Alguns erros podem ocorrer durante a execução da aplicação, e alguns deles podem estar relacionados ao Docker.
+Se a aplicação não inicia:
 
-### Erros antes da inicialização
+- Confira os [requisitos](#requisitos) e a [configuração](docs/CONFIGURATION.md).
+- Teste o Docker com `docker run --rm hello-world:latest`. Se faltar permissão, siga a [pós-instalação do Docker](https://docs.docker.com/engine/install/linux-postinstall/).
+- Reconstrua a imagem com `docker compose build --no-cache`. Se der erro, envie a mensagem ao mantenedor.
 
-Se você estiver enfrentando alguns erros antes da inicialização da aplicação, verifique os seguintes itens:
-
-- Verifique se a máquina atende aos [requisitos](#server_environment).
-- Verifique se todos os passos especificados em [antes de começar](#before_start) foram completados, refaça-os se necessário.
-- Verifique se seu usuário possui permissões de uso ao Docker, executando o comando `docker run --rm hello-world:latest`.
-- Realize os processos de pós-instalação do Docker, conforme [documentação oficial](https://docs.docker.com/engine/install/linux-postinstall/).
-
-### Limpando o ambiente do Docker
-
-Se você estiver enfrentando alguns erros relacionados ao Docker, você pode tentar limpar o ambiente do Docker executando os seguintes comandos:
+Para limpar o ambiente do projeto (isto apaga o banco de dados):
 
 ```bash
-# Pare todos os containers
 docker compose down
-docker stop $(docker ps -q)
-
-# Remova todos os arquivos da pasta runtime
 sudo rm -rf ./.runtime
-
-# Remova todas as imagens relacionadas a este projeto
-docker rmi $(docker images -q -f "reference=autodroid_*")
-
-# Reinicie o serviço de rede
-sudo systemctl restart NetworkManager.service
-
-# (Opcional) Limpe o ambiente do Docker
-docker system prune -a
+docker rmi malwaredatalab/autodroid-api:latest
 ```
 
-### Verificando as etapas de inicialização
-
-Se você estiver enfrentando alguns erros durante a inicialização da aplicação, você pode verificar as etapas da inicialização executando os seguintes comandos:
-
-```bash
-# Tente usar qualquer imagem do Docker Hub que não esteja em sua máquina para verificar se o Docker instalado está funcionando como esperado
-docker rmi hello-world
-docker run --rm hello-world:latest
-
-# Tente construir a aplicação manualmente, em caso de erro, envie a mensagem de erro para o mantenedor do projeto
-docker compose build --no-cache
-```
-
-Persistindo o erro, entre em contato com o mantenedor do projeto.
-
-## 📖 Referências <a name="bibliography"></a>
+## Referências
 
 LAVIOLA, Luiz Felipe; PAIM, Kayuã Oleques; KREUTZ, Diego; MANSILHA, Rodrigo Brandão. AutoDroid: disponibilizando a ferramenta DroidAugmentor como serviço. In: ESCOLA REGIONAL DE REDES DE COMPUTADORES (ERRC), 20. , 2023, Porto Alegre/RS. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2023 . p. 145-150. DOI: https://doi.org/10.5753/errc.2023.929.
 

@@ -7,8 +7,9 @@ dist
 storage
 
 .runtime
+.tmp
 
-test/outputs
+**/test/outputs
 
 !tmp/.gitkeep
 translation.missing.json
@@ -17,3 +18,6 @@ service-account.json
 
 .docker
 docker-compose.yml
+
+origin.key
+origin.pem

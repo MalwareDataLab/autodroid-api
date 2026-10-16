@@ -1,53 +1,53 @@
-# Codebase Structure
+# Estrutura do código
 
-A estrutura interna é proposta a seguir:
+O repositório é um monorepo Yarn com um único pacote, `packages/api`: o servidor REST e GraphQL, publicado como imagem Docker. A API também serve um servidor MCP remoto em `/mcp` (veja [MCP](./MCP.md)). O CLI `autodroid` e o MCP via stdio ficam no repositório [autodroid-sdk](https://github.com/MalwareDataLab/autodroid-sdk), em `src/cli/`.
 
-## Backend
+## packages/api
 
 ```
-.
-├── .github/ - contém todos os arquivos relacionados ao GitHub, como modelos de problemas, modelos de solicitações de recebimento e GitHub Actions
-├── .husky/ - ganchos git (não edite sem usar o Husky CLI)
-├── .vscode/ - configuração do vscode
-├── dist/ - contém os arquivos compilados para produção
-├── docs/ - contém a documentação do projeto
-├── prisma/ - contém os arquivos relacionados ao banco de dados gerenciado pelo Prisma
-├── scripts/ - contém os scripts relacionados à aplicação
-├── src/ - contém os arquivos relacionados à aplicação
-│   ├── @types/ - definições de tipos globais
-│   ├── modules/ - contém partes do software separadas pelo domínio
-│   │   ├── <<module>>/
-│   │   │   ├── constants - constantes
-│   │   │   ├── entities - entidades
-│   │   │   ├── guards - guardas de acesso
-│   │   │   ├── infrastructure - infraestrutura do módulo (http, ws, banco de dados, ORM, e outros)
-│   │   │   ├── repositories - interfaces de repositórios de dados para inversão de dependência (DDD)
-│   │   │   ├── schemas - esquemas de validação de entrada do usuário
-│   │   │   ├── services - camada de negócio
-│   │   │   └── types - tipos, enums e interfaces
+packages/api/
+├── dist/              arquivos compilados para produção
+├── prisma/            esquema e migrações do banco (Prisma)
+├── scripts/           scripts de apoio
+├── src/
+│   ├── index.ts       ponto de entrada
+│   ├── @types/        tipos globais
+│   ├── modules/       um diretório por domínio
+│   │   └── <module>/
+│   │       ├── constants/       constantes
+│   │       ├── decorators/      decoradores do módulo
+│   │       ├── entities/        entidades
+│   │       ├── guards/          guardas de acesso
+│   │       ├── infrastructure/  http, graphql, banco de dados e outras integrações do módulo
+│   │       ├── repositories/    interfaces dos repositórios (inversão de dependência)
+│   │       ├── schemas/         validação da entrada
+│   │       ├── services/        regras de negócio
+│   │       ├── types/           tipos, enums e interfaces
+│   │       └── utils/           funções do módulo
 │   └── shared/
-│   │   ├── config - arquivos de configuração
-│   │   ├── constants - constantes globais
-│   │   ├── container - contém os provedores para injeção de dependência
-│   │   │   ├── providers/<<name>> - pasta raiz do provedor
-│   │   │   │   ├── implementations - implementação do provedor
-│   │   │   │   └── mocks - provedor falso para fins de teste
-│   │   │   └repositories - contém as referências dos repositórios
-│   │   ├── decorators - decoradores globais
-│   │   ├── errors - exceções controladas/forçadas
-│   │   ├── i18n - internacionalização
-│   │   ├── infrastructure - infraestrutura global
-│   │   │   ├── app - inicializador da aplicação
-│   │   │   ├── graphql - módulo de inicialização do graphql
-│   │   │   ├── http - módulo de inicialização do http
-│   │   │   │   ├── middlewares - middlewares globais
-│   │   │   │   └── routes - roteador global que une todos os módulos em um
-│   │   │   └── websocket - módulo de inicialização do websocket
-│   │   ├── types - tipos e interfaces globais
-│   │   └── utils - funções utilitárias
+│       ├── config/            configuração
+│       ├── constants/         constantes globais
+│       ├── container/         injeção de dependência
+│       │   ├── providers/     um diretório por provedor (implementations, models, types)
+│       │   └── repositories/  referências dos repositórios
+│       ├── decorators/        decoradores globais
+│       ├── errors/            erros controlados
+│       ├── i18n/              internacionalização
+│       ├── infrastructure/    app, graphql, http (middlewares e routes), saml, sentry, websocket
+│       ├── types/             tipos globais
+│       └── utils/             funções utilitárias
 └── test/
-    ├── config
-    ├── outputs
-    ├── types
-    └── utils
+    ├── config/        configuração do Vitest
+    ├── factories/     fábricas de dados de teste
+    ├── fixtures/      contrato das ferramentas MCP
+    ├── live/          teste local do MCP com um host real, fora da execução padrão
+    ├── mcp/           testes do MCP via HTTP e OAuth
+    ├── sdk/           testes externos com o SDK
+    ├── outputs/       relatórios de cobertura
+    ├── types/         tipos de teste
+    └── utils/         utilitários de teste
 ```
+
+## Testes
+
+Os testes unitários, de integração e e2e ficam ao lado do código que testam. Os do MCP (`test/mcp`), do SDK (`test/sdk`) e do host MCP real (`test/live`) ficam em `packages/api/test`. O sufixo do arquivo indica a camada: `.spec.ts` (unitário), `.test.ts` (integração), `.e2e.test.ts` (e2e), e `.external.test.ts` e `.live.test.ts` (serviços reais, que só rodam com `test:external` e `test:live-host`). O que cada camada simula e as metas de cobertura estão no [AGENTS.md](../AGENTS.md).

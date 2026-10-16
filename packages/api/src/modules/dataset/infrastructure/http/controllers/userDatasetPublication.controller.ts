@@ -1,0 +1,25 @@
+import { Request, Response } from "express";
+import { container } from "tsyringe";
+
+// Util import
+import { process } from "@shared/utils/instanceParser";
+
+// Service import
+import { UserDatasetRequestPublicationService } from "@modules/dataset/services/userDatasetRequestPublication.service";
+
+class UserDatasetPublicationController {
+  public async update(req: Request, res: Response) {
+    const userDatasetRequestPublicationService = container.resolve(
+      UserDatasetRequestPublicationService,
+    );
+    const dataset = await userDatasetRequestPublicationService.execute({
+      dataset_id: req.params.dataset_id,
+
+      user: req.user_session.user,
+      language: req.language,
+    });
+    return res.json(process(dataset));
+  }
+}
+
+export { UserDatasetPublicationController };
