@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.5...v0.9.0) (2026-10-16)
+
+
+### Features
+
+* add mcp ([cb474da](https://github.com/MalwareDataLab/autodroid-api/commit/cb474da5fbf332924e78dda53bc3d4cfd5649485))
+* wip test cli mcp ([f87b905](https://github.com/MalwareDataLab/autodroid-api/commit/f87b90528aaba200b9a5f9149764756029b11586))
+* wip test cli mcp ([7320312](https://github.com/MalwareDataLab/autodroid-api/commit/73203125ad094ac51c5a17784f78b16c1bde2c9f))
+
+
+### Bug Fixes
+
+* **api:** clear lint and tsc errors, fix pre-commit hook tsconfig resolution ([faf0737](https://github.com/MalwareDataLab/autodroid-api/commit/faf073737df927ba219b1c014688cc96c54f7728))
+
 ## [0.8.5](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.4...v0.8.5) (2026-02-23)
 
 
