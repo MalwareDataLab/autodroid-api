@@ -5,8 +5,6 @@ import { configDefaults, defineConfig } from "vitest/config";
 const vitestWorkerGuard = new URL("../vitestWorkerGuard.mjs", import.meta.url)
   .href;
 
-// The unit lane mocks every external, the database included. Pointing it at a
-// dead socket turns that rule into something the machine enforces.
 const UNREACHABLE_DATABASE_URL = "postgresql://unit:unit@127.0.0.1:1/never";
 
 const COVERAGE_EXCLUDE = [
@@ -102,14 +100,8 @@ const coverageScope =
 // eslint-disable-next-line import/no-default-export
 export default defineConfig({
   test: {
-    // v8 coverage instruments every included source file, which slows the
-    // per-test DB setup/teardown (repositories re-resolved against a fresh
-    // database). The bare suite passed at 10s/30s but flaked under coverage;
-    // 60s gives a deterministic margin.
     testTimeout: 60000,
     hookTimeout: 60000,
-    // Bound cleanup so a fork wedged on a saturated testcontainer is killed
-    // rather than orphaned.
     teardownTimeout: 20000,
     globals: true,
     clearMocks: true,
@@ -117,17 +109,11 @@ export default defineConfig({
     unstubEnvs: true,
     unstubGlobals: true,
     env: { TZ: "UTC" },
-    // A test that asserts nothing still marks its lines covered; this makes that
-    // impossible.
     expect: { requireAssertions: true },
-    // Entities and GraphQL payloads exceed the 40-char default and print as
-    // `{ Object (a, b) }`, which makes a failure undebuggable.
     chaiConfig: { truncateThreshold: 0 },
     pool: "forks",
     poolOptions: {
       forks: {
-        // Vitest 3.2.4: execArgv lives on poolOptions.forks, not test.execArgv.
-        // --import runs in the worker at Node startup (before any test file).
         execArgv: [`--import=${vitestWorkerGuard}`],
       },
     },
@@ -139,15 +125,10 @@ export default defineConfig({
       enabled: true,
       provider: "v8",
       // Without this, v8 counts are remapped through v8-to-istanbul, which
-      // misattributes branches in TS/decorator-heavy files. AST-aware remapping
       // matches istanbul's accuracy at v8's speed.
       experimentalAstAwareRemapping: true,
       reportsDirectory: coverageScope.reportsDirectory,
       reporter: ["json", "json-summary", "text-summary", "html"],
-      // Logic-surface denominator: measure every runtime-branching file, even
-      // those no test touches yet (`all`), so 100% is machine-verifiable and
-      // regressions surface. Declarative/generated/wiring files carry no
-      // branches and are excluded below.
       all: true,
       reportOnFailure: true,
       include: coverageScope.include,

@@ -15,6 +15,7 @@ packages/api/
 │   ├── modules/       um diretório por domínio
 │   │   └── <module>/
 │   │       ├── constants/       constantes
+│   │       ├── decorators/      decoradores do módulo
 │   │       ├── entities/        entidades
 │   │       ├── guards/          guardas de acesso
 │   │       ├── infrastructure/  http, graphql, banco de dados e outras integrações do módulo
@@ -49,9 +50,4 @@ packages/api/
 
 ## Testes
 
-Os testes ficam ao lado do código que testam. O sufixo do arquivo indica a camada:
-
-- `.spec.ts`: unitário
-- `.test.ts`: integração, com banco em contêiner
-- `.e2e.test.ts`: ponta a ponta, pela API HTTP
-- `.external.test.ts`: usa serviços reais de terceiros e só roda com `test:external`
+Os testes unitários, de integração e e2e ficam ao lado do código que testam. Os do MCP (`test/mcp`), do SDK (`test/sdk`) e do host MCP real (`test/live`) ficam em `packages/api/test`. O sufixo do arquivo indica a camada: `.spec.ts` (unitário), `.test.ts` (integração), `.e2e.test.ts` (e2e), e `.external.test.ts` e `.live.test.ts` (serviços reais, que só rodam com `test:external` e `test:live-host`). O que cada camada simula e as metas de cobertura estão no [AGENTS.md](../AGENTS.md).

@@ -46,14 +46,14 @@ Construa a API:
 yarn build
 ```
 
-O build gera só arquivos JavaScript, em `packages/api/dist`. No servidor, monte a mesma estrutura do `Dockerfile`:
+O build gera os arquivos JavaScript em `packages/api/dist` e copia para lá os demais arquivos de `src`, como os modelos de email. No servidor, monte a mesma estrutura do `Dockerfile`:
 
 - `package.json` e `yarn.lock`, da raiz do repositório
 - `packages/api/package.json`
 - `packages/api/prisma/`
 - `packages/api/dist/`, renomeada para `packages/api/src/`
 
-Instale só as dependências de produção, preencha `packages/api/.env` com os valores de produção e inicie:
+Instale só as dependências de produção, preencha `packages/api/.env` com os valores de produção, incluindo `NODE_ENV=production` (o `start:prod` define só `APP_ENV`), e inicie:
 
 ```bash
 yarn install --frozen-lockfile --production

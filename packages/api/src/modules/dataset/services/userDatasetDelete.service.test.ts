@@ -95,10 +95,6 @@ describe("Service: UserDatasetDeleteService", () => {
   });
 
   it("should throw if the file is not found", async () => {
-    // Dataset.file_id is a Prisma relation with onDelete: Cascade, so
-    // deleting the file always cascades and deletes the dataset with it —
-    // "dataset exists but its file doesn't" cannot be constructed via real
-    // deletion. Override the one lookup for this defensive guard instead.
     const user = await userFactory.create();
     const file = await fileFactory.create({ type: FILE_TYPE.DATASET });
     const dataset = await datasetRepository.createOne({

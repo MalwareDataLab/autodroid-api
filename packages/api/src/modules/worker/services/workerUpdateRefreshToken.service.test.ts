@@ -75,10 +75,6 @@ describe("Service: WorkerUpdateRefreshTokenService", () => {
       data: buildRequestData(worker, registrationToken.token, refresh_token),
     });
 
-    // HS256 signing is deterministic on {payload, secret, iat}; the payload
-    // here carries no per-call entropy, so a re-issued token can legitimately
-    // land on the same iat second and be byte-identical to the one just
-    // validated — assert identity/shape only, not (in)equality with the old token.
     expect(response).toEqual(expect.objectContaining({ id: worker.id }));
     expect(typeof response.refresh_token).toBe("string");
     expect(response.refresh_token.length).toBeGreaterThan(0);
@@ -145,9 +141,6 @@ describe("Service: WorkerUpdateRefreshTokenService", () => {
     );
 
     const { token: refresh_token } = generateWorkerRefreshToken(otherWorker);
-    // findOne requires the stored refresh_token to exactly match the request's,
-    // so the real worker's record has to carry this mismatched-payload token
-    // for the lookup to succeed and reach the signature check at all.
     await workerRepository.updateOne({ id: worker.id }, { refresh_token });
 
     await expect(() =>

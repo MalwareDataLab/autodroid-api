@@ -49,8 +49,6 @@ describe("Service: UserProcessingDeleteService", () => {
     );
 
     if (!params.withFiles) {
-      // The factory's relation loader auto-creates a placeholder file
-      // whenever the id is falsy, so force the "no file" state directly.
       processing = (await processingRepository.updateOne(
         { id: processing.id },
         { result_file_id: null, metrics_file_id: null },

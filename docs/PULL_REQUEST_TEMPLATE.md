@@ -10,5 +10,8 @@
 ### Como testar?
 (Descreva os pré-requisitos e os passos para testar)
 
+### Issue e testes
+(Cite a issue e diga quais camadas de teste rodaram: unitária, integração, e2e)
+
 ### Outras observações
 (Qualquer informação útil para quem for revisar ou testar)

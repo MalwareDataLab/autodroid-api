@@ -34,7 +34,7 @@ Este Código de Conduta se aplica tanto nos espaços do projeto quanto em espaç
 
 ## Aplicação
 
-Casos de comportamento abusivo, assediador ou de outra forma inaceitável podem ser relatados entrando em contato com a equipe do projeto em kylelobo20@gmail.com. Todas as reclamações serão revisadas e investigadas e resultarão em uma resposta considerada necessária e apropriada às circunstâncias. A equipe do projeto tem a obrigação de manter a confidencialidade em relação ao denunciante de um incidente. Detalhes adicionais sobre políticas específicas de aplicação podem ser publicados separadamente.
+Casos de comportamento abusivo, assediador ou de outra forma inaceitável podem ser relatados entrando em contato com a equipe do projeto em luiz@laviola.dev. Todas as reclamações serão revisadas e investigadas e resultarão em uma resposta considerada necessária e apropriada às circunstâncias. A equipe do projeto tem a obrigação de manter a confidencialidade em relação ao denunciante de um incidente. Detalhes adicionais sobre políticas específicas de aplicação podem ser publicados separadamente.
 
 Os mantenedores do projeto que não seguirem ou aplicarem o Código de Conduta de boa fé poderão enfrentar repercussões temporárias ou permanentes, conforme determinado por outros membros da liderança do projeto.
 

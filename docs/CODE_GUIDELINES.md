@@ -1,6 +1,6 @@
 # Diretrizes de código
 
-O projeto usa TypeScript e ESLint (com as regras do Airbnb, as recomendadas do `@typescript-eslint` e o Prettier). Siga a configuração em `packages/api/.eslintrc.js`.
+O projeto usa TypeScript e ESLint (com as regras `airbnb-base`, as recomendadas do `@typescript-eslint` e o Prettier). Siga a configuração em `packages/api/.eslintrc.js`.
 
 Use `yarn lint` para checar e corrigir o lint e os tipos.
 

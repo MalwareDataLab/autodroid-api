@@ -81,8 +81,6 @@ describe("Service: WorkerHandleProcessingSuccessService", () => {
       metrics_file_id: metricsFile.id,
       finished_at: null,
     });
-    // The factory always backfills a nullish result_file_id with a fresh
-    // file association, so the "no result file" state has to be forced after.
     await processingRepository.updateOne(
       { id: processing.id },
       { result_file_id: null },
@@ -119,8 +117,6 @@ describe("Service: WorkerHandleProcessingSuccessService", () => {
   it("should throw if there are no output files", async () => {
     const worker = await workerFactory.create();
     const processing = await processingFactory.create();
-    // The factory always backfills a nullish file id with a fresh file
-    // association, so the "no files" state has to be forced afterwards.
     await processingRepository.updateOne(
       { id: processing.id },
       { result_file_id: null, metrics_file_id: null },

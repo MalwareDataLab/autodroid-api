@@ -92,9 +92,6 @@ describe("Service: WorkerGenerateProcessingResultUploadFileService", () => {
       started_at: null,
     });
 
-    // processingFactory.create() auto-populates optional file/worker relations
-    // it isn't given explicitly (see loadEntityRelations) — force this one back
-    // to genuinely null so the "no previous file" branch is actually exercised.
     const processingRepository = container.resolve<IProcessingRepository>(
       "ProcessingRepository",
     );

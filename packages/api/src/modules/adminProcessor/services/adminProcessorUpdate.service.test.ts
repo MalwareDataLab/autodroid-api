@@ -32,9 +32,6 @@ describe("Service: AdminProcessorUpdateService", () => {
   it("should update a processor", async () => {
     const owner = await userFactory.create();
     const processor = await processorFactory.create({ user_id: owner.id });
-    // ProcessorSchema excludes ownership/relation fields (see processor.schema.ts) —
-    // strip them from the built entity so the real Prisma update() isn't handed a
-    // stray user_id pointing at a non-persisted user.
     const {
       id: _id,
       seq: _seq,

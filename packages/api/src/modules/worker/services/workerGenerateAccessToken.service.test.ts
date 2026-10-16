@@ -42,10 +42,6 @@ describe("Service: WorkerGenerateAccessTokenService", () => {
       system_info: { updated: true },
     }) as WorkerRefreshTokenSchema;
 
-  // The repository matches `refresh_token` as a literal DB column, so a
-  // freshly-created worker's persisted value must be overwritten with the
-  // token we actually sign, mirroring how workerRegister/workerUpdateRefreshToken
-  // persist the token they hand back to the client.
   const createWorkerWithValidRefreshToken = async (
     overrides: Partial<Worker>,
   ) => {
@@ -120,11 +116,6 @@ describe("Service: WorkerGenerateAccessTokenService", () => {
     const { registration_token, worker, refresh_token } =
       await createWorkerWithValidRefreshToken({ archived_at: null });
 
-    // The repository's own lookup filters on internal_id/signature/registration_token
-    // as literal equality, so the request must present values that match the
-    // CURRENT row for the worker to be found at all — the token itself must be
-    // the one that goes stale (signed before this rotation), mirroring a replayed
-    // refresh token presented after the worker's credentials rotated.
     const rotated_internal_id = crypto.randomUUID();
     const workerRepository =
       container.resolve<IWorkerRepository>("WorkerRepository");

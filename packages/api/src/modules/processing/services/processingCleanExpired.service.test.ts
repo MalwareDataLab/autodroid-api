@@ -39,9 +39,6 @@ describe("Service: ProcessingCleanExpiredService", () => {
     const processingWithoutFilesSeed = await processingFactory.create({
       keep_until: faker.date.past(),
     });
-    // The factory's relation loader auto-creates a placeholder file whenever
-    // result_file_id/metrics_file_id is falsy, so force the "no file" state
-    // with a direct update instead of relying on the create-time default.
     const processingWithoutFiles = (await processingRepository.updateOne(
       { id: processingWithoutFilesSeed.id },
       { result_file_id: null, metrics_file_id: null },

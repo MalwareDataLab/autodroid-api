@@ -1,14 +1,12 @@
 <p align="center">
-  <a href="" rel="noopener">
-    <img width="200px" height="200px" src=".github/docs/0-logo.png" alt="Project logo" style="fill:#000000">
-  </a>
+  <img width="200px" height="200px" src=".github/docs/0-logo.png" alt="Logo da AutoDroid" style="fill:#000000">
 </p>
 
 <h3 align="center">AutoDroid</h3>
 
 <div align="center">
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+![Status](https://img.shields.io/badge/status-active-success.svg)
 
 </div>
 
@@ -24,13 +22,11 @@ O serviço cobre a etapa de expansão de dataset do pipeline de AutoML descrita 
 
 <img src=".github/docs/2-proposal.jpg" alt="Overview" style="fill:#000000">
 
-O projeto tem várias partes, mostradas abaixo.
-
 <img src=".github/docs/1-overview.jpg" alt="Overview" style="fill:#000000">
 
 ## Arquitetura
 
-A API é escrita em TypeScript, com Node.js, Express e TypeGraphQL. Usa PostgreSQL (via Prisma), Redis (filas com Bull), MongoDB, Tsyringe para injeção de dependência e Vitest para testes. O código segue DDD e Clean Architecture, com os princípios SOLID e TDD.
+A API é escrita em TypeScript, com Node.js, Express e TypeGraphQL. Usa PostgreSQL (via Prisma), Redis (filas com Bull), MongoDB, Tsyringe para injeção de dependência e Vitest para testes. O código segue DDD e Clean Architecture, com os princípios SOLID, e os testes são escritos com TDD.
 
 Diagramas no [modelo C4](https://c4model.com/):
 
@@ -42,12 +38,15 @@ Diagramas no [modelo C4](https://c4model.com/):
 
 Entidades:
 
-- `User`: usuário da aplicação. Guarda email, nome e telefone, e o login é feito pelo Firebase.
+- `User`: usuário da aplicação. Guarda email, nome e telefone. O login é feito pelo Firebase ou por SAML (RNP CAFe).
+- `UserAuthProviderConn`: vínculo de um usuário com um provedor de autenticação.
 - `File`: arquivo, como um dataset ou o resultado de um processamento.
 - `Processor`: imagem Docker que processa um conjunto de dados com os parâmetros informados.
 - `Dataset`: arquivo de entrada de um processador.
 - `Processing`: pedido de processamento de um usuário. Guarda o ciclo de vida completo, com status e resultado.
 - `Worker`: instância da aplicação Worker, que executa os jobs em segundo plano.
+- `WorkerRegistrationToken`: token que um administrador cria para registrar workers.
+- `McpAuthorizationGrant`: autorização que um usuário dá a um cliente MCP, com uma linha por usuário, cliente e recurso.
 
 ## Requisitos
 
@@ -63,7 +62,7 @@ Usuário: um navegador ou um cliente de API (curl, httpie, Postman, Insomnia).
 
 ## Como executar
 
-Antes de tudo, siga a [configuração](docs/CONFIGURATION.md) para obter as credenciais do Firebase e do Google Cloud Storage.
+Antes de tudo, siga a [configuração](docs/CONFIGURATION.md) para obter as credenciais do Firebase e do Google Cloud Storage e preencha as variáveis obrigatórias no `docker-compose.yml`. Sem `SESSION_SECRET` e `MCP_OAUTH_CLIENT_ID_SECRET`, a API não sobe.
 
 ```bash
 git clone https://github.com/MalwareDataLab/AutoDroid.git
@@ -79,8 +78,8 @@ autodroid_api_gateway_prod  | 🆗 Redis default connection success.
 autodroid_api_gateway_prod  | 🆗 Non-relational Database connection success.
 autodroid_api_gateway_prod  | 🆗 Firebase authentication provider init success.
 autodroid_api_gateway_prod  | 🆗 Google storage provider init success.
-autodroid_api_gateway_prod  | 🆗 Processing background jobs on @autodroid/api.
-autodroid_api_gateway_prod  | ⚡️ @autodroid/api production version X using Node.js X running at port 3333 with PID X.
+autodroid_api_gateway_prod  | 🆗 Processing background jobs on autodroid-api.
+autodroid_api_gateway_prod  | ⚡️ autodroid-api development version X using Node.js X running at port 3333 with PID X.
 ```
 
 Para parar, use `Ctrl + C` ou `docker compose down`. A pasta `./.runtime` guarda os arquivos da aplicação e pode exigir permissão de superusuário para ser alterada ou apagada.
@@ -95,9 +94,9 @@ O fluxo comum:
 
 1. Toda requisição leva o header `Authorization: Bearer ${token}`, com o token do Firebase.
 2. Um administrador registra um processador (imagem Docker).
-3. O usuário cria um dataset. A API devolve uma `upload_url`, e o arquivo é enviado para ela. Há um [dataset de exemplo](./docs/samples/dataset_example.csv).
+3. O usuário cria um dataset. A API devolve a `upload_url` do campo `file`, e o arquivo é enviado para ela. Há um [dataset de exemplo](./docs/samples/dataset_example.csv).
 4. Com o `processor_id` e o `dataset_id`, o usuário pede o processamento, com os parâmetros padrão ou personalizados.
-5. Quando o `status` indica que terminou, o resultado (um zip) é baixado pelo campo `public_url`.
+5. Quando o `status` indica que terminou, o resultado (um zip) é baixado pela `public_url` do campo `result_file`.
 
 O worker é uma aplicação separada, que executa os jobs em segundo plano. Um administrador cria um `WorkerRegistrationToken`, e o campo `token` autentica o worker na API. A instalação está em [autodroid-worker](https://github.com/MalwareDataLab/autodroid-worker).
 
@@ -105,7 +104,7 @@ O worker é uma aplicação separada, que executa os jobs em segundo plano. Um a
   <img src=".github/docs/3-common-flowchart.jpg" alt="Fluxo comum">
 </p>
 
-MCP: os mesmos recursos estão disponíveis para assistentes de IA. Os dois modos de uso estão em [docs/MCP.md](docs/MCP.md).
+Os mesmos recursos também estão disponíveis por MCP, para qualquer cliente MCP. Os dois modos de uso estão em [docs/MCP.md](docs/MCP.md).
 
 ## Testes
 
@@ -113,7 +112,9 @@ MCP: os mesmos recursos estão disponíveis para assistentes de IA. Os dois modo
 yarn test
 ```
 
-Roda as camadas unitária, de integração e e2e. As duas últimas sobem bancos em contêineres, então o Docker precisa estar rodando. Os relatórios de cobertura ficam em `packages/api/test/outputs`.
+Roda as camadas unitária, de integração e e2e. As duas últimas sobem bancos e um emulador de storage em contêineres, então o Docker precisa estar rodando. Elas também entram no Firebase com contas de teste: copie `packages/api/.env.test.example` para `packages/api/.env.test` e preencha `TESTING_FIREBASE_WEB_API_KEY`, `TESTING_ADMIN_*` e `TESTING_USER_*`. A camada e2e usa o Chromium do Playwright (`yarn workspace autodroid-api run playwright install --with-deps chromium`). Os relatórios de cobertura ficam em `packages/api/test/outputs`.
+
+Cada camada roda sozinha com `yarn workspace autodroid-api run test:unit`, `test:integration` ou `test:e2e`. O que cada camada simula e as metas de cobertura estão no [AGENTS.md](AGENTS.md).
 
 A camada `test:external` usa serviços reais (Google Cloud Storage e Firebase) e não roda por padrão:
 
@@ -125,18 +126,18 @@ O comando `yarn lint` checa o lint e os tipos e corrige o que for possível. Os 
 
 ## CI e releases
 
-O workflow `ci.yml` roda em pull requests e pushes para `main` e `qa`: lint, build, build da imagem Docker (sem publicar) e testes. O workflow `deploy.yml` roda em pushes para `main`, `staging` e `qa`: o release-please abre o PR de release e, quando não há PR de release aberto, a imagem Docker é construída e publicada no Docker Hub e a release é criada.
+O workflow `ci.yml` roda em pull requests e pushes para `main` e `qa`: lint, build, build da imagem Docker (sem publicar) e testes. O workflow `deploy.yml` roda em pushes para `main`, `staging` e `qa`: o release-please abre o PR de release e, quando não há PR de release aberto, a imagem Docker é construída e publicada no Docker Hub e a release é criada. Depois, o job `sync-develop` atualiza o `develop`.
 
 ## Implantação
 
-Com a [configuração](docs/CONFIGURATION.md) pronta, preencha as variáveis no `docker-compose.yml` e rode:
+Com a [configuração](docs/CONFIGURATION.md) pronta, preencha as variáveis no `docker-compose.yml`, troque `NODE_ENV=development` por `NODE_ENV=production` (só assim valem o CORS restrito, o cookie de sessão seguro e a checagem de origem do `/mcp`) e rode:
 
 ```bash
 docker compose build --no-cache
 docker compose up -d
 ```
 
-A aplicação usa a porta 3333. Para mudar, edite o `docker-compose.yml` e rode `docker compose restart`. Libere a porta no firewall e verifique as restrições da sua rede e do seu provedor.
+A aplicação usa a porta 3333. Para mudar, troque o lado do host em `ports` (por exemplo `8080:3333`) no `docker-compose.yml` e rode `docker compose up -d`. Libere a porta no firewall e verifique as restrições da sua rede e do seu provedor.
 
 O `docker-compose.yml` inclui o [watchtower](https://containrrr.dev/watchtower/), que atualiza a aplicação sozinho. Para atualizar à mão:
 
@@ -159,7 +160,7 @@ Para limpar o ambiente do projeto (isto apaga o banco de dados):
 ```bash
 docker compose down
 sudo rm -rf ./.runtime
-docker rmi $(docker images -q -f "reference=autodroid_*")
+docker rmi malwaredatalab/autodroid-api:latest
 ```
 
 ## Referências

@@ -24,8 +24,6 @@ let redisContainer: StartedRedisContainer | undefined;
 const TEMPLATE_DATABASE = "autodroid_template";
 
 const startPostgreSql = async () => {
-  // Durability is worthless for a throwaway container and dominates the cost of
-  // the per-test database clone.
   const container = await new PostgreSqlContainer("postgres:14")
     .withDatabase(TEMPLATE_DATABASE)
     .withCommand([
@@ -44,14 +42,10 @@ const startPostgreSql = async () => {
   const baseUri = container.getConnectionUri().toString();
   process.env.DATABASE_URL = baseUri;
 
-  // Replay the migrations once against the template; every test then clones it
-  // with CREATE DATABASE ... TEMPLATE instead of replaying them again.
   execSync("./node_modules/.bin/prisma migrate deploy", {
     env: { ...process.env, DATABASE_URL: baseUri },
   });
 
-  // CREATE DATABASE ... TEMPLATE refuses to run while any session is connected
-  // to the source, so make a stray connection impossible rather than unlikely.
   const administratorClient = new Client({
     connectionString: baseUri.replace(`/${TEMPLATE_DATABASE}`, "/postgres"),
   });
@@ -114,8 +108,6 @@ export default async function setup(project: TestProject) {
     template: TEMPLATE_DATABASE,
   });
 
-  // Each project runs this setup, so a second run would clobber the first's
-  // process.env. Hand the addresses over explicitly instead.
   project.provide("nonRelationalDatabase", {
     baseUri: process.env.NON_RELATIONAL_DATABASE_URL!,
   });

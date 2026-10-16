@@ -79,8 +79,6 @@ describe("Service: WorkerHandleProcessingResultUploadFileService", () => {
   it("should throw if the result file was not found", async () => {
     const worker = await workerFactory.create();
     const processing = await processingFactory.create();
-    // The factory always backfills a nullish result_file_id with a fresh
-    // file association, so the "no file" state has to be forced afterwards.
     await processingRepository.updateOne(
       { id: processing.id },
       { result_file_id: null },

@@ -21,8 +21,6 @@ import { fileFactory } from "../entities/factories/file.factory";
 // Target import
 import { ProcessFilePublicAccessService } from "./processFilePublicAccess.service";
 
-// The service only hands `cls` to `parse`, which instantiates it with
-// class-transformer, so a bare class typed as the expected shape is enough.
 const plainClass = <T>() => class {} as unknown as ClassConstructor<T>;
 
 describe("Service: ProcessFilePublicAccessService", () => {

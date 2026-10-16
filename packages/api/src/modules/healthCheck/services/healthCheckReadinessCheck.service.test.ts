@@ -36,16 +36,6 @@ describe("Service: HealthCheckReadinessCheckService", () => {
     ).resolves.toBeUndefined();
   });
 
-  // The relational/non-relational/in-memory clients are real, proxy-based
-  // driver objects shared across every test in this file (only DB rows get
-  // truncated between tests). vi.spyOn-ing a method directly on them (e.g.
-  // Prisma's `client.user`) was found to permanently corrupt that shared
-  // client for every later test in the file, surviving even
-  // vi.restoreAllMocks(). Each "not ready" case below instead builds the
-  // service with two real, untouched dependencies plus one lightweight
-  // broken double for just the dependency under test — real integration
-  // everywhere except the single call being forced to fail.
-
   it("should throw when the relational database is not ready", async () => {
     const brokenDatabaseProvider = {
       ...databaseProvider,

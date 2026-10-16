@@ -230,11 +230,6 @@ describe("Service: HandleUserSessionService", () => {
   });
 
   it("should throw INVALID_SESSION_REGISTRY when the conn is disconnected", async () => {
-    // The real repository's findOne (called here without include_disconnected)
-    // always filters disconnected rows out, so this guard can never be reached
-    // through the default lookup — override findOne for this one call to
-    // simulate the state the guard defends against, same as the disconnected
-    // real conn we just persisted.
     const user = await userFactory.create();
     const conn = await userAuthProviderConnRepository.createOne({
       user_id: user.id,

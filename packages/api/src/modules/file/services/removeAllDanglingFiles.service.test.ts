@@ -35,12 +35,6 @@ describe("Service: RemoveAllDanglingFilesService", () => {
   });
 
   it("should refresh expired uploads and remove not found files", async () => {
-    // PrismaFileRepository.findMany runs every returned row through
-    // File.processAnyNested, which auto-calls storageProvider.refreshFile
-    // for any file with allow_public_access/upload_url truthy — a real,
-    // repository-wide side effect unrelated to this service. Keeping those
-    // fields falsy here isolates the counts to what THIS service's own
-    // explicit refresh loop does.
     const expiredOk = await fileFactory.create({
       type: FILE_TYPE.DATASET,
       provider_status: FILE_PROVIDER_STATUS.PENDING,

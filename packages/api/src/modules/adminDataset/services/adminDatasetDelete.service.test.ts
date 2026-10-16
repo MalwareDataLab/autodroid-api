@@ -65,12 +65,6 @@ describe("Service: AdminDatasetDeleteService", () => {
   });
 
   it("should throw if the file was not found", async () => {
-    // Dataset.file_id is a unique FK with onDelete: Cascade, so a real,
-    // consistent DB state can never have a dataset pointing at a missing
-    // file — deleting the file cascades to delete the dataset too. Simulate
-    // the race (file removed between the two lookups) via a single-call spy
-    // on the real repository, matching this codebase's existing convention
-    // for found-then-vanished races (see userDatasetRequestPublication.service.test.ts).
     const owner = await userFactory.create();
     const file = await fileFactory.create();
     const dataset = await datasetFactory.create({
