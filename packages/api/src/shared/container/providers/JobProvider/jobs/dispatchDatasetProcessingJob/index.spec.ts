@@ -103,6 +103,20 @@ describe("Job: DispatchDatasetProcessingJob", () => {
     );
   });
 
+  it("should finish with an application error about the pending processes when the periodic dispatch fails", async () => {
+    datasetProcessorProvider.dispatchNotStartedProcesses.mockRejectedValueOnce(
+      new Error("No worker available."),
+    );
+
+    await dispatchDatasetProcessingJob.handle(buildJob([]), done);
+
+    const [error] = done.mock.calls[0];
+    expect(error.key).toBe("@dispatch_dataset_processing_job/ERROR");
+    expect(error.message).toBe(
+      "Unable to dispatch the pending processes. No worker available.",
+    );
+  });
+
   it("should not fail the processes while attempts remain", async () => {
     await dispatchDatasetProcessingJob.onFailed(
       buildJob(["processing-1"], 1439),

@@ -25,6 +25,7 @@ import { logger } from "@shared/utils/logger";
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
 // Entity import
@@ -498,16 +499,50 @@ describe("Provider: DatasetProcessorProvider", () => {
     expect(logger.info).toHaveBeenCalledWith("🆗 No processes to dispatch.");
   });
 
-  it("should read every not dispatched process, oldest first, without a page bound", async () => {
-    processingRepositoryMock.findMany.mockResolvedValueOnce([]);
-
-    await provider.dispatchNotStartedProcesses({ processing_ids: [] });
-
-    expect(processingRepositoryMock.findMany).toHaveBeenCalledWith(
-      { worker_id: null },
-      undefined,
-      [{ field: "created_at", order: SORT_ORDER.ASC }],
+  it("should dispatch the oldest pending process and never a failed one that no worker received", async () => {
+    const failedWithoutWorker = buildProcessing({
+      status: PROCESSING_STATUS.FAILED,
+      worker_id: null,
+      created_at: new Date("2026-10-06T22:20:43Z"),
+    });
+    const pending = buildProcessing({
+      status: PROCESSING_STATUS.PENDING,
+      worker_id: null,
+      created_at: new Date("2026-10-23T15:22:07Z"),
+    });
+    const storedProcesses = [failedWithoutWorker, pending];
+    processingRepositoryMock.findMany.mockImplementation(
+      async (filter: Record<string, unknown>, pagination, sorting) => {
+        expect(pagination).toBeUndefined();
+        expect(sorting).toEqual([
+          { field: "created_at", order: SORT_ORDER.ASC },
+        ]);
+        return storedProcesses
+          .filter(processing =>
+            Object.entries(filter).every(
+              ([field, value]) => (processing as any)[field] === value,
+            ),
+          )
+          .sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
+      },
     );
+    inMemoryDatabaseProviderMock.connection.hgetall.mockResolvedValueOnce({
+      "worker-a": "1",
+    });
+    const dispatchSpy = vi
+      .spyOn(provider as any, "dispatchProcessToWorker")
+      .mockImplementation(async ({ processing_id }: any) =>
+        storedProcesses.find(processing => processing.id === processing_id),
+      );
+
+    const result = await provider.dispatchNotStartedProcesses({
+      processing_ids: [],
+    });
+
+    expect(dispatchSpy.mock.calls).toEqual([
+      [{ processing_id: pending.id, worker_id: "worker-a" }],
+    ]);
+    expect(result).toEqual({ dispatched: [pending], failed: [], skipped: [] });
   });
 
   it("should throw when there are no workers available", async () => {
@@ -575,9 +610,16 @@ describe("Provider: DatasetProcessorProvider", () => {
       }),
     );
 
-    await provider.dispatchNotStartedProcesses({ processing_ids: [] });
+    const result = await provider.dispatchNotStartedProcesses({
+      processing_ids: [],
+    });
 
     expect(logger.error).toHaveBeenCalled();
+    expect(result).toEqual({
+      dispatched: [],
+      failed: [processing],
+      skipped: [],
+    });
   });
 
   it("should rethrow non-app errors raised while dispatching", async () => {

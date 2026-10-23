@@ -20,6 +20,7 @@ import { ISocketWorkerStatusMessage } from "@shared/infrastructure/websocket/soc
 
 // Enum import
 import { FILE_PROVIDER_STATUS } from "@modules/file/types/fileProviderStatus.enum";
+import { PROCESSING_STATUS } from "@modules/processing/types/processingStatus.enum";
 import { SORT_ORDER } from "@modules/sorting/types/sortOrder.enum";
 
 // DTO import
@@ -375,6 +376,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
     const processes = await this.processingRepository.findMany(
       {
         worker_id: null,
+        status: PROCESSING_STATUS.PENDING,
       },
       undefined,
       [{ field: "created_at", order: SORT_ORDER.ASC }],
@@ -447,7 +449,7 @@ class DatasetProcessorProvider implements IDatasetProcessorProvider {
             logger.error(
               `❎ Cannot dispatch processing ID ${processing?.id} to worker ${selectedWorkerId}. ${error.message}`,
             );
-            failedToDispatch.push(processes[0]);
+            failedToDispatch.push(processing);
           } else {
             throw error;
           }

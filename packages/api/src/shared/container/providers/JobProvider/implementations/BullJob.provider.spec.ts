@@ -51,6 +51,7 @@ vi.mock("tsyringe", async importOriginal => {
 });
 
 vi.mock("../jobs", () => ({
+  DispatchDatasetProcessingJob: class {},
   ProcessingCleanExpiredJob: class {},
   ProcessingFailDanglingJob: class {},
   RemoveAllDanglingFilesJob: class {},
@@ -109,7 +110,7 @@ describe("Provider: BullJobProvider", () => {
     const provider = buildProvider();
     await provider.initialization;
 
-    expect(bullState.queues).toHaveLength(4);
+    expect(bullState.queues).toHaveLength(5);
     expect(bullState.queues[0].process).not.toHaveBeenCalled();
   });
 
@@ -140,6 +141,43 @@ describe("Provider: BullJobProvider", () => {
     );
     expect(cleanExpiredQueue.add).toHaveBeenCalled();
     expect(cleanExpiredQueue.process).toHaveBeenCalledOnce();
+  });
+
+  it("should dispatch the pending processes every minute, one attempt per run, over the job's own retry options", async () => {
+    getEnvConfigMock.mockReturnValue({
+      JOBS_ENABLED: "true",
+      APP_INFO: { name: "Autodroid" },
+    } as any);
+    resolveMock.mockImplementation((job: any) => ({
+      name: job.name,
+      concurrency: 1,
+      jobOptions:
+        job.name === "DispatchDatasetProcessingJob"
+          ? { attempts: 1440, backoff: { type: "fixed", delay: 60000 } }
+          : {},
+      queueOptions: {},
+      handle: vi.fn().mockResolvedValue(undefined),
+      onFailed: vi.fn().mockResolvedValue(undefined),
+    }));
+
+    const provider = buildProvider();
+    await provider.initialization;
+
+    const dispatchQueue = bullState.queues.find(
+      queue => queue.name === "DispatchDatasetProcessingJob",
+    );
+    expect(dispatchQueue.add.mock.calls).toEqual([
+      [
+        { processing_ids: [] },
+        {
+          attempts: 1,
+          backoff: { type: "fixed", delay: 60000 },
+          removeOnComplete: true,
+          removeOnFail: true,
+          repeat: { cron: "* * * * *" },
+        },
+      ],
+    ]);
   });
 
   it("should default the app name to API when it is missing", async () => {
