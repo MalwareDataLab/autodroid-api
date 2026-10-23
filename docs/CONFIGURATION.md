@@ -54,3 +54,5 @@ Opcionais (deixe vazio, como em `CAMPO=`, se não for usar):
 - `WORKER_MAX_CONCURRENT_JOBS`, `DEFAULT_LANGUAGE`, `APP_PORT`, `DATABASE_LOGGER_ENABLED` e `DEBUG`: ajustes de execução, com os valores do `.env.example`.
 
 Os testes usam o arquivo `packages/api/.env.test`, copiado de `.env.test.example`, com as contas de teste do Firebase (`TESTING_*`).
+
+Comandos e testes que falam com o backend publicado usam `packages/api/.env.live`, copiado de `.env.live.example`. O arquivo fica fora do git e guarda as URLs do servidor publicado, a chave web do Firebase, as contas de teste e o token do Sentry (`SENTRY_*`, os nomes que o `sentry-cli` lê). O token do harness deve ser só de leitura: `org:read`, `project:read` e `event:read`. Os nomes `AUTODROID_CLI_*` são os que o CLI do SDK já lê. Para usar: `set -a; . packages/api/.env.live; set +a`.

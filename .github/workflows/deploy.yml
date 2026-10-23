@@ -165,18 +165,33 @@ jobs:
     steps:
       - name: Checkout to branch
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Push to develop branch
         continue-on-error: true
         env:
           BRANCH: ${{ github.ref_name }}
+          RELEASE_FILES: '^(CHANGELOG\.md|package\.json|packages/api/package\.json|\.github/config/release-please-manifest-[a-z]+\.json)$'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin develop:develop || git checkout -b develop
-          git checkout develop
-          git pull origin develop
-          git merge "$BRANCH" --no-ff -X theirs --no-edit
+          git fetch origin develop
+          git checkout -B develop origin/develop
+          if ! git merge "$BRANCH" --no-ff --no-edit; then
+            conflicted=$(git diff --name-only --diff-filter=U)
+            unexpected=$(printf '%s\n' "$conflicted" | grep -vE "$RELEASE_FILES" || true)
+            if [ -n "$unexpected" ]; then
+              git merge --abort
+              echo "::error::develop was not synced, merge it by hand. Conflicts outside the release files: $unexpected"
+              exit 1
+            fi
+            printf '%s\n' "$conflicted" | while read -r file; do
+              git checkout --theirs -- "$file"
+              git add -- "$file"
+            done
+            git -c core.editor=true merge --continue
+          fi
           git push origin develop
 
   release:
