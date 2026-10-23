@@ -9,6 +9,7 @@ import { i18next } from "@shared/i18n";
 
 // Configuration import
 import { getEmailConfig } from "@config/email";
+import { getFrontendConfig } from "@config/frontend";
 
 // Util import
 import { logger } from "@shared/utils/logger";
@@ -26,6 +27,7 @@ vi.mock("handlebars", () => ({
 vi.mock("node:fs/promises", () => ({ default: { readFile: vi.fn() } }));
 vi.mock("@shared/i18n", () => ({ i18next: { cloneInstance: vi.fn() } }));
 vi.mock("@config/email", () => ({ getEmailConfig: vi.fn() }));
+vi.mock("@config/frontend", () => ({ getFrontendConfig: vi.fn() }));
 vi.mock("@shared/utils/logger", () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
@@ -35,6 +37,7 @@ const compileMock = vi.mocked(handlebars.compile);
 const readFileMock = vi.mocked(fs.readFile);
 const cloneInstanceMock = vi.mocked(i18next.cloneInstance);
 const getEmailConfigMock = vi.mocked(getEmailConfig);
+const getFrontendConfigMock = vi.mocked(getFrontendConfig);
 
 const transporterMock = { verify: vi.fn(), sendMail: vi.fn() };
 
@@ -92,6 +95,9 @@ describe("Provider: NodemailerEmailNotificationProvider", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getEmailConfigMock.mockReturnValue(buildConfig());
+    getFrontendConfigMock.mockReturnValue({
+      FRONTEND_URL: "https://app.autodroid.example",
+    } as ReturnType<typeof getFrontendConfig>);
     createTransportMock.mockReturnValue(transporterMock as any);
     compileMock.mockReturnValue(templateMock as any);
     readFileMock.mockResolvedValue("content");
@@ -156,6 +162,13 @@ describe("Provider: NodemailerEmailNotificationProvider", () => {
 
     expect(i18nInstanceMock.changeLanguage).toHaveBeenCalledWith("en");
     expect(templateMock).toHaveBeenCalledOnce();
+    expect(templateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        language: "en",
+        frontend_url: "https://app.autodroid.example",
+      }),
+      expect.anything(),
+    );
     expect(transporterMock.sendMail).toHaveBeenCalledWith(
       expect.objectContaining({
         to: [{ name: "Recipient", address: toEmail }],

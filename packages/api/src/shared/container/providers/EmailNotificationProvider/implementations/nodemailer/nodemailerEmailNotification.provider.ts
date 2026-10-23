@@ -8,6 +8,7 @@ import { i18next } from "@shared/i18n";
 
 // Configuration import
 import { getEmailConfig } from "@config/email";
+import { getFrontendConfig } from "@config/frontend";
 
 // Error import
 import { AppError } from "@shared/errors/AppError";
@@ -122,18 +123,21 @@ export class NodemailerEmailNotificationProvider
 
     const i18n = i18next.cloneInstance({ initImmediate: true });
 
-    const html = selectedTemplate(template.variables, {
-      helpers: {
-        t(lng: string, key: string, subkey: string, def: string) {
-          i18n.changeLanguage(lng);
-          return i18n.t(`${key}${subkey}`, def);
-        },
-        concat(...args: string[]) {
-          args.pop();
-          return args.join("");
+    const html = selectedTemplate(
+      { ...template.variables, frontend_url: getFrontendConfig().FRONTEND_URL },
+      {
+        helpers: {
+          t(lng: string, key: string, subkey: string, def: string) {
+            i18n.changeLanguage(lng);
+            return i18n.t(`${key}${subkey}`, def);
+          },
+          concat(...args: string[]) {
+            args.pop();
+            return args.join("");
+          },
         },
       },
-    });
+    );
 
     await this.client.sendMail({
       to: to_override || parseNodemailerAddresses(to),
