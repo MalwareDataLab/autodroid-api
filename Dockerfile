@@ -1,5 +1,5 @@
 # Build environment
-FROM node:24.21.0-alpine AS build
+FROM node:24.22.0-alpine AS build
 WORKDIR /usr/app
 RUN apk add --no-cache openssl
 
@@ -10,7 +10,7 @@ COPY . .
 RUN yarn workspace autodroid-api run build
 
 # Production environment
-FROM node:24.21.0-alpine AS production
+FROM node:24.22.0-alpine AS production
 WORKDIR /usr/app
 RUN apk add --no-cache openssl
 RUN addgroup -g 1001 -S nodegrp
