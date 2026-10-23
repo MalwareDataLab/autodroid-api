@@ -211,4 +211,105 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
 
     expect(deleted).toBeNull();
   });
+
+  it("should treat a token without expiry as not expired and activatable", async () => {
+    const neverExpiring = await repository.createOne(
+      buildCreateData({ expires_at: null }),
+    );
+
+    const notExpiredResult = await repository.findMany({ expired: false });
+    const expiredResult = await repository.findMany({ expired: true });
+    const activatableResult = await repository.findMany({ activatable: true });
+    const notActivatableResult = await repository.findMany({
+      activatable: false,
+    });
+
+    expect(notExpiredResult.map(token => token.id)).toContain(neverExpiring.id);
+    expect(expiredResult.map(token => token.id)).not.toContain(
+      neverExpiring.id,
+    );
+    expect(activatableResult.map(token => token.id)).toContain(
+      neverExpiring.id,
+    );
+    expect(notActivatableResult.map(token => token.id)).not.toContain(
+      neverExpiring.id,
+    );
+  });
+
+  it("should activate a single-use token only once", async () => {
+    const token = await repository.createOne(buildCreateData());
+
+    const firstActivation = await repository.activateOne({ id: token.id });
+    const secondActivation = await repository.activateOne({ id: token.id });
+
+    expect([firstActivation, secondActivation]).toEqual([true, false]);
+    const found = await repository.findOne({ id: token.id });
+    expect(found?.activated_at).toBeInstanceOf(Date);
+  });
+
+  it("should activate a single-use token once under concurrent activations", async () => {
+    const token = await repository.createOne(buildCreateData());
+
+    const activations = await Promise.all(
+      Array.from({ length: 5 }, () => repository.activateOne({ id: token.id })),
+    );
+
+    expect(activations.filter(Boolean)).toHaveLength(1);
+  });
+
+  it("should activate an unlimited token repeatedly", async () => {
+    const token = await repository.createOne(
+      buildCreateData({ is_unlimited_usage: true, activated_at: new Date() }),
+    );
+
+    const firstActivation = await repository.activateOne({ id: token.id });
+    const secondActivation = await repository.activateOne({ id: token.id });
+
+    expect([firstActivation, secondActivation]).toEqual([true, true]);
+  });
+
+  it.each([
+    ["expired", { expires_at: new Date(Date.now() - 60_000) }],
+    ["archived", { archived_at: new Date() }],
+  ])("should not activate an %s token", async (_label, overrides) => {
+    const token = await workerRegistrationTokenFactory.create({
+      user_id: user.id,
+      is_unlimited_usage: true,
+      ...overrides,
+    });
+
+    const activated = await repository.activateOne({ id: token.id });
+
+    expect(activated).toBe(false);
+    const found = await repository.findOne({ id: token.id });
+    expect(found?.activated_at).toBeNull();
+  });
+
+  it("should release an activated single-use token", async () => {
+    const token = await repository.createOne(buildCreateData());
+    await repository.activateOne({ id: token.id });
+
+    await repository.releaseOne({ id: token.id });
+
+    const found = await repository.findOne({ id: token.id });
+    expect(found?.activated_at).toBeNull();
+    expect(await repository.activateOne({ id: token.id })).toBe(true);
+  });
+
+  it("should not release an unlimited token or another token", async () => {
+    const activatedAt = new Date("2026-01-01T00:00:00.000Z");
+    const unlimited = await repository.createOne(
+      buildCreateData({ is_unlimited_usage: true, activated_at: activatedAt }),
+    );
+    const otherToken = await repository.createOne(
+      buildCreateData({ activated_at: activatedAt }),
+    );
+
+    await repository.releaseOne({ id: unlimited.id });
+
+    const foundUnlimited = await repository.findOne({ id: unlimited.id });
+    const foundOther = await repository.findOne({ id: otherToken.id });
+    expect(foundUnlimited?.activated_at).toEqual(activatedAt);
+    expect(foundOther?.activated_at).toEqual(activatedAt);
+  });
 });

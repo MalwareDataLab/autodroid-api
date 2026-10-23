@@ -62,6 +62,18 @@ class WorkerRegisterService {
         ),
       });
 
+    if (
+      registrationToken.expires_at &&
+      registrationToken.expires_at <= new Date()
+    )
+      throw new AppError({
+        key: "@worker_register_service/REGISTRATION_TOKEN_EXPIRED",
+        message: t(
+          "worker_register_service.REGISTRATION_TOKEN_EXPIRED",
+          "Registration token expired.",
+        ),
+      });
+
     const existingSignature = await this.workerRepository.findOne({
       signature,
       archived: false,
@@ -75,6 +87,21 @@ class WorkerRegisterService {
           "Signature already used.",
         ),
       });
+
+    const activated = await this.workerRegistrationTokenRepository.activateOne({
+      id: registrationToken.id,
+    });
+
+    if (!activated)
+      throw new AppError({
+        key: "@worker_register_service/REGISTRATION_TOKEN_ALREADY_USED",
+        message: t(
+          "worker_register_service.REGISTRATION_TOKEN_ALREADY_USED",
+          "Registration token already used.",
+        ),
+      });
+
+    let createdWorkerId: string | undefined;
 
     try {
       const worker = await this.workerRepository.createOne({
@@ -101,6 +128,7 @@ class WorkerRegisterService {
         refresh_token: "",
         refresh_token_expires_at: new Date(),
       });
+      createdWorkerId = worker.id;
 
       const workerWithRefreshToken =
         await this.workerUpdateRefreshTokenService.execute({
@@ -123,6 +151,18 @@ class WorkerRegisterService {
 
       return workerWithRefreshToken;
     } catch (error) {
+      const archiveCreatedWorker = createdWorkerId
+        ? this.workerRepository.deleteOne({ id: createdWorkerId })
+        : Promise.resolve();
+
+      await archiveCreatedWorker
+        .then(() =>
+          this.workerRegistrationTokenRepository.releaseOne({
+            id: registrationToken.id,
+          }),
+        )
+        .catch(() => undefined);
+
       if (error instanceof AppError) throw error;
 
       throw new AppError({

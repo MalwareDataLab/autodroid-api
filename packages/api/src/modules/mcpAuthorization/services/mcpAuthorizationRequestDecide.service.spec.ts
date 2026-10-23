@@ -325,7 +325,29 @@ describe("Service: McpAuthorizationRequestDecideService", () => {
       expect(new URL(result.redirect_to).searchParams.get("state")).toBe("xyz");
     });
 
-    it("should set the code before deleting the request", async () => {
+    it("should throw a 404, storing no code, when a concurrent decision already claimed the request", async () => {
+      delMock.mockResolvedValueOnce(0);
+
+      await expect(
+        service.execute({
+          request_id: REQUEST_ID,
+          approve: true,
+          is_admin: false,
+          user_auth_provider_conn: USER_AUTH_PROVIDER_CONN,
+        }),
+      ).rejects.toThrowError(
+        expect.objectContaining({
+          key: "@mcp_authorization_request_decide_service/REQUEST_NOT_FOUND",
+          statusCode: 404,
+        }),
+      );
+      expect(delMock).toHaveBeenCalledExactlyOnceWith(
+        `mcp-oauth:request:${REQUEST_ID}`,
+      );
+      expect(setMock).not.toHaveBeenCalled();
+    });
+
+    it("should claim the request before storing the code", async () => {
       const callOrder: string[] = [];
       setMock.mockImplementation(async () => {
         callOrder.push("set");
@@ -343,7 +365,7 @@ describe("Service: McpAuthorizationRequestDecideService", () => {
         user_auth_provider_conn: USER_AUTH_PROVIDER_CONN,
       });
 
-      expect(callOrder).toEqual(["set", "del"]);
+      expect(callOrder).toEqual(["del", "set"]);
     });
   });
 });

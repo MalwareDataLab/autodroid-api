@@ -69,17 +69,22 @@ class PrismaWorkerRegistrationTokenRepository
         archived_at: archived ? { not: null } : null,
       }),
 
-      ...(expired !== undefined && {
-        expires_at: expired ? { lte: new Date() } : { gt: new Date() },
-      }),
+      ...(expired !== undefined &&
+        (expired
+          ? { expires_at: { lte: new Date() } }
+          : {
+              OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }],
+            })),
 
       ...(activatable !== undefined && {
         AND: activatable
-          ? {
-              archived_at: null,
-              expires_at: { gt: new Date() },
-              OR: [{ activated_at: null }, { is_unlimited_usage: true }],
-            }
+          ? [
+              { archived_at: null },
+              {
+                OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }],
+              },
+              { OR: [{ activated_at: null }, { is_unlimited_usage: true }] },
+            ]
           : {
               OR: [
                 { archived_at: { not: null } },
@@ -176,6 +181,23 @@ class PrismaWorkerRegistrationTokenRepository
       });
 
     return parse(WorkerRegistrationToken, workerRegistrationToken);
+  }
+
+  public async activateOne({ id }: { id: string }): Promise<boolean> {
+    const { count } =
+      await this.databaseProvider.client.workerRegistrationToken.updateMany({
+        where: this.getWhereClause({ id, activatable: true }),
+        data: { activated_at: new Date() },
+      });
+
+    return count > 0;
+  }
+
+  public async releaseOne({ id }: { id: string }): Promise<void> {
+    await this.databaseProvider.client.workerRegistrationToken.updateMany({
+      where: { id, is_unlimited_usage: false, activated_at: { not: null } },
+      data: { activated_at: null },
+    });
   }
 }
 

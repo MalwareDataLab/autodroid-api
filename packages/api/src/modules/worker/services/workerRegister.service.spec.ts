@@ -1,4 +1,12 @@
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  Mocked,
+  vi,
+} from "vitest";
 
 // Schema import
 import { WorkerRegisterSchema } from "@modules/worker/schemas/worker.schema";
@@ -38,6 +46,8 @@ describe("Service: WorkerRegisterService", () => {
       getCount: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),
+      activateOne: vi.fn(),
+      releaseOne: vi.fn(),
     };
 
     workerRepositoryMock = {
@@ -55,6 +65,10 @@ describe("Service: WorkerRegisterService", () => {
     );
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("should register a worker", async () => {
     const registration_token = workerRegistrationTokenFactory.build();
     const worker = workerFactory.build(
@@ -69,6 +83,9 @@ describe("Service: WorkerRegisterService", () => {
     workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
       registration_token,
     );
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      true,
+    );
     workerRepositoryMock.findOne
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(worker);
@@ -80,6 +97,100 @@ describe("Service: WorkerRegisterService", () => {
     });
 
     expect(response).toBe(updatedWorker);
+    expect(workerRegistrationTokenRepositoryMock.findOne).toHaveBeenCalledWith({
+      token: registration_token.token,
+      archived: false,
+    });
+    expect(
+      workerRegistrationTokenRepositoryMock.activateOne,
+    ).toHaveBeenCalledWith({ id: registration_token.id });
+  });
+
+  it("should register a worker with a token that expires in the future", async () => {
+    const now = new Date("2026-01-01T00:00:00.000Z");
+    vi.useFakeTimers({ now, toFake: ["Date"] });
+    const registration_token = workerRegistrationTokenFactory.build({
+      expires_at: new Date(now.getTime() + 1),
+    });
+    const worker = workerFactory.build(
+      { refresh_token: "", archived_at: null },
+      { associations: { registration_token } },
+    );
+
+    workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
+      registration_token,
+    );
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      true,
+    );
+    workerRepositoryMock.findOne
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(worker);
+    workerRepositoryMock.createOne.mockResolvedValueOnce(worker);
+    workerRepositoryMock.updateOne.mockResolvedValueOnce(worker);
+
+    const response = await workerRegisterService.execute({
+      data: buildRequestData(registration_token.token),
+    });
+
+    expect(response).toBe(worker);
+  });
+
+  it.each([
+    ["expires exactly now", 0],
+    ["expired in the past", -1],
+  ])(
+    "should throw if the registration token %s",
+    async (_label, offsetMilliseconds) => {
+      const now = new Date("2026-01-01T00:00:00.000Z");
+      vi.useFakeTimers({ now, toFake: ["Date"] });
+      const registration_token = workerRegistrationTokenFactory.build({
+        expires_at: new Date(now.getTime() + offsetMilliseconds),
+      });
+
+      workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
+        registration_token,
+      );
+
+      await expect(() =>
+        workerRegisterService.execute({
+          data: buildRequestData(registration_token.token),
+        }),
+      ).rejects.toThrowError(
+        expect.objectContaining({
+          key: "@worker_register_service/REGISTRATION_TOKEN_EXPIRED",
+        }),
+      );
+      expect(
+        workerRegistrationTokenRepositoryMock.activateOne,
+      ).not.toHaveBeenCalled();
+      expect(workerRepositoryMock.createOne).not.toHaveBeenCalled();
+    },
+  );
+
+  it("should throw if the single-use registration token was already used", async () => {
+    const registration_token = workerRegistrationTokenFactory.build({
+      activated_at: new Date(),
+    });
+
+    workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
+      registration_token,
+    );
+    workerRepositoryMock.findOne.mockResolvedValueOnce(null);
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      false,
+    );
+
+    await expect(() =>
+      workerRegisterService.execute({
+        data: buildRequestData(registration_token.token),
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@worker_register_service/REGISTRATION_TOKEN_ALREADY_USED",
+      }),
+    );
+    expect(workerRepositoryMock.createOne).not.toHaveBeenCalled();
   });
 
   it("should throw if the registration token was not found", async () => {
@@ -126,10 +237,15 @@ describe("Service: WorkerRegisterService", () => {
     workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
       registration_token,
     );
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      true,
+    );
     workerRepositoryMock.findOne
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(null);
     workerRepositoryMock.createOne.mockResolvedValueOnce(worker);
+    workerRepositoryMock.deleteOne.mockResolvedValueOnce(worker);
+    workerRegistrationTokenRepositoryMock.releaseOne.mockResolvedValueOnce();
 
     await expect(() =>
       workerRegisterService.execute({
@@ -140,6 +256,12 @@ describe("Service: WorkerRegisterService", () => {
         key: "@worker_update_refresh_token_service/WORKER_NOT_FOUND",
       }),
     );
+    expect(workerRepositoryMock.deleteOne).toHaveBeenCalledWith({
+      id: worker.id,
+    });
+    expect(
+      workerRegistrationTokenRepositoryMock.releaseOne,
+    ).toHaveBeenCalledWith({ id: registration_token.id });
   });
 
   it("should throw a generic error when an unexpected error occurs", async () => {
@@ -148,8 +270,12 @@ describe("Service: WorkerRegisterService", () => {
     workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
       registration_token,
     );
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      true,
+    );
     workerRepositoryMock.findOne.mockResolvedValueOnce(null);
     workerRepositoryMock.createOne.mockRejectedValueOnce(new Error("db down"));
+    workerRegistrationTokenRepositoryMock.releaseOne.mockResolvedValueOnce();
 
     await expect(() =>
       workerRegisterService.execute({
@@ -160,5 +286,77 @@ describe("Service: WorkerRegisterService", () => {
         key: "@worker_register_service/FAIL_TO_REGISTER_WORKER",
       }),
     );
+    expect(workerRepositoryMock.deleteOne).not.toHaveBeenCalled();
+    expect(
+      workerRegistrationTokenRepositoryMock.releaseOne,
+    ).toHaveBeenCalledWith({ id: registration_token.id });
+  });
+
+  it("should keep the token consumed and surface the original error when archiving the created worker fails", async () => {
+    const registration_token = workerRegistrationTokenFactory.build();
+    const worker = workerFactory.build(
+      { refresh_token: "", archived_at: null },
+      { associations: { registration_token } },
+    );
+
+    workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
+      registration_token,
+    );
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      true,
+    );
+    workerRepositoryMock.findOne
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null);
+    workerRepositoryMock.createOne.mockResolvedValueOnce(worker);
+    workerRepositoryMock.deleteOne.mockRejectedValueOnce(new Error("db down"));
+
+    await expect(() =>
+      workerRegisterService.execute({
+        data: buildRequestData(registration_token.token),
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@worker_update_refresh_token_service/WORKER_NOT_FOUND",
+      }),
+    );
+    expect(workerRepositoryMock.deleteOne).toHaveBeenCalledWith({
+      id: worker.id,
+    });
+    expect(
+      workerRegistrationTokenRepositoryMock.releaseOne,
+    ).not.toHaveBeenCalled();
+  });
+
+  it("should surface the original error when releasing the token fails", async () => {
+    const registration_token = workerRegistrationTokenFactory.build();
+
+    workerRegistrationTokenRepositoryMock.findOne.mockResolvedValueOnce(
+      registration_token,
+    );
+    workerRegistrationTokenRepositoryMock.activateOne.mockResolvedValueOnce(
+      true,
+    );
+    workerRepositoryMock.findOne.mockResolvedValueOnce(null);
+    workerRepositoryMock.createOne.mockRejectedValueOnce(new Error("db down"));
+    workerRegistrationTokenRepositoryMock.releaseOne.mockRejectedValueOnce(
+      new Error("release failed"),
+    );
+
+    await expect(() =>
+      workerRegisterService.execute({
+        data: buildRequestData(registration_token.token),
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@worker_register_service/FAIL_TO_REGISTER_WORKER",
+        debug: expect.objectContaining({
+          error: expect.objectContaining({ message: "db down" }),
+        }),
+      }),
+    );
+    expect(
+      workerRegistrationTokenRepositoryMock.releaseOne,
+    ).toHaveBeenCalledWith({ id: registration_token.id });
   });
 });

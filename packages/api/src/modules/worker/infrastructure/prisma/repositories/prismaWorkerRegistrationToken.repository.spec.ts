@@ -31,6 +31,7 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
       findMany: ReturnType<typeof vi.fn>;
       count: ReturnType<typeof vi.fn>;
       update: ReturnType<typeof vi.fn>;
+      updateMany: ReturnType<typeof vi.fn>;
     };
   };
 
@@ -45,6 +46,7 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
         findMany: vi.fn(),
         count: vi.fn(),
         update: vi.fn(),
+        updateMany: vi.fn(),
       },
     };
 
@@ -145,11 +147,11 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
         activated_at: { not: null },
         archived_at: { not: null },
         expires_at: { lte: now },
-        AND: {
-          archived_at: null,
-          expires_at: { gt: now },
-          OR: [{ activated_at: null }, { is_unlimited_usage: true }],
-        },
+        AND: [
+          { archived_at: null },
+          { OR: [{ expires_at: null }, { expires_at: { gt: now } }] },
+          { OR: [{ activated_at: null }, { is_unlimited_usage: true }] },
+        ],
       },
       include: relations,
       orderBy: defaultOrderBy,
@@ -181,7 +183,7 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
           user_id: undefined,
           activated_at: null,
           archived_at: null,
-          expires_at: { gt: now },
+          OR: [{ expires_at: null }, { expires_at: { gt: now } }],
           AND: {
             OR: [
               { archived_at: { not: null } },
@@ -238,11 +240,11 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
         token: undefined,
         is_unlimited_usage: undefined,
         user_id: workerRegistrationToken.user_id,
-        AND: {
-          archived_at: null,
-          expires_at: { gt: now },
-          OR: [{ activated_at: null }, { is_unlimited_usage: true }],
-        },
+        AND: [
+          { archived_at: null },
+          { OR: [{ expires_at: null }, { expires_at: { gt: now } }] },
+          { OR: [{ activated_at: null }, { is_unlimited_usage: true }] },
+        ],
       },
     });
   });
@@ -313,5 +315,57 @@ describe("Repository: PrismaWorkerRegistrationTokenRepository", () => {
       }),
     ).resolves.toBeNull();
     expect(client.workerRegistrationToken.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [1, true],
+    [0, false],
+  ])(
+    "should activate only an activatable token in one conditional update (%i updated rows)",
+    async (updatedRowCount, expectedActivated) => {
+      client.workerRegistrationToken.updateMany.mockResolvedValueOnce({
+        count: updatedRowCount,
+      });
+
+      const activated =
+        await prismaWorkerRegistrationTokenRepository.activateOne({
+          id: workerRegistrationToken.id,
+        });
+
+      expect(activated).toBe(expectedActivated);
+      expect(client.workerRegistrationToken.updateMany).toHaveBeenCalledWith({
+        where: {
+          id: workerRegistrationToken.id,
+          token: undefined,
+          is_unlimited_usage: undefined,
+          user_id: undefined,
+          AND: [
+            { archived_at: null },
+            { OR: [{ expires_at: null }, { expires_at: { gt: now } }] },
+            { OR: [{ activated_at: null }, { is_unlimited_usage: true }] },
+          ],
+        },
+        data: { activated_at: now },
+      });
+    },
+  );
+
+  it("should release only the activated single-use token with that id", async () => {
+    client.workerRegistrationToken.updateMany.mockResolvedValueOnce({
+      count: 1,
+    });
+
+    await prismaWorkerRegistrationTokenRepository.releaseOne({
+      id: workerRegistrationToken.id,
+    });
+
+    expect(client.workerRegistrationToken.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: workerRegistrationToken.id,
+        is_unlimited_usage: false,
+        activated_at: { not: null },
+      },
+      data: { activated_at: null },
+    });
   });
 });
