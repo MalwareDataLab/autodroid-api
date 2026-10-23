@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.9.0...v0.9.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* **email:** build footer links from FRONTEND_URL ([5b2e361](https://github.com/MalwareDataLab/autodroid-api/commit/5b2e36135442acfca31bc80216bf4e8beddc3f28))
+* make worker registration tokens and mcp consent single-use ([ac2c8a6](https://github.com/MalwareDataLab/autodroid-api/commit/ac2c8a60cc00160375606e5721abe9576365b19b))
+
 ## [0.9.0](https://github.com/MalwareDataLab/autodroid-api/compare/v0.8.5...v0.9.0) (2026-10-16)
 
 
