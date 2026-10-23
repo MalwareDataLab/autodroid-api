@@ -24,7 +24,7 @@ let redisContainer: StartedRedisContainer | undefined;
 const TEMPLATE_DATABASE = "autodroid_template";
 
 const startPostgreSql = async () => {
-  const container = await new PostgreSqlContainer("postgres:14")
+  const container = await new PostgreSqlContainer("postgres:18")
     .withDatabase(TEMPLATE_DATABASE)
     .withCommand([
       "postgres",
@@ -63,7 +63,7 @@ const startPostgreSql = async () => {
 };
 
 const startMongoDb = async () => {
-  const container = await new MongoDBContainer("mongo:6").start();
+  const container = await new MongoDBContainer("mongo:9").start();
   process.env.NON_RELATIONAL_DATABASE_URL = container
     .getConnectionString()
     .toString();

@@ -82,8 +82,15 @@ class McpAuthorizationRequestDecideService {
         statusCode: 409,
       });
 
+    const claimed = await this.inMemoryDatabaseProvider.connection.del(key);
+    if (!claimed)
+      throw new AppError({
+        key: `${ERROR_KEY_PREFIX}/REQUEST_NOT_FOUND`,
+        message: "This authorization request was not found or has expired.",
+        statusCode: 404,
+      });
+
     if (!approve) {
-      await this.inMemoryDatabaseProvider.connection.del(key);
       return {
         redirect_to: this.buildRedirect(record, {
           error: "access_denied",
@@ -93,7 +100,6 @@ class McpAuthorizationRequestDecideService {
 
     const scopes = grantableMcpAuthorizationScopes(record.scopes, is_admin);
     if (!scopes.length) {
-      await this.inMemoryDatabaseProvider.connection.del(key);
       return {
         redirect_to: this.buildRedirect(record, { error: "invalid_scope" }),
       };
@@ -128,8 +134,6 @@ class McpAuthorizationRequestDecideService {
       "EX",
       MCP_AUTHORIZATION_CODE_TTL_SECONDS,
     );
-
-    await this.inMemoryDatabaseProvider.connection.del(key);
 
     return { redirect_to: this.buildRedirect(record, { code }) };
   }

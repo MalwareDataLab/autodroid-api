@@ -37,4 +37,8 @@ export interface IWorkerRegistrationTokenRepository {
   deleteOne(
     filter: IFindWorkerRegistrationTokenDTO,
   ): Promise<WorkerRegistrationToken | null>;
+
+  activateOne(filter: { id: string }): Promise<boolean>;
+
+  releaseOne(filter: { id: string }): Promise<void>;
 }

@@ -24,6 +24,8 @@ describe("Service: AdminWorkerRegistrationTokenDeleteService", () => {
       getCount: vi.fn(),
       updateOne: vi.fn(),
       deleteOne: vi.fn(),
+      activateOne: vi.fn(),
+      releaseOne: vi.fn(),
     };
 
     adminWorkerRegistrationTokenDeleteService =

@@ -93,4 +93,156 @@ describe("Service: WorkerRegisterService", () => {
       }),
     );
   });
+
+  it("should mark a single-use registration token as activated", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      is_unlimited_usage: false,
+      activated_at: null,
+    });
+
+    await workerRegisterService.execute({
+      data: buildRequestData(registrationToken.token),
+    });
+
+    const persistedToken = await workerRegistrationTokenRepository.findOne({
+      id: registrationToken.id,
+    });
+    expect(persistedToken?.activated_at).toBeInstanceOf(Date);
+  });
+
+  it("should register a worker with a token that never expires", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      expires_at: null,
+    });
+
+    const response = await workerRegisterService.execute({
+      data: buildRequestData(registrationToken.token),
+    });
+
+    expect(response.registration_token_id).toBe(registrationToken.id);
+  });
+
+  it("should register a worker with a token that expires in the future", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      expires_at: new Date(Date.now() + 60_000),
+    });
+
+    const response = await workerRegisterService.execute({
+      data: buildRequestData(registrationToken.token),
+    });
+
+    expect(response.registration_token_id).toBe(registrationToken.id);
+  });
+
+  it("should reject a single-use registration token that was already used", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      is_unlimited_usage: false,
+    });
+    await workerRegisterService.execute({
+      data: buildRequestData(registrationToken.token),
+    });
+
+    await expect(() =>
+      workerRegisterService.execute({
+        data: buildRequestData(registrationToken.token),
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@worker_register_service/REGISTRATION_TOKEN_ALREADY_USED",
+      }),
+    );
+    expect(
+      await workerRepository.getCount({
+        registration_token_id: registrationToken.id,
+      }),
+    ).toBe(1);
+  });
+
+  it("should reject an expired registration token", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      expires_at: new Date(Date.now() - 60_000),
+    });
+
+    await expect(() =>
+      workerRegisterService.execute({
+        data: buildRequestData(registrationToken.token),
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@worker_register_service/REGISTRATION_TOKEN_EXPIRED",
+      }),
+    );
+    expect(
+      await workerRepository.getCount({
+        registration_token_id: registrationToken.id,
+      }),
+    ).toBe(0);
+  });
+
+  it("should reject an archived registration token", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      archived_at: new Date(),
+    });
+
+    await expect(() =>
+      workerRegisterService.execute({
+        data: buildRequestData(registrationToken.token),
+      }),
+    ).rejects.toThrowError(
+      expect.objectContaining({
+        key: "@worker_register_service/REGISTRATION_TOKEN_NOT_FOUND",
+      }),
+    );
+  });
+
+  it("should reuse an unlimited registration token", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      is_unlimited_usage: true,
+    });
+
+    const firstWorker = await workerRegisterService.execute({
+      data: buildRequestData(registrationToken.token),
+    });
+    const secondWorker = await workerRegisterService.execute({
+      data: buildRequestData(registrationToken.token),
+    });
+
+    expect(firstWorker.id).not.toBe(secondWorker.id);
+    expect(
+      await workerRepository.getCount({
+        registration_token_id: registrationToken.id,
+      }),
+    ).toBe(2);
+  });
+
+  it("should register exactly one worker when a single-use token is used concurrently", async () => {
+    const registrationToken = await workerRegistrationTokenFactory.create({
+      is_unlimited_usage: false,
+    });
+
+    const results = await Promise.allSettled([
+      workerRegisterService.execute({
+        data: buildRequestData(registrationToken.token),
+      }),
+      workerRegisterService.execute({
+        data: buildRequestData(registrationToken.token),
+      }),
+    ]);
+
+    expect(results.map(result => result.status).sort()).toEqual([
+      "fulfilled",
+      "rejected",
+    ]);
+    expect(results.find(result => result.status === "rejected")).toEqual({
+      status: "rejected",
+      reason: expect.objectContaining({
+        key: "@worker_register_service/REGISTRATION_TOKEN_ALREADY_USED",
+      }),
+    });
+    expect(
+      await workerRepository.getCount({
+        registration_token_id: registrationToken.id,
+      }),
+    ).toBe(1);
+  });
 });
