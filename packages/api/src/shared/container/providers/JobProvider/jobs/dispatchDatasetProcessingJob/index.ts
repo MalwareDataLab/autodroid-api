@@ -65,7 +65,9 @@ class DispatchDatasetProcessingJob implements IJob {
       done(
         new AppError({
           key: "@dispatch_dataset_processing_job/ERROR",
-          message: `Unable to dispatch processes originated from ${processing_ids[0]}${processing_ids.length > 1 ? ` and ${processing_ids.length - 1}` : ""}. ${error.message}`,
+          message: processing_ids.length
+            ? `Unable to dispatch processes originated from ${processing_ids[0]}${processing_ids.length > 1 ? ` and ${processing_ids.length - 1}` : ""}. ${error.message}`
+            : `Unable to dispatch the pending processes. ${error.message}`,
         }),
       );
     }

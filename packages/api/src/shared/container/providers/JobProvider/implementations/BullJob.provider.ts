@@ -115,7 +115,18 @@ class BullJobProvider implements IJobProvider {
   }
 
   private async startCronJobs() {
-    const cronJobs: { name: keyof typeof Jobs; rule: string; data: any }[] = [
+    const cronJobs: {
+      name: keyof typeof Jobs;
+      rule: string;
+      data: any;
+      options?: IJobOptionsDTO;
+    }[] = [
+      {
+        name: "DispatchDatasetProcessingJob",
+        rule: "* * * * *",
+        data: { processing_ids: [] },
+        options: { attempts: 1 },
+      },
       {
         name: "ProcessingCleanExpiredJob",
         rule: "0 * * * *",
@@ -163,6 +174,7 @@ class BullJobProvider implements IJobProvider {
 
     cronJobs.forEach(job => {
       this.add(job.name, job.data, {
+        ...job.options,
         repeat: {
           cron: job.rule,
         },
@@ -318,8 +330,8 @@ class BullJobProvider implements IJobProvider {
     if (selectedModule)
       selectedModule.queue.add(data, {
         ...this.defaultJobOptions,
-        ...options,
         ...selectedModule.jobModule.jobOptions,
+        ...options,
       });
   }
 
