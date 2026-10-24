@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.9.1...v0.9.2) (2026-10-24)
+
+
+### Bug Fixes
+
+* dispatch pending processings every minute and never failed ones ([ca57c8c](https://github.com/MalwareDataLab/autodroid-api/commit/ca57c8c633941525656e99468ea2338ff1b1a4a0))
+
 ## [0.9.1](https://github.com/MalwareDataLab/autodroid-api/compare/v0.9.0...v0.9.1) (2026-10-23)
 
 
