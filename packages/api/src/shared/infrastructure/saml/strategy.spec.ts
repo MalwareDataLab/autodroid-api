@@ -270,6 +270,22 @@ describe("SAML: SamlFederationManager", () => {
       expect(h.XMLBuilder).toHaveBeenCalled();
     });
 
+    it("should order the contact person children as the SAML metadata schema requires", async () => {
+      const manager = await createManager();
+
+      manager.generateMetadata();
+
+      const [builtMetadata] = h.buildFn.mock.calls[0] as unknown as [any];
+      const descriptor = builtMetadata["md:EntityDescriptor"];
+      expect(Object.keys(descriptor["md:ContactPerson"])).toEqual([
+        "@_contactType",
+        "md:Company",
+        "md:GivenName",
+        "md:SurName",
+        "md:EmailAddress",
+      ]);
+    });
+
     it("should throw when the certificates are not configured", async () => {
       const manager = await createManager();
       (manager as any).SP_KEY = undefined;
