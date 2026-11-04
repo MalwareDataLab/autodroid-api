@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.3](https://github.com/MalwareDataLab/autodroid-api/compare/v0.9.2...v0.9.3) (2026-11-04)
+
+
+### Bug Fixes
+
+* email sequence on saml metadata ([9892fbd](https://github.com/MalwareDataLab/autodroid-api/commit/9892fbdda38d9de5605c9ed9216e679cfa76d3e6))
+
 ## [0.9.2](https://github.com/MalwareDataLab/autodroid-api/compare/v0.9.1...v0.9.2) (2026-10-24)
 
 
