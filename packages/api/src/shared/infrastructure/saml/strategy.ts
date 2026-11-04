@@ -1,6 +1,6 @@
 import { MultiSamlStrategy } from "@node-saml/passport-saml";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
-import { XMLBuilder } from "fast-xml-parser";
+import XMLBuilder from "fast-xml-builder";
 import schedule from "node-schedule";
 import passport from "passport";
 import { MetadataReader, toPassportConfig } from "passport-saml-metadata";

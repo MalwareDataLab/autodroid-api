@@ -63,7 +63,7 @@ vi.mock("passport-saml-metadata", () => ({
   MetadataReader: h.MetadataReader,
   toPassportConfig: h.toPassportConfig,
 }));
-vi.mock("fast-xml-parser", () => ({ XMLBuilder: h.XMLBuilder }));
+vi.mock("fast-xml-builder", () => ({ default: h.XMLBuilder }));
 vi.mock("tsyringe", () => ({ container: { resolve: h.resolveFn } }));
 vi.mock(
   "@modules/authentication/services/handleSamlToFirebaseAuthentication.service",
