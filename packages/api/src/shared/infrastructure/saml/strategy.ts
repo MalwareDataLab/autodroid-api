@@ -341,9 +341,9 @@ class SamlFederationManager {
         "md:ContactPerson": {
           "@_contactType": "technical",
           "md:Company": "Malware DataLab",
-          "md:EmailAddress": "malwaredatalab@gmail.com",
           "md:GivenName": "Luiz Felipe",
           "md:SurName": "Laviola",
+          "md:EmailAddress": "malwaredatalab@gmail.com",
         },
       },
     };
